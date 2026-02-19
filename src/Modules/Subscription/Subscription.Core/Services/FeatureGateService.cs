@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SaasKit.Infrastructure.Caching;
-using SaasKit.Infrastructure.Persistence;
+using TadHub.Infrastructure.Caching;
+using TadHub.Infrastructure.Persistence;
 using Subscription.Contracts;
 using Subscription.Core.Entities;
 

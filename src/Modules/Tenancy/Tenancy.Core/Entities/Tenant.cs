@@ -1,4 +1,4 @@
-using SaasKit.SharedKernel.Entities;
+using TadHub.SharedKernel.Entities;
 using Tenancy.Contracts.DTOs;
 
 namespace Tenancy.Core.Entities;

@@ -4,8 +4,8 @@ using Authorization.Core.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using SaasKit.Infrastructure.Auth;
-using SaasKit.SharedKernel.Interfaces;
+using TadHub.Infrastructure.Auth;
+using TadHub.SharedKernel.Interfaces;
 
 namespace Authorization.Core;
 

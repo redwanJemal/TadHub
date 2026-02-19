@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SaasKit.Infrastructure.Persistence;
+using TadHub.Infrastructure.Persistence;
 using Subscription.Core.Entities;
 
 namespace Subscription.Core.Seeds;

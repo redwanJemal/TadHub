@@ -1,217 +1,191 @@
-# Progress Tracker
+# TadHub - Tadbeer ERP Platform Progress
 
-## 📊 Overall Progress
+**UAE Domestic Worker Recruitment Lifecycle Management**
 
-| Phase | Name | Tasks | Completed | Status |
-|-------|------|-------|-----------|--------|
-| P0 | Solution Scaffolding + Docker | 7 | 7 | ✅ Complete |
-| P1 | SharedKernel | 6 | 6 | ✅ Complete |
-| P2 | Infrastructure | 13 | 13 | ✅ Complete |
-| P3 | Identity Module | 7 | 7 | ✅ Complete |
-| P4 | Tenancy Module | 4 | 4 | ✅ Complete |
-| P5 | Authorization Module | 3 | 3 | ✅ Complete |
-| P6 | Notification Module | 1 | 1 | ✅ Complete |
-| P7 | Subscription Module | 3 | 3 | ✅ Complete |
-| P8 | Portal Module | 3 | 3 | ✅ Complete |
-| P9 | API Management Module | 1 | 1 | ✅ Complete |
-| P10 | Feature Flags Module | 1 | 1 | ✅ Complete |
-| P11 | Audit Module | 1 | 1 | ✅ Complete |
-| P12 | Analytics Module | 1 | 1 | ✅ Complete |
-| P13 | Content Module | 1 | 1 | ✅ Complete |
-| P14 | Template + Integration + CI | 3 | 3 | ✅ Complete |
-| **Total** | | **55** | **55** | **100%** |
+## Overview
 
----
+| Metric | Value |
+|--------|-------|
+| **Total Phases** | 11 (P0-P10) |
+| **Total Tasks** | 28 |
+| **Total Entities** | ~50 |
+| **Domain Events** | 32 |
+| **Estimated Timeline** | 15 weeks |
 
-## 📋 Detailed Task Progress
+## Phase Summary
 
-### Phase 0: Solution Scaffolding + Docker
+| Phase | Module | Tasks | Status | Progress |
+|-------|--------|-------|--------|----------|
+| P0 | Boilerplate Adaptation | 4 | ⏳ Pending | 0/4 |
+| P1 | Client Management | 4 | ⏳ Pending | 0/4 |
+| P2 | Worker/CV Management | 5 | ⏳ Pending | 0/5 |
+| P3 | Contract Engine | 4 | ⏳ Pending | 0/4 |
+| P4 | Financial & Billing | 3 | ⏳ Pending | 0/3 |
+| P5 | PRO & Govt Gateway | 3 | ⏳ Pending | 0/3 |
+| P6 | Scheduling & Dispatch | 1 | ⏳ Pending | 0/1 |
+| P7 | WPS | 1 | ⏳ Pending | 0/1 |
+| P8 | Notification Extensions | 1 | ⏳ Pending | 0/1 |
+| P9 | Reporting & Dashboards | 1 | ⏳ Pending | 0/1 |
+| P10 | Integration Tests | 1 | ⏳ Pending | 0/1 |
 
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P0-T01 | Create solution and all project files | ✅ | 29 projects, build passes |
-| P0-T02 | Create Directory.Build.props and global config | ✅ | Central package management |
-| P0-T03 | Create Docker Compose for dev environment | ✅ | 8 services configured |
-| P0-T04 | Create Keycloak realm export | ✅ | 4 clients, 2 roles, 2 users |
-| P0-T05 | Create appsettings.json with all config sections | ✅ | 9 settings classes |
-| P0-T06 | Create minimal Program.cs | ✅ | JWT auth, CORS, Scalar |
-| P0-T07 | Create .gitignore and README | ✅ | Full documentation |
-
-### Phase 1: SharedKernel
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P1-T01 | Create base entity types | ✅ | BaseEntity, TenantScoped, SoftDeletable, IAuditable |
-| P1-T02 | Create core interfaces | ✅ | ITenantContext, ICurrentUser, IClock, IUnitOfWork |
-| P1-T03 | Create domain event base and platform events | ✅ | 15 domain events |
-| P1-T04 | Create Result type, pagination, extensions | ✅ | Result<T>, PagedList, StringExt |
-| P1-T05 | Create API contract types (envelope, filters) | ✅ | ApiResponse, ApiError, QueryParams |
-| P1-T06 | Create clock implementation | ✅ | SystemClock, FakeClock |
-
-### Phase 2: Infrastructure
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P2-T01 | Create filter model binder and sort parser | ✅ | FilterParser, SortParser, ModelBinder |
-| P2-T02 | Create IQueryable filter/sort extensions | ✅ | ApplyFilters, ApplySort extensions |
-| P2-T03 | Create API response envelope wrapper | ✅ | Middleware, ExceptionHandler, ValidationFilter |
-| P2-T04 | Create AppDbContext with multi-tenancy | ✅ | Global query filters, snake_case |
-| P2-T05 | Create EF Core interceptors | ✅ | Auditable, TenantId, SoftDelete, RLS |
-| P2-T06 | Create PostgreSQL RLS policies | ✅ | init.sql, rls-policies.sql |
-| P2-T07 | Configure MassTransit with RabbitMQ | ✅ | AddMessaging, TenantContext filters |
-| P2-T08 | Configure Redis distributed cache | ✅ | IRedisCacheService, tenant-aware keys |
-| P2-T09 | Create SSE infrastructure | ✅ | ConnectionManager, Notifier, Redis Pub/Sub |
-| P2-T10 | Create SSE HTTP endpoint | ✅ | /api/v1/events/stream [Authorize] |
-| P2-T11 | Configure MinIO, Meilisearch, Hangfire | ✅ | Storage, Search, Jobs services |
-| P2-T12 | Create Keycloak Admin API client | ✅ | IKeycloakAdminClient, HttpClient-based, token caching |
-| P2-T13 | Create Infrastructure ServiceRegistration | ✅ | Single AddInfrastructure() call, health checks |
-
-### Phase 3: Identity Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P3-T01 | Create Identity.Contracts | ✅ | IIdentityService, DTOs |
-| P3-T02 | Create Identity entities and EF config | ✅ | UserProfile, AdminUser, EF configs |
-| P3-T03 | Implement IdentityService with filter/sort | ✅ | Full CRUD, filter/sort extensions |
-| P3-T04 | Create Keycloak event consumer | ✅ | Created/Updated consumers |
-| P3-T05 | Implement ICurrentUser from JWT claims | ✅ | CurrentUser, TenantContext |
-| P3-T06 | Create Identity API controllers | ✅ | UsersController with all endpoints |
-| P3-T07 | Create Identity ServiceRegistration | ✅ | One-line module registration |
-
-### Phase 4: Tenancy Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P4-T01 | Create Tenancy entities and EF config | ✅ | 6 entities, ITenantService, DTOs |
-| P4-T02 | Implement TenantService with filters | ✅ | Full CRUD, members, invitations |
-| P4-T03 | Implement Tenant Resolution Middleware | ✅ | Subdomain, header, JWT resolvers |
-| P4-T04 | Create Tenancy API and ServiceRegistration | ✅ | 3 controllers, middleware |
-
-### Phase 5: Authorization Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P5-T01 | Create Authorization entities (7 entities) | ✅ | Permission, Role, RolePermission, UserRole, Group, GroupUser, GroupRole |
-| P5-T02 | Implement AuthorizationService and handlers | ✅ | Full service, TenantCreatedConsumer, HasPermission attribute |
-| P5-T03 | Create Authorization API and ServiceRegistration | ✅ | RolesController, PermissionsController |
-
-### Phase 6: Notification Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P6-T01 | Implement Notification module | ✅ | Entity, Service, Controller, SSE push |
-
-### Phase 7: Subscription Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P7-T01 | Create Subscription entities (10 entities) | ✅ | Plan, PlanPrice, PlanFeature, TenantSubscription, Credit, etc. |
-| P7-T02 | Implement Stripe, SubscriptionService, etc. | ✅ | StripePaymentGateway, FeatureGateService, CreditService |
-| P7-T03 | Create Subscription API and ServiceRegistration | ✅ | Plans, Subscriptions, Credits, Webhook controllers |
-
-### Phase 8: Portal Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P8-T01 | Create Portal entities (10 entities) | ✅ | Portal, PortalUser, PortalPage, PortalDomain, etc. |
-| P8-T02 | Implement Portal services and middleware | ✅ | PortalService, PortalUserService, PortalContext |
-| P8-T03 | Create Portal API and ServiceRegistration | ✅ | PortalsController, PortalUsersController, public API |
-
-### Phase 9: API Management Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P9-T01 | Implement API Management module | ✅ | ApiKey, ApiKeyLog, auth, rate limiting |
-
-### Phase 10: Feature Flags Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P10-T01 | Implement Feature Flags module | ✅ | Flags with percentage rollout, SSE push |
-
-### Phase 11: Audit Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P11-T01 | Implement Audit module | ✅ | Events, logs, webhooks with delivery |
-
-### Phase 12: Analytics Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P12-T01 | Implement Analytics module | ✅ | PageViews, Events, Sessions, DailyStats |
-
-### Phase 13: Content Module
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P13-T01 | Implement Content module (16 entities) | ✅ | Blog, KB, Pages, Media, Translations |
-
-### Phase 14: Template + Integration + CI
-
-| Task ID | Description | Status | Notes |
-|---------|-------------|--------|-------|
-| P14-T01 | Create _Template module | ✅ | Full example with README |
-| P14-T02 | Write end-to-end integration tests | ✅ | WebApplicationFactory setup |
-| P14-T03 | Create GitHub Actions CI pipeline | ✅ | Build, test, lint |
+**Overall Progress: 0/28 tasks (0%)**
 
 ---
 
-## 📝 Legend
+## Phase Details
 
-| Symbol | Meaning |
-|--------|---------|
-| ⬜ | Not Started |
-| 🟡 | In Progress |
-| ✅ | Completed |
-| ❌ | Blocked |
-| 🔄 | Needs Revision |
+### Phase 0: Boilerplate Adaptation (Week 1)
 
----
+Customize existing boilerplate for Tadbeer domain.
 
-## 📅 Session Log
-
-| Date | Session | Tasks Completed | Notes |
-|------|---------|-----------------|-------|
-| 2026-02-19 | 1 | P0-T01 | Solution structure: 29 projects, 12 modules |
-| 2026-02-19 | 2 | P0-T02 to P0-T07 | Phase 0 complete: Docker, config, settings |
-| 2026-02-19 | 3 | P1-T01 to P1-T06 | Phase 1 complete: SharedKernel foundation |
-| 2026-02-19 | 4 | P2-T01, P2-T02 | Filter/Sort parsing + IQueryable extensions |
-| 2026-02-19 | 5 | P2-T03 to P2-T05 | API envelope, AppDbContext, EF interceptors |
-| 2026-02-19 | 6 | P2-T06 | PostgreSQL RLS policies |
-| 2026-02-19 | 7 | P2-T07 | MassTransit + RabbitMQ messaging |
-| 2026-02-19 | 8 | P2-T08, P2-T09 | Redis cache + SSE infrastructure |
-| 2026-02-19 | 9 | P2-T10, P2-T11 | SSE endpoint + MinIO/Meilisearch/Hangfire |
-| 2026-02-19 | 10 | P2-T12, P2-T13 | Keycloak Admin client + Infrastructure registration |
-| 2026-02-19 | 11 | P3-T01 to P3-T07 | Complete Identity module |
-| 2026-02-19 | 12 | P4-T01 to P4-T04 | Complete Tenancy module |
-| 2026-02-19 | 13 | P5-T01 to P5-T03 | Complete Authorization module |
-| 2026-02-19 | 14 | P6-T01 | Complete Notification module |
-| 2026-02-19 | 15 | P7-T01 to P7-T03 | Complete Subscription module |
-| 2026-02-19 | 16 | P8-T01 to P8-T03 | Complete Portal module |
-| 2026-02-19 | 17 | P9 to P14 | Complete all remaining modules 🎉 |
+| Task | Description | Status |
+|------|-------------|--------|
+| P0-T01 | Extend Tenant entity for Tadbeer agency fields | ⏳ Pending |
+| P0-T02 | Seed Tadbeer domain roles and permissions | ⏳ Pending |
+| P0-T03 | Register all Tadbeer domain events (32 events) | ⏳ Pending |
+| P0-T04 | Create localization infrastructure for bilingual support | ⏳ Pending |
 
 ---
 
-## 🎯 Current Focus
+### Phase 1: Client Management (Weeks 2-4, parallel with P2)
 
-**Status:** 🎉 PROJECT COMPLETE! 🎉
+Employer lifecycle: registration, verification, lead tracking.
 
-**Notes:**
-- ✅ Phase 0 COMPLETE (7/7 tasks) - Scaffolding + Docker
-- ✅ Phase 1 COMPLETE (6/6 tasks) - SharedKernel
-- ✅ Phase 2 COMPLETE (13/13 tasks) - Infrastructure
-- ✅ Phase 3 COMPLETE (7/7 tasks) - Identity Module
-- ✅ Phase 4 COMPLETE (4/4 tasks) - Tenancy Module
-- ✅ Phase 5 COMPLETE (3/3 tasks) - Authorization Module
-- ✅ Phase 6 COMPLETE (1/1 tasks) - Notification Module
-- ✅ Phase 7 COMPLETE (3/3 tasks) - Subscription Module
-- ✅ Phase 8 COMPLETE (3/3 tasks) - Portal Module
-- ✅ Phase 9 COMPLETE (1/1 tasks) - API Management Module
-- ✅ Phase 10 COMPLETE (1/1 tasks) - Feature Flags Module
-- ✅ Phase 11 COMPLETE (1/1 tasks) - Audit Module
-- ✅ Phase 12 COMPLETE (1/1 tasks) - Analytics Module
-- ✅ Phase 13 COMPLETE (1/1 tasks) - Content Module
-- ✅ Phase 14 COMPLETE (3/3 tasks) - Template + CI
+| Task | Description | Status |
+|------|-------------|--------|
+| P1-T01 | Create ClientManagement.Contracts | ⏳ Pending |
+| P1-T02 | Create Client entities and EF configuration | ⏳ Pending |
+| P1-T03 | Implement ClientService with category auto-detection | ⏳ Pending |
+| P1-T04 | Create Client API controllers and ServiceRegistration | ⏳ Pending |
 
-**Total: 55/55 tasks (100%) ✅**
+---
+
+### Phase 2: Worker/CV Management (Weeks 2-4, parallel with P1)
+
+20-state worker state machine, CV management, nationality pricing.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P2-T01 | Create Worker.Contracts | ⏳ Pending |
+| P2-T02 | Create Worker entities (8) and state machine enum | ⏳ Pending |
+| P2-T03 | Implement Worker state machine with domain events | ⏳ Pending |
+| P2-T04 | Implement WorkerService and WorkerSearchService | ⏳ Pending |
+| P2-T05 | Create Worker API controllers and ServiceRegistration | ⏳ Pending |
+
+---
+
+### Phase 3: Contract Engine (Weeks 5-7)
+
+Three contract types with lifecycle strategies.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P3-T01 | Create Contract.Contracts and entities | ⏳ Pending |
+| P3-T02 | Implement contract lifecycle strategies (Traditional/Temporary/Flexible) | ⏳ Pending |
+| P3-T03 | Implement ContractService orchestrating strategies and events | ⏳ Pending |
+| P3-T04 | Create Contract API controllers, consumers, ServiceRegistration | ⏳ Pending |
+
+---
+
+### Phase 4: Financial & Billing (Weeks 8-10, parallel with P5)
+
+Invoicing, VAT, milestones, X-Reports.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P4-T01 | Create Financial entities (10+) and EF config | ⏳ Pending |
+| P4-T02 | Implement Financial services (invoicing, payments, VAT, refunds, X-Reports) | ⏳ Pending |
+| P4-T03 | Create Financial API controllers and ServiceRegistration | ⏳ Pending |
+
+---
+
+### Phase 5: PRO & Government Gateway (Weeks 8-10, parallel with P4)
+
+8 government transaction types with manual/API abstraction.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P5-T01 | Create PRO entities and transaction types | ⏳ Pending |
+| P5-T02 | Implement ProGatewayService with IGovernmentTransactionService abstraction | ⏳ Pending |
+| P5-T03 | Create PRO API controllers and ServiceRegistration | ⏳ Pending |
+
+---
+
+### Phase 6: Scheduling & Dispatch (Weeks 11-12, parallel with P7)
+
+Flexible bookings with labor law enforcement.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P6-T01 | Create Scheduling entities, booking engine, conflict detection, labor law | ⏳ Pending |
+
+---
+
+### Phase 7: WPS (Weeks 11-12, parallel with P6)
+
+SIF generation, payroll, compliance.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P7-T01 | Implement WPS module (payroll, SIF generation, compliance) | ⏳ Pending |
+
+---
+
+### Phase 8: Notification Extensions (Weeks 13-14, parallel with P9)
+
+WhatsApp, SMS, bilingual templates, escalation.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P8-T01 | Extend Notification module for Tadbeer domain | ⏳ Pending |
+
+---
+
+### Phase 9: Reporting & Dashboards (Weeks 13-14, parallel with P8)
+
+Role-based dashboards, MoHRE compliance reports.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P9-T01 | Implement Reporting module with role-based dashboards | ⏳ Pending |
+
+---
+
+### Phase 10: Integration Tests (Week 15)
+
+End-to-end business flow validation.
+
+| Task | Description | Status |
+|------|-------------|--------|
+| P10-T01 | Write cross-module integration tests | ⏳ Pending |
+
+---
+
+## Key Milestones
+
+| Milestone | Target | Status |
+|-----------|--------|--------|
+| Boilerplate adapted | Week 1 | ⏳ |
+| Client + Worker modules complete | Week 4 | ⏳ |
+| Contract Engine complete | Week 7 | ⏳ |
+| Financial + PRO complete | Week 10 | ⏳ |
+| Scheduling + WPS complete | Week 12 | ⏳ |
+| Notifications + Reporting complete | Week 14 | ⏳ |
+| All integration tests passing | Week 15 | ⏳ |
+
+---
+
+## Legend
+
+- ⏳ Pending
+- 🔄 In Progress
+- ✅ Complete
+- ⚠️ Blocked
+
+---
+
+## Notes
+
+- **Boilerplate Foundation Complete**: Multi-tenancy, IAM, JWT auth, MassTransit event bus, Redis caching, SSE, Hangfire jobs, PostgreSQL with EF Core, API response envelope, bracket-notation filters, RFC 9457 error handling.
+- **Backend Only**: Frontend will be developed separately.
+- **Compliance**: Federal Decree-Law No. 9 of 2022, MoHRE Standards, WPS 2025.

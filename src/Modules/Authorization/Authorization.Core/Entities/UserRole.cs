@@ -1,5 +1,5 @@
 using Identity.Core.Entities;
-using SaasKit.SharedKernel.Entities;
+using TadHub.SharedKernel.Entities;
 
 namespace Authorization.Core.Entities;
 

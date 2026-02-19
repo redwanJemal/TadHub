@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Portal.Contracts;
 using Portal.Core.Services;
-using SaasKit.Infrastructure.Tenancy;
+using TadHub.Infrastructure.Tenancy;
 
 namespace Portal.Core;
 

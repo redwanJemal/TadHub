@@ -2,8 +2,8 @@ using FluentValidation;
 using Identity.Contracts;
 using Identity.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
-using SaasKit.Infrastructure.Auth;
-using SaasKit.SharedKernel.Interfaces;
+using TadHub.Infrastructure.Auth;
+using TadHub.SharedKernel.Interfaces;
 
 namespace Identity.Core;
 
