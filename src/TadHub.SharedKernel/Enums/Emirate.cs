@@ -1,7 +1,8 @@
-namespace Tenancy.Core.Entities;
+namespace TadHub.SharedKernel.Enums;
 
 /// <summary>
 /// UAE Emirates enumeration.
+/// Shared across all modules.
 /// </summary>
 public enum Emirate
 {

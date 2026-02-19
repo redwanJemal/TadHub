@@ -1,4 +1,5 @@
 using TadHub.SharedKernel.Entities;
+using TadHub.SharedKernel.Enums;
 using Tenancy.Contracts.DTOs;
 
 namespace Tenancy.Core.Entities;
