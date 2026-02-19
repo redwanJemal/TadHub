@@ -54,6 +54,9 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<TenantContext>();
         services.AddScoped<ITenantContext>(sp => sp.GetRequiredService<TenantContext>());
 
+        // Localization service (for bilingual En/Ar support)
+        services.AddScoped<TadHub.SharedKernel.Localization.ILocalizationService, Localization.LocalizationService>();
+
         // =============================================================================
         // API Infrastructure
         // =============================================================================

@@ -5,6 +5,7 @@ namespace Tenancy.Core.Entities;
 
 /// <summary>
 /// Tenant entity representing an organization/workspace.
+/// Extended for Tadbeer agency management.
 /// </summary>
 public class Tenant : BaseEntity
 {
@@ -77,4 +78,63 @@ public class Tenant : BaseEntity
     /// Navigation property for child tenants.
     /// </summary>
     public ICollection<Tenant> ChildTenants { get; set; } = new List<Tenant>();
+
+    #region Tadbeer Agency Fields
+
+    /// <summary>
+    /// Tadbeer license number (unique identifier for the agency).
+    /// </summary>
+    public string? TadbeerLicenseNumber { get; set; }
+
+    /// <summary>
+    /// MoHRE (Ministry of Human Resources and Emiratisation) license number.
+    /// </summary>
+    public string? MohreLicenseNumber { get; set; }
+
+    /// <summary>
+    /// Trade license number.
+    /// </summary>
+    public string? TradeLicenseNumber { get; set; }
+
+    /// <summary>
+    /// Trade license expiry date.
+    /// </summary>
+    public DateTimeOffset? TradeLicenseExpiry { get; set; }
+
+    /// <summary>
+    /// UAE Emirate where the agency is registered.
+    /// </summary>
+    public Emirate? Emirate { get; set; }
+
+    /// <summary>
+    /// Whether the agency is currently active.
+    /// </summary>
+    public bool IsActive { get; set; } = true;
+
+    /// <summary>
+    /// Primary license expiry date.
+    /// </summary>
+    public DateTimeOffset? LicenseExpiryDate { get; set; }
+
+    /// <summary>
+    /// Tax Registration Number (TRN) for VAT compliance.
+    /// </summary>
+    public string? TaxRegistrationNumber { get; set; }
+
+    /// <summary>
+    /// Navigation property for agency licenses.
+    /// </summary>
+    public ICollection<TadbeerLicense> Licenses { get; set; } = new List<TadbeerLicense>();
+
+    /// <summary>
+    /// Navigation property for shared pool agreements where this tenant is the provider.
+    /// </summary>
+    public ICollection<SharedPoolAgreement> OutgoingPoolAgreements { get; set; } = new List<SharedPoolAgreement>();
+
+    /// <summary>
+    /// Navigation property for shared pool agreements where this tenant is the receiver.
+    /// </summary>
+    public ICollection<SharedPoolAgreement> IncomingPoolAgreements { get; set; } = new List<SharedPoolAgreement>();
+
+    #endregion
 }

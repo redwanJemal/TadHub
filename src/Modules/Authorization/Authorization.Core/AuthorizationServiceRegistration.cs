@@ -25,8 +25,12 @@ public static class AuthorizationServiceRegistration
         // Permission checker (for policy handler)
         services.AddScoped<IPermissionChecker, PermissionCheckerAdapter>();
 
-        // Permission seeder (runs on startup)
+        // Permission seeders (run on startup)
         services.AddHostedService<PermissionSeeder>();
+        services.AddHostedService<TadbeerPermissionSeeder>();
+
+        // Tadbeer role seeder (used by TenantCreatedConsumer)
+        services.AddScoped<TadbeerRoleSeeder>();
 
         // Authorization policy provider
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
