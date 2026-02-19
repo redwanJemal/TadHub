@@ -1,16 +1,29 @@
 namespace TadHub.SharedKernel.Events.Tadbeer.Worker;
 
 /// <summary>
+/// Published when a new worker is created.
+/// </summary>
+public record WorkerCreatedEvent : TadbeerEventBase
+{
+    public Guid WorkerId { get; init; }
+    public string CvSerial { get; init; } = string.Empty;
+    public string FullNameEn { get; init; } = string.Empty;
+    public string Nationality { get; init; } = string.Empty;
+    public Guid JobCategoryId { get; init; }
+    public Guid? CreatedByUserId { get; init; }
+}
+
+/// <summary>
 /// Published when a worker's status changes in the 20-state machine.
 /// </summary>
 public record WorkerStatusChangedEvent : TadbeerEventBase
 {
     public Guid WorkerId { get; init; }
-    public string OldStatus { get; init; } = string.Empty;
-    public string NewStatus { get; init; } = string.Empty;
+    public string FromStatus { get; init; } = string.Empty;
+    public string ToStatus { get; init; } = string.Empty;
     public string? Reason { get; init; }
     public Guid? RelatedEntityId { get; init; }
-    public Guid TriggeredByUserId { get; init; }
+    public Guid? ChangedByUserId { get; init; }
 }
 
 /// <summary>

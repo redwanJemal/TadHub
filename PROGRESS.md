@@ -18,7 +18,7 @@
 |-------|--------|-------|--------|----------|
 | P0 | Boilerplate Adaptation | 4 | ✅ Complete | 4/4 |
 | P1 | Client Management | 4 | ✅ Complete | 4/4 |
-| P2 | Worker/CV Management | 5 | ⏳ Pending | 0/5 |
+| P2 | Worker/CV Management | 5 | ✅ Complete | 5/5 |
 | P3 | Contract Engine | 4 | ⏳ Pending | 0/4 |
 | P4 | Financial & Billing | 3 | ⏳ Pending | 0/3 |
 | P5 | PRO & Govt Gateway | 3 | ⏳ Pending | 0/3 |
@@ -28,7 +28,7 @@
 | P9 | Reporting & Dashboards | 1 | ⏳ Pending | 0/1 |
 | P10 | Integration Tests | 1 | ⏳ Pending | 0/1 |
 
-**Overall Progress: 8/28 tasks (29%)**
+**Overall Progress: 13/28 tasks (46%)**
 
 ---
 
@@ -60,17 +60,17 @@ Employer lifecycle: registration, verification, lead tracking.
 
 ---
 
-### Phase 2: Worker/CV Management (Weeks 2-4, parallel with P1)
+### Phase 2: Worker/CV Management (Weeks 2-4, parallel with P1) ✅
 
 20-state worker state machine, CV management, nationality pricing.
 
 | Task | Description | Status |
 |------|-------------|--------|
-| P2-T01 | Create Worker.Contracts | ⏳ Pending |
-| P2-T02 | Create Worker entities (8) and state machine enum | ⏳ Pending |
-| P2-T03 | Implement Worker state machine with domain events | ⏳ Pending |
-| P2-T04 | Implement WorkerService and WorkerSearchService | ⏳ Pending |
-| P2-T05 | Create Worker API controllers and ServiceRegistration | ⏳ Pending |
+| P2-T01 | Create Worker.Contracts | ✅ Complete |
+| P2-T02 | Create Worker entities (8) and state machine enum | ✅ Complete |
+| P2-T03 | Implement Worker state machine with domain events | ✅ Complete |
+| P2-T04 | Implement WorkerService and WorkerSearchService | ✅ Complete |
+| P2-T05 | Create Worker API controllers and ServiceRegistration | ✅ Complete |
 
 ---
 
@@ -166,7 +166,7 @@ End-to-end business flow validation.
 | Milestone | Target | Status |
 |-----------|--------|--------|
 | Boilerplate adapted | Week 1 | ✅ |
-| Client + Worker modules complete | Week 4 | 🔄 (Client ✅, Worker ⏳) |
+| Client + Worker modules complete | Week 4 | ✅ |
 | Contract Engine complete | Week 7 | ⏳ |
 | Financial + PRO complete | Week 10 | ⏳ |
 | Scheduling + WPS complete | Week 12 | ⏳ |
