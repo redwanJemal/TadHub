@@ -39,6 +39,58 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         builder.Property(x => x.Settings)
             .HasColumnType("jsonb");
 
+        #region Tadbeer Agency Fields
+
+        builder.Property(x => x.TadbeerLicenseNumber)
+            .HasMaxLength(50);
+
+        builder.Property(x => x.MohreLicenseNumber)
+            .HasMaxLength(50);
+
+        builder.Property(x => x.TradeLicenseNumber)
+            .HasMaxLength(50);
+
+        builder.Property(x => x.Emirate)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
+        builder.Property(x => x.TaxRegistrationNumber)
+            .HasMaxLength(20);
+
+        // Unique constraint on Tadbeer license number
+        builder.HasIndex(x => x.TadbeerLicenseNumber)
+            .IsUnique()
+            .HasDatabaseName("ix_tenants_tadbeer_license")
+            .HasFilter("tadbeer_license_number IS NOT NULL");
+
+        // Index for emirate queries
+        builder.HasIndex(x => x.Emirate)
+            .HasDatabaseName("ix_tenants_emirate");
+
+        // Index for active agencies
+        builder.HasIndex(x => x.IsActive)
+            .HasDatabaseName("ix_tenants_is_active");
+
+        // Relationship to licenses
+        builder.HasMany(x => x.Licenses)
+            .WithOne(x => x.Tenant)
+            .HasForeignKey(x => x.TenantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Relationship to outgoing pool agreements (this tenant is providing workers)
+        builder.HasMany(x => x.OutgoingPoolAgreements)
+            .WithOne(x => x.FromTenant)
+            .HasForeignKey(x => x.FromTenantId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Relationship to incoming pool agreements (this tenant is receiving workers)
+        builder.HasMany(x => x.IncomingPoolAgreements)
+            .WithOne(x => x.ToTenant)
+            .HasForeignKey(x => x.ToTenantId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        #endregion
+
         // Unique constraint on slug
         builder.HasIndex(x => x.Slug)
             .IsUnique()
