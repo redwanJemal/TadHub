@@ -106,6 +106,12 @@ public class QueryParameters
             .Select(i => i.Trim())
             .ToList();
     }
+
+    /// <summary>
+    /// Parses the Include string into an IncludeSet for efficient lookup.
+    /// Use this with IncludeResolver pattern for ToRefDto/ToDto decisions.
+    /// </summary>
+    public IncludeSet GetIncludes() => IncludeResolver.Parse(Include);
 }
 
 /// <summary>
