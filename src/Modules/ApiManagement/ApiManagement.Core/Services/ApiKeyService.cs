@@ -6,12 +6,12 @@ using ApiManagement.Contracts.DTOs;
 using ApiManagement.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SaasKit.Infrastructure.Api;
-using SaasKit.Infrastructure.Caching;
-using SaasKit.Infrastructure.Persistence;
-using SaasKit.SharedKernel.Api;
-using SaasKit.SharedKernel.Interfaces;
-using SaasKit.SharedKernel.Models;
+using TadHub.Infrastructure.Api;
+using TadHub.Infrastructure.Caching;
+using TadHub.Infrastructure.Persistence;
+using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Interfaces;
+using TadHub.SharedKernel.Models;
 
 namespace ApiManagement.Core.Services;
 

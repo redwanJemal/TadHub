@@ -47,7 +47,7 @@ docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
 docker compose up -d postgres redis rabbitmq keycloak minio meilisearch
 
 # Run API locally
-cd ../src/SaasKit.Api
+cd ../src/TadHub.Api
 dotnet watch run
 ```
 
@@ -64,7 +64,7 @@ dotnet watch run
 
 1. **Run EF Migrations** (creates tables):
    ```bash
-   cd ../src/SaasKit.Api
+   cd ../src/TadHub.Api
    dotnet ef database update
    ```
 

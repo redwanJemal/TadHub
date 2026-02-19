@@ -3,7 +3,7 @@
   <!-- Contracts: Public interfaces and DTOs only. ZERO NuGet dependencies. -->
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SaasKit.SharedKernel\SaasKit.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

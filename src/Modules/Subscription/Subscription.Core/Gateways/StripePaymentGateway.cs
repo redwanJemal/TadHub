@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SaasKit.Infrastructure.Settings;
+using TadHub.Infrastructure.Settings;
 using Stripe;
 using Stripe.Checkout;
 

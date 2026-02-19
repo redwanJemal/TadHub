@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using SaasKit.Infrastructure.Api;
-using SaasKit.Infrastructure.Persistence;
-using SaasKit.SharedKernel.Api;
-using SaasKit.SharedKernel.Models;
+using TadHub.Infrastructure.Api;
+using TadHub.Infrastructure.Persistence;
+using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Models;
 using Subscription.Contracts;
 using Subscription.Contracts.DTOs;
 using Subscription.Core.Entities;

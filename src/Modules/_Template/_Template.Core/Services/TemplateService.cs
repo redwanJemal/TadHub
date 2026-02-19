@@ -3,10 +3,10 @@ using _Template.Contracts;
 using _Template.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SaasKit.Infrastructure.Api;
-using SaasKit.Infrastructure.Persistence;
-using SaasKit.SharedKernel.Api;
-using SaasKit.SharedKernel.Models;
+using TadHub.Infrastructure.Api;
+using TadHub.Infrastructure.Persistence;
+using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Models;
 
 namespace _Template.Core.Services;
 

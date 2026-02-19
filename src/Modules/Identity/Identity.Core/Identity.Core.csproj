@@ -7,8 +7,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Identity.Contracts\Identity.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\SaasKit.SharedKernel\SaasKit.SharedKernel.csproj" />
-    <ProjectReference Include="..\..\..\SaasKit.Infrastructure\SaasKit.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\TadHub.Infrastructure\TadHub.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-using SaasKit.SharedKernel.Entities;
+using TadHub.SharedKernel.Entities;
 
 namespace Portal.Core.Entities;
 

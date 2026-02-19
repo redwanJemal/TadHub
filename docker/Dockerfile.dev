@@ -35,5 +35,5 @@ ENV DOTNET_USE_POLLING_FILE_WATCHER=true
 EXPOSE 5000
 
 # Run with hot reload
-WORKDIR /app/src/SaasKit.Api
+WORKDIR /app/src/TadHub.Api
 ENTRYPOINT ["dotnet", "watch", "run", "--no-launch-profile"]

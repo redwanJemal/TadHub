@@ -1,7 +1,7 @@
 using Authorization.Contracts;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using SaasKit.SharedKernel.Events;
+using TadHub.SharedKernel.Events;
 
 namespace Authorization.Core.Consumers;
 

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SaasKit.Infrastructure.Settings;
+using TadHub.Infrastructure.Settings;
 using Subscription.Contracts;
 using Subscription.Core.Gateways;
 using Subscription.Core.Seeds;
