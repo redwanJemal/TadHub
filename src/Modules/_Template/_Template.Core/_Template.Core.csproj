@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="MassTransit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\_Template.Contracts\_Template.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\SaasKit.SharedKernel\SaasKit.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\SaasKit.Infrastructure\SaasKit.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

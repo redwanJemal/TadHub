@@ -1,0 +1,195 @@
+version: "3.8"
+
+services:
+  # =============================================================================
+  # PostgreSQL 17 - Primary Database
+  # =============================================================================
+  postgres:
+    image: postgres:17-alpine
+    container_name: saaskit-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-saaskit}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-saaskit_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-saaskit_dev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./postgres/rls-policies.sql:/docker-entrypoint-initdb.d/rls-policies.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-saaskit} -d ${POSTGRES_DB:-saaskit_dev}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - saaskit-network
+
+  # =============================================================================
+  # Keycloak 26 - Identity Provider
+  # =============================================================================
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: saaskit-keycloak
+    command: start-dev --import-realm
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-saaskit_dev}
+      KC_DB_USERNAME: ${POSTGRES_USER:-saaskit}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-saaskit_dev}
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - saaskit-network
+
+  # =============================================================================
+  # Redis 7 - Caching & Pub/Sub
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: saaskit-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_dev}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_dev}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - saaskit-network
+
+  # =============================================================================
+  # RabbitMQ 3 - Message Broker
+  # =============================================================================
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: saaskit-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-saaskit}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-rabbitmq_dev}
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - saaskit-network
+
+  # =============================================================================
+  # MinIO - Object Storage (S3 Compatible)
+  # =============================================================================
+  minio:
+    image: minio/minio:latest
+    container_name: saaskit-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - saaskit-network
+
+  # =============================================================================
+  # Meilisearch - Full-Text Search Engine
+  # =============================================================================
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: saaskit-meilisearch
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_API_KEY:-meilisearch_dev_key}
+      MEILI_ENV: development
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - saaskit-network
+
+  # =============================================================================
+  # Grafana - Monitoring Dashboard
+  # =============================================================================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: saaskit-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: false
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - loki
+    networks:
+      - saaskit-network
+
+  # =============================================================================
+  # Loki - Log Aggregation
+  # =============================================================================
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: saaskit-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - saaskit-network
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  saaskit-network:
+    driver: bridge
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  minio_data:
+  meilisearch_data:
+  grafana_data:
+  loki_data:

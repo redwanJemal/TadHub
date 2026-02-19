@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Contracts: Public interfaces and DTOs only. ZERO NuGet dependencies. -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SaasKit.SharedKernel\SaasKit.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,39 @@
+# =============================================================================
+# SaaS Boilerplate - Development Dockerfile
+# =============================================================================
+# Hot reload enabled with dotnet watch
+# =============================================================================
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS development
+
+WORKDIR /app
+
+# Install useful tools for development
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy solution and project files first (for better caching)
+COPY *.sln ./
+COPY Directory.Build.props ./
+COPY Directory.Packages.props ./
+COPY global.json ./
+
+# Copy all project files
+COPY src/ ./src/
+COPY tests/ ./tests/
+
+# Restore dependencies
+RUN dotnet restore
+
+# Set environment variables for development
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+
+# Expose port
+EXPOSE 5000
+
+# Run with hot reload
+WORKDIR /app/src/SaasKit.Api
+ENTRYPOINT ["dotnet", "watch", "run", "--no-launch-profile"]

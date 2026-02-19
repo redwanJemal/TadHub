@@ -1,0 +1,206 @@
+{
+  "id": "saas-platform",
+  "realm": "saas-platform",
+  "displayName": "SaaS Platform",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 5,
+  "roles": {
+    "realm": [
+      {
+        "name": "platform-admin",
+        "description": "Platform administrator with full access",
+        "composite": false
+      },
+      {
+        "name": "platform-user",
+        "description": "Regular platform user",
+        "composite": false
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "saas-api",
+      "name": "SaaS API",
+      "description": "Backend API service",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "saas-api-secret-dev",
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "attributes": {
+        "access.token.lifespan": "300"
+      }
+    },
+    {
+      "clientId": "saas-web",
+      "name": "SaaS Web App",
+      "description": "Frontend web application",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "rootUrl": "http://localhost:3000",
+      "baseUrl": "http://localhost:3000",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:5000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:5000"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "access.token.lifespan": "300",
+        "client.session.idle.timeout": "1800"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "profile",
+        "roles",
+        "email",
+        "tenant_id"
+      ]
+    },
+    {
+      "clientId": "saas-portal",
+      "name": "SaaS Portal",
+      "description": "B2B2C Portal application",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "rootUrl": "http://localhost:4000",
+      "baseUrl": "http://localhost:4000",
+      "redirectUris": [
+        "http://localhost:4000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4000"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    },
+    {
+      "clientId": "saas-admin",
+      "name": "SaaS Admin Console",
+      "description": "Platform administration console",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "saas-admin-secret-dev",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "rootUrl": "http://localhost:3002",
+      "baseUrl": "http://localhost:3002",
+      "redirectUris": [
+        "http://localhost:3002/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3002"
+      ]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "tenant_id",
+      "description": "Tenant ID scope",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "tenant_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "tenant_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "tenant_id",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin@saaskit.dev",
+      "email": "admin@saaskit.dev",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Platform",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Admin123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "platform-admin",
+        "platform-user"
+      ]
+    },
+    {
+      "username": "user@saaskit.dev",
+      "email": "user@saaskit.dev",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Test",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "User123!",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "platform-user"
+      ]
+    }
+  ],
+  "smtpServer": {},
+  "accessTokenLifespan": 300,
+  "accessTokenLifespanForImplicitFlow": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 28800,
+  "offlineSessionIdleTimeout": 2592000,
+  "accessCodeLifespan": 60,
+  "accessCodeLifespanUserAction": 300,
+  "accessCodeLifespanLogin": 1800,
+  "actionTokenGeneratedByAdminLifespan": 43200,
+  "actionTokenGeneratedByUserLifespan": 300
+}

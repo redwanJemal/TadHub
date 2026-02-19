@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: saaskit
+          POSTGRES_PASSWORD: saaskit_test
+          POSTGRES_DB: saaskit_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Unit Tests
+        run: dotnet test --no-build --configuration Release --filter "Category!=Integration" --verbosity normal
+
+      - name: Integration Tests
+        run: dotnet test --no-build --configuration Release --filter "Category=Integration" --verbosity normal
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Database=saaskit_test;Username=saaskit;Password=saaskit_test"
+          ConnectionStrings__Redis: "localhost:6379"
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Format Check
+        run: dotnet format --verify-no-changes --verbosity diagnostic
+        continue-on-error: true  # Don't fail the build on formatting issues initially

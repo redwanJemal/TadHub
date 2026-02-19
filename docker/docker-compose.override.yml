@@ -1,0 +1,63 @@
+version: "3.8"
+
+# Development overrides - hot reload, debugging, etc.
+services:
+  # =============================================================================
+  # API Service - .NET 9 with Hot Reload
+  # =============================================================================
+  api:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.dev
+    container_name: saaskit-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+      # Database
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=${POSTGRES_DB:-saaskit_dev};Username=${POSTGRES_USER:-saaskit};Password=${POSTGRES_PASSWORD:-saaskit_dev}
+      # Redis
+      - Redis__ConnectionString=redis:6379,password=${REDIS_PASSWORD:-redis_dev}
+      # RabbitMQ
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=${RABBITMQ_USER:-saaskit}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD:-rabbitmq_dev}
+      # Keycloak
+      - Keycloak__Authority=http://keycloak:8080/realms/saas-platform
+      - Keycloak__Audience=saas-api
+      # MinIO
+      - Minio__Endpoint=minio:9000
+      - Minio__AccessKey=${MINIO_ACCESS_KEY:-minioadmin}
+      - Minio__SecretKey=${MINIO_SECRET_KEY:-minioadmin}
+      # Meilisearch
+      - Meilisearch__Url=http://meilisearch:7700
+      - Meilisearch__ApiKey=${MEILISEARCH_API_KEY:-meilisearch_dev_key}
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../src:/app/src:ro
+      - ../tests:/app/tests:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - saaskit-network
+
+  # =============================================================================
+  # Mailpit - Email Testing (catches all outgoing mail)
+  # =============================================================================
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: saaskit-mailpit
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+    networks:
+      - saaskit-network
