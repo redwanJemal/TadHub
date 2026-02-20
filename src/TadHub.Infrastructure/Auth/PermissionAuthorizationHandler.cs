@@ -65,6 +65,7 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
 
 /// <summary>
 /// Policy provider that creates permission-based policies dynamically.
+/// Handles both "Permission:xxx" format and direct permission names like "workers.view".
 /// </summary>
 public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 {
@@ -78,13 +79,18 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
 
     public Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
+        // Handle explicit "Permission:" prefix
         if (policyName.StartsWith(PolicyPrefix))
         {
             var permission = policyName[PolicyPrefix.Length..];
-            var policy = new AuthorizationPolicyBuilder()
-                .AddRequirements(new PermissionRequirement(permission))
-                .Build();
-            return Task.FromResult<AuthorizationPolicy?>(policy);
+            return CreatePermissionPolicy(permission);
+        }
+
+        // Handle permission-style names directly (e.g., "workers.view", "clients.manage")
+        // These follow the pattern: module.action or module.submodule.action
+        if (IsPermissionStyleName(policyName))
+        {
+            return CreatePermissionPolicy(policyName);
         }
 
         return _fallbackProvider.GetPolicyAsync(policyName);
@@ -98,5 +104,24 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     public Task<AuthorizationPolicy?> GetFallbackPolicyAsync()
     {
         return _fallbackProvider.GetFallbackPolicyAsync();
+    }
+
+    private static Task<AuthorizationPolicy?> CreatePermissionPolicy(string permission)
+    {
+        var policy = new AuthorizationPolicyBuilder()
+            .AddRequirements(new PermissionRequirement(permission))
+            .Build();
+        return Task.FromResult<AuthorizationPolicy?>(policy);
+    }
+
+    /// <summary>
+    /// Checks if the policy name follows a permission-style pattern (contains dots, lowercase).
+    /// </summary>
+    private static bool IsPermissionStyleName(string policyName)
+    {
+        // Permission names contain dots (e.g., workers.view, clients.manage)
+        // and are typically lowercase
+        return policyName.Contains('.') && 
+               policyName.All(c => char.IsLower(c) || c == '.');
     }
 }

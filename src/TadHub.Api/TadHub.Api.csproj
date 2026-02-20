@@ -27,6 +27,11 @@
     <ProjectReference Include="..\Modules\Subscription\Subscription.Core\Subscription.Core.csproj" />
     <ProjectReference Include="..\Modules\_Template\_Template.Core\_Template.Core.csproj" />
     <ProjectReference Include="..\Modules\Tenancy\Tenancy.Core\Tenancy.Core.csproj" />
+    <!-- Tadbeer domain modules -->
+    <ProjectReference Include="..\Modules\Tadbeer\Worker\Worker.Core\Worker.Core.csproj" />
+    <ProjectReference Include="..\Modules\Tadbeer\Worker\Worker.Api\Worker.Api.csproj" />
+    <ProjectReference Include="..\Modules\Tadbeer\ClientManagement\ClientManagement.Core\ClientManagement.Core.csproj" />
+    <ProjectReference Include="..\Modules\Tadbeer\ClientManagement\ClientManagement.Api\ClientManagement.Api.csproj" />
   </ItemGroup>
 
 </Project>

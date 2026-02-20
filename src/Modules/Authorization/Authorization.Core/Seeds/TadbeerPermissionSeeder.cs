@@ -65,10 +65,14 @@ public class TadbeerPermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "clients.manage", Description = "Manage client records", Module = "clients", DisplayOrder = 3 },
 
             // Worker/CV Management module
-            new() { Id = Guid.NewGuid(), Name = "workers.manage", Description = "Manage worker records", Module = "workers", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "workers.cv.edit", Description = "Edit worker CV/profile", Module = "workers", DisplayOrder = 2 },
-            new() { Id = Guid.NewGuid(), Name = "workers.search", Description = "Search available workers", Module = "workers", DisplayOrder = 3 },
-            new() { Id = Guid.NewGuid(), Name = "workers.passport.custody", Description = "Manage passport custody", Module = "workers", DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "workers.view", Description = "View worker records", Module = "workers", DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "workers.create", Description = "Create new workers", Module = "workers", DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "workers.update", Description = "Update worker records", Module = "workers", DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "workers.manage", Description = "Full worker management (delete, state changes)", Module = "workers", DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "workers.cv.edit", Description = "Edit worker CV/profile", Module = "workers", DisplayOrder = 5 },
+            new() { Id = Guid.NewGuid(), Name = "workers.search", Description = "Search available workers", Module = "workers", DisplayOrder = 6 },
+            new() { Id = Guid.NewGuid(), Name = "workers.passport.view", Description = "View passport information", Module = "workers", DisplayOrder = 7 },
+            new() { Id = Guid.NewGuid(), Name = "workers.passport.manage", Description = "Manage passport custody", Module = "workers", DisplayOrder = 8 },
 
             // Contract Engine module
             new() { Id = Guid.NewGuid(), Name = "contracts.create", Description = "Create new contracts", Module = "contracts", DisplayOrder = 1 },

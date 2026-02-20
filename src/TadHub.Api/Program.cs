@@ -18,6 +18,8 @@ using TadHub.Infrastructure;
 using TadHub.Infrastructure.Settings;
 using TadHub.Infrastructure.Tenancy;
 using Tenancy.Core;
+using Worker.Core;
+using ClientManagement.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +107,10 @@ builder.Services.AddAuditModule();
 builder.Services.AddAnalyticsModule();
 builder.Services.AddContentModule();
 builder.Services.AddTemplateModule();
+
+// Tadbeer domain modules
+builder.Services.AddWorkerModule();
+builder.Services.AddClientManagementModule();
 
 var app = builder.Build();
 
