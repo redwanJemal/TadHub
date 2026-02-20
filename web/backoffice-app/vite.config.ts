@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' ? '/admin/' : '/',
+  base: '/',  // Serve from root since we have dedicated domain admin.endlessmaker.com
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
