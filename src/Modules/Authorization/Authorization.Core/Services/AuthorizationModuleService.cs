@@ -3,6 +3,7 @@ using System.Text.Json;
 using Authorization.Contracts;
 using Authorization.Contracts.DTOs;
 using Authorization.Core.Entities;
+using Identity.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TadHub.Infrastructure.Api;
@@ -450,10 +451,36 @@ public class AuthorizationModuleService : IAuthorizationModuleService
         if (cached is not null)
             return cached;
 
-        // Load from database
+        // The userId parameter might be either:
+        // 1. The internal user_profiles.id (when called from internal code)
+        // 2. The Keycloak sub claim (when called from authorization handler)
+        // We need to resolve to the internal ID for the user_roles lookup
+        
+        var internalUserId = userId;
+        
+        // First, check if this userId exists directly in user_roles
+        var directExists = await _db.Set<UserRole>()
+            .AsNoTracking()
+            .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
+        
+        if (!directExists)
+        {
+            // Try to resolve from Keycloak ID (the userId might be the Keycloak sub)
+            var keycloakIdStr = userId.ToString();
+            var userProfile = await _db.Set<UserProfile>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.KeycloakId == keycloakIdStr, ct);
+            
+            if (userProfile is not null)
+            {
+                internalUserId = userProfile.Id;
+            }
+        }
+
+        // Load from database using the resolved internal user ID
         var userRoles = await _db.Set<UserRole>()
             .AsNoTracking()
-            .Where(x => x.TenantId == tenantId && x.UserId == userId)
+            .Where(x => x.TenantId == tenantId && x.UserId == internalUserId)
             .Include(x => x.Role)
             .ThenInclude(x => x.Permissions)
             .ThenInclude(x => x.Permission)
@@ -468,7 +495,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
 
         var result = new UserPermissionsDto
         {
-            UserId = userId,
+            UserId = internalUserId,
             TenantId = tenantId,
             Permissions = permissions,
             Roles = roles
