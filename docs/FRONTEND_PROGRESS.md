@@ -1,0 +1,524 @@
+# TadHub Frontend Progress Tracker
+
+**Last Updated:** February 2024  
+**Frontend Stack:** React/Next.js, TypeScript, TailwindCSS, React Query
+
+---
+
+## Overview
+
+This document tracks the frontend implementation progress for TadHub. Tasks are organized by phase and priority.
+
+### Status Legend
+- ⬜ Not Started
+- 🟡 In Progress
+- ✅ Complete
+- 🔴 Blocked
+
+---
+
+## Phase 1: Core Domain (tenant-app)
+
+### Workers Module (Priority: Critical)
+
+#### Worker List
+- ⬜ Worker list page with data table
+- ⬜ Status filter dropdown (multi-select)
+- ⬜ Nationality filter dropdown (multi-select)
+- ⬜ Job category filter
+- ⬜ Availability filter (flexible bookings)
+- ⬜ Date range filter (createdAt)
+- ⬜ Search by name/CV serial/passport
+- ⬜ Sortable columns (name, salary, date, status)
+- ⬜ Pagination controls
+- ⬜ Bulk actions toolbar
+- ⬜ Export to CSV/Excel
+- ⬜ Quick status badge display
+- ⬜ Worker card/grid view toggle
+
+#### Worker Detail/CV View
+- ⬜ CV detail page layout
+- ⬜ Identity section (passport, Emirates ID, CV serial)
+- ⬜ Personal details section
+- ⬜ Photo gallery with primary photo highlight
+- ⬜ Video player for introduction video
+- ⬜ Skills list with rating display (0-100 bar)
+- ⬜ Languages with proficiency badges
+- ⬜ Employment history display
+- ⬜ Current status badge with color coding
+- ⬜ Passport location indicator
+- ⬜ Job category display
+- ⬜ Salary information
+- ⬜ Notes/comments section
+- ⬜ Print-friendly CV view
+- ⬜ Share CV via link
+
+#### Worker Create/Edit Form
+- ⬜ Multi-step form wizard
+- ⬜ Step 1: Identity (passport, name EN/AR)
+- ⬜ Step 2: Personal details (DOB, nationality, religion, etc.)
+- ⬜ Step 3: Job & Pricing (category, salary)
+- ⬜ Step 4: Skills & Languages (add/remove)
+- ⬜ Step 5: Media upload (photos, videos)
+- ⬜ Form validation with error messages
+- ⬜ Draft auto-save
+- ⬜ Duplicate passport warning
+- ⬜ Job category selector with search
+- ⬜ Date of birth picker with age calculation
+
+#### State Transition UI
+- ⬜ State transition button/dropdown
+- ⬜ Valid transitions display
+- ⬜ Transition confirmation modal
+- ⬜ Reason input field
+- ⬜ Related entity selector (contract, medical report)
+- ⬜ State history timeline view
+- ⬜ State history with user who triggered
+- ⬜ Visual state machine diagram
+
+#### Passport Custody Management
+- ⬜ Current custody display card
+- ⬜ Transfer passport modal
+- ⬜ Location selector
+- ⬜ Handed to name/entity input
+- ⬜ Transfer notes
+- ⬜ Custody history timeline
+- ⬜ Custody audit trail
+
+#### Skills & Languages Management
+- ⬜ Inline skill add/edit
+- ⬜ Skill rating slider (0-100)
+- ⬜ Skill delete confirmation
+- ⬜ Language add modal
+- ⬜ Proficiency dropdown (Poor/Fair/Fluent)
+- ⬜ Common skills autocomplete
+- ⬜ Language autocomplete
+
+#### Media Upload
+- ⬜ Drag & drop upload zone
+- ⬜ Multi-file upload support
+- ⬜ Photo preview grid
+- ⬜ Video thumbnail generation
+- ⬜ Set primary photo action
+- ⬜ Delete media confirmation
+- ⬜ Media type selection (Photo/Video/Document)
+- ⬜ Upload progress indicator
+- ⬜ Image compression before upload
+
+**Worker Module Total: 0/62 tasks**
+
+---
+
+### Clients Module (Priority: Critical)
+
+#### Client List
+- ⬜ Client list page with data table
+- ⬜ Category filter (Local/Expat/Investor/VIP)
+- ⬜ Sponsor file status filter
+- ⬜ Verification status filter
+- ⬜ Nationality filter
+- ⬜ Emirate filter
+- ⬜ Date range filter
+- ⬜ Search by name/Emirates ID
+- ⬜ Sortable columns
+- ⬜ Pagination controls
+- ⬜ Verification badge display
+- ⬜ Block status indicator
+- ⬜ Quick actions menu (verify, block)
+
+#### Client Detail View
+- ⬜ Client detail page layout
+- ⬜ Emirates ID display with copy button
+- ⬜ Name display (EN/AR)
+- ⬜ Contact information section
+- ⬜ Category badge
+- ⬜ Sponsor file status
+- ⬜ Verification status with date
+- ⬜ Block reason display (if blocked)
+- ⬜ Documents list (inline)
+- ⬜ Discount cards list
+- ⬜ Communication log timeline
+- ⬜ Notes section
+- ⬜ Quick action buttons (verify, block/unblock)
+
+#### Client Create/Edit Form
+- ⬜ Registration form layout
+- ⬜ Emirates ID input with validation
+- ⬜ Name inputs (EN/AR)
+- ⬜ Passport input
+- ⬜ Nationality selector
+- ⬜ Contact fields (phone, email)
+- ⬜ Emirate selector
+- ⬜ Category override (admin only)
+- ⬜ Document upload section
+- ⬜ Salary certificate upload
+- ⬜ Ejari/tenancy contract upload
+- ⬜ Notes textarea
+- ⬜ Form validation
+- ⬜ Duplicate Emirates ID warning
+
+#### Document Management
+- ⬜ Documents list/grid view
+- ⬜ Document type badges
+- ⬜ Expiry date display with warning
+- ⬜ Verification status badge
+- ⬜ Add document modal
+- ⬜ Document type selector
+- ⬜ File upload with preview
+- ⬜ Expiry date picker
+- ⬜ Verify document action
+- ⬜ Delete document confirmation
+- ⬜ Download document action
+- ⬜ Document viewer (PDF/Image)
+
+#### Verification Workflow
+- ⬜ Verification checklist display
+- ⬜ Required documents indicator
+- ⬜ Verify client button with confirmation
+- ⬜ Verification success message
+- ⬜ Verification history
+
+#### Block/Unblock Workflow
+- ⬜ Block client modal
+- ⬜ Block reason input (required)
+- ⬜ Block confirmation
+- ⬜ Unblock action button
+- ⬜ Block history display
+
+#### Communication Logs
+- ⬜ Communication log timeline
+- ⬜ Channel badges (Phone/WhatsApp/Email/WalkIn)
+- ⬜ Direction indicator (Inbound/Outbound)
+- ⬜ Add communication modal
+- ⬜ Channel selector
+- ⬜ Direction toggle
+- ⬜ Summary textarea
+- ⬜ Pagination for logs
+
+#### Discount Cards
+- ⬜ Discount cards list
+- ⬜ Card type display
+- ⬜ Discount percentage badge
+- ⬜ Validity status
+- ⬜ Add discount card modal
+- ⬜ Remove card action
+
+**Clients Module Total: 0/59 tasks**
+
+---
+
+### Leads Module (Priority: High)
+
+#### Lead List/Pipeline
+- ⬜ Lead list page with data table
+- ⬜ Kanban board view (pipeline)
+- ⬜ Status filter (multi-select)
+- ⬜ Source filter
+- ⬜ Assigned user filter
+- ⬜ Date range filter
+- ⬜ Search by contact name/phone/email
+- ⬜ Drag & drop in kanban view
+- ⬜ Lead count per status
+- ⬜ Assigned user avatar display
+- ⬜ Quick status change
+- ⬜ View toggle (list/kanban)
+
+#### Lead Detail View
+- ⬜ Lead detail page layout
+- ⬜ Contact information display
+- ⬜ Source badge
+- ⬜ Status badge with color
+- ⬜ Assigned user display
+- ⬜ Notes section
+- ⬜ Activity timeline
+- ⬜ Convert to client button
+- ⬜ Edit lead action
+
+#### Lead Create/Edit Form
+- ⬜ Create lead form
+- ⬜ Source selector
+- ⬜ Contact name input
+- ⬜ Contact phone input with validation
+- ⬜ Contact email input with validation
+- ⬜ Notes textarea
+- ⬜ Assign to user selector
+- ⬜ Form validation
+- ⬜ Edit lead form
+
+#### Convert to Client Flow
+- ⬜ Convert button on lead detail
+- ⬜ Pre-filled client form from lead data
+- ⬜ Emirates ID input (required)
+- ⬜ Additional client fields
+- ⬜ Conversion confirmation
+- ⬜ Redirect to new client after conversion
+
+#### Funnel Statistics
+- ⬜ Funnel visualization chart
+- ⬜ Stage count display
+- ⬜ Conversion rate percentage
+- ⬜ Date range selector
+- ⬜ Source breakdown
+- ⬜ Time-based trend chart
+
+**Leads Module Total: 0/38 tasks**
+
+---
+
+## Phase 2: Team & Settings (tenant-app)
+
+### Team Members
+- ⬜ Members list page
+- ⬜ Role badge display (Owner/Admin/Member)
+- ⬜ Avatar display
+- ⬜ Join date display
+- ⬜ Change role dropdown (admin/owner only)
+- ⬜ Remove member action
+- ⬜ Self-removal with confirmation
+- ⬜ Owner protection (can't remove last owner)
+
+**Team Members Total: 0/8 tasks**
+
+### Invitations
+- ⬜ Pending invitations list
+- ⬜ Invite member button
+- ⬜ Invite modal with email input
+- ⬜ Role selector for invitation
+- ⬜ Email validation
+- ⬜ Invitation sent confirmation
+- ⬜ Revoke invitation action
+- ⬜ Invitation status badges (pending/expired/accepted)
+- ⬜ Resend invitation action
+- ⬜ Public invitation accept page
+- ⬜ Invitation expiry display
+
+**Invitations Total: 0/11 tasks**
+
+### Roles & Permissions
+- ⬜ Roles list page
+- ⬜ Role detail view
+- ⬜ Permissions checklist display
+- ⬜ Create role form
+- ⬜ Role name input
+- ⬜ Description textarea
+- ⬜ Permissions multi-select
+- ⬜ Grouped permissions by module
+- ⬜ Edit role form
+- ⬜ Delete role confirmation
+- ⬜ System role indicator (can't edit)
+- ⬜ Assign role to user action
+- ⬜ User-role mapping view
+- ⬜ Remove role from user
+
+**Roles & Permissions Total: 0/14 tasks**
+
+### API Keys
+- ⬜ API keys list
+- ⬜ Key prefix display (masked)
+- ⬜ Expiry date display
+- ⬜ Last used timestamp
+- ⬜ Request count display
+- ⬜ Create API key modal
+- ⬜ Key name input
+- ⬜ Permissions selection
+- ⬜ Expiry date picker
+- ⬜ Rate limit configuration
+- ⬜ Show secret on creation (copy button)
+- ⬜ Revoke key confirmation
+- ⬜ Key usage logs view
+
+**API Keys Total: 0/13 tasks**
+
+### Settings
+- ⬜ Tenant settings page layout
+- ⬜ General settings (name, logo, description)
+- ⬜ Logo upload
+- ⬜ Website URL
+- ⬜ Billing settings link
+- ⬜ Webhooks configuration
+- ⬜ Add webhook form
+- ⬜ Event selection for webhooks
+- ⬜ Test webhook action
+- ⬜ Delete webhook confirmation
+- ⬜ Notification preferences
+- ⬜ Email notifications toggle
+- ⬜ Danger zone (delete tenant)
+
+**Settings Total: 0/13 tasks**
+
+---
+
+## Phase 3: Backoffice (admin-app)
+
+### Tenants Management
+- ⬜ Tenants list page
+- ⬜ Status filter (Active/Suspended)
+- ⬜ Search by name/slug
+- ⬜ Tenant detail view
+- ⬜ Tenant type display
+- ⬜ Subscription status
+- ⬜ Member count
+- ⬜ Suspend tenant action
+- ⬜ Reactivate tenant action
+- ⬜ Force delete tenant (dangerous)
+
+**Tenants Management Total: 0/10 tasks**
+
+### Users Management
+- ⬜ Users list page
+- ⬜ Active/Inactive filter
+- ⬜ Search by name/email
+- ⬜ User detail view
+- ⬜ Tenant memberships display
+- ⬜ Login history
+- ⬜ Deactivate user action
+- ⬜ Reactivate user action
+- ⬜ Create user form (admin)
+
+**Users Management Total: 0/9 tasks**
+
+### Audit Logs
+- ⬜ Audit events list
+- ⬜ Audit logs list (entity changes)
+- ⬜ Event name filter
+- ⬜ Date range filter
+- ⬜ User filter
+- ⬜ Entity type filter
+- ⬜ Payload viewer (JSON)
+- ⬜ Old/new values diff view
+- ⬜ Export audit logs
+
+**Audit Logs Total: 0/9 tasks**
+
+### Feature Flags
+- ⬜ Feature flags list
+- ⬜ Enabled/disabled toggle
+- ⬜ Percentage rollout slider
+- ⬜ Create feature flag form
+- ⬜ Flag name input
+- ⬜ Description input
+- ⬜ Enabled toggle
+- ⬜ Percentage input
+- ⬜ Edit feature flag
+- ⬜ Delete feature flag
+- ⬜ Plan-based targeting
+
+**Feature Flags Total: 0/11 tasks**
+
+### Plans & Subscriptions
+- ⬜ Plans list view
+- ⬜ Plan detail with features
+- ⬜ Create/edit plan form
+- ⬜ Plan prices management
+- ⬜ Plan features management
+- ⬜ Feature value types (boolean/numeric/unlimited)
+- ⬜ Active subscriptions list
+- ⬜ Subscription detail view
+- ⬜ Manual subscription actions
+- ⬜ Revenue dashboard
+
+**Plans & Subscriptions Total: 0/10 tasks**
+
+---
+
+## Phase 4: Shared Components
+
+### UI Components
+- ⬜ Data table component with sorting/filtering
+- ⬜ Pagination component
+- ⬜ Filter panel component
+- ⬜ Multi-select dropdown
+- ⬜ Date range picker
+- ⬜ Search input with debounce
+- ⬜ Status badge component
+- ⬜ Avatar component
+- ⬜ File upload component
+- ⬜ Modal/Dialog component
+- ⬜ Toast notifications
+- ⬜ Confirmation dialog
+- ⬜ Loading skeleton
+- ⬜ Empty state component
+- ⬜ Error boundary
+- ⬜ Breadcrumbs component
+
+**UI Components Total: 0/16 tasks**
+
+### Layout & Navigation
+- ⬜ Sidebar navigation
+- ⬜ Tenant switcher dropdown
+- ⬜ User menu dropdown
+- ⬜ Notifications popover
+- ⬜ Mobile responsive navigation
+- ⬜ Breadcrumb navigation
+- ⬜ Page header component
+
+**Layout & Navigation Total: 0/7 tasks**
+
+### API Integration
+- ⬜ React Query setup
+- ⬜ API client with auth interceptor
+- ⬜ Error handling middleware
+- ⬜ Retry logic
+- ⬜ Cache invalidation patterns
+- ⬜ Optimistic updates
+- ⬜ Pagination hooks
+- ⬜ Filter state management
+- ⬜ Sort state management
+
+**API Integration Total: 0/9 tasks**
+
+### Authentication
+- ⬜ Keycloak integration
+- ⬜ Login redirect
+- ⬜ Token refresh
+- ⬜ Logout flow
+- ⬜ Protected route wrapper
+- ⬜ Permission-based rendering
+- ⬜ Tenant context provider
+
+**Authentication Total: 0/7 tasks**
+
+---
+
+## Summary
+
+| Module | Not Started | In Progress | Complete | Total |
+|--------|-------------|-------------|----------|-------|
+| Workers | 62 | 0 | 0 | 62 |
+| Clients | 59 | 0 | 0 | 59 |
+| Leads | 38 | 0 | 0 | 38 |
+| Team Members | 8 | 0 | 0 | 8 |
+| Invitations | 11 | 0 | 0 | 11 |
+| Roles & Permissions | 14 | 0 | 0 | 14 |
+| API Keys | 13 | 0 | 0 | 13 |
+| Settings | 13 | 0 | 0 | 13 |
+| Tenants Management | 10 | 0 | 0 | 10 |
+| Users Management | 9 | 0 | 0 | 9 |
+| Audit Logs | 9 | 0 | 0 | 9 |
+| Feature Flags | 11 | 0 | 0 | 11 |
+| Plans & Subscriptions | 10 | 0 | 0 | 10 |
+| UI Components | 16 | 0 | 0 | 16 |
+| Layout & Navigation | 7 | 0 | 0 | 7 |
+| API Integration | 9 | 0 | 0 | 9 |
+| Authentication | 7 | 0 | 0 | 7 |
+| **Total** | **306** | **0** | **0** | **306** |
+
+---
+
+## Priority Order
+
+1. **Critical (Week 1-4):** Workers, Clients, Leads modules
+2. **High (Week 5-6):** Team Members, Invitations, Roles
+3. **Medium (Week 7-8):** API Keys, Settings, Shared Components
+4. **Low (Week 9-10):** Backoffice modules (admin-only)
+
+---
+
+## Notes
+
+- All forms should have proper validation matching backend DTOs
+- Use TypeScript types from `@tadhub/api-types` package
+- Follow React Query patterns for data fetching
+- Implement optimistic updates where possible
+- Mobile responsiveness is required for all modules
+- RTL support (Arabic) is required for text displays
