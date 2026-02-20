@@ -1,0 +1,157 @@
+{
+  "title": "Workers",
+  "subtitle": "Manage worker CVs, state machine, and passport custody",
+  "actions": {
+    "create": "Add Worker",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "transition": "Change Status",
+    "addSkill": "Add Skill",
+    "addLanguage": "Add Language",
+    "uploadPhoto": "Upload Photo",
+    "uploadVideo": "Upload Video"
+  },
+  "filters": {
+    "search": "Search by name, passport, CV serial...",
+    "status": "Status",
+    "nationality": "Nationality",
+    "jobCategory": "Job Category",
+    "availableForFlexible": "Available for Flexible"
+  },
+  "table": {
+    "worker": "Worker",
+    "cvSerial": "CV Serial",
+    "nationality": "Nationality",
+    "jobCategory": "Job Category",
+    "status": "Status",
+    "salary": "Salary",
+    "noResults": "No workers found",
+    "showing": "Showing {{from}} to {{to}} of {{total}} workers"
+  },
+  "status": {
+    "Draft": "Draft",
+    "InTraining": "In Training",
+    "ReadyForMarket": "Ready for Market",
+    "Reserved": "Reserved",
+    "Hired": "Hired",
+    "OnLeave": "On Leave",
+    "Terminated": "Terminated",
+    "MedicallyUnfit": "Medically Unfit",
+    "Absconded": "Absconded",
+    "Deported": "Deported"
+  },
+  "form": {
+    "title": {
+      "create": "Add New Worker",
+      "edit": "Edit Worker"
+    },
+    "sections": {
+      "personal": "Personal Information",
+      "employment": "Employment Details",
+      "skills": "Skills & Languages",
+      "documents": "Documents & Media"
+    },
+    "fields": {
+      "passportNumber": "Passport Number",
+      "emiratesId": "Emirates ID",
+      "cvSerial": "CV Serial",
+      "fullNameEn": "Full Name (English)",
+      "fullNameAr": "Full Name (Arabic)",
+      "nationality": "Nationality",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "religion": "Religion",
+      "maritalStatus": "Marital Status",
+      "numberOfChildren": "Number of Children",
+      "education": "Education Level",
+      "yearsOfExperience": "Years of Experience",
+      "jobCategory": "Job Category",
+      "monthlyBaseSalary": "Monthly Base Salary (AED)",
+      "isAvailableForFlexible": "Available for Flexible Work",
+      "notes": "Notes"
+    },
+    "placeholders": {
+      "passportNumber": "Enter passport number",
+      "emiratesId": "784-XXXX-XXXXXXX-X",
+      "fullNameEn": "Enter full name in English",
+      "fullNameAr": "أدخل الاسم الكامل بالعربية",
+      "selectNationality": "Select nationality",
+      "selectGender": "Select gender",
+      "selectReligion": "Select religion",
+      "selectMaritalStatus": "Select marital status",
+      "selectEducation": "Select education level",
+      "selectJobCategory": "Select job category",
+      "notes": "Add any additional notes..."
+    },
+    "validation": {
+      "passportRequired": "Passport number is required",
+      "fullNameEnRequired": "English name is required",
+      "fullNameArRequired": "Arabic name is required",
+      "nationalityRequired": "Nationality is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "genderRequired": "Gender is required",
+      "jobCategoryRequired": "Job category is required",
+      "salaryRequired": "Salary is required",
+      "salaryMin": "Salary must be at least AED 0"
+    }
+  },
+  "detail": {
+    "overview": "Overview",
+    "history": "History",
+    "documents": "Documents",
+    "currentStatus": "Current Status",
+    "passportLocation": "Passport Location",
+    "age": "Age",
+    "yearsOld": "years old",
+    "experience": "Experience",
+    "yearsExperience": "{{years}} years",
+    "salary": "Monthly Salary",
+    "skills": "Skills",
+    "languages": "Languages",
+    "noSkills": "No skills added",
+    "noLanguages": "No languages added",
+    "stateHistory": "State History",
+    "noHistory": "No state changes recorded"
+  },
+  "transition": {
+    "title": "Change Worker Status",
+    "currentStatus": "Current Status",
+    "newStatus": "New Status",
+    "reason": "Reason (optional)",
+    "reasonPlaceholder": "Enter reason for status change...",
+    "confirm": "Confirm Change",
+    "success": "Status changed successfully",
+    "error": "Failed to change status"
+  },
+  "deleteDialog": {
+    "title": "Delete Worker",
+    "description": "Are you sure you want to delete this worker? This action cannot be undone."
+  },
+  "error": {
+    "loadingFailed": "Failed to load workers",
+    "saveFailed": "Failed to save worker",
+    "deleteFailed": "Failed to delete worker"
+  },
+  "success": {
+    "created": "Worker created successfully",
+    "updated": "Worker updated successfully",
+    "deleted": "Worker deleted successfully"
+  },
+  "gender": {
+    "Male": "Male",
+    "Female": "Female"
+  },
+  "passportLocation": {
+    "WithAgency": "With Agency",
+    "WithWorker": "With Worker",
+    "WithClient": "With Client",
+    "WithPRO": "With PRO",
+    "WithGovernment": "With Government"
+  },
+  "proficiency": {
+    "Poor": "Basic",
+    "Fair": "Intermediate",
+    "Fluent": "Fluent"
+  }
+}

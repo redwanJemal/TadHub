@@ -1,0 +1,157 @@
+{
+  "title": "العمال",
+  "subtitle": "إدارة السير الذاتية للعمال وحالة العمل وحفظ جوازات السفر",
+  "actions": {
+    "create": "إضافة عامل",
+    "view": "عرض",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "transition": "تغيير الحالة",
+    "addSkill": "إضافة مهارة",
+    "addLanguage": "إضافة لغة",
+    "uploadPhoto": "رفع صورة",
+    "uploadVideo": "رفع فيديو"
+  },
+  "filters": {
+    "search": "البحث بالاسم، جواز السفر، رقم السيرة الذاتية...",
+    "status": "الحالة",
+    "nationality": "الجنسية",
+    "jobCategory": "فئة الوظيفة",
+    "availableForFlexible": "متاح للعمل المرن"
+  },
+  "table": {
+    "worker": "العامل",
+    "cvSerial": "رقم السيرة الذاتية",
+    "nationality": "الجنسية",
+    "jobCategory": "فئة الوظيفة",
+    "status": "الحالة",
+    "salary": "الراتب",
+    "noResults": "لم يتم العثور على عمال",
+    "showing": "عرض {{from}} إلى {{to}} من {{total}} عامل"
+  },
+  "status": {
+    "Draft": "مسودة",
+    "InTraining": "قيد التدريب",
+    "ReadyForMarket": "جاهز للسوق",
+    "Reserved": "محجوز",
+    "Hired": "موظف",
+    "OnLeave": "في إجازة",
+    "Terminated": "منتهي",
+    "MedicallyUnfit": "غير لائق طبياً",
+    "Absconded": "هارب",
+    "Deported": "مُرحَّل"
+  },
+  "form": {
+    "title": {
+      "create": "إضافة عامل جديد",
+      "edit": "تعديل العامل"
+    },
+    "sections": {
+      "personal": "المعلومات الشخصية",
+      "employment": "تفاصيل التوظيف",
+      "skills": "المهارات واللغات",
+      "documents": "المستندات والوسائط"
+    },
+    "fields": {
+      "passportNumber": "رقم جواز السفر",
+      "emiratesId": "الهوية الإماراتية",
+      "cvSerial": "رقم السيرة الذاتية",
+      "fullNameEn": "الاسم الكامل (بالإنجليزية)",
+      "fullNameAr": "الاسم الكامل (بالعربية)",
+      "nationality": "الجنسية",
+      "dateOfBirth": "تاريخ الميلاد",
+      "gender": "الجنس",
+      "religion": "الديانة",
+      "maritalStatus": "الحالة الاجتماعية",
+      "numberOfChildren": "عدد الأطفال",
+      "education": "المستوى التعليمي",
+      "yearsOfExperience": "سنوات الخبرة",
+      "jobCategory": "فئة الوظيفة",
+      "monthlyBaseSalary": "الراتب الشهري الأساسي (درهم)",
+      "isAvailableForFlexible": "متاح للعمل المرن",
+      "notes": "ملاحظات"
+    },
+    "placeholders": {
+      "passportNumber": "أدخل رقم جواز السفر",
+      "emiratesId": "784-XXXX-XXXXXXX-X",
+      "fullNameEn": "Enter full name in English",
+      "fullNameAr": "أدخل الاسم الكامل بالعربية",
+      "selectNationality": "اختر الجنسية",
+      "selectGender": "اختر الجنس",
+      "selectReligion": "اختر الديانة",
+      "selectMaritalStatus": "اختر الحالة الاجتماعية",
+      "selectEducation": "اختر المستوى التعليمي",
+      "selectJobCategory": "اختر فئة الوظيفة",
+      "notes": "أضف أي ملاحظات إضافية..."
+    },
+    "validation": {
+      "passportRequired": "رقم جواز السفر مطلوب",
+      "fullNameEnRequired": "الاسم بالإنجليزية مطلوب",
+      "fullNameArRequired": "الاسم بالعربية مطلوب",
+      "nationalityRequired": "الجنسية مطلوبة",
+      "dateOfBirthRequired": "تاريخ الميلاد مطلوب",
+      "genderRequired": "الجنس مطلوب",
+      "jobCategoryRequired": "فئة الوظيفة مطلوبة",
+      "salaryRequired": "الراتب مطلوب",
+      "salaryMin": "يجب أن يكون الراتب 0 درهم على الأقل"
+    }
+  },
+  "detail": {
+    "overview": "نظرة عامة",
+    "history": "السجل",
+    "documents": "المستندات",
+    "currentStatus": "الحالة الحالية",
+    "passportLocation": "موقع جواز السفر",
+    "age": "العمر",
+    "yearsOld": "سنة",
+    "experience": "الخبرة",
+    "yearsExperience": "{{years}} سنوات",
+    "salary": "الراتب الشهري",
+    "skills": "المهارات",
+    "languages": "اللغات",
+    "noSkills": "لم يتم إضافة مهارات",
+    "noLanguages": "لم يتم إضافة لغات",
+    "stateHistory": "سجل الحالة",
+    "noHistory": "لم يتم تسجيل تغييرات في الحالة"
+  },
+  "transition": {
+    "title": "تغيير حالة العامل",
+    "currentStatus": "الحالة الحالية",
+    "newStatus": "الحالة الجديدة",
+    "reason": "السبب (اختياري)",
+    "reasonPlaceholder": "أدخل سبب تغيير الحالة...",
+    "confirm": "تأكيد التغيير",
+    "success": "تم تغيير الحالة بنجاح",
+    "error": "فشل في تغيير الحالة"
+  },
+  "deleteDialog": {
+    "title": "حذف العامل",
+    "description": "هل أنت متأكد من حذف هذا العامل؟ لا يمكن التراجع عن هذا الإجراء."
+  },
+  "error": {
+    "loadingFailed": "فشل في تحميل العمال",
+    "saveFailed": "فشل في حفظ العامل",
+    "deleteFailed": "فشل في حذف العامل"
+  },
+  "success": {
+    "created": "تم إنشاء العامل بنجاح",
+    "updated": "تم تحديث العامل بنجاح",
+    "deleted": "تم حذف العامل بنجاح"
+  },
+  "gender": {
+    "Male": "ذكر",
+    "Female": "أنثى"
+  },
+  "passportLocation": {
+    "WithAgency": "لدى الوكالة",
+    "WithWorker": "لدى العامل",
+    "WithClient": "لدى العميل",
+    "WithPRO": "لدى مندوب العلاقات العامة",
+    "WithGovernment": "لدى الجهات الحكومية"
+  },
+  "proficiency": {
+    "Poor": "مبتدئ",
+    "Fair": "متوسط",
+    "Fluent": "طليق"
+  }
+}

@@ -12,6 +12,9 @@ const CallbackPage = lazy(() => import('@/features/auth/CallbackPage').then(m =>
 // Onboarding
 const OnboardingPage = lazy(() => import('@/features/onboarding').then(m => ({ default: m.OnboardingPage })));
 
+// Workers Module
+const WorkersList = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkersList })));
+
 // Placeholder home
 function HomePage() {
   return (
@@ -69,23 +72,13 @@ export function AppRouter() {
           <Route index element={<HomePage />} />
           <Route path="dashboard" element={<HomePage />} />
           
-          {/* Example permission-protected routes */}
-          {/* <Route 
-            path="workers/*" 
-            element={
-              <ProtectedRoute requiredPermission="workers.view">
-                <WorkersModule />
-              </ProtectedRoute>
-            } 
-          /> */}
-          {/* <Route 
-            path="settings/*" 
-            element={
-              <ProtectedRoute requiredRole="Admin">
-                <SettingsModule />
-              </ProtectedRoute>
-            } 
-          /> */}
+          {/* Workers Module */}
+          <Route path="workers" element={<WorkersList />} />
+          
+          {/* TODO: Add more worker routes */}
+          {/* <Route path="workers/new" element={<WorkerForm />} /> */}
+          {/* <Route path="workers/:id" element={<WorkerDetail />} /> */}
+          {/* <Route path="workers/:id/edit" element={<WorkerForm />} /> */}
         </Route>
 
         {/* Catch all */}

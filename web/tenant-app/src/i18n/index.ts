@@ -9,15 +9,19 @@ import commonAr from './common/ar.json';
 // Feature translations
 import authEn from '../features/auth/i18n/en.json';
 import authAr from '../features/auth/i18n/ar.json';
+import workersEn from '../features/workers/i18n/en.json';
+import workersAr from '../features/workers/i18n/ar.json';
 
 const resources = {
   en: {
     common: commonEn,
     auth: authEn,
+    workers: workersEn,
   },
   ar: {
     common: commonAr,
     auth: authAr,
+    workers: workersAr,
   },
 };
 
@@ -28,7 +32,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth'],
+    ns: ['common', 'auth', 'workers'],
     interpolation: {
       escapeValue: false,
     },
