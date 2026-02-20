@@ -1,0 +1,71 @@
+{
+  "title": "المستأجرون",
+  "subtitle": "إدارة الوكالات والمؤسسات على المنصة",
+  "createTenant": "إنشاء مستأجر",
+  "editTenant": "تعديل المستأجر",
+  "tenantDetails": "تفاصيل المستأجر",
+  "noTenants": "لم يتم العثور على مستأجرين",
+  "createFirst": "أنشئ مستأجرك الأول",
+  "searchPlaceholder": "البحث عن المستأجرين...",
+  "allStatuses": "جميع الحالات",
+  "fields": {
+    "name": "اسم المستأجر",
+    "namePlaceholder": "أدخل اسم المستأجر",
+    "slug": "المعرف",
+    "slugPlaceholder": "معرف-المستأجر",
+    "slugDescription": "معرف صديق للرابط (يتم إنشاؤه تلقائياً من الاسم)",
+    "type": "نوع المستأجر",
+    "typePlaceholder": "اختر نوعاً",
+    "description": "الوصف",
+    "descriptionPlaceholder": "وصف موجز للمستأجر",
+    "status": "الحالة",
+    "created": "تاريخ الإنشاء",
+    "owner": "المالك",
+    "members": "الأعضاء"
+  },
+  "types": {
+    "agency": "وكالة",
+    "organization": "مؤسسة",
+    "enterprise": "شركة"
+  },
+  "status": {
+    "active": "نشط",
+    "suspended": "موقوف",
+    "pending": "قيد الانتظار"
+  },
+  "actions": {
+    "view": "عرض التفاصيل",
+    "edit": "تعديل",
+    "suspend": "إيقاف",
+    "reactivate": "إعادة تفعيل",
+    "delete": "حذف",
+    "addMember": "إضافة عضو"
+  },
+  "members": {
+    "title": "الأعضاء",
+    "addMember": "إضافة عضو",
+    "noMembers": "لم يتم العثور على أعضاء",
+    "role": "الدور",
+    "joinedAt": "تاريخ الانضمام",
+    "removeMember": "إزالة العضو"
+  },
+  "messages": {
+    "createSuccess": "تم إنشاء المستأجر بنجاح",
+    "updateSuccess": "تم تحديث المستأجر بنجاح",
+    "deleteSuccess": "تم حذف المستأجر بنجاح",
+    "suspendSuccess": "تم إيقاف المستأجر بنجاح",
+    "reactivateSuccess": "تم إعادة تفعيل المستأجر بنجاح",
+    "memberAddSuccess": "تمت إضافة العضو بنجاح",
+    "memberRemoveSuccess": "تمت إزالة العضو بنجاح",
+    "error": "حدث خطأ"
+  },
+  "confirmDelete": {
+    "title": "حذف المستأجر",
+    "description": "هل أنت متأكد من حذف هذا المستأجر؟ لا يمكن التراجع عن هذا الإجراء.",
+    "confirm": "حذف",
+    "cancel": "إلغاء"
+  },
+  "pagination": {
+    "showing": "عرض {{from}} إلى {{to}} من {{total}} مستأجر"
+  }
+}

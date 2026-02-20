@@ -5,6 +5,9 @@ import { useSidebar } from "./DashboardLayout";
 import { useAppAuth } from "@/features/auth/AuthProvider";
 import {
   LayoutDashboard,
+  Building2,
+  Users,
+  FileText,
   X,
   LogOut,
 } from "lucide-react";
@@ -19,11 +22,9 @@ import {
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
-  // Features to be implemented:
-  // { path: "/tenants", icon: Building2, labelKey: "nav.tenants" },
-  // { path: "/users", icon: Users, labelKey: "nav.users" },
-  // { path: "/roles", icon: Shield, labelKey: "nav.roles" },
-  // { path: "/audit-logs", icon: FileText, labelKey: "nav.auditLogs" },
+  { path: "/tenants", icon: Building2, labelKey: "nav.tenants" },
+  { path: "/users", icon: Users, labelKey: "nav.users" },
+  { path: "/audit-logs", icon: FileText, labelKey: "nav.auditLogs" },
 ];
 
 interface SidebarProps {

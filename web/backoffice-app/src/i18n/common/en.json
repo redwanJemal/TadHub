@@ -5,6 +5,7 @@
     "error": "An error occurred"
   },
   "nav": {
+    "home": "Dashboard",
     "dashboard": "Dashboard",
     "tenants": "Tenants",
     "users": "Users",
