@@ -5,12 +5,6 @@ import { useSidebar } from "./DashboardLayout";
 import { useAppAuth } from "@/features/auth/AuthProvider";
 import {
   LayoutDashboard,
-  Building2,
-  Users,
-  Shield,
-  FileText,
-  List,
-  Settings,
   X,
   LogOut,
 } from "lucide-react";
@@ -24,13 +18,12 @@ import {
 } from "@/shared/components/ui/tooltip";
 
 const navItems = [
-  { path: "/", icon: LayoutDashboard, labelKey: "nav.dashboard" },
-  { path: "/tenants", icon: Building2, labelKey: "nav.tenants" },
-  { path: "/users", icon: Users, labelKey: "nav.users" },
-  { path: "/roles", icon: Shield, labelKey: "nav.roles" },
-  { path: "/audit-logs", icon: FileText, labelKey: "nav.auditLogs" },
-  { path: "/lookups", icon: List, labelKey: "nav.lookups" },
-  { path: "/settings", icon: Settings, labelKey: "nav.settings" },
+  { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
+  // Features to be implemented:
+  // { path: "/tenants", icon: Building2, labelKey: "nav.tenants" },
+  // { path: "/users", icon: Users, labelKey: "nav.users" },
+  // { path: "/roles", icon: Shield, labelKey: "nav.roles" },
+  // { path: "/audit-logs", icon: FileText, labelKey: "nav.auditLogs" },
 ];
 
 interface SidebarProps {
@@ -57,10 +50,10 @@ export function Sidebar({ onClose }: SidebarProps) {
         )}>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
-              F
+              T
             </div>
             {!collapsed && (
-              <span className="font-semibold text-lg whitespace-nowrap">{t("app.name")}</span>
+              <span className="font-semibold text-lg whitespace-nowrap">TadHub Admin</span>
             )}
           </div>
           {!collapsed && (
@@ -82,7 +75,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  end={item.path === "/"}
+                  end={item.exact}
                   onClick={onClose}
                   className={({ isActive }) =>
                     cn(
