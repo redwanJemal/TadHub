@@ -112,10 +112,28 @@ public class TenantService : ITenantService
 
     public async Task<PagedList<TenantDto>> ListUserTenantsAsync(Guid userId, QueryParameters qp, CancellationToken ct = default)
     {
-        var query = _db.Set<TenantUser>()
+        // Get tenant IDs for this user first, then query tenants with Include
+        var tenantIds = _db.Set<TenantUser>()
             .AsNoTracking()
             .Where(x => x.UserId == userId)
-            .Select(x => x.Tenant)
+            .Select(x => x.TenantId);
+
+        var query = _db.Set<Tenant>()
+            .AsNoTracking()
+            .Include(x => x.TenantType)
+            .Where(x => tenantIds.Contains(x.Id))
+            .ApplyFilters(qp.Filters, TenantFilters)
+            .ApplySort(qp.GetSortFields(), TenantSortable);
+
+        return await query
+            .Select(x => MapToDto(x))
+            .ToPagedListAsync(qp, ct);
+    }
+
+    public async Task<PagedList<TenantDto>> ListAllTenantsAsync(QueryParameters qp, CancellationToken ct = default)
+    {
+        var query = _db.Set<Tenant>()
+            .AsNoTracking()
             .Include(x => x.TenantType)
             .ApplyFilters(qp.Filters, TenantFilters)
             .ApplySort(qp.GetSortFields(), TenantSortable);

@@ -142,52 +142,14 @@ public sealed class ApiResponseWrappingMiddleware
 
     private static string WrapPagedList(JsonElement root, HttpContext context)
     {
-        var requestId = GetRequestId(context);
-        var items = root.GetProperty("items");
-        var page = root.GetProperty("page").GetInt32();
-        var pageSize = root.GetProperty("pageSize").GetInt32();
-        var totalCount = root.GetProperty("totalCount").GetInt32();
-        var totalPages = root.GetProperty("totalPages").GetInt32();
-        var hasNextPage = root.GetProperty("hasNextPage").GetBoolean();
-        var hasPreviousPage = root.GetProperty("hasPreviousPage").GetBoolean();
-
-        var wrapped = new
-        {
-            data = items,
-            meta = new
-            {
-                timestamp = DateTimeOffset.UtcNow,
-                requestId
-            },
-            pagination = new
-            {
-                page,
-                pageSize,
-                totalCount,
-                totalPages,
-                hasNextPage,
-                hasPreviousPage
-            }
-        };
-
-        return JsonSerializer.Serialize(wrapped, JsonOptions);
+        // PagedList is already in correct format per API standard, pass through
+        return root.GetRawText();
     }
 
     private static string WrapAsApiResponse(JsonElement data, HttpContext context)
     {
-        var requestId = GetRequestId(context);
-
-        var wrapped = new
-        {
-            data,
-            meta = new
-            {
-                timestamp = DateTimeOffset.UtcNow,
-                requestId
-            }
-        };
-
-        return JsonSerializer.Serialize(wrapped, JsonOptions);
+        // Single item responses pass through as-is
+        return data.GetRawText();
     }
 
     private static string GetRequestId(HttpContext context)

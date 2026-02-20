@@ -1,6 +1,6 @@
 import { ApiResponse, ApiSuccessResponse, QueryParams, buildQueryString } from './types';
 
-const API_BASE = '/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
 
 /**
  * Custom API Error class with status code and error details
@@ -107,6 +107,7 @@ async function handleUnauthorized(): Promise<boolean> {
 
 /**
  * Handle API response and throw on error
+ * API returns raw data directly (not wrapped in { success, data })
  */
 async function handleResponse<T>(response: Response, retryFn?: () => Promise<T>): Promise<T> {
   // Handle 401 - try refresh
@@ -117,7 +118,7 @@ async function handleResponse<T>(response: Response, retryFn?: () => Promise<T>)
     }
   }
 
-  let json: ApiResponse<T>;
+  let json: T | { error: string; message: string };
 
   try {
     json = await response.json();
@@ -129,17 +130,17 @@ async function handleResponse<T>(response: Response, retryFn?: () => Promise<T>)
     );
   }
 
-  if (!response.ok || !json.success) {
-    const error = 'error' in json ? json.error : undefined;
+  if (!response.ok) {
+    // Error responses have { error, message } format
+    const errorResponse = json as { error?: string; message?: string };
     throw new ApiError(
       response.status,
-      error?.code ?? 'UNKNOWN_ERROR',
-      error?.message ?? 'An error occurred',
-      error?.details
+      errorResponse.error ?? 'UNKNOWN_ERROR',
+      errorResponse.message ?? 'An error occurred'
     );
   }
 
-  return json.data as T;
+  return json as T;
 }
 
 /**

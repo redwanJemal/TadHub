@@ -5,6 +5,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 // Feature translations
 import authEn from "@/features/auth/i18n/en.json";
 import authAr from "@/features/auth/i18n/ar.json";
+import tenantsEn from "@/features/tenants/i18n/en.json";
+import tenantsAr from "@/features/tenants/i18n/ar.json";
 
 // Shared/common translations
 import commonEn from "./common/en.json";
@@ -14,10 +16,12 @@ const resources = {
   en: {
     common: commonEn,
     auth: authEn,
+    tenants: tenantsEn,
   },
   ar: {
     common: commonAr,
     auth: authAr,
+    tenants: tenantsAr,
   },
 };
 
@@ -36,7 +40,7 @@ i18n
     resources,
     fallbackLng: "en",
     defaultNS: "common",
-    ns: ["common", "auth"],
+    ns: ["common", "auth", "tenants"],
     interpolation: {
       escapeValue: false,
     },

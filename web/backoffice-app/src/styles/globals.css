@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand colors - ForgeBase green */
-  --color-brand-50: oklch(0.97 0.02 145);
-  --color-brand-100: oklch(0.93 0.04 145);
-  --color-brand-200: oklch(0.86 0.08 145);
-  --color-brand-300: oklch(0.76 0.12 145);
-  --color-brand-400: oklch(0.64 0.16 145);
-  --color-brand-500: oklch(0.52 0.14 145);
-  --color-brand-600: oklch(0.43 0.12 145);
-  --color-brand-700: oklch(0.36 0.10 145);
-  --color-brand-800: oklch(0.30 0.08 145);
-  --color-brand-900: oklch(0.25 0.06 145);
-  --color-brand-950: oklch(0.18 0.04 145);
+  /* Brand colors - Admin Indigo/Blue theme */
+  --color-brand-50: oklch(0.97 0.02 260);
+  --color-brand-100: oklch(0.93 0.04 260);
+  --color-brand-200: oklch(0.86 0.08 260);
+  --color-brand-300: oklch(0.76 0.14 260);
+  --color-brand-400: oklch(0.64 0.18 260);
+  --color-brand-500: oklch(0.52 0.20 260);
+  --color-brand-600: oklch(0.45 0.18 260);
+  --color-brand-700: oklch(0.38 0.16 260);
+  --color-brand-800: oklch(0.32 0.14 260);
+  --color-brand-900: oklch(0.26 0.10 260);
+  --color-brand-950: oklch(0.20 0.08 260);
 
   /* Semantic colors - Light mode */
   --color-background: var(--color-white);

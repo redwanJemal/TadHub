@@ -1,15 +1,9 @@
 /**
- * Standard API response meta with pagination info
+ * Standard API response meta
  */
 export interface ResponseMeta {
-  requestId: string;
-  timestamp: string;
-  page?: number;
-  perPage?: number;
-  total?: number;
-  totalPages?: number;
-  hasNext?: boolean;
-  hasPrev?: boolean;
+  requestId?: string;
+  timestamp?: string;
 }
 
 /**
@@ -49,14 +43,16 @@ export interface ApiSuccessResponse<T> {
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 /**
- * Paginated response data
+ * Paginated response data (matches API standard)
  */
 export interface PaginatedData<T> {
   items: T[];
-  total: number;
+  totalCount: number;
   page: number;
-  perPage: number;
+  pageSize: number;
   totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
 /**

@@ -1,0 +1,71 @@
+{
+  "title": "Tenants",
+  "subtitle": "Manage agencies and organizations on the platform",
+  "createTenant": "Create Tenant",
+  "editTenant": "Edit Tenant",
+  "tenantDetails": "Tenant Details",
+  "noTenants": "No tenants found",
+  "createFirst": "Create your first tenant",
+  "searchPlaceholder": "Search tenants...",
+  "allStatuses": "All Statuses",
+  "fields": {
+    "name": "Tenant Name",
+    "namePlaceholder": "Enter tenant name",
+    "slug": "Slug",
+    "slugPlaceholder": "tenant-slug",
+    "slugDescription": "URL-friendly identifier (auto-generated from name)",
+    "type": "Tenant Type",
+    "typePlaceholder": "Select a type",
+    "description": "Description",
+    "descriptionPlaceholder": "Brief description of the tenant",
+    "status": "Status",
+    "created": "Created",
+    "owner": "Owner",
+    "members": "Members"
+  },
+  "types": {
+    "agency": "Agency",
+    "organization": "Organization",
+    "enterprise": "Enterprise"
+  },
+  "status": {
+    "active": "Active",
+    "suspended": "Suspended",
+    "pending": "Pending"
+  },
+  "actions": {
+    "view": "View Details",
+    "edit": "Edit",
+    "suspend": "Suspend",
+    "reactivate": "Reactivate",
+    "delete": "Delete",
+    "addMember": "Add Member"
+  },
+  "members": {
+    "title": "Members",
+    "addMember": "Add Member",
+    "noMembers": "No members found",
+    "role": "Role",
+    "joinedAt": "Joined",
+    "removeMember": "Remove Member"
+  },
+  "messages": {
+    "createSuccess": "Tenant created successfully",
+    "updateSuccess": "Tenant updated successfully",
+    "deleteSuccess": "Tenant deleted successfully",
+    "suspendSuccess": "Tenant suspended successfully",
+    "reactivateSuccess": "Tenant reactivated successfully",
+    "memberAddSuccess": "Member added successfully",
+    "memberRemoveSuccess": "Member removed successfully",
+    "error": "An error occurred"
+  },
+  "confirmDelete": {
+    "title": "Delete Tenant",
+    "description": "Are you sure you want to delete this tenant? This action cannot be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  },
+  "pagination": {
+    "showing": "Showing {{from}} to {{to}} of {{total}} tenants"
+  }
+}

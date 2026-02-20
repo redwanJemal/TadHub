@@ -27,14 +27,22 @@ public class TenantsController : ControllerBase
     }
 
     /// <summary>
-    /// Lists tenants the current user is a member of.
+    /// Lists tenants. Platform admins see all tenants, regular users see only their tenants.
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<TenantDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> ListUserTenants(
+    public async Task<IActionResult> ListTenants(
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
+        // Platform admins can see all tenants
+        if (User.IsInRole("platform-admin"))
+        {
+            var allResult = await _tenantService.ListAllTenantsAsync(qp, ct);
+            return Ok(allResult);
+        }
+        
+        // Regular users see only their tenants
         var result = await _tenantService.ListUserTenantsAsync(_currentUser.UserId, qp, ct);
         return Ok(result);
     }

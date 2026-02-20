@@ -13,6 +13,12 @@ const TenantsListPage = lazy(() => import("@/features/tenants/pages/TenantsListP
 const TenantFormPage = lazy(() => import("@/features/tenants/pages/TenantFormPage").then(m => ({ default: m.TenantFormPage })));
 const TenantDetailPage = lazy(() => import("@/features/tenants/pages/TenantDetailPage").then(m => ({ default: m.TenantDetailPage })));
 
+// Users pages
+const UsersListPage = lazy(() => import("@/features/users/pages/UsersListPage").then(m => ({ default: m.UsersListPage })));
+
+// Audit pages
+const AuditLogsPage = lazy(() => import("@/features/audit/pages/AuditLogsPage").then(m => ({ default: m.AuditLogsPage })));
+
 // Dashboard home
 function DashboardHome() {
   return (
@@ -100,7 +106,11 @@ export function AppRoutes() {
             <Route path="/tenants/:tenantId" element={<TenantDetailPage />} />
             <Route path="/tenants/:tenantId/edit" element={<TenantFormPage />} />
             
-            {/* TODO: Users, Audit, etc. */}
+            {/* Users */}
+            <Route path="/users" element={<UsersListPage />} />
+            
+            {/* Audit Logs */}
+            <Route path="/audit-logs" element={<AuditLogsPage />} />
           </Route>
         </Route>
 
