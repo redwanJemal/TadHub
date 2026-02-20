@@ -1,9 +1,11 @@
 using System.Linq.Expressions;
 using System.Security.Cryptography;
+using Identity.Contracts;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TadHub.Infrastructure.Api;
+using TadHub.Infrastructure.Auth;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Events;
@@ -24,6 +26,8 @@ public class TenantService : ITenantService
     private readonly AppDbContext _db;
     private readonly IPublishEndpoint _publisher;
     private readonly ICurrentUser _currentUser;
+    private readonly CurrentUser _currentUserImpl;
+    private readonly IIdentityService _identityService;
     private readonly IClock _clock;
     private readonly ILogger<TenantService> _logger;
 
@@ -72,12 +76,16 @@ public class TenantService : ITenantService
         AppDbContext db,
         IPublishEndpoint publisher,
         ICurrentUser currentUser,
+        CurrentUser currentUserImpl,
+        IIdentityService identityService,
         IClock clock,
         ILogger<TenantService> logger)
     {
         _db = db;
         _publisher = publisher;
         _currentUser = currentUser;
+        _currentUserImpl = currentUserImpl;
+        _identityService = identityService;
         _clock = clock;
         _logger = logger;
     }
@@ -145,6 +153,16 @@ public class TenantService : ITenantService
 
     public async Task<Result<TenantDto>> CreateAsync(CreateTenantRequest request, CancellationToken ct = default)
     {
+        // Resolve internal user ID from Keycloak ID
+        var keycloakId = _currentUserImpl.KeycloakId;
+        var userProfile = await _identityService.GetByKeycloakIdAsync(keycloakId, ct);
+        if (!userProfile.IsSuccess)
+        {
+            _logger.LogWarning("Could not find user profile for Keycloak ID {KeycloakId}", keycloakId);
+            return Result<TenantDto>.Unauthorized("User profile not found. Please try logging out and back in.");
+        }
+        var internalUserId = userProfile.Value!.Id;
+
         // Generate slug from name if not provided
         var slug = request.Slug?.ToLower() ?? request.Name.ToSlug();
 
@@ -169,12 +187,12 @@ public class TenantService : ITenantService
 
         _db.Set<Tenant>().Add(tenant);
 
-        // Create owner membership for the current user
+        // Create owner membership for the current user (using internal user ID)
         var owner = new TenantUser
         {
             Id = Guid.NewGuid(),
             TenantId = tenant.Id,
-            UserId = _currentUser.UserId,
+            UserId = internalUserId,
             Role = TenantRole.Owner,
             JoinedAt = _clock.UtcNow
         };
@@ -184,15 +202,15 @@ public class TenantService : ITenantService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation(
-            "Created tenant {TenantId} ({Slug}) by user {UserId}",
-            tenant.Id, tenant.Slug, _currentUser.UserId);
+            "Created tenant {TenantId} ({Slug}) by user {UserId} (Keycloak: {KeycloakId})",
+            tenant.Id, tenant.Slug, internalUserId, keycloakId);
 
         // Publish domain event
         await _publisher.Publish(new TenantCreatedEvent(
             tenant.Id,
             tenant.Name,
             tenant.Slug,
-            _currentUser.UserId,
+            internalUserId,
             _clock.UtcNow), ct);
 
         return Result<TenantDto>.Success(MapToDto(tenant));

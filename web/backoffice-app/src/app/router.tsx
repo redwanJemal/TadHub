@@ -13,8 +13,11 @@ const TenantsListPage = lazy(() => import("@/features/tenants/pages/TenantsListP
 const TenantFormPage = lazy(() => import("@/features/tenants/pages/TenantFormPage").then(m => ({ default: m.TenantFormPage })));
 const TenantDetailPage = lazy(() => import("@/features/tenants/pages/TenantDetailPage").then(m => ({ default: m.TenantDetailPage })));
 
-// Users pages
+// Users pages (all user profiles - for searching/adding to tenants)
 const UsersListPage = lazy(() => import("@/features/users/pages/UsersListPage").then(m => ({ default: m.UsersListPage })));
+
+// Platform Team (admin users)
+const PlatformTeamPage = lazy(() => import("@/features/platform-team/pages/PlatformTeamPage").then(m => ({ default: m.PlatformTeamPage })));
 
 // Audit pages
 const AuditLogsPage = lazy(() => import("@/features/audit/pages/AuditLogsPage").then(m => ({ default: m.AuditLogsPage })));
@@ -106,7 +109,10 @@ export function AppRoutes() {
             <Route path="/tenants/:tenantId" element={<TenantDetailPage />} />
             <Route path="/tenants/:tenantId/edit" element={<TenantFormPage />} />
             
-            {/* Users */}
+            {/* Platform Team (Admin Users) */}
+            <Route path="/platform-team" element={<PlatformTeamPage />} />
+            
+            {/* Users (All User Profiles - for searching) */}
             <Route path="/users" element={<UsersListPage />} />
             
             {/* Audit Logs */}

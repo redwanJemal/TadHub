@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Building2,
   Users,
+  Shield,
   FileText,
   X,
   LogOut,
@@ -23,7 +24,8 @@ import {
 const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
   { path: "/tenants", icon: Building2, labelKey: "nav.tenants" },
-  { path: "/users", icon: Users, labelKey: "nav.users" },
+  { path: "/platform-team", icon: Shield, labelKey: "nav.platformTeam" },
+  { path: "/users", icon: Users, labelKey: "nav.allUsers" },
   { path: "/audit-logs", icon: FileText, labelKey: "nav.auditLogs" },
 ];
 

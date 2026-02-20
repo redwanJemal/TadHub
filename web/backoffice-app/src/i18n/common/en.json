@@ -8,6 +8,8 @@
     "home": "Dashboard",
     "dashboard": "Dashboard",
     "tenants": "Tenants",
+    "platformTeam": "Platform Team",
+    "allUsers": "All Users",
     "users": "Users",
     "roles": "Roles",
     "auditLogs": "Audit Logs",

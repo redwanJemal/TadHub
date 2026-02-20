@@ -11,67 +11,67 @@ import {
 } from './types';
 
 // ============================================================================
-// Tenant CRUD
+// Tenant CRUD (Admin endpoints - no tenant context required)
 // ============================================================================
 
 /**
  * List all tenants (admin view)
  */
 export async function listTenants(params?: QueryParams): Promise<PaginatedData<TenantDto>> {
-  return apiClient.get<PaginatedData<TenantDto>>('/tenants', params);
+  return apiClient.get<PaginatedData<TenantDto>>('/admin/tenants', params);
 }
 
 /**
  * Get tenant by ID
  */
 export async function getTenant(tenantId: string): Promise<TenantDto> {
-  return apiClient.get<TenantDto>(`/tenants/${tenantId}`);
+  return apiClient.get<TenantDto>(`/admin/tenants/${tenantId}`);
 }
 
 /**
  * Get tenant by slug
  */
 export async function getTenantBySlug(slug: string): Promise<TenantDto> {
-  return apiClient.get<TenantDto>(`/tenants/by-slug/${slug}`);
+  return apiClient.get<TenantDto>(`/admin/tenants/by-slug/${slug}`);
 }
 
 /**
  * Create a new tenant
  */
 export async function createTenant(data: CreateTenantRequest): Promise<TenantDto> {
-  return apiClient.post<TenantDto>('/tenants', data);
+  return apiClient.post<TenantDto>('/admin/tenants', data);
 }
 
 /**
  * Update tenant
  */
 export async function updateTenant(tenantId: string, data: UpdateTenantRequest): Promise<TenantDto> {
-  return apiClient.patch<TenantDto>(`/tenants/${tenantId}`, data);
+  return apiClient.patch<TenantDto>(`/admin/tenants/${tenantId}`, data);
 }
 
 /**
  * Suspend tenant
  */
 export async function suspendTenant(tenantId: string): Promise<void> {
-  return apiClient.post<void>(`/tenants/${tenantId}/suspend`);
+  return apiClient.post<void>(`/admin/tenants/${tenantId}/suspend`);
 }
 
 /**
  * Reactivate tenant
  */
 export async function reactivateTenant(tenantId: string): Promise<void> {
-  return apiClient.post<void>(`/tenants/${tenantId}/reactivate`);
+  return apiClient.post<void>(`/admin/tenants/${tenantId}/reactivate`);
 }
 
 /**
  * Delete tenant
  */
 export async function deleteTenant(tenantId: string): Promise<void> {
-  return apiClient.delete<void>(`/tenants/${tenantId}`);
+  return apiClient.delete<void>(`/admin/tenants/${tenantId}`);
 }
 
 // ============================================================================
-// Tenant Members
+// Tenant Members (Admin endpoints)
 // ============================================================================
 
 /**
@@ -81,14 +81,14 @@ export async function listTenantMembers(
   tenantId: string,
   params?: QueryParams
 ): Promise<PaginatedData<TenantUserDto>> {
-  return apiClient.get<PaginatedData<TenantUserDto>>(`/tenants/${tenantId}/members`, params);
+  return apiClient.get<PaginatedData<TenantUserDto>>(`/admin/tenants/${tenantId}/members`, params);
 }
 
 /**
  * Get tenant member
  */
 export async function getTenantMember(tenantId: string, userId: string): Promise<TenantUserDto> {
-  return apiClient.get<TenantUserDto>(`/tenants/${tenantId}/members/${userId}`);
+  return apiClient.get<TenantUserDto>(`/admin/tenants/${tenantId}/members/${userId}`);
 }
 
 /**
@@ -98,7 +98,7 @@ export async function addTenantMember(
   tenantId: string,
   data: AddTenantMemberRequest
 ): Promise<TenantUserDto> {
-  return apiClient.post<TenantUserDto>(`/tenants/${tenantId}/members`, data);
+  return apiClient.post<TenantUserDto>(`/admin/tenants/${tenantId}/members`, data);
 }
 
 /**
@@ -109,14 +109,45 @@ export async function updateMemberRole(
   userId: string,
   data: UpdateMemberRoleRequest
 ): Promise<TenantUserDto> {
-  return apiClient.patch<TenantUserDto>(`/tenants/${tenantId}/members/${userId}`, data);
+  return apiClient.patch<TenantUserDto>(`/admin/tenants/${tenantId}/members/${userId}`, data);
 }
 
 /**
  * Remove member from tenant
  */
 export async function removeTenantMember(tenantId: string, userId: string): Promise<void> {
-  return apiClient.delete<void>(`/tenants/${tenantId}/members/${userId}`);
+  return apiClient.delete<void>(`/admin/tenants/${tenantId}/members/${userId}`);
+}
+
+// ============================================================================
+// Tenant Invitations (Admin endpoints)
+// ============================================================================
+
+/**
+ * List tenant invitations
+ */
+export async function listTenantInvitations(
+  tenantId: string,
+  params?: QueryParams
+): Promise<PaginatedData<any>> {
+  return apiClient.get<PaginatedData<any>>(`/admin/tenants/${tenantId}/invitations`, params);
+}
+
+/**
+ * Create invitation
+ */
+export async function createTenantInvitation(
+  tenantId: string,
+  data: { email: string; role: string }
+): Promise<any> {
+  return apiClient.post<any>(`/admin/tenants/${tenantId}/invitations`, data);
+}
+
+/**
+ * Revoke invitation
+ */
+export async function revokeTenantInvitation(tenantId: string, invitationId: string): Promise<void> {
+  return apiClient.delete<void>(`/admin/tenants/${tenantId}/invitations/${invitationId}`);
 }
 
 // ============================================================================
@@ -127,14 +158,14 @@ export async function removeTenantMember(tenantId: string, userId: string): Prom
  * List all users (admin)
  */
 export async function listUsers(params?: QueryParams): Promise<PaginatedData<UserProfileDto>> {
-  return apiClient.get<PaginatedData<UserProfileDto>>('/users', params);
+  return apiClient.get<PaginatedData<UserProfileDto>>('/admin/users', params);
 }
 
 /**
  * Search users by email or name
  */
 export async function searchUsers(query: string): Promise<PaginatedData<UserProfileDto>> {
-  return apiClient.get<PaginatedData<UserProfileDto>>('/users', {
+  return apiClient.get<PaginatedData<UserProfileDto>>('/admin/users', {
     q: query,
     perPage: 10,
   });
@@ -144,5 +175,5 @@ export async function searchUsers(query: string): Promise<PaginatedData<UserProf
  * Get user by ID
  */
 export async function getUser(userId: string): Promise<UserProfileDto> {
-  return apiClient.get<UserProfileDto>(`/users/${userId}`);
+  return apiClient.get<UserProfileDto>(`/admin/users/${userId}`);
 }
