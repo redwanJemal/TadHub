@@ -68,6 +68,7 @@
     "passwordMatch": "Passwords do not match"
   },
   "nav": {
+    "home": "Home",
     "dashboard": "Dashboard",
     "team": "Team",
     "roles": "Roles",
