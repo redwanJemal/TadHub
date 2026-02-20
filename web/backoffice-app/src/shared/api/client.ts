@@ -131,12 +131,15 @@ async function handleResponse<T>(response: Response, retryFn?: () => Promise<T>)
   }
 
   if (!response.ok) {
-    // Error responses have { error, message } format
+    // Error responses can have { error, message } or just { error } format
     const errorResponse = json as { error?: string; message?: string };
+    // Use error as the message if message is not provided
+    const errorMessage = errorResponse.message || errorResponse.error || 'An error occurred';
+    const errorCode = errorResponse.error ?? 'UNKNOWN_ERROR';
     throw new ApiError(
       response.status,
-      errorResponse.error ?? 'UNKNOWN_ERROR',
-      errorResponse.message ?? 'An error occurred'
+      errorCode,
+      errorMessage
     );
   }
 

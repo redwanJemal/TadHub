@@ -73,6 +73,9 @@ export function useCreateTenant() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
     },
+    meta: {
+      successMessage: 'Tenant created successfully',
+    },
   });
 }
 
@@ -86,6 +89,9 @@ export function useUpdateTenant() {
       queryClient.invalidateQueries({ queryKey: tenantKeys.detail(tenantId) });
       queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
     },
+    meta: {
+      successMessage: 'Tenant updated successfully',
+    },
   });
 }
 
@@ -97,6 +103,9 @@ export function useSuspendTenant() {
     onSuccess: (_, tenantId) => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.detail(tenantId) });
       queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
+    },
+    meta: {
+      successMessage: 'Tenant suspended successfully',
     },
   });
 }
@@ -110,6 +119,9 @@ export function useReactivateTenant() {
       queryClient.invalidateQueries({ queryKey: tenantKeys.detail(tenantId) });
       queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
     },
+    meta: {
+      successMessage: 'Tenant reactivated successfully',
+    },
   });
 }
 
@@ -120,6 +132,9 @@ export function useDeleteTenant() {
     mutationFn: (tenantId: string) => deleteTenant(tenantId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
+    },
+    meta: {
+      successMessage: 'Tenant deleted successfully',
     },
   });
 }
@@ -145,6 +160,9 @@ export function useAddTenantMember() {
     onSuccess: (_, { tenantId }) => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.members(tenantId) });
     },
+    meta: {
+      successMessage: 'Member added successfully',
+    },
   });
 }
 
@@ -164,6 +182,9 @@ export function useUpdateMemberRole() {
     onSuccess: (_, { tenantId }) => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.members(tenantId) });
     },
+    meta: {
+      successMessage: 'Member role updated successfully',
+    },
   });
 }
 
@@ -175,6 +196,9 @@ export function useRemoveTenantMember() {
       removeTenantMember(tenantId, userId),
     onSuccess: (_, { tenantId }) => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.members(tenantId) });
+    },
+    meta: {
+      successMessage: 'Member removed successfully',
     },
   });
 }
