@@ -1,0 +1,167 @@
+{
+  "title": "Tenants",
+  "subtitle": "Manage all tenants in the system",
+  "addTenant": "Add Tenant",
+  "searchPlaceholder": "Search tenants...",
+  "noPlan": "No Plan",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "columns": {
+    "name": "Tenant",
+    "domain": "Domain",
+    "plan": "Plan",
+    "users": "Users",
+    "status": "Status",
+    "createdAt": "Created",
+    "actions": "Actions"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "filters": {
+    "status": "Status"
+  },
+  "sheet": {
+    "createTitle": "Create Tenant",
+    "createDescription": "Add a new tenant to the platform.",
+    "editTitle": "Edit Tenant",
+    "editDescription": "Update tenant details and settings.",
+    "basicInfo": "Basic Information",
+    "subscription": "Subscription",
+    "settings": "Settings"
+  },
+  "fields": {
+    "name": "Tenant Name",
+    "namePlaceholder": "Acme Corporation",
+    "slug": "Slug",
+    "slugPlaceholder": "acme-corp",
+    "slugHint": "URL-friendly identifier. Cannot be changed after creation.",
+    "domain": "Custom Domain",
+    "domainPlaceholder": "app.acme.com",
+    "domainHint": "Optional custom domain for this tenant.",
+    "plan": "Plan",
+    "planPlaceholder": "Select a plan",
+    "noPlan": "No Plan",
+    "status": "Status"
+  },
+  "settings": {
+    "allowRegistration": "Allow User Registration",
+    "allowRegistrationHint": "Users can self-register for this tenant.",
+    "enableApi": "Enable API Access",
+    "enableApiHint": "Allow API access with API keys.",
+    "maxUsers": "Maximum Users",
+    "maxUsersHint": "Maximum number of users allowed for this tenant.",
+    "general": {
+      "title": "General Settings",
+      "description": "Configure tenant-specific settings."
+    },
+    "save": "Save Settings",
+    "saving": "Saving...",
+    "saveSuccess": "Settings saved successfully.",
+    "dangerZone": {
+      "title": "Danger Zone",
+      "description": "Irreversible and destructive actions.",
+      "suspend": {
+        "title": "Suspend Tenant",
+        "description": "Temporarily disable access to this tenant.",
+        "button": "Suspend",
+        "confirmTitle": "Suspend Tenant?",
+        "confirmDescription": "Are you sure you want to suspend \"{{name}}\"? Users will not be able to access this tenant."
+      },
+      "activate": {
+        "title": "Activate Tenant",
+        "description": "Re-enable access to this tenant.",
+        "button": "Activate",
+        "confirmTitle": "Activate Tenant?",
+        "confirmDescription": "Are you sure you want to activate \"{{name}}\"? Users will be able to access this tenant again."
+      },
+      "delete": {
+        "title": "Delete Tenant",
+        "description": "Permanently delete this tenant and all its data.",
+        "button": "Delete Tenant",
+        "confirmTitle": "Delete Tenant?",
+        "confirmDescription": "Are you sure you want to permanently delete \"{{name}}\"? This action cannot be undone and all data will be lost."
+      }
+    }
+  },
+  "deleteDialog": {
+    "title": "Delete Tenant",
+    "description": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
+  },
+  "actions": {
+    "view": "View Details",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "create": "Create Tenant",
+    "creating": "Creating...",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "deleting": "Deleting..."
+  },
+  "detail": {
+    "backToList": "Back to Tenants",
+    "notFound": "Tenant not found",
+    "totalUsers": "Total Users",
+    "currentPlan": "Current Plan",
+    "maxUsers": "Max Users",
+    "created": "Created",
+    "tabs": {
+      "overview": "Overview",
+      "users": "Users",
+      "subscription": "Subscription",
+      "settings": "Settings"
+    },
+    "info": {
+      "title": "Tenant Information",
+      "name": "Name",
+      "slug": "Slug",
+      "domain": "Domain",
+      "status": "Status",
+      "created": "Created At",
+      "updated": "Updated At"
+    },
+    "quickSettings": {
+      "title": "Quick Settings"
+    }
+  },
+  "users": {
+    "title": "Tenant Users",
+    "searchPlaceholder": "Search users...",
+    "invite": "Invite User",
+    "noUsers": "No users found",
+    "never": "Never",
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "status": "Status",
+      "lastLogin": "Last Login"
+    }
+  },
+  "subscription": {
+    "current": "Current Subscription",
+    "features": "Features",
+    "renewsOn": "Renews on",
+    "manualOverride": "Manual Override (Admin Only)",
+    "manualOverrideHint": "Override subscription settings manually. Use with caution.",
+    "plan": "Plan",
+    "selectPlan": "Select a plan",
+    "status": "Status",
+    "validUntil": "Valid Until",
+    "maxUsersOverride": "Max Users Override",
+    "maxUsersOverridePlaceholder": "Leave empty to use plan default",
+    "notes": "Admin Notes",
+    "notesPlaceholder": "Reason for override...",
+    "applyOverride": "Apply Override",
+    "applying": "Applying...",
+    "updateSuccess": "Subscription updated successfully.",
+    "statuses": {
+      "active": "Active",
+      "trialing": "Trialing",
+      "pastDue": "Past Due",
+      "canceled": "Canceled",
+      "unpaid": "Unpaid"
+    }
+  }
+}

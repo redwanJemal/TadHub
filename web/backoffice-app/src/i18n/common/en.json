@@ -1,0 +1,64 @@
+{
+  "app": {
+    "name": "ForgeBase Admin",
+    "loading": "Loading...",
+    "error": "An error occurred"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "tenants": "Tenants",
+    "users": "Users",
+    "roles": "Roles",
+    "auditLogs": "Audit Logs",
+    "lookups": "Lookups",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "common": {
+    "all": "All",
+    "selected": "selected"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "refresh": "Refresh",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "clearFilters": "Clear Filters"
+  },
+  "table": {
+    "noResults": "No results found",
+    "loading": "Loading...",
+    "rowsPerPage": "Rows per page",
+    "page": "Page",
+    "of": "of",
+    "selected": "{{count}} selected",
+    "totalResults": "{{count}} results"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email",
+    "minLength": "Must be at least {{min}} characters",
+    "maxLength": "Must be at most {{max}} characters"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "failed": "Failed"
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hours ago",
+    "daysAgo": "{{count}} days ago"
+  }
+}

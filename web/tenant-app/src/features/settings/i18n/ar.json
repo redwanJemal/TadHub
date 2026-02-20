@@ -1,0 +1,53 @@
+{
+  "title": "الإعدادات",
+  "tabs": {
+    "general": "عام",
+    "security": "الأمان",
+    "billing": "الفواتير",
+    "api": "مفاتيح API",
+    "integrations": "التكاملات"
+  },
+  "general": {
+    "title": "الإعدادات العامة",
+    "workspaceName": "اسم مساحة العمل",
+    "workspaceSlug": "رابط مساحة العمل",
+    "industry": "القطاع",
+    "timezone": "المنطقة الزمنية",
+    "language": "اللغة الافتراضية",
+    "logo": "شعار مساحة العمل",
+    "uploadLogo": "رفع الشعار",
+    "removeLogo": "إزالة الشعار"
+  },
+  "security": {
+    "title": "إعدادات الأمان",
+    "twoFactor": "المصادقة الثنائية",
+    "twoFactorDesc": "أضف طبقة إضافية من الأمان لحسابك",
+    "sessionTimeout": "انتهاء الجلسة",
+    "sessionTimeoutDesc": "تسجيل الخروج تلقائياً بعد عدم النشاط",
+    "passwordPolicy": "سياسة كلمة المرور",
+    "ipWhitelist": "قائمة IP المسموحة",
+    "ipWhitelistDesc": "تقييد الوصول لعناوين IP محددة"
+  },
+  "api": {
+    "title": "مفاتيح API",
+    "description": "إدارة مفاتيح API للتكاملات",
+    "createKey": "إنشاء مفتاح API",
+    "keyName": "اسم المفتاح",
+    "keyNamePlaceholder": "مثال: API الإنتاج",
+    "permissions": "الصلاحيات",
+    "expiresAt": "ينتهي في",
+    "lastUsed": "آخر استخدام",
+    "never": "أبداً",
+    "noExpiry": "بدون انتهاء",
+    "copyKey": "نسخ المفتاح",
+    "keyCopied": "تم نسخ مفتاح API",
+    "revokeKey": "إلغاء المفتاح",
+    "confirmRevoke": "هل أنت متأكد من إلغاء مفتاح API هذا؟"
+  },
+  "dangerZone": {
+    "title": "منطقة الخطر",
+    "deleteWorkspace": "حذف مساحة العمل",
+    "deleteWorkspaceDesc": "حذف مساحة العمل وجميع بياناتها نهائياً",
+    "deleteConfirm": "لا يمكن التراجع عن هذا الإجراء. اكتب اسم مساحة العمل للتأكيد."
+  }
+}

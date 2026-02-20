@@ -1,0 +1,14 @@
+{
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to your admin account",
+    "email": "Email",
+    "emailPlaceholder": "admin@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "submit": "Sign in",
+    "loading": "Signing in...",
+    "forgotPassword": "Forgot password?"
+  },
+  "logout": "Logout"
+}

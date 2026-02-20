@@ -1,0 +1,21 @@
+{
+  "title": "Audit Logs",
+  "subtitle": "View system activity and changes",
+  "list": "Audit Log List",
+  "searchPlaceholder": "Search logs...",
+  "columns": {
+    "action": "Action",
+    "entity": "Entity",
+    "user": "User",
+    "tenant": "Tenant",
+    "ipAddress": "IP Address",
+    "timestamp": "Timestamp"
+  },
+  "actions": {
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "login": "Login",
+    "logout": "Logout"
+  }
+}

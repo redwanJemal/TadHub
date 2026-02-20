@@ -1,0 +1,25 @@
+{
+  "title": "لوحة التحكم",
+  "welcome": "مرحباً بعودتك، {{name}}!",
+  "overview": "نظرة عامة",
+  "quickActions": "إجراءات سريعة",
+  "recentActivity": "النشاط الأخير",
+  "stats": {
+    "teamMembers": "أعضاء الفريق",
+    "activeUsers": "المستخدمون النشطون",
+    "apiCalls": "استدعاءات API",
+    "storage": "التخزين المستخدم"
+  },
+  "actions": {
+    "inviteTeam": "دعوة الفريق",
+    "createApiKey": "إنشاء مفتاح API",
+    "viewSettings": "عرض الإعدادات",
+    "viewBilling": "عرض الفواتير"
+  },
+  "activity": {
+    "noActivity": "لا يوجد نشاط حديث",
+    "userJoined": "انضم {{user}} إلى مساحة العمل",
+    "settingsUpdated": "تم تحديث الإعدادات",
+    "apiKeyCreated": "تم إنشاء مفتاح API جديد"
+  }
+}

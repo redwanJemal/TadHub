@@ -1,0 +1,14 @@
+{
+  "title": "الأدوار",
+  "subtitle": "إدارة الأدوار والصلاحيات",
+  "list": "قائمة الأدوار",
+  "addRole": "إضافة دور",
+  "searchPlaceholder": "البحث عن أدوار...",
+  "systemRole": "نظام",
+  "columns": {
+    "name": "الدور",
+    "permissions": "الصلاحيات",
+    "users": "المستخدمين",
+    "actions": "الإجراءات"
+  }
+}

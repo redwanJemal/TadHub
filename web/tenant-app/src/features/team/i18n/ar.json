@@ -1,0 +1,63 @@
+{
+  "title": "أعضاء الفريق",
+  "subtitle": "إدارة فريق مساحة العمل",
+  "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني...",
+  "inviteMember": "دعوة عضو",
+  "neverLoggedIn": "أبداً",
+  "columns": {
+    "member": "العضو",
+    "role": "الدور",
+    "status": "الحالة",
+    "lastLogin": "آخر تسجيل دخول",
+    "actions": "الإجراءات"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "pending": "قيد الانتظار"
+  },
+  "filters": {
+    "role": "الدور",
+    "status": "الحالة"
+  },
+  "inviteDialog": {
+    "title": "دعوة عضو للفريق",
+    "description": "إرسال دعوة للانضمام إلى مساحة العمل"
+  },
+  "editDialog": {
+    "title": "تعديل العضو",
+    "description": "تحديث الدور والحالة لـ {{name}}"
+  },
+  "deleteDialog": {
+    "title": "إزالة العضو",
+    "description": "هل أنت متأكد من إزالة {{name}} من مساحة العمل؟ سيفقد الوصول فوراً."
+  },
+  "fields": {
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "colleague@company.com",
+    "role": "الدور",
+    "rolePlaceholder": "اختر دوراً",
+    "firstName": "الاسم الأول",
+    "firstNamePlaceholder": "أحمد",
+    "lastName": "اسم العائلة",
+    "lastNamePlaceholder": "محمد",
+    "isActive": "عضو نشط"
+  },
+  "actions": {
+    "cancel": "إلغاء",
+    "invite": "إرسال الدعوة",
+    "inviting": "جاري الإرسال...",
+    "save": "حفظ التغييرات",
+    "saving": "جاري الحفظ...",
+    "remove": "إزالة",
+    "removing": "جاري الإزالة..."
+  },
+  "notifications": {
+    "memberInvited": "تم إرسال الدعوة بنجاح",
+    "memberUpdated": "تم تحديث العضو بنجاح",
+    "memberRemoved": "تم إزالة العضو بنجاح",
+    "invitationResent": "تم إعادة إرسال الدعوة بنجاح",
+    "removeFailed": "فشل في إزالة العضو",
+    "resendFailed": "فشل في إعادة إرسال الدعوة"
+  }
+}
