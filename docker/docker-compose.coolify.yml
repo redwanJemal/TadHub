@@ -1,0 +1,202 @@
+version: "3.8"
+
+# TadHub Coolify Deployment
+# This docker-compose is designed to work with Coolify's infrastructure
+
+services:
+  # =============================================================================
+  # PostgreSQL 17 - Primary Database
+  # =============================================================================
+  postgres:
+    image: postgres:17-alpine
+    container_name: tadhub-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tadhub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-tadhub}
+    volumes:
+      - tadhub_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tadhub} -d ${POSTGRES_DB:-tadhub}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tadhub-internal
+      - coolify
+
+  # =============================================================================
+  # Redis 7 - Caching & Pub/Sub
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: tadhub-redis
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - tadhub_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tadhub-internal
+      - coolify
+
+  # =============================================================================
+  # RabbitMQ 3 - Message Broker
+  # =============================================================================
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: tadhub-rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-tadhub}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - tadhub_rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - tadhub-internal
+      - coolify
+
+  # =============================================================================
+  # Keycloak 26 - Identity Provider
+  # Accessible at https://auth.endlessmaker.com
+  # =============================================================================
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: tadhub-keycloak
+    restart: always
+    command: start --optimized --hostname-strict=false --proxy-headers=xforwarded
+    environment:
+      # Database
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-tadhub}
+      KC_DB_USERNAME: ${POSTGRES_USER:-tadhub}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      # Production settings
+      KC_HOSTNAME: auth.endlessmaker.com
+      KC_HTTP_ENABLED: true
+      KC_PROXY: edge
+      # Features
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_FEATURES: token-exchange,admin-fine-grained-authz
+      # Admin user
+      KEYCLOAK_ADMIN: ${KC_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    networks:
+      - tadhub-internal
+      - coolify
+
+  # =============================================================================
+  # TadHub API - .NET 9 Backend
+  # Accessible at https://api.endlessmaker.com
+  # =============================================================================
+  api:
+    image: ghcr.io/redwanjemal/tadhub-api:latest
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.api
+    container_name: tadhub-api
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__DefaultConnection: Host=postgres;Database=${POSTGRES_DB:-tadhub};Username=${POSTGRES_USER:-tadhub};Password=${POSTGRES_PASSWORD}
+      ConnectionStrings__Redis: redis:6379,password=${REDIS_PASSWORD}
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: ${RABBITMQ_USER:-tadhub}
+      RabbitMQ__Password: ${RABBITMQ_PASSWORD}
+      Auth__Authority: https://auth.endlessmaker.com/realms/tadhub
+      Auth__Audience: tadhub-api
+      Storage__Endpoint: https://storage.endlessmaker.com
+      Storage__AccessKey: ${MINIO_ACCESS_KEY}
+      Storage__SecretKey: ${MINIO_SECRET_KEY}
+      Storage__BucketName: tadhub
+      Cors__Origins__0: https://tadbeer.endlessmaker.com
+      Cors__Origins__1: https://admin.endlessmaker.com
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - tadhub-internal
+      - coolify
+
+  # =============================================================================
+  # Tenant App - React Frontend
+  # Accessible at https://tadbeer.endlessmaker.com
+  # =============================================================================
+  tenant-app:
+    image: ghcr.io/redwanjemal/tadhub-tenant:latest
+    build:
+      context: ../web/tenant-app
+      dockerfile: ../../docker/Dockerfile.web
+      args:
+        VITE_API_URL: https://api.endlessmaker.com/api/v1
+        VITE_AUTH_URL: https://auth.endlessmaker.com
+        VITE_AUTH_REALM: tadhub
+        VITE_AUTH_CLIENT_ID: tenant-app
+        VITE_STORAGE_URL: https://storage.endlessmaker.com
+    container_name: tadhub-tenant-app
+    restart: always
+    networks:
+      - coolify
+
+  # =============================================================================
+  # Backoffice App - React Admin Frontend
+  # Accessible at https://admin.endlessmaker.com (future)
+  # =============================================================================
+  backoffice-app:
+    image: ghcr.io/redwanjemal/tadhub-backoffice:latest
+    build:
+      context: ../web/backoffice-app
+      dockerfile: ../../docker/Dockerfile.web
+      args:
+        VITE_API_URL: https://api.endlessmaker.com/api/v1
+        VITE_AUTH_URL: https://auth.endlessmaker.com
+        VITE_AUTH_REALM: tadhub
+        VITE_AUTH_CLIENT_ID: backoffice-app
+        VITE_STORAGE_URL: https://storage.endlessmaker.com
+    container_name: tadhub-backoffice-app
+    restart: always
+    networks:
+      - coolify
+
+networks:
+  tadhub-internal:
+    driver: bridge
+  coolify:
+    external: true
+
+volumes:
+  tadhub_postgres_data:
+  tadhub_redis_data:
+  tadhub_rabbitmq_data:
