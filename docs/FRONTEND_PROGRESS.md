@@ -1,7 +1,7 @@
 # TadHub Frontend Progress Tracker
 
 **Last Updated:** February 20, 2026  
-**Frontend Stack:** React/Next.js, TypeScript, TailwindCSS, React Query
+**Frontend Stack:** React/Vite, TypeScript, TailwindCSS, React Query, shadcn/ui
 
 ---
 
@@ -14,6 +14,9 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 - 🟡 In Progress
 - ✅ Complete
 - 🔴 Blocked
+
+### Current Blockers
+> **🔴 BLOCKER:** Tenant-app requires users to have tenant associations before using. Users must be added to tenants via backoffice-app first. See Phase 3 priorities.
 
 ---
 
@@ -64,11 +67,13 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 - ✅ Login page with Keycloak redirect
 - ✅ OAuth callback page handler
 - ✅ Extract tokens from callback
-- ✅ Fetch user profile after login
-- ✅ Fetch tenant list for user
-- ✅ Tenant selection (if user has multiple)
-- ✅ Set active tenant in context
+- ✅ Fetch user profile after login (`/users/me`)
+- 🔴 Fetch tenant list for user (blocked: requires backoffice tenant setup)
+- 🔴 Tenant selection (if user has multiple) (blocked: no tenants to select)
+- ✅ Set active tenant in context (X-Tenant-ID header)
 - ✅ Redirect to dashboard after login
+
+> **Note (Feb 20):** Auth flow works end-to-end (Keycloak → token → API). Blocking issue: `/me` returns `tenants: []` because users must be added to tenants via backoffice first. This is by design for B2B SaaS.
 
 ### Logout Flow
 - ✅ Logout button in header/menu
@@ -87,7 +92,7 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 - ✅ Restore session on page refresh
 - ✅ Handle expired session gracefully
 
-**Phase 0 Total: 42/42 tasks ✅** 🎉
+**Phase 0 Total: 40/42 tasks** (2 blocked pending backoffice)
 
 ---
 
@@ -422,10 +427,13 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 
 ---
 
-## Phase 3: Backoffice (admin-app)
+## Phase 3: Backoffice (admin-app) — 🔴 HIGH PRIORITY
 
-### Tenants Management
+> **Why High Priority?** Tenant-app users need to be added to tenants first. Backoffice must be built to unblock tenant-app testing and onboarding.
+
+### Tenants Management (CRITICAL PATH)
 - ⬜ Tenants list page
+- ⬜ Create tenant form ← **Must implement first**
 - ⬜ Status filter (Active/Suspended)
 - ⬜ Search by name/slug
 - ⬜ Tenant detail view
@@ -435,21 +443,24 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 - ⬜ Suspend tenant action
 - ⬜ Reactivate tenant action
 - ⬜ Force delete tenant (dangerous)
+- ⬜ Add user to tenant ← **Must implement first**
+- ⬜ Assign role to user in tenant ← **Must implement first**
 
-**Tenants Management Total: 0/10 tasks**
+**Tenants Management Total: 0/13 tasks**
 
-### Users Management
+### Users Management (CRITICAL PATH)
 - ⬜ Users list page
 - ⬜ Active/Inactive filter
 - ⬜ Search by name/email
 - ⬜ User detail view
 - ⬜ Tenant memberships display
+- ⬜ Add user to tenant ← **Shared with Tenants**
 - ⬜ Login history
 - ⬜ Deactivate user action
 - ⬜ Reactivate user action
 - ⬜ Create user form (admin)
 
-**Users Management Total: 0/9 tasks**
+**Users Management Total: 0/10 tasks**
 
 ### Audit Logs
 - ⬜ Audit events list
@@ -549,36 +560,37 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 
 ## Summary
 
-| Phase | Module | Not Started | In Progress | Complete | Total |
-|-------|--------|-------------|-------------|----------|-------|
-| **0** | **Authentication** | **0** | **0** | **42** | **42** |
-| 1 | Workers | 62 | 0 | 0 | 62 |
-| 1 | Clients | 59 | 0 | 0 | 59 |
-| 1 | Leads | 38 | 0 | 0 | 38 |
-| 2 | Team Members | 8 | 0 | 0 | 8 |
-| 2 | Invitations | 11 | 0 | 0 | 11 |
-| 2 | Roles & Permissions | 14 | 0 | 0 | 14 |
-| 2 | API Keys | 13 | 0 | 0 | 13 |
-| 2 | Settings | 13 | 0 | 0 | 13 |
-| 3 | Tenants Management | 10 | 0 | 0 | 10 |
-| 3 | Users Management | 9 | 0 | 0 | 9 |
-| 3 | Audit Logs | 9 | 0 | 0 | 9 |
-| 3 | Feature Flags | 11 | 0 | 0 | 11 |
-| 3 | Plans & Subscriptions | 10 | 0 | 0 | 10 |
-| 4 | UI Components | 16 | 0 | 0 | 16 |
-| 4 | Layout & Navigation | 7 | 0 | 0 | 7 |
-| 4 | API Integration | 9 | 0 | 0 | 9 |
-| | **Total** | **299** | **0** | **42** | **341** |
+| Phase | Module | Not Started | In Progress | Complete | Blocked | Total |
+|-------|--------|-------------|-------------|----------|---------|-------|
+| **0** | **Authentication** | **0** | **0** | **40** | **2** | **42** |
+| **3** | **Tenants (CRITICAL)** | **13** | **0** | **0** | **0** | **13** |
+| **3** | **Users (CRITICAL)** | **10** | **0** | **0** | **0** | **10** |
+| 1 | Workers | 62 | 0 | 0 | 0 | 62 |
+| 1 | Clients | 59 | 0 | 0 | 0 | 59 |
+| 1 | Leads | 38 | 0 | 0 | 0 | 38 |
+| 2 | Team Members | 8 | 0 | 0 | 0 | 8 |
+| 2 | Invitations | 11 | 0 | 0 | 0 | 11 |
+| 2 | Roles & Permissions | 14 | 0 | 0 | 0 | 14 |
+| 2 | API Keys | 13 | 0 | 0 | 0 | 13 |
+| 2 | Settings | 13 | 0 | 0 | 0 | 13 |
+| 3 | Audit Logs | 9 | 0 | 0 | 0 | 9 |
+| 3 | Feature Flags | 11 | 0 | 0 | 0 | 11 |
+| 3 | Plans & Subscriptions | 10 | 0 | 0 | 0 | 10 |
+| 4 | UI Components | 16 | 0 | 0 | 0 | 16 |
+| 4 | Layout & Navigation | 7 | 0 | 0 | 0 | 7 |
+| 4 | API Integration | 9 | 0 | 0 | 0 | 9 |
+| | **Total** | **303** | **0** | **40** | **2** | **345** |
 
 ---
 
-## Priority Order
+## Priority Order (Updated Feb 20)
 
-0. **🔴 CRITICAL (Week 1):** Authentication — nothing works without this!
-1. **Critical (Week 2-5):** Workers, Clients, Leads modules (core business)
-2. **High (Week 6-7):** Team Members, Invitations, Roles
-3. **Medium (Week 8-9):** API Keys, Settings, Shared Components
-4. **Low (Week 10-11):** Backoffice modules (admin-only)
+0. **✅ DONE:** Authentication — Keycloak OIDC integration complete
+1. **🔴 CRITICAL (Now):** Backoffice Tenant + User Management — unblocks everything!
+   - Create tenant, add users to tenant, assign roles
+2. **High (After backoffice):** Workers, Clients, Leads modules (core business)
+3. **Medium:** Team Members, Invitations, Roles (tenant-app settings)
+4. **Lower:** API Keys, Settings, Remaining Backoffice, Shared Components
 
 ---
 
