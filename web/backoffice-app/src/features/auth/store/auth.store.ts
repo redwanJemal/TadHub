@@ -42,8 +42,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       const { accessToken, employee } = response.data!;
 
-      localStorage.setItem("forgebase_admin_token", accessToken);
-      localStorage.setItem("forgebase_admin_employee", JSON.stringify(employee));
+      localStorage.setItem("tadhub_admin_token", accessToken);
+      localStorage.setItem("tadhub_admin_employee", JSON.stringify(employee));
 
       set({
         token: accessToken,
@@ -59,8 +59,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: () => {
-    localStorage.removeItem("forgebase_admin_token");
-    localStorage.removeItem("forgebase_admin_employee");
+    localStorage.removeItem("tadhub_admin_token");
+    localStorage.removeItem("tadhub_admin_employee");
 
     set({
       employee: null,
@@ -72,8 +72,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   loadFromStorage: () => {
-    const token = localStorage.getItem("forgebase_admin_token");
-    const employeeStr = localStorage.getItem("forgebase_admin_employee");
+    const token = localStorage.getItem("tadhub_admin_token");
+    const employeeStr = localStorage.getItem("tadhub_admin_employee");
 
     if (token && employeeStr) {
       try {
