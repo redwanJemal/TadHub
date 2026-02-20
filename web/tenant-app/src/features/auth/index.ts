@@ -1,13 +1,11 @@
-// Auth Provider and hooks
 export { AuthProvider, useAppAuth, getAccessToken, getTenantId, setTenantId } from './AuthProvider';
-
-// Auth hooks
-export * from './hooks';
-
-// Auth components
 export { ProtectedRoute } from './components/ProtectedRoute';
-
-// Pages
 export { LoginPage } from './LoginPage';
 export { SignUpPage } from './SignUpPage';
 export { CallbackPage } from './CallbackPage';
+export { ForbiddenPage } from './ForbiddenPage';
+export { usePermissions, checkPermission } from './hooks/usePermissions';
+export { useTenant, useTenantStore } from './hooks/useTenant';
+export { useUser } from './hooks/useUser';
+export type { Permission, Role } from './hooks/usePermissions';
+export type { Tenant } from './hooks/useTenant';

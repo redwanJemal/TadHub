@@ -1,0 +1,231 @@
+version: "3.8"
+
+# Production Docker Compose for TadHub
+# Deployment URLs:
+#   - API: https://api.endlessmaker.com
+#   - Auth (Keycloak): https://auth.endlessmaker.com
+#   - Storage (MinIO): https://storage.endlessmaker.com
+#   - Tenant App: https://tadbeer.endlessmaker.com
+
+services:
+  # =============================================================================
+  # PostgreSQL 17 - Primary Database
+  # =============================================================================
+  postgres:
+    image: postgres:17-alpine
+    container_name: tadhub-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-tadhub}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-tadhub}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tadhub-network
+
+  # =============================================================================
+  # Redis 7 - Caching & Pub/Sub
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: tadhub-redis
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tadhub-network
+
+  # =============================================================================
+  # RabbitMQ 3 - Message Broker
+  # =============================================================================
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: tadhub-rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - tadhub-network
+
+  # =============================================================================
+  # MinIO - Object Storage (S3 Compatible)
+  # Accessible at https://storage.endlessmaker.com
+  # =============================================================================
+  minio:
+    image: minio/minio:latest
+    container_name: tadhub-minio
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+      MINIO_DOMAIN: storage.endlessmaker.com
+      MINIO_BROWSER_REDIRECT_URL: https://storage.endlessmaker.com
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - tadhub-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.minio.rule=Host(`storage.endlessmaker.com`)"
+      - "traefik.http.routers.minio.entrypoints=websecure"
+      - "traefik.http.routers.minio.tls.certresolver=letsencrypt"
+      - "traefik.http.services.minio.loadbalancer.server.port=9000"
+
+  # =============================================================================
+  # TadHub API - .NET Backend
+  # Accessible at https://api.endlessmaker.com
+  # =============================================================================
+  api:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.api
+    container_name: tadhub-api
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__DefaultConnection: Host=postgres;Database=${POSTGRES_DB:-tadhub};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      ConnectionStrings__Redis: redis:6379,password=${REDIS_PASSWORD}
+      RabbitMQ__Host: rabbitmq
+      RabbitMQ__Username: ${RABBITMQ_USER}
+      RabbitMQ__Password: ${RABBITMQ_PASSWORD}
+      Auth__Authority: https://auth.endlessmaker.com/realms/tadhub
+      Auth__Audience: tadhub-api
+      Storage__Endpoint: http://minio:9000
+      Storage__AccessKey: ${MINIO_ACCESS_KEY}
+      Storage__SecretKey: ${MINIO_SECRET_KEY}
+      Storage__BucketName: tadhub
+      Storage__PublicUrl: https://storage.endlessmaker.com
+      Cors__Origins__0: https://tadbeer.endlessmaker.com
+      Cors__Origins__1: https://admin.endlessmaker.com
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - tadhub-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`api.endlessmaker.com`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.api.loadbalancer.server.port=5000"
+
+  # =============================================================================
+  # Tenant App - React Frontend
+  # Accessible at https://tadbeer.endlessmaker.com
+  # =============================================================================
+  tenant-app:
+    build:
+      context: ../web/tenant-app
+      dockerfile: ../../docker/Dockerfile.web
+      args:
+        VITE_API_URL: https://api.endlessmaker.com/api/v1
+        VITE_AUTH_URL: https://auth.endlessmaker.com
+        VITE_AUTH_REALM: tadhub
+        VITE_AUTH_CLIENT_ID: tenant-app
+        VITE_STORAGE_URL: https://storage.endlessmaker.com
+    container_name: tadhub-tenant-app
+    restart: always
+    ports:
+      - "3000:80"
+    networks:
+      - tadhub-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tenant-app.rule=Host(`tadbeer.endlessmaker.com`)"
+      - "traefik.http.routers.tenant-app.entrypoints=websecure"
+      - "traefik.http.routers.tenant-app.tls.certresolver=letsencrypt"
+      - "traefik.http.services.tenant-app.loadbalancer.server.port=80"
+
+  # =============================================================================
+  # Traefik - Reverse Proxy & SSL
+  # =============================================================================
+  traefik:
+    image: traefik:v3.0
+    container_name: tadhub-traefik
+    restart: always
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_certs:/letsencrypt
+    networks:
+      - tadhub-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.endlessmaker.com`)"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_DASHBOARD_AUTH}"
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  tadhub-network:
+    driver: bridge
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  minio_data:
+  traefik_certs:

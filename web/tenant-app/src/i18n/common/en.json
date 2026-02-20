@@ -1,5 +1,5 @@
 {
-  "appName": "ForgeBase",
+  "appName": "TadHub",
   "loading": "Loading...",
   "error": "Error",
   "success": "Success",
@@ -83,5 +83,34 @@
   "theme": "Theme",
   "lightMode": "Light",
   "darkMode": "Dark",
-  "systemMode": "System"
+  "systemMode": "System",
+  "forbidden": {
+    "title": "Access Denied",
+    "message": "You do not have permission to access this page.",
+    "requiredPermission": "Required permission",
+    "goBack": "Go Back",
+    "goHome": "Go to Dashboard"
+  },
+  "onboarding": {
+    "welcome": "Welcome to TadHub",
+    "selectWorkspace": "Select a workspace to continue",
+    "createWorkspace": "Create your first workspace to get started",
+    "pendingInvitations": "Pending Invitations",
+    "invitedBy": "Invited by {{name}} as {{role}}",
+    "accept": "Accept",
+    "yourWorkspaces": "Your Workspaces",
+    "continue": "Continue",
+    "or": "or",
+    "createNew": "Create a New Workspace",
+    "newWorkspace": "New Workspace",
+    "workspaceName": "Workspace Name",
+    "workspaceNamePlaceholder": "e.g., My Company",
+    "cancel": "Cancel",
+    "create": "Create"
+  },
+  "tenant": {
+    "select": "Select Workspace",
+    "workspaces": "Workspaces",
+    "create": "Create Workspace"
+  }
 }
