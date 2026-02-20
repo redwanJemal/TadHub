@@ -17,6 +17,80 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 
 ---
 
+## Phase 0: Authentication (CRITICAL - Do First!)
+
+> **Why Phase 0?** Nothing works without auth. All API calls require valid tokens and tenant context.
+
+### Keycloak OIDC Integration
+- ⬜ Install `react-oidc-context` package
+- ⬜ Configure Keycloak provider settings
+- ⬜ Set up OIDC authority URL (Keycloak realm)
+- ⬜ Configure client ID for tenant-app
+- ⬜ Configure client ID for backoffice-app
+- ⬜ Set redirect URIs (login callback)
+- ⬜ Set post-logout redirect URI
+
+### Token Management
+- ⬜ Access token extraction from OIDC context
+- ⬜ Automatic token refresh before expiry
+- ⬜ Token refresh error handling
+- ⬜ Silent refresh in background
+- ⬜ Token storage (memory, not localStorage for security)
+
+### API Client Setup
+- ⬜ Create axios/fetch instance with base URL
+- ⬜ Add Authorization header interceptor (Bearer token)
+- ⬜ Add X-Tenant-ID header interceptor
+- ⬜ 401 response handler (redirect to login)
+- ⬜ 403 response handler (permission denied UI)
+- ⬜ Network error handling
+- ⬜ Request retry logic
+
+### Auth Context & Hooks
+- ⬜ AuthProvider wrapper component
+- ⬜ useAuth hook (isAuthenticated, user, token)
+- ⬜ useTenant hook (current tenant context)
+- ⬜ usePermissions hook (check user permissions)
+- ⬜ hasPermission utility function
+
+### Protected Routes
+- ⬜ ProtectedRoute wrapper component
+- ⬜ Redirect to login if not authenticated
+- ⬜ Loading state while checking auth
+- ⬜ Permission-based route protection
+- ⬜ Role-based route protection
+
+### Login Flow
+- ⬜ Login page with Keycloak redirect
+- ⬜ OAuth callback page handler
+- ⬜ Extract tokens from callback
+- ⬜ Fetch user profile after login
+- ⬜ Fetch tenant list for user
+- ⬜ Tenant selection (if user has multiple)
+- ⬜ Set active tenant in context
+- ⬜ Redirect to dashboard after login
+
+### Logout Flow
+- ⬜ Logout button in header/menu
+- ⬜ Clear local auth state
+- ⬜ Keycloak logout redirect
+- ⬜ Redirect to login page after logout
+
+### User Profile
+- ⬜ Fetch /users/me endpoint
+- ⬜ Display user name in header
+- ⬜ Display user avatar
+- ⬜ User profile dropdown menu
+
+### Session Persistence
+- ⬜ Remember selected tenant
+- ⬜ Restore session on page refresh
+- ⬜ Handle expired session gracefully
+
+**Phase 0 Total: 0/42 tasks**
+
+---
+
 ## Phase 1: Core Domain (tenant-app)
 
 ### Workers Module (Priority: Critical)
@@ -468,49 +542,43 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 **API Integration Total: 0/9 tasks**
 
 ### Authentication
-- ⬜ Keycloak integration
-- ⬜ Login redirect
-- ⬜ Token refresh
-- ⬜ Logout flow
-- ⬜ Protected route wrapper
-- ⬜ Permission-based rendering
-- ⬜ Tenant context provider
-
-**Authentication Total: 0/7 tasks**
+> **Moved to Phase 0** — Auth is foundational and must be completed first.
+> See Phase 0 above for all 42 auth-related tasks.
 
 ---
 
 ## Summary
 
-| Module | Not Started | In Progress | Complete | Total |
-|--------|-------------|-------------|----------|-------|
-| Workers | 62 | 0 | 0 | 62 |
-| Clients | 59 | 0 | 0 | 59 |
-| Leads | 38 | 0 | 0 | 38 |
-| Team Members | 8 | 0 | 0 | 8 |
-| Invitations | 11 | 0 | 0 | 11 |
-| Roles & Permissions | 14 | 0 | 0 | 14 |
-| API Keys | 13 | 0 | 0 | 13 |
-| Settings | 13 | 0 | 0 | 13 |
-| Tenants Management | 10 | 0 | 0 | 10 |
-| Users Management | 9 | 0 | 0 | 9 |
-| Audit Logs | 9 | 0 | 0 | 9 |
-| Feature Flags | 11 | 0 | 0 | 11 |
-| Plans & Subscriptions | 10 | 0 | 0 | 10 |
-| UI Components | 16 | 0 | 0 | 16 |
-| Layout & Navigation | 7 | 0 | 0 | 7 |
-| API Integration | 9 | 0 | 0 | 9 |
-| Authentication | 7 | 0 | 0 | 7 |
-| **Total** | **306** | **0** | **0** | **306** |
+| Phase | Module | Not Started | In Progress | Complete | Total |
+|-------|--------|-------------|-------------|----------|-------|
+| **0** | **Authentication** | **42** | **0** | **0** | **42** |
+| 1 | Workers | 62 | 0 | 0 | 62 |
+| 1 | Clients | 59 | 0 | 0 | 59 |
+| 1 | Leads | 38 | 0 | 0 | 38 |
+| 2 | Team Members | 8 | 0 | 0 | 8 |
+| 2 | Invitations | 11 | 0 | 0 | 11 |
+| 2 | Roles & Permissions | 14 | 0 | 0 | 14 |
+| 2 | API Keys | 13 | 0 | 0 | 13 |
+| 2 | Settings | 13 | 0 | 0 | 13 |
+| 3 | Tenants Management | 10 | 0 | 0 | 10 |
+| 3 | Users Management | 9 | 0 | 0 | 9 |
+| 3 | Audit Logs | 9 | 0 | 0 | 9 |
+| 3 | Feature Flags | 11 | 0 | 0 | 11 |
+| 3 | Plans & Subscriptions | 10 | 0 | 0 | 10 |
+| 4 | UI Components | 16 | 0 | 0 | 16 |
+| 4 | Layout & Navigation | 7 | 0 | 0 | 7 |
+| 4 | API Integration | 9 | 0 | 0 | 9 |
+| | **Total** | **341** | **0** | **0** | **341** |
 
 ---
 
 ## Priority Order
 
-1. **Critical (Week 1-4):** Workers, Clients, Leads modules
-2. **High (Week 5-6):** Team Members, Invitations, Roles
-3. **Medium (Week 7-8):** API Keys, Settings, Shared Components
-4. **Low (Week 9-10):** Backoffice modules (admin-only)
+0. **🔴 CRITICAL (Week 1):** Authentication — nothing works without this!
+1. **Critical (Week 2-5):** Workers, Clients, Leads modules (core business)
+2. **High (Week 6-7):** Team Members, Invitations, Roles
+3. **Medium (Week 8-9):** API Keys, Settings, Shared Components
+4. **Low (Week 10-11):** Backoffice modules (admin-only)
 
 ---
 
