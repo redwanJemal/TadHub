@@ -4,18 +4,36 @@ import { ProtectedRoute } from '@/features/auth/components/ProtectedRoute';
 import { DashboardLayout } from '@/shared/components/layout/DashboardLayout';
 import { PageLoader } from '@/shared/components/ui/page-loader';
 
-// Lazy load pages
+// Auth pages
 const LoginPage = lazy(() => import('@/features/auth/LoginPage').then(m => ({ default: m.LoginPage })));
 const SignUpPage = lazy(() => import('@/features/auth/SignUpPage').then(m => ({ default: m.SignUpPage })));
 const CallbackPage = lazy(() => import('@/features/auth/CallbackPage').then(m => ({ default: m.CallbackPage })));
-const OnboardingPage = lazy(() => import('@/features/onboarding/OnboardingPage').then(m => ({ default: m.OnboardingPage })));
-const DashboardPage = lazy(() => import('@/features/dashboard/DashboardPage').then(m => ({ default: m.DashboardPage })));
-const SettingsPage = lazy(() => import('@/features/settings/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const ApiKeysPage = lazy(() => import('@/features/api-keys/ApiKeysPage').then(m => ({ default: m.ApiKeysPage })));
-const IntegrationsPage = lazy(() => import('@/features/integrations/IntegrationsPage').then(m => ({ default: m.IntegrationsPage })));
-const BillingPage = lazy(() => import('@/features/billing/BillingPage').then(m => ({ default: m.BillingPage })));
-const RolesPage = lazy(() => import('@/features/roles/RolesPage').then(m => ({ default: m.RolesPage })));
-const TeamPage = lazy(() => import('@/features/team/TeamPage').then(m => ({ default: m.TeamPage })));
+
+// Placeholder home
+function HomePage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+      <h1 className="text-3xl font-bold mb-4">TadHub - Tenant Portal</h1>
+      <p className="text-muted-foreground mb-8">
+        Tadbeer ERP Platform for UAE Domestic Worker Recruitment
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-2xl">
+        <div className="p-4 border rounded-lg">
+          <h3 className="font-semibold mb-2">🧑‍💼 Workers</h3>
+          <p className="text-sm text-muted-foreground">CV management, state machine, passport custody</p>
+        </div>
+        <div className="p-4 border rounded-lg">
+          <h3 className="font-semibold mb-2">👥 Clients</h3>
+          <p className="text-sm text-muted-foreground">Employer management, verification, documents</p>
+        </div>
+        <div className="p-4 border rounded-lg">
+          <h3 className="font-semibold mb-2">📊 Leads</h3>
+          <p className="text-sm text-muted-foreground">Sales pipeline, follow-ups</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function AppRouter() {
   return (
@@ -25,18 +43,8 @@ export function AppRouter() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/callback" element={<CallbackPage />} />
-        
-        {/* Onboarding - requires auth but no tenant setup yet */}
-        <Route
-          path="/onboarding"
-          element={
-            <ProtectedRoute requireOnboarding>
-              <OnboardingPage />
-            </ProtectedRoute>
-          }
-        />
 
-        {/* Protected routes - require auth + completed onboarding */}
+        {/* Protected routes */}
         <Route
           path="/"
           element={
@@ -45,14 +53,8 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="team" element={<TeamPage />} />
-          <Route path="roles" element={<RolesPage />} />
-          <Route path="api-keys" element={<ApiKeysPage />} />
-          <Route path="integrations" element={<IntegrationsPage />} />
-          <Route path="billing" element={<BillingPage />} />
-          <Route path="settings" element={<SettingsPage />} />
+          <Route index element={<HomePage />} />
+          {/* Feature routes will be added here */}
         </Route>
 
         {/* Catch all */}

@@ -9,35 +9,15 @@ import commonAr from './common/ar.json';
 // Feature translations
 import authEn from '../features/auth/i18n/en.json';
 import authAr from '../features/auth/i18n/ar.json';
-import dashboardEn from '../features/dashboard/i18n/en.json';
-import dashboardAr from '../features/dashboard/i18n/ar.json';
-import onboardingEn from '../features/onboarding/i18n/en.json';
-import onboardingAr from '../features/onboarding/i18n/ar.json';
-import settingsEn from '../features/settings/i18n/en.json';
-import settingsAr from '../features/settings/i18n/ar.json';
-import rolesEn from '../features/roles/i18n/en.json';
-import rolesAr from '../features/roles/i18n/ar.json';
-import teamEn from '../features/team/i18n/en.json';
-import teamAr from '../features/team/i18n/ar.json';
 
 const resources = {
   en: {
     common: commonEn,
     auth: authEn,
-    dashboard: dashboardEn,
-    onboarding: onboardingEn,
-    settings: settingsEn,
-    roles: rolesEn,
-    team: teamEn,
   },
   ar: {
     common: commonAr,
     auth: authAr,
-    dashboard: dashboardAr,
-    onboarding: onboardingAr,
-    settings: settingsAr,
-    roles: rolesAr,
-    team: teamAr,
   },
 };
 
@@ -48,7 +28,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'dashboard', 'onboarding', 'settings', 'roles', 'team'],
+    ns: ['common', 'auth'],
     interpolation: {
       escapeValue: false,
     },

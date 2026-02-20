@@ -5,24 +5,16 @@ import { useSidebar } from "./DashboardLayout";
 import { useAuth } from "react-oidc-context";
 import {
   LayoutDashboard,
-  Users,
-  Settings,
   X,
   LogOut,
-  Key,
-  Plug,
-  CreditCard,
-  Shield,
 } from "lucide-react";
 
 const navItems = [
-  { path: "/dashboard", icon: LayoutDashboard, labelKey: "nav.dashboard" },
-  { path: "/team", icon: Users, labelKey: "nav.team" },
-  { path: "/roles", icon: Shield, labelKey: "nav.roles" },
-  { path: "/api-keys", icon: Key, labelKey: "nav.api" },
-  { path: "/integrations", icon: Plug, labelKey: "nav.integrations" },
-  { path: "/billing", icon: CreditCard, labelKey: "nav.billing" },
-  { path: "/settings", icon: Settings, labelKey: "nav.settings" },
+  { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
+  // Features to be implemented:
+  // { path: "/workers", icon: Briefcase, labelKey: "nav.workers" },
+  // { path: "/clients", icon: UserCheck, labelKey: "nav.clients" },
+  // { path: "/leads", icon: Users, labelKey: "nav.leads" },
 ];
 
 interface SidebarProps {
@@ -59,11 +51,11 @@ export function Sidebar({ onClose }: SidebarProps) {
       >
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
-            S
+            T
           </div>
           {!collapsed && (
             <span className="font-semibold text-lg whitespace-nowrap">
-              SaaS Starter
+              TadHub
             </span>
           )}
         </div>
@@ -80,9 +72,9 @@ export function Sidebar({ onClose }: SidebarProps) {
       {/* Tenant info */}
       {!collapsed && (
         <div className="border-b px-4 py-3">
-          <p className="text-xs text-muted-foreground">{t("welcome")}</p>
+          <p className="text-xs text-muted-foreground">Welcome</p>
           <p className="font-medium text-foreground truncate">
-            {firstName || "Workspace"}
+            {firstName || "Tenant Portal"}
           </p>
         </div>
       )}
@@ -103,6 +95,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                 <NavLink
                   key={item.path}
                   to={item.path}
+                  end={item.exact}
                   onClick={onClose}
                   title={t(item.labelKey)}
                   className={({ isActive }) =>
@@ -123,6 +116,7 @@ export function Sidebar({ onClose }: SidebarProps) {
               <NavLink
                 key={item.path}
                 to={item.path}
+                end={item.exact}
                 onClick={onClose}
                 className={({ isActive }) =>
                   cn(
