@@ -74,7 +74,7 @@ services:
     image: quay.io/keycloak/keycloak:26.0
     container_name: tadhub-keycloak
     restart: always
-    command: start --optimized --hostname-strict=false --proxy-headers=xforwarded
+    command: start --hostname-strict=false --proxy-headers=xforwarded --http-enabled=true --db=postgres
     environment:
       # Database
       KC_DB: postgres
