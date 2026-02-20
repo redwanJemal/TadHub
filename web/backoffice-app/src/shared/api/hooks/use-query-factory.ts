@@ -7,7 +7,7 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query';
 import { apiClient, ApiError } from '../client';
-import type { QueryParams, PaginatedData, ApiSuccessResponse, ResponseMeta } from '../types';
+import type { QueryParams, PaginatedData, ResponseMeta } from '../types';
 
 /**
  * Paginated query result with helper methods
@@ -61,30 +61,29 @@ export function createListQuery<T>(
   ): PaginatedQueryResult<T> {
     const queryKey: QueryKey = [key, 'list', params];
 
-    const query = useQuery<ApiSuccessResponse<PaginatedData<T>>, ApiError>({
+    const query = useQuery<PaginatedData<T>, ApiError>({
       queryKey,
-      queryFn: () => apiClient.getWithMeta<PaginatedData<T>>(endpoint, params),
+      queryFn: () => apiClient.get<PaginatedData<T>>(endpoint, params),
       enabled: options?.enabled ?? true,
       staleTime: options?.staleTime,
       gcTime: options?.cacheTime,
       refetchOnMount: options?.refetchOnMount,
     });
 
-    const data = query.data?.data;
-    const meta = query.data?.meta ?? {} as ResponseMeta;
+    const data = query.data;
 
     return {
       items: data?.items ?? [],
-      meta,
+      meta: {} as ResponseMeta,
       isLoading: query.isLoading,
       isError: query.isError,
       error: query.error,
       refetch: query.refetch,
-      hasNextPage: meta.hasNext ?? false,
-      hasPrevPage: meta.hasPrev ?? false,
-      totalPages: meta.totalPages ?? 0,
-      total: meta.total ?? 0,
-      currentPage: meta.page ?? 1,
+      hasNextPage: data?.hasNextPage ?? false,
+      hasPrevPage: data?.hasPreviousPage ?? false,
+      totalPages: data?.totalPages ?? 0,
+      total: data?.totalCount ?? 0,
+      currentPage: data?.page ?? 1,
     };
   };
 }

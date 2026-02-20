@@ -25,6 +25,11 @@ public interface ITenantService
     /// Lists tenants the user is a member of.
     /// </summary>
     Task<PagedList<TenantDto>> ListUserTenantsAsync(Guid userId, QueryParameters qp, CancellationToken ct = default);
+    
+    /// <summary>
+    /// Lists all tenants (for platform admins).
+    /// </summary>
+    Task<PagedList<TenantDto>> ListAllTenantsAsync(QueryParameters qp, CancellationToken ct = default);
 
     /// <summary>
     /// Creates a new tenant. The current user becomes the owner.

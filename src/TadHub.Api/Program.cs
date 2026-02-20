@@ -56,7 +56,39 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = keycloakSettings.ValidateIssuer,
             ValidateAudience = keycloakSettings.ValidateAudience,
             ValidateLifetime = true,
-            ValidateIssuerSigningKey = true
+            ValidateIssuerSigningKey = true,
+            RoleClaimType = "roles"  // Use Keycloak's roles claim
+        };
+        
+        // Map Keycloak realm_access roles to standard role claims
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var realmAccess = context.Principal?.FindFirst("realm_access")?.Value;
+                if (!string.IsNullOrEmpty(realmAccess))
+                {
+                    try
+                    {
+                        var doc = System.Text.Json.JsonDocument.Parse(realmAccess);
+                        if (doc.RootElement.TryGetProperty("roles", out var rolesArray))
+                        {
+                            var identity = context.Principal?.Identity as System.Security.Claims.ClaimsIdentity;
+                            foreach (var role in rolesArray.EnumerateArray())
+                            {
+                                var roleName = role.GetString();
+                                if (!string.IsNullOrEmpty(roleName))
+                                {
+                                    identity?.AddClaim(new System.Security.Claims.Claim(
+                                        System.Security.Claims.ClaimTypes.Role, roleName));
+                                }
+                            }
+                        }
+                    }
+                    catch { /* ignore parsing errors */ }
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 

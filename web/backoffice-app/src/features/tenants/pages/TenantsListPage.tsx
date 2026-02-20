@@ -279,7 +279,7 @@ export function TenantsListPage() {
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.total)} of {data.total} tenants
+            Showing {(page - 1) * 20 + 1} to {Math.min(page * 20, data.totalCount)} of {data.totalCount} tenants
           </p>
           <div className="flex items-center gap-2">
             <Button
