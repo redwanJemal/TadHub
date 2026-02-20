@@ -1,7 +1,7 @@
 import { getAccessToken, getTenantId } from '../../features/auth/AuthProvider';
 import { ApiResponse, ApiSuccessResponse, QueryParams, buildQueryString } from './types';
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://api.endlessmaker.com/api/v1';
 
 // Retry configuration
 const RETRY_CONFIG = {
@@ -114,7 +114,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
     throw new ApiError(403, errorCode, errorMessage);
   }
 
-  let json: ApiResponse<T>;
+  let json: unknown;
 
   try {
     json = await response.json();
@@ -126,8 +126,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
     );
   }
 
-  if (!response.ok || !json.success) {
-    const error = 'error' in json ? json.error : undefined;
+  // Check if response is an error response
+  if (!response.ok) {
+    const errorJson = json as { error?: { code?: string; message?: string; details?: unknown } };
+    const error = errorJson?.error;
     throw new ApiError(
       response.status,
       error?.code ?? 'UNKNOWN_ERROR',
@@ -136,7 +138,28 @@ async function handleResponse<T>(response: Response): Promise<T> {
     );
   }
 
-  return json.data as T;
+  // Handle wrapped response format: { data: T, meta?: ... }
+  const wrappedJson = json as { data?: T; success?: boolean; error?: unknown };
+  
+  // If it has explicit success: false, it's an error
+  if (wrappedJson.success === false) {
+    const errorJson = json as { error?: { code?: string; message?: string; details?: unknown } };
+    const error = errorJson?.error;
+    throw new ApiError(
+      response.status,
+      error?.code ?? 'UNKNOWN_ERROR',
+      error?.message ?? 'An error occurred',
+      error?.details
+    );
+  }
+
+  // If response has 'data' property, return it (wrapped format)
+  if (wrappedJson.data !== undefined) {
+    return wrappedJson.data;
+  }
+
+  // Otherwise return the raw response (direct format)
+  return json as T;
 }
 
 /**
@@ -280,6 +303,113 @@ export const apiClient = {
       },
     });
     return handleResponseWithMeta<T>(response);
+  },
+
+  /**
+   * GET request for paginated endpoints
+   * Transforms { data: T[], pagination: {...} } to { items: T[], ...pagination }
+   */
+  async getPaged<T>(endpoint: string, params?: QueryParams): Promise<{
+    items: T[];
+    totalCount: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }> {
+    const response = await fetchWithRetry(buildUrl(endpoint, params), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
+      },
+    });
+
+    if (response.status === 401) {
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+      throw new ApiError(401, 'UNAUTHORIZED', 'Authentication required');
+    }
+
+    if (response.status === 403) {
+      window.dispatchEvent(new CustomEvent('auth:forbidden'));
+      throw new ApiError(403, 'FORBIDDEN', 'Permission denied');
+    }
+
+    let json: unknown;
+    try {
+      json = await response.json();
+    } catch {
+      throw new ApiError(response.status, 'PARSE_ERROR', 'Failed to parse response');
+    }
+
+    if (!response.ok) {
+      const errorJson = json as { error?: { code?: string; message?: string } };
+      throw new ApiError(
+        response.status,
+        errorJson?.error?.code ?? 'UNKNOWN_ERROR',
+        errorJson?.error?.message ?? 'An error occurred'
+      );
+    }
+
+    // Handle wrapped paged response: { data: T[], pagination: {...}, meta: {...} }
+    const pagedJson = json as {
+      data?: T[];
+      pagination?: {
+        page: number;
+        pageSize: number;
+        totalCount: number;
+        totalPages: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+      };
+    };
+
+    if (pagedJson.data && pagedJson.pagination) {
+      return {
+        items: pagedJson.data,
+        ...pagedJson.pagination,
+      };
+    }
+
+    // Handle direct PagedList format (items, totalCount, etc.)
+    const directJson = json as {
+      items?: T[];
+      totalCount?: number;
+      page?: number;
+      pageSize?: number;
+      totalPages?: number;
+      hasNextPage?: boolean;
+      hasPreviousPage?: boolean;
+    };
+
+    if (directJson.items !== undefined) {
+      return {
+        items: directJson.items,
+        totalCount: directJson.totalCount ?? 0,
+        page: directJson.page ?? 1,
+        pageSize: directJson.pageSize ?? 20,
+        totalPages: directJson.totalPages ?? 0,
+        hasNextPage: directJson.hasNextPage ?? false,
+        hasPreviousPage: directJson.hasPreviousPage ?? false,
+      };
+    }
+
+    // Fallback: treat as array
+    const arrayJson = json as T[];
+    if (Array.isArray(arrayJson)) {
+      return {
+        items: arrayJson,
+        totalCount: arrayJson.length,
+        page: 1,
+        pageSize: arrayJson.length,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      };
+    }
+
+    throw new ApiError(response.status, 'INVALID_FORMAT', 'Unexpected response format');
   },
 
   async post<T>(endpoint: string, body?: unknown): Promise<T> {

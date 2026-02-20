@@ -70,7 +70,7 @@ export const workersApi = {
    */
   async list(params: WorkerFilterParams = {}): Promise<PagedList<WorkerDto>> {
     const query = buildWorkerQueryParams(params);
-    return apiClient.get<PagedList<WorkerDto>>(BASE_PATH, query);
+    return apiClient.getPaged<WorkerDto>(BASE_PATH, query);
   },
 
   /**

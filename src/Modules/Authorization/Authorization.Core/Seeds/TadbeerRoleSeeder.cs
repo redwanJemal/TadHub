@@ -137,6 +137,7 @@ public class TadbeerRoleSeeder
             {
                 "clients.register",
                 "clients.manage",
+                "workers.view",
                 "workers.search",
                 "contracts.create"
             },
@@ -153,15 +154,21 @@ public class TadbeerRoleSeeder
                 "pro.tasks.manage",
                 "pro.visa.apply",
                 "pro.documents.manage",
-                "workers.passport.custody",
+                "workers.view",
+                "workers.passport.view",
+                "workers.passport.manage",
                 "contracts.approve"
             },
             
             ["agent"] = new()
             {
+                "workers.view",
+                "workers.create",
+                "workers.update",
                 "workers.manage",
                 "workers.cv.edit",
                 "workers.search",
+                "workers.passport.view",
                 "scheduling.bookings.create",
                 "scheduling.bookings.cancel"
             },
