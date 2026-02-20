@@ -1,0 +1,63 @@
+{
+  "title": "Team Members",
+  "subtitle": "Manage your workspace team",
+  "searchPlaceholder": "Search by name or email...",
+  "inviteMember": "Invite Member",
+  "neverLoggedIn": "Never",
+  "columns": {
+    "member": "Member",
+    "role": "Role",
+    "status": "Status",
+    "lastLogin": "Last Login",
+    "actions": "Actions"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending"
+  },
+  "filters": {
+    "role": "Role",
+    "status": "Status"
+  },
+  "inviteDialog": {
+    "title": "Invite Team Member",
+    "description": "Send an invitation to join your workspace"
+  },
+  "editDialog": {
+    "title": "Edit Member",
+    "description": "Update role and status for {{name}}"
+  },
+  "deleteDialog": {
+    "title": "Remove Member",
+    "description": "Are you sure you want to remove {{name}} from this workspace? They will lose access immediately."
+  },
+  "fields": {
+    "email": "Email Address",
+    "emailPlaceholder": "colleague@company.com",
+    "role": "Role",
+    "rolePlaceholder": "Select a role",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "John",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Doe",
+    "isActive": "Active member"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "invite": "Send Invitation",
+    "inviting": "Sending...",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "remove": "Remove",
+    "removing": "Removing..."
+  },
+  "notifications": {
+    "memberInvited": "Invitation sent successfully",
+    "memberUpdated": "Member updated successfully",
+    "memberRemoved": "Member removed successfully",
+    "invitationResent": "Invitation resent successfully",
+    "removeFailed": "Failed to remove member",
+    "resendFailed": "Failed to resend invitation"
+  }
+}

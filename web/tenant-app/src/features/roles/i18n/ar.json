@@ -1,0 +1,44 @@
+{
+  "title": "الأدوار والصلاحيات",
+  "subtitle": "إدارة الأدوار المخصصة لمساحة العمل",
+  "searchPlaceholder": "البحث في الأدوار...",
+  "addRole": "إضافة دور",
+  "systemRole": "نظام",
+  "columns": {
+    "name": "الدور",
+    "permissions": "الصلاحيات",
+    "members": "الأعضاء",
+    "createdAt": "تاريخ الإنشاء",
+    "actions": "الإجراءات"
+  },
+  "createDialog": {
+    "title": "إنشاء دور",
+    "description": "إنشاء دور مخصص جديد لمساحة العمل"
+  },
+  "editDialog": {
+    "title": "تعديل الدور",
+    "description": "تحديث اسم الدور والصلاحيات"
+  },
+  "deleteDialog": {
+    "title": "حذف الدور",
+    "description": "هل أنت متأكد من حذف الدور \"{{name}}\"؟ لا يمكن التراجع عن هذا الإجراء."
+  },
+  "fields": {
+    "name": "الاسم",
+    "namePlaceholder": "مثال: محرر",
+    "slug": "المعرف",
+    "slugPlaceholder": "مثال: editor",
+    "description": "الوصف",
+    "descriptionPlaceholder": "وصف مختصر لهذا الدور",
+    "permissions": "الصلاحيات"
+  },
+  "actions": {
+    "cancel": "إلغاء",
+    "create": "إنشاء",
+    "creating": "جاري الإنشاء...",
+    "save": "حفظ التغييرات",
+    "saving": "جاري الحفظ...",
+    "delete": "حذف",
+    "deleting": "جاري الحذف..."
+  }
+}

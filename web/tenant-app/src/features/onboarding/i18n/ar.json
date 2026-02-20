@@ -1,0 +1,73 @@
+{
+  "title": "مرحباً بك في فورج بيس",
+  "subtitle": "دعنا نقوم بإعداد مساحة العمل الخاصة بك في خطوات بسيطة",
+  "steps": {
+    "workspace": "مساحة العمل",
+    "profile": "الملف الشخصي",
+    "team": "الفريق",
+    "complete": "اكتمال"
+  },
+  "workspace": {
+    "title": "إنشاء مساحة العمل",
+    "subtitle": "ستكون هذه مساحة فريقك على فورج بيس",
+    "name": "اسم مساحة العمل",
+    "namePlaceholder": "مثال: شركة أكمي",
+    "nameHint": "هكذا ستظهر مساحة العمل لأعضاء الفريق",
+    "slug": "رابط مساحة العمل",
+    "slugPlaceholder": "acme-inc",
+    "slugHint": "معرف مساحة العمل الفريد",
+    "industry": "القطاع",
+    "industryPlaceholder": "اختر القطاع",
+    "size": "حجم الفريق",
+    "sizePlaceholder": "اختر حجم الفريق"
+  },
+  "profile": {
+    "title": "أكمل ملفك الشخصي",
+    "subtitle": "أخبرنا قليلاً عن نفسك",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "jobTitle": "المسمى الوظيفي",
+    "jobTitlePlaceholder": "مثال: مدير المنتج",
+    "phone": "رقم الهاتف",
+    "phonePlaceholder": "+966 5x xxx xxxx"
+  },
+  "team": {
+    "title": "دعوة فريقك",
+    "subtitle": "التعاون أفضل معاً",
+    "inviteEmails": "الدعوة عبر البريد الإلكتروني",
+    "inviteEmailsPlaceholder": "أدخل عناوين البريد الإلكتروني، مفصولة بفواصل",
+    "inviteEmailsHint": "سنرسل لهم دعوة للانضمام إلى مساحة العمل",
+    "skipForNow": "تخطي الآن",
+    "inviteCount": "سيتم دعوة {{count}} عضو فريق",
+    "inviteCount_plural": "سيتم دعوة {{count}} أعضاء فريق"
+  },
+  "complete": {
+    "title": "أنت جاهز!",
+    "subtitle": "مساحة العمل جاهزة للاستخدام",
+    "goToDashboard": "انتقل إلى لوحة التحكم",
+    "whatNext": "ماذا بعد؟",
+    "suggestions": {
+      "explore": "استكشف لوحة التحكم",
+      "invite": "دعوة المزيد من أعضاء الفريق",
+      "settings": "تخصيص الإعدادات",
+      "integrations": "إعداد التكاملات"
+    }
+  },
+  "industries": {
+    "technology": "التكنولوجيا",
+    "healthcare": "الرعاية الصحية",
+    "finance": "المالية والبنوك",
+    "education": "التعليم",
+    "retail": "التجزئة والتجارة الإلكترونية",
+    "manufacturing": "التصنيع",
+    "consulting": "الاستشارات",
+    "other": "أخرى"
+  },
+  "teamSizes": {
+    "solo": "أنا فقط",
+    "small": "2-10 أشخاص",
+    "medium": "11-50 شخص",
+    "large": "51-200 شخص",
+    "enterprise": "200+ شخص"
+  }
+}

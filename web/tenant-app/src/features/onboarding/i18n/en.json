@@ -1,0 +1,73 @@
+{
+  "title": "Welcome to ForgeBase",
+  "subtitle": "Let's set up your workspace in a few easy steps",
+  "steps": {
+    "workspace": "Workspace",
+    "profile": "Profile",
+    "team": "Team",
+    "complete": "Complete"
+  },
+  "workspace": {
+    "title": "Create Your Workspace",
+    "subtitle": "This will be your team's home on ForgeBase",
+    "name": "Workspace Name",
+    "namePlaceholder": "e.g., Acme Inc",
+    "nameHint": "This is how your workspace will appear to team members",
+    "slug": "Workspace URL",
+    "slugPlaceholder": "acme-inc",
+    "slugHint": "Your unique workspace identifier",
+    "industry": "Industry",
+    "industryPlaceholder": "Select your industry",
+    "size": "Team Size",
+    "sizePlaceholder": "Select team size"
+  },
+  "profile": {
+    "title": "Complete Your Profile",
+    "subtitle": "Tell us a bit about yourself",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "jobTitle": "Job Title",
+    "jobTitlePlaceholder": "e.g., Product Manager",
+    "phone": "Phone Number",
+    "phonePlaceholder": "+1 (555) 000-0000"
+  },
+  "team": {
+    "title": "Invite Your Team",
+    "subtitle": "Collaboration is better together",
+    "inviteEmails": "Invite by Email",
+    "inviteEmailsPlaceholder": "Enter email addresses, separated by commas",
+    "inviteEmailsHint": "We'll send them an invitation to join your workspace",
+    "skipForNow": "Skip for now",
+    "inviteCount": "{{count}} team member will be invited",
+    "inviteCount_plural": "{{count}} team members will be invited"
+  },
+  "complete": {
+    "title": "You're All Set!",
+    "subtitle": "Your workspace is ready to go",
+    "goToDashboard": "Go to Dashboard",
+    "whatNext": "What's next?",
+    "suggestions": {
+      "explore": "Explore the dashboard",
+      "invite": "Invite more team members",
+      "settings": "Customize your settings",
+      "integrations": "Set up integrations"
+    }
+  },
+  "industries": {
+    "technology": "Technology",
+    "healthcare": "Healthcare",
+    "finance": "Finance & Banking",
+    "education": "Education",
+    "retail": "Retail & E-commerce",
+    "manufacturing": "Manufacturing",
+    "consulting": "Consulting",
+    "other": "Other"
+  },
+  "teamSizes": {
+    "solo": "Just me",
+    "small": "2-10 people",
+    "medium": "11-50 people",
+    "large": "51-200 people",
+    "enterprise": "200+ people"
+  }
+}

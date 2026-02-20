@@ -1,0 +1,44 @@
+{
+  "title": "Roles & Permissions",
+  "subtitle": "Manage custom roles for your workspace",
+  "searchPlaceholder": "Search roles...",
+  "addRole": "Add Role",
+  "systemRole": "System",
+  "columns": {
+    "name": "Role",
+    "permissions": "Permissions",
+    "members": "Members",
+    "createdAt": "Created",
+    "actions": "Actions"
+  },
+  "createDialog": {
+    "title": "Create Role",
+    "description": "Create a new custom role for your workspace"
+  },
+  "editDialog": {
+    "title": "Edit Role",
+    "description": "Update role name and permissions"
+  },
+  "deleteDialog": {
+    "title": "Delete Role",
+    "description": "Are you sure you want to delete the role \"{{name}}\"? This action cannot be undone."
+  },
+  "fields": {
+    "name": "Name",
+    "namePlaceholder": "e.g. Editor",
+    "slug": "Slug",
+    "slugPlaceholder": "e.g. editor",
+    "description": "Description",
+    "descriptionPlaceholder": "Brief description of this role",
+    "permissions": "Permissions"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "create": "Create",
+    "creating": "Creating...",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "delete": "Delete",
+    "deleting": "Deleting..."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "login": {
+    "title": "مرحباً بعودتك",
+    "subtitle": "سجل دخولك إلى حساب المدير",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "admin@example.com",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "••••••••",
+    "submit": "تسجيل الدخول",
+    "loading": "جاري تسجيل الدخول...",
+    "forgotPassword": "نسيت كلمة المرور؟"
+  },
+  "logout": "تسجيل الخروج"
+}

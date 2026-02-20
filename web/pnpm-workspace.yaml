@@ -1,0 +1,4 @@
+packages:
+  - 'tenant-app'
+  - 'backoffice-app'
+  - 'packages/*'
