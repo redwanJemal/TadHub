@@ -432,24 +432,25 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 > **Why High Priority?** Tenant-app users need to be added to tenants first. Backoffice must be built to unblock tenant-app testing and onboarding.
 
 ### Tenants Management (CRITICAL PATH)
-- ⬜ Tenants list page
-- ⬜ Create tenant form ← **Must implement first**
-- ⬜ Status filter (Active/Suspended)
-- ⬜ Search by name/slug
-- ⬜ Tenant detail view
-- ⬜ Tenant type display
-- ⬜ Subscription status
-- ⬜ Member count
-- ⬜ Suspend tenant action
-- ⬜ Reactivate tenant action
-- ⬜ Force delete tenant (dangerous)
-- ⬜ Add user to tenant ← **Must implement first**
-- ⬜ Assign role to user in tenant ← **Must implement first**
+- ✅ Tenants list page
+- ✅ Create tenant form
+- ✅ Status filter (Active/Suspended)
+- ✅ Search by name/slug
+- ✅ Tenant detail view
+- ✅ Tenant type display
+- ✅ Subscription status
+- ✅ Member count (Members tab with count)
+- ✅ Suspend tenant action
+- ✅ Reactivate tenant action
+- ✅ Force delete tenant (confirmation dialog)
+- ✅ Row selection checkboxes (bulk actions UI)
+- ⬜ Add user to tenant ← **Next priority**
+- ⬜ Assign role to user in tenant
 
-**Tenants Management Total: 0/13 tasks**
+**Tenants Management Total: 12/14 tasks**
 
 ### Users Management (CRITICAL PATH)
-- ⬜ Users list page
+- 🟡 Users list page (placeholder created, routing works)
 - ⬜ Active/Inactive filter
 - ⬜ Search by name/email
 - ⬜ User detail view
@@ -460,9 +461,10 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 - ⬜ Reactivate user action
 - ⬜ Create user form (admin)
 
-**Users Management Total: 0/10 tasks**
+**Users Management Total: 1/10 tasks (in progress)**
 
 ### Audit Logs
+- 🟡 Audit logs page (placeholder created, routing works)
 - ⬜ Audit events list
 - ⬜ Audit logs list (entity changes)
 - ⬜ Event name filter
@@ -473,7 +475,7 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 - ⬜ Old/new values diff view
 - ⬜ Export audit logs
 
-**Audit Logs Total: 0/9 tasks**
+**Audit Logs Total: 1/10 tasks (in progress)**
 
 ### Feature Flags
 - ⬜ Feature flags list
@@ -563,8 +565,8 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 | Phase | Module | Not Started | In Progress | Complete | Blocked | Total |
 |-------|--------|-------------|-------------|----------|---------|-------|
 | **0** | **Authentication** | **0** | **0** | **40** | **2** | **42** |
-| **3** | **Tenants (CRITICAL)** | **13** | **0** | **0** | **0** | **13** |
-| **3** | **Users (CRITICAL)** | **10** | **0** | **0** | **0** | **10** |
+| **3** | **Tenants (CRITICAL)** | **2** | **0** | **12** | **0** | **14** |
+| **3** | **Users (CRITICAL)** | **9** | **1** | **0** | **0** | **10** |
 | 1 | Workers | 62 | 0 | 0 | 0 | 62 |
 | 1 | Clients | 59 | 0 | 0 | 0 | 59 |
 | 1 | Leads | 38 | 0 | 0 | 0 | 38 |
@@ -573,7 +575,7 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 | 2 | Roles & Permissions | 14 | 0 | 0 | 0 | 14 |
 | 2 | API Keys | 13 | 0 | 0 | 0 | 13 |
 | 2 | Settings | 13 | 0 | 0 | 0 | 13 |
-| 3 | Audit Logs | 9 | 0 | 0 | 0 | 9 |
+| 3 | Audit Logs | 9 | 1 | 0 | 0 | 10 |
 | 3 | Feature Flags | 11 | 0 | 0 | 0 | 11 |
 | 3 | Plans & Subscriptions | 10 | 0 | 0 | 0 | 10 |
 | 4 | UI Components | 16 | 0 | 0 | 0 | 16 |

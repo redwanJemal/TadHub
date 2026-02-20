@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Search, MoreHorizontal, Building2, Users, Pause, Play, Trash2 } from 'lucide-react';
+import { Plus, Search, MoreHorizontal, Building2, Users, Pause, Play, Trash2, X } from 'lucide-react';
 import { useTenants, useSuspendTenant, useReactivateTenant, useDeleteTenant } from '../hooks';
 import { TenantDto, TenantStatus } from '../types';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Badge } from '@/shared/components/ui/badge';
+import { Checkbox } from '@/shared/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -67,6 +68,7 @@ export function TenantsListPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState<TenantDto | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const { data, isLoading, error } = useTenants({
     page,
@@ -92,6 +94,31 @@ export function TenantsListPage() {
     await deleteMutation.mutateAsync(deleteTarget.id);
     setDeleteTarget(null);
   };
+
+  // Selection helpers
+  const allIds = useMemo(() => data?.items.map(t => t.id) ?? [], [data]);
+  const isAllSelected = allIds.length > 0 && allIds.every(id => selectedIds.has(id));
+  const isSomeSelected = allIds.some(id => selectedIds.has(id));
+
+  const toggleAll = () => {
+    if (isAllSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(allIds));
+    }
+  };
+
+  const toggleOne = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
 
   return (
     <div className="space-y-6">
@@ -141,11 +168,44 @@ export function TenantsListPage() {
         </div>
       )}
 
+      {/* Bulk Actions Toolbar */}
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-4 rounded-lg border bg-muted/50 p-3">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={clearSelection}>
+              <X className="h-4 w-4" />
+            </Button>
+            <span className="text-sm font-medium">
+              {selectedIds.size} selected
+            </span>
+          </div>
+          <div className="flex-1" />
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" disabled>
+              <Pause className="mr-2 h-4 w-4" />
+              Suspend Selected
+            </Button>
+            <Button variant="destructive" size="sm" disabled>
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Selected
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[50px]">
+                <Checkbox
+                  checked={isAllSelected}
+                  onCheckedChange={toggleAll}
+                  aria-label="Select all"
+                  className={isSomeSelected && !isAllSelected ? "data-[state=checked]:bg-primary/50" : ""}
+                />
+              </TableHead>
               <TableHead>Tenant</TableHead>
               <TableHead>Slug</TableHead>
               <TableHead>Status</TableHead>
@@ -158,6 +218,7 @@ export function TenantsListPage() {
               // Loading skeleton
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-4" /></TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Skeleton className="h-10 w-10 rounded-full" />
@@ -176,7 +237,7 @@ export function TenantsListPage() {
             ) : data?.items.length === 0 ? (
               // Empty state
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   <div className="flex flex-col items-center gap-2">
                     <Building2 className="h-8 w-8 text-muted-foreground" />
                     <p className="text-muted-foreground">No tenants found</p>
@@ -189,7 +250,14 @@ export function TenantsListPage() {
             ) : (
               // Data rows
               data?.items.map((tenant) => (
-                <TableRow key={tenant.id}>
+                <TableRow key={tenant.id} data-state={selectedIds.has(tenant.id) ? "selected" : undefined}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedIds.has(tenant.id)}
+                      onCheckedChange={() => toggleOne(tenant.id)}
+                      aria-label={`Select ${tenant.name}`}
+                    />
+                  </TableCell>
                   <TableCell>
                     <Link
                       to={`/tenants/${tenant.id}`}
