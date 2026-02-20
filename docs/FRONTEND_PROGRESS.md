@@ -450,18 +450,18 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 **Tenants Management Total: 12/14 tasks**
 
 ### Users Management (CRITICAL PATH)
-- 🟡 Users list page (placeholder created, routing works)
-- ⬜ Active/Inactive filter
-- ⬜ Search by name/email
-- ⬜ User detail view
+- ✅ Users list page with data table
+- ✅ Active/Inactive filter
+- ✅ Search by name/email
+- ✅ User detail view (dialog with profile info)
 - ⬜ Tenant memberships display
 - ⬜ Add user to tenant ← **Shared with Tenants**
 - ⬜ Login history
-- ⬜ Deactivate user action
-- ⬜ Reactivate user action
+- ✅ Deactivate user action
+- ✅ Reactivate user action
 - ⬜ Create user form (admin)
 
-**Users Management Total: 1/10 tasks (in progress)**
+**Users Management Total: 6/10 tasks**
 
 ### Audit Logs
 - 🟡 Audit logs page (placeholder created, routing works)
@@ -566,7 +566,7 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 |-------|--------|-------------|-------------|----------|---------|-------|
 | **0** | **Authentication** | **0** | **0** | **40** | **2** | **42** |
 | **3** | **Tenants (CRITICAL)** | **2** | **0** | **12** | **0** | **14** |
-| **3** | **Users (CRITICAL)** | **9** | **1** | **0** | **0** | **10** |
+| **3** | **Users (CRITICAL)** | **4** | **0** | **6** | **0** | **10** |
 | 1 | Workers | 62 | 0 | 0 | 0 | 62 |
 | 1 | Clients | 59 | 0 | 0 | 0 | 59 |
 | 1 | Leads | 38 | 0 | 0 | 0 | 38 |

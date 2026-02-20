@@ -57,7 +57,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = keycloakSettings.ValidateAudience,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            RoleClaimType = "roles"  // Use Keycloak's roles claim
+            // Use standard ClaimTypes.Role for role validation
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role
         };
         
         // Map Keycloak realm_access roles to standard role claims
