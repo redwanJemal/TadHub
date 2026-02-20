@@ -2,8 +2,9 @@ import { useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { AuthProvider as OidcAuthProvider, useAuth } from 'react-oidc-context';
 import { oidcConfig } from '../../lib/auth-config';
+import { useTenantStore } from './hooks/useTenant';
 
-// Store for managing auth state across the app
+// Store for managing auth state across the app (for non-React contexts like API client)
 let accessToken: string | null = null;
 let tenantId: string | null = null;
 
@@ -12,7 +13,12 @@ export function getAccessToken(): string | null {
 }
 
 export function getTenantId(): string | null {
-  return tenantId;
+  // First try the module-level variable, then fall back to store
+  if (tenantId) return tenantId;
+  
+  // Get from zustand store (for SSR/hydration scenarios)
+  const state = useTenantStore.getState();
+  return state.currentTenant?.id ?? null;
 }
 
 export function setTenantId(id: string | null): void {
@@ -22,21 +28,32 @@ export function setTenantId(id: string | null): void {
 // Inner component to sync auth state
 function AuthSync({ children }: { children: ReactNode }) {
   const auth = useAuth();
+  const { setCurrentTenant, clearTenant } = useTenantStore();
 
   useEffect(() => {
     if (auth.isAuthenticated && auth.user?.access_token) {
       accessToken = auth.user.access_token;
       
       // Extract tenant_id from token claims if available
-      const tokenTenantId = (auth.user.profile as Record<string, unknown>)?.tenant_id as string | undefined;
+      const profile = auth.user.profile as Record<string, unknown>;
+      const tokenTenantId = profile?.tenant_id as string | undefined;
+      const tokenTenantName = profile?.tenant_name as string | undefined;
+      const tokenTenantSlug = profile?.tenant_slug as string | undefined;
+      
       if (tokenTenantId) {
         tenantId = tokenTenantId;
+        setCurrentTenant({
+          id: tokenTenantId,
+          name: tokenTenantName ?? 'Tenant',
+          slug: tokenTenantSlug ?? tokenTenantId,
+        });
       }
     } else {
       accessToken = null;
       tenantId = null;
+      clearTenant();
     }
-  }, [auth.isAuthenticated, auth.user]);
+  }, [auth.isAuthenticated, auth.user, setCurrentTenant, clearTenant]);
 
   // Handle 401 errors - redirect to login
   useEffect(() => {
