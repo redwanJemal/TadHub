@@ -1,5 +1,5 @@
 {
-  "appName": "فورج بيس",
+  "appName": "تاد هب",
   "loading": "جاري التحميل...",
   "error": "خطأ",
   "success": "نجاح",
@@ -83,5 +83,34 @@
   "theme": "المظهر",
   "lightMode": "فاتح",
   "darkMode": "داكن",
-  "systemMode": "النظام"
+  "systemMode": "النظام",
+  "forbidden": {
+    "title": "الوصول مرفوض",
+    "message": "ليس لديك صلاحية للوصول إلى هذه الصفحة.",
+    "requiredPermission": "الصلاحية المطلوبة",
+    "goBack": "رجوع",
+    "goHome": "الذهاب للوحة التحكم"
+  },
+  "onboarding": {
+    "welcome": "مرحباً بك في تاد هب",
+    "selectWorkspace": "اختر مساحة عمل للمتابعة",
+    "createWorkspace": "أنشئ مساحة عملك الأولى للبدء",
+    "pendingInvitations": "الدعوات المعلقة",
+    "invitedBy": "دعوة من {{name}} بدور {{role}}",
+    "accept": "قبول",
+    "yourWorkspaces": "مساحات العمل الخاصة بك",
+    "continue": "متابعة",
+    "or": "أو",
+    "createNew": "إنشاء مساحة عمل جديدة",
+    "newWorkspace": "مساحة عمل جديدة",
+    "workspaceName": "اسم مساحة العمل",
+    "workspaceNamePlaceholder": "مثال: شركتي",
+    "cancel": "إلغاء",
+    "create": "إنشاء"
+  },
+  "tenant": {
+    "select": "اختر مساحة العمل",
+    "workspaces": "مساحات العمل",
+    "create": "إنشاء مساحة عمل"
+  }
 }

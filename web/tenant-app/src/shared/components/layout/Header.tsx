@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { keycloakUrls } from "@/lib/auth-config";
+import { TenantSelector } from "@/shared/components/tenant";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -51,6 +52,17 @@ export function Header({ onMenuClick }: HeaderProps) {
     document.body.dir = dir;
   }, [currentLang]);
 
+  // Listen for forbidden events to show toast/notification
+  useEffect(() => {
+    const handleForbidden = (event: CustomEvent<{ message: string; code: string }>) => {
+      // You can show a toast notification here
+      console.warn('Permission denied:', event.detail.message);
+    };
+
+    window.addEventListener('auth:forbidden', handleForbidden as EventListener);
+    return () => window.removeEventListener('auth:forbidden', handleForbidden as EventListener);
+  }, []);
+
   const handleLanguageToggle = () => {
     const newLang = currentLang === "en" ? "ar" : "en";
     i18n.changeLanguage(newLang);
@@ -70,7 +82,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   };
 
   const handleLogout = () => {
-    auth.signoutRedirect({ post_logout_redirect_uri: window.location.origin });
+    auth.signoutRedirect({ post_logout_redirect_uri: window.location.origin + '/login' });
   };
 
   const handleAccountSettings = () => {
@@ -103,6 +115,9 @@ export function Header({ onMenuClick }: HeaderProps) {
             <PanelLeftClose className="h-5 w-5" />
           )}
         </button>
+
+        {/* Tenant Selector - only shows if user has multiple tenants */}
+        <TenantSelector className="hidden md:block" />
       </div>
 
       <div className="flex items-center gap-2">

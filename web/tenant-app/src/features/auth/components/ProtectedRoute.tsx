@@ -2,10 +2,23 @@ import { ReactNode, useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 import { apiClient } from '../../../shared/api/client';
+import { usePermissions, Permission } from '../hooks/usePermissions';
+import { ForbiddenPage } from '../ForbiddenPage';
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  /** Require user to be in onboarding state */
   requireOnboarding?: boolean;
+  /** Required permission to access this route */
+  requiredPermission?: Permission;
+  /** Required permissions - user must have ALL */
+  requiredPermissions?: Permission[];
+  /** Required permissions - user must have ANY */
+  anyPermission?: Permission[];
+  /** Required role (Owner, Admin, Member) */
+  requiredRole?: 'Owner' | 'Admin' | 'Member';
+  /** Custom fallback for permission denied */
+  fallback?: ReactNode;
 }
 
 interface UserStatus {
@@ -23,13 +36,30 @@ interface UserStatus {
     name: string;
     slug: string;
   };
+  role?: 'Owner' | 'Admin' | 'Member';
 }
 
-export function ProtectedRoute({ children, requireOnboarding = false }: ProtectedRouteProps) {
+// Role hierarchy: Owner > Admin > Member
+const ROLE_HIERARCHY: Record<string, number> = {
+  'Member': 1,
+  'Admin': 2,
+  'Owner': 3,
+};
+
+export function ProtectedRoute({
+  children,
+  requireOnboarding = false,
+  requiredPermission,
+  requiredPermissions,
+  anyPermission,
+  requiredRole,
+  fallback,
+}: ProtectedRouteProps) {
   const auth = useAuth();
   const location = useLocation();
   const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { hasPermission, hasAllPermissions, hasAnyPermission } = usePermissions();
 
   useEffect(() => {
     async function fetchUserStatus() {
@@ -84,6 +114,57 @@ export function ProtectedRoute({ children, requireOnboarding = false }: Protecte
   // For regular protected routes - redirect to onboarding if needed
   if (userStatus?.status === 'onboarding' || userStatus?.status === 'select_tenant') {
     return <Navigate to="/onboarding" replace />;
+  }
+
+  // Check role-based access
+  if (requiredRole && userStatus?.role) {
+    const userRoleLevel = ROLE_HIERARCHY[userStatus.role] || 0;
+    const requiredRoleLevel = ROLE_HIERARCHY[requiredRole] || 0;
+    
+    if (userRoleLevel < requiredRoleLevel) {
+      if (fallback) return <>{fallback}</>;
+      return (
+        <ForbiddenPage 
+          message={`This page requires ${requiredRole} role or higher.`}
+        />
+      );
+    }
+  }
+
+  // Check single permission
+  if (requiredPermission && !hasPermission(requiredPermission)) {
+    if (fallback) return <>{fallback}</>;
+    return (
+      <ForbiddenPage 
+        requiredPermission={requiredPermission}
+      />
+    );
+  }
+
+  // Check all permissions (AND)
+  if (requiredPermissions && requiredPermissions.length > 0) {
+    if (!hasAllPermissions(requiredPermissions)) {
+      if (fallback) return <>{fallback}</>;
+      return (
+        <ForbiddenPage 
+          requiredPermission={requiredPermissions.join(', ')}
+          message="You need all of the required permissions to access this page."
+        />
+      );
+    }
+  }
+
+  // Check any permission (OR)
+  if (anyPermission && anyPermission.length > 0) {
+    if (!hasAnyPermission(anyPermission)) {
+      if (fallback) return <>{fallback}</>;
+      return (
+        <ForbiddenPage 
+          requiredPermission={anyPermission.join(' or ')}
+          message="You need at least one of the required permissions to access this page."
+        />
+      );
+    }
   }
 
   return <>{children}</>;

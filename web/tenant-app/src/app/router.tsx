@@ -9,6 +9,9 @@ const LoginPage = lazy(() => import('@/features/auth/LoginPage').then(m => ({ de
 const SignUpPage = lazy(() => import('@/features/auth/SignUpPage').then(m => ({ default: m.SignUpPage })));
 const CallbackPage = lazy(() => import('@/features/auth/CallbackPage').then(m => ({ default: m.CallbackPage })));
 
+// Onboarding
+const OnboardingPage = lazy(() => import('@/features/onboarding').then(m => ({ default: m.OnboardingPage })));
+
 // Placeholder home
 function HomePage() {
   return (
@@ -44,6 +47,16 @@ export function AppRouter() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/callback" element={<CallbackPage />} />
 
+        {/* Onboarding - for tenant selection */}
+        <Route
+          path="/onboarding"
+          element={
+            <ProtectedRoute requireOnboarding>
+              <OnboardingPage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Protected routes */}
         <Route
           path="/"
@@ -54,7 +67,25 @@ export function AppRouter() {
           }
         >
           <Route index element={<HomePage />} />
-          {/* Feature routes will be added here */}
+          <Route path="dashboard" element={<HomePage />} />
+          
+          {/* Example permission-protected routes */}
+          {/* <Route 
+            path="workers/*" 
+            element={
+              <ProtectedRoute requiredPermission="workers.view">
+                <WorkersModule />
+              </ProtectedRoute>
+            } 
+          /> */}
+          {/* <Route 
+            path="settings/*" 
+            element={
+              <ProtectedRoute requiredRole="Admin">
+                <SettingsModule />
+              </ProtectedRoute>
+            } 
+          /> */}
         </Route>
 
         {/* Catch all */}
