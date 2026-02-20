@@ -2,15 +2,15 @@ import { WebStorageStateStore } from 'oidc-client-ts';
 import type { UserManagerSettings } from 'oidc-client-ts';
 
 // TadHub Keycloak Configuration
-const KEYCLOAK_URL = import.meta.env.VITE_KEYCLOAK_URL || 'https://auth.tadhub.ae';
-const KEYCLOAK_REALM = import.meta.env.VITE_KEYCLOAK_REALM || 'tadhub';
-const KEYCLOAK_CLIENT_ID = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'tadhub-tenant-app';
+const KEYCLOAK_URL = import.meta.env.VITE_AUTH_URL || 'https://auth.endlessmaker.com';
+const KEYCLOAK_REALM = import.meta.env.VITE_AUTH_REALM || 'tadhub';
+const KEYCLOAK_CLIENT_ID = import.meta.env.VITE_AUTH_CLIENT_ID || 'tenant-app';
 
 export const oidcConfig: UserManagerSettings = {
   authority: `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`,
   client_id: KEYCLOAK_CLIENT_ID,
   redirect_uri: `${window.location.origin}/callback`,
-  post_logout_redirect_uri: window.location.origin,
+  post_logout_redirect_uri: `${window.location.origin}/login`,
   response_type: 'code',
   scope: 'openid profile email',
   
@@ -56,4 +56,4 @@ export const isDevelopment = import.meta.env.DEV;
 /**
  * API base URL
  */
-export const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://api.tadhub.ae/api/v1';
+export const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://api.endlessmaker.com/api/v1';

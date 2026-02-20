@@ -44,7 +44,7 @@ async function handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
 }
 
 function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem("forgebase_admin_token");
+  const token = localStorage.getItem("tadhub_admin_token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 

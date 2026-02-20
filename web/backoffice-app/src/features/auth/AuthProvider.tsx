@@ -18,10 +18,10 @@ function AuthSync({ children }: { children: ReactNode }) {
     if (auth.isAuthenticated && auth.user?.access_token) {
       accessToken = auth.user.access_token;
       // Store in localStorage for API client
-      localStorage.setItem('forgebase_admin_token', auth.user.access_token);
+      localStorage.setItem('tadhub_admin_token', auth.user.access_token);
     } else {
       accessToken = null;
-      localStorage.removeItem('forgebase_admin_token');
+      localStorage.removeItem('tadhub_admin_token');
     }
   }, [auth.isAuthenticated, auth.user]);
 
@@ -62,8 +62,8 @@ export function useAppAuth() {
   }, [auth]);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('forgebase_admin_token');
-    localStorage.removeItem('forgebase_admin_employee');
+    localStorage.removeItem('tadhub_admin_token');
+    localStorage.removeItem('tadhub_admin_employee');
     auth.signoutRedirect();
   }, [auth]);
 

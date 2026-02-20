@@ -41,7 +41,7 @@ let refreshPromise: Promise<boolean> | null = null;
  * Get authentication headers from storage
  */
 function getAuthHeaders(): HeadersInit {
-  const token = localStorage.getItem('forgebase_admin_token');
+  const token = localStorage.getItem('tadhub_admin_token');
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -49,7 +49,7 @@ function getAuthHeaders(): HeadersInit {
  * Attempt to refresh the access token
  */
 async function refreshAccessToken(): Promise<boolean> {
-  const refreshToken = localStorage.getItem('forgebase_refresh_token');
+  const refreshToken = localStorage.getItem('tadhub_refresh_token');
   if (!refreshToken) return false;
 
   try {
@@ -63,8 +63,8 @@ async function refreshAccessToken(): Promise<boolean> {
 
     const json = await response.json();
     if (json.success && json.data?.tokens) {
-      localStorage.setItem('forgebase_admin_token', json.data.tokens.accessToken);
-      localStorage.setItem('forgebase_refresh_token', json.data.tokens.refreshToken);
+      localStorage.setItem('tadhub_admin_token', json.data.tokens.accessToken);
+      localStorage.setItem('tadhub_refresh_token', json.data.tokens.refreshToken);
       return true;
     }
     return false;
@@ -92,9 +92,9 @@ async function handleUnauthorized(): Promise<boolean> {
   
   if (!success) {
     // Clear tokens and redirect to login
-    localStorage.removeItem('forgebase_admin_token');
-    localStorage.removeItem('forgebase_refresh_token');
-    localStorage.removeItem('forgebase_user');
+    localStorage.removeItem('tadhub_admin_token');
+    localStorage.removeItem('tadhub_refresh_token');
+    localStorage.removeItem('tadhub_user');
     
     // Only redirect if not already on login page
     if (!window.location.pathname.includes('/login')) {

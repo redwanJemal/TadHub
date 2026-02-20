@@ -30,7 +30,7 @@ export function LoginPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 font-bold text-xl">
               F
             </div>
-            <span className="text-2xl font-bold">ForgeBase</span>
+            <span className="text-2xl font-bold">TadHub</span>
           </div>
         </div>
         
@@ -85,7 +85,7 @@ export function LoginPage() {
         </div>
         
         <div className="text-sm text-primary-foreground/60">
-          © 2024 ForgeBase. Open-source backend platform.
+          © 2024 TadHub. Open-source backend platform.
         </div>
       </div>
 
