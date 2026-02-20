@@ -602,3 +602,43 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 - Implement optimistic updates where possible
 - Mobile responsiveness is required for all modules
 - RTL support (Arabic) is required for text displays
+
+## Session 2026-02-20: Backend-Frontend Alignment Fix
+
+### Issues Fixed
+1. **EF Core Query Error** - `ListUserTenantsAsync` was using Include after Select
+2. **Response Format Mismatch** - Frontend used `total`/`perPage`, API used `totalCount`/`pageSize`
+3. **Keycloak Configuration** - JWT audience and role mapping fixed
+4. **CORS Configuration** - Added `admin.endlessmaker.com` to allowed origins
+
+### Key Changes
+- `TenantService.cs` - Fixed EF Core Include order
+- `client.ts` - Handle raw API responses (no wrapper)
+- `common.ts` - Updated `PaginatedData` type to match API docs
+- `TenantsListPage.tsx` - Use correct field names
+- Keycloak DB - Added `platform-admin` role and audience mapper
+
+### Deployment Status
+- **API:** https://api.endlessmaker.com ✅
+- **Backoffice:** https://admin.endlessmaker.com ✅
+- **Keycloak:** https://auth.endlessmaker.com ✅
+
+## Session 2026-02-20: Backend-Frontend Alignment Fix
+
+### Issues Fixed
+1. **EF Core Query Error** - `ListUserTenantsAsync` was using Include after Select
+2. **Response Format Mismatch** - Frontend used `total`/`perPage`, API used `totalCount`/`pageSize`
+3. **Keycloak Configuration** - JWT audience and role mapping fixed
+4. **CORS Configuration** - Added `admin.endlessmaker.com` to allowed origins
+
+### Key Changes
+- `TenantService.cs` - Fixed EF Core Include order
+- `client.ts` - Handle raw API responses (no wrapper)
+- `common.ts` - Updated `PaginatedData` type to match API docs
+- `TenantsListPage.tsx` - Use correct field names
+- Keycloak DB - Added `platform-admin` role and audience mapper
+
+### Deployment Status
+- **API:** https://api.endlessmaker.com ✅
+- **Backoffice:** https://admin.endlessmaker.com ✅
+- **Keycloak:** https://auth.endlessmaker.com ✅
