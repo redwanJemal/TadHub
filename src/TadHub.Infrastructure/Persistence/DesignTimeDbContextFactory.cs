@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,9 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
 {
     public AppDbContext CreateDbContext(string[] args)
     {
+        // Load module assemblies for entity configuration discovery
+        LoadModuleAssemblies();
+        
         // Build configuration
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -32,6 +36,29 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
         });
 
         return new AppDbContext(optionsBuilder.Options, new DesignTimeTenantContext());
+    }
+
+    /// <summary>
+    /// Load all module assemblies so their entity configurations are discovered.
+    /// </summary>
+    private static void LoadModuleAssemblies()
+    {
+        var basePath = AppContext.BaseDirectory;
+        var moduleAssemblyPaths = Directory.GetFiles(basePath, "*.Core.dll")
+            .Concat(Directory.GetFiles(basePath, "*.Api.dll"))
+            .Where(p => !p.Contains("Microsoft") && !p.Contains("System"));
+
+        foreach (var assemblyPath in moduleAssemblyPaths)
+        {
+            try
+            {
+                Assembly.LoadFrom(assemblyPath);
+            }
+            catch
+            {
+                // Ignore load errors
+            }
+        }
     }
 
     /// <summary>

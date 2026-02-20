@@ -5,22 +5,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 WORKDIR /src
 
-# Copy solution and project files
-COPY *.sln ./
-COPY Directory.Build.props ./
-COPY Directory.Packages.props ./
-COPY src/TadHub.Api/TadHub.Api.csproj ./src/TadHub.Api/
-COPY src/TadHub.Application/TadHub.Application.csproj ./src/TadHub.Application/
-COPY src/TadHub.Domain/TadHub.Domain.csproj ./src/TadHub.Domain/
-COPY src/TadHub.Infrastructure/TadHub.Infrastructure.csproj ./src/TadHub.Infrastructure/
+# Copy everything
+COPY . .
 
-# Restore dependencies
-RUN dotnet restore
-
-# Copy source code
-COPY src/ ./src/
-
-# Build release
+# Restore and publish
+RUN dotnet restore src/TadHub.Api/TadHub.Api.csproj
 RUN dotnet publish src/TadHub.Api/TadHub.Api.csproj -c Release -o /app/publish --no-restore
 
 # Runtime stage
@@ -30,18 +19,18 @@ WORKDIR /app
 # Install curl for healthcheck
 RUN apk add --no-cache curl
 
-# Create non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
-
 # Copy published app
 COPY --from=build /app/publish .
 
 # Expose port
 EXPOSE 5000
 
+# Set environment
+ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_ENVIRONMENT=Production
+
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:5000/health || exit 1
 
 # Entry point
