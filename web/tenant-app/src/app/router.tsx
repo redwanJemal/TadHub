@@ -14,6 +14,8 @@ const OnboardingPage = lazy(() => import('@/features/onboarding').then(m => ({ d
 
 // Workers Module
 const WorkersList = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkersList })));
+const WorkerDetail = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkerDetail })));
+const WorkerForm = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkerForm })));
 
 // Placeholder home
 function HomePage() {
@@ -74,11 +76,9 @@ export function AppRouter() {
           
           {/* Workers Module */}
           <Route path="workers" element={<WorkersList />} />
-          
-          {/* TODO: Add more worker routes */}
-          {/* <Route path="workers/new" element={<WorkerForm />} /> */}
-          {/* <Route path="workers/:id" element={<WorkerDetail />} /> */}
-          {/* <Route path="workers/:id/edit" element={<WorkerForm />} /> */}
+          <Route path="workers/new" element={<WorkerForm />} />
+          <Route path="workers/:id" element={<WorkerDetail />} />
+          <Route path="workers/:id/edit" element={<WorkerForm />} />
         </Route>
 
         {/* Catch all */}

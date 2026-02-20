@@ -1,5 +1,7 @@
 // Components
 export { WorkersList } from './components/WorkersList';
+export { WorkerDetail } from './components/WorkerDetail';
+export { WorkerForm } from './components/WorkerForm';
 
 // Hooks
 export {
