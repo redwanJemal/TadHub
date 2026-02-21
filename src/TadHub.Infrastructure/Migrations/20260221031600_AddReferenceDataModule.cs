@@ -53,7 +53,7 @@ namespace SaasKit.Migrations
                 name: "ix_countries_common_nationality",
                 table: "countries",
                 column: "is_common_nationality",
-                filter: "\"IsCommonNationality\" = true");
+                filter: "is_common_nationality = true");
         }
 
         /// <inheritdoc />

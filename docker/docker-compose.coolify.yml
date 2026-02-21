@@ -78,7 +78,7 @@ services:
     environment:
       # Database
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-tadhub}
+      KC_DB_URL: jdbc:postgresql://tadhub-postgres:5432/${POSTGRES_DB:-tadhub}
       KC_DB_USERNAME: ${POSTGRES_USER:-tadhub}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
       # Production settings
@@ -92,11 +92,18 @@ services:
       # Admin user
       KEYCLOAK_ADMIN: ${KC_ADMIN_USER:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tadhub-keycloak.rule=Host(`auth.endlessmaker.com`)
+      - traefik.http.routers.tadhub-keycloak.entrypoints=https
+      - traefik.http.routers.tadhub-keycloak.tls=true
+      - traefik.http.routers.tadhub-keycloak.tls.certresolver=letsencrypt
+      - traefik.http.services.tadhub-keycloak.loadbalancer.server.port=8080
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -119,7 +126,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:5000
-      ConnectionStrings__DefaultConnection: Host=postgres;Database=${POSTGRES_DB:-tadhub};Username=${POSTGRES_USER:-tadhub};Password=${POSTGRES_PASSWORD}
+      ConnectionStrings__DefaultConnection: Host=tadhub-postgres;Database=${POSTGRES_DB:-tadhub};Username=${POSTGRES_USER:-tadhub};Password=${POSTGRES_PASSWORD}
       ConnectionStrings__Redis: redis:6379,password=${REDIS_PASSWORD}
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: ${RABBITMQ_USER:-tadhub}
@@ -130,8 +137,14 @@ services:
       Storage__AccessKey: ${MINIO_ACCESS_KEY}
       Storage__SecretKey: ${MINIO_SECRET_KEY}
       Storage__BucketName: tadhub
-      Cors__AllowedOrigins__0: https://tadbeer.endlessmaker.com
-      Cors__AllowedOrigins__1: https://admin.endlessmaker.com
+      Cors__AllowedOriginsString: https://tadbeer.endlessmaker.com,https://admin.endlessmaker.com,http://localhost:3000
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tadhub-api.rule=Host(`api.endlessmaker.com`)
+      - traefik.http.routers.tadhub-api.entrypoints=https
+      - traefik.http.routers.tadhub-api.tls=true
+      - traefik.http.routers.tadhub-api.tls.certresolver=letsencrypt
+      - traefik.http.services.tadhub-api.loadbalancer.server.port=5000
     depends_on:
       postgres:
         condition: service_healthy
@@ -167,6 +180,13 @@ services:
         VITE_STORAGE_URL: https://storage.endlessmaker.com
     container_name: tadhub-tenant-app
     restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tadhub-tenant.rule=Host(`tadbeer.endlessmaker.com`)
+      - traefik.http.routers.tadhub-tenant.entrypoints=https
+      - traefik.http.routers.tadhub-tenant.tls=true
+      - traefik.http.routers.tadhub-tenant.tls.certresolver=letsencrypt
+      - traefik.http.services.tadhub-tenant.loadbalancer.server.port=80
     networks:
       - coolify
 
@@ -187,6 +207,13 @@ services:
         VITE_STORAGE_URL: https://storage.endlessmaker.com
     container_name: tadhub-backoffice-app
     restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tadhub-backoffice.rule=Host(`admin.endlessmaker.com`)
+      - traefik.http.routers.tadhub-backoffice.entrypoints=https
+      - traefik.http.routers.tadhub-backoffice.tls=true
+      - traefik.http.routers.tadhub-backoffice.tls.certresolver=letsencrypt
+      - traefik.http.services.tadhub-backoffice.loadbalancer.server.port=80
     networks:
       - coolify
 

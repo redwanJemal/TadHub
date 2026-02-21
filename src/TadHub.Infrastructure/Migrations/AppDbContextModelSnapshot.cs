@@ -3663,7 +3663,7 @@ namespace SaasKit.Migrations
 
                     b.HasIndex("IsCommonNationality")
                         .HasDatabaseName("ix_countries_common_nationality")
-                        .HasFilter("\"IsCommonNationality\" = true");
+                        .HasFilter("is_common_nationality = true");
 
                     b.HasIndex("IsActive", "DisplayOrder")
                         .HasDatabaseName("ix_countries_active_order");
