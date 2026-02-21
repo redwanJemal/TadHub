@@ -73,7 +73,7 @@ public class CountryConfiguration : IEntityTypeConfiguration<Country>
 
         // Index for common nationalities
         builder.HasIndex(x => x.IsCommonNationality)
-            .HasFilter("\"IsCommonNationality\" = true")
+            .HasFilter("is_common_nationality = true")
             .HasDatabaseName("ix_countries_common_nationality");
     }
 }
