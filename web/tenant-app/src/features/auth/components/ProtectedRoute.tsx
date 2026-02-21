@@ -3,6 +3,8 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 import { apiClient } from '../../../shared/api/client';
 import { usePermissions, Permission } from '../hooks/usePermissions';
+import { useTenantStore } from '../hooks/useTenant';
+import { setTenantId } from '../AuthProvider';
 import { ForbiddenPage } from '../ForbiddenPage';
 
 interface ProtectedRouteProps {
@@ -22,20 +24,21 @@ interface ProtectedRouteProps {
 }
 
 interface UserStatus {
-  status: 'onboarding' | 'select_tenant' | 'active';
-  pendingInvitations?: Array<{ id: string; tenantName: string }>;
-  canCreateTenant?: boolean;
-  tenants?: Array<{ id: string; name: string; slug: string }>;
-  profile?: {
-    id: string;
-    email: string;
-    displayName: string;
-  };
-  tenant?: {
-    id: string;
-    name: string;
-    slug: string;
-  };
+  id: string;
+  keycloakId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  locale: string;
+  isActive: boolean;
+  defaultTenantId?: string;
+  needsOnboarding: boolean;
+  needsTenantSelection: boolean;
+  tenants: Array<{ id: string; name: string; slug: string }>;
+  // Computed fields for compatibility
+  status?: 'onboarding' | 'select_tenant' | 'active';
+  tenant?: { id: string; name: string; slug: string };
   role?: 'Owner' | 'Admin' | 'Member';
 }
 
@@ -60,6 +63,7 @@ export function ProtectedRoute({
   const [userStatus, setUserStatus] = useState<UserStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { hasPermission, hasAllPermissions, hasAnyPermission } = usePermissions();
+  const { setCurrentTenant, setAvailableTenants } = useTenantStore();
 
   useEffect(() => {
     async function fetchUserStatus() {
@@ -71,6 +75,19 @@ export function ProtectedRoute({
       try {
         const status = await apiClient.get<UserStatus>('/me');
         setUserStatus(status);
+        
+        // Set tenant from response
+        if (status.tenants && status.tenants.length > 0) {
+          setAvailableTenants(status.tenants);
+          
+          // Use the first tenant or the one marked as default
+          const defaultTenant = status.tenant || status.tenants[0];
+          if (defaultTenant) {
+            setCurrentTenant(defaultTenant);
+            setTenantId(defaultTenant.id);
+            console.log('[Auth] Set tenant:', defaultTenant.id, defaultTenant.name);
+          }
+        }
       } catch (error) {
         console.error('Failed to fetch user status:', error);
       } finally {
@@ -79,7 +96,7 @@ export function ProtectedRoute({
     }
 
     fetchUserStatus();
-  }, [auth.isAuthenticated]);
+  }, [auth.isAuthenticated, setCurrentTenant, setAvailableTenants]);
 
   // Still loading OIDC or user status
   if (auth.isLoading || isLoading) {
@@ -105,14 +122,15 @@ export function ProtectedRoute({
 
   // For onboarding route - only allow if user needs onboarding
   if (requireOnboarding) {
-    if (userStatus?.status !== 'onboarding' && userStatus?.status !== 'select_tenant') {
+    const needsOnboarding = userStatus?.needsOnboarding || userStatus?.needsTenantSelection;
+    if (!needsOnboarding) {
       return <Navigate to="/dashboard" replace />;
     }
     return <>{children}</>;
   }
 
   // For regular protected routes - redirect to onboarding if needed
-  if (userStatus?.status === 'onboarding' || userStatus?.status === 'select_tenant') {
+  if (userStatus?.needsOnboarding || userStatus?.needsTenantSelection) {
     return <Navigate to="/onboarding" replace />;
   }
 

@@ -5,20 +5,33 @@ import { useTranslation } from 'react-i18next';
 import { Building2, Check, Plus, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { apiClient } from '@/shared/api/client';
 import { useTenantStore, Tenant } from '@/features/auth/hooks/useTenant';
+import { setTenantId } from '@/features/auth/AuthProvider';
 import { cn } from '@/shared/lib/cn';
 
 interface UserOnboardingStatus {
-  status: 'onboarding' | 'select_tenant' | 'active';
-  pendingInvitations: Array<{ 
+  id: string;
+  keycloakId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  locale: string;
+  isActive: boolean;
+  defaultTenantId?: string;
+  needsOnboarding: boolean;
+  needsTenantSelection: boolean;
+  tenants: Tenant[];
+  // Legacy compatibility
+  status?: 'onboarding' | 'select_tenant' | 'active';
+  pendingInvitations?: Array<{ 
     id: string; 
     tenantName: string; 
     tenantId: string;
     role: string;
     invitedByName: string;
   }>;
-  canCreateTenant: boolean;
-  tenants: Tenant[];
-  profile: {
+  canCreateTenant?: boolean;
+  profile?: {
     id: string;
     email: string;
     firstName: string;
@@ -48,13 +61,14 @@ export function OnboardingPage() {
         const data = await apiClient.get<UserOnboardingStatus>('/me');
         setStatus(data);
         
-        // If already active, redirect
-        if (data.status === 'active') {
+        // If already active (not needing onboarding), redirect
+        if (!data.needsOnboarding && !data.needsTenantSelection && data.tenants.length > 0) {
           navigate('/', { replace: true });
         }
         
         // Pre-select if only one tenant
-        if (data.tenants.length === 1 && data.pendingInvitations.length === 0) {
+        const invitations = data.pendingInvitations || [];
+        if (data.tenants.length === 1 && invitations.length === 0) {
           setSelectedTenant(data.tenants[0].id);
         }
       } catch (err) {
@@ -81,6 +95,7 @@ export function OnboardingPage() {
       const tenant = status.tenants.find(t => t.id === selectedTenant);
       if (tenant) {
         setCurrentTenant(tenant);
+        setTenantId(tenant.id); // Set module-level tenant ID for API calls
         setAvailableTenants(status.tenants);
       }
       
@@ -147,7 +162,7 @@ export function OnboardingPage() {
 
   const user = status?.profile;
   const hasTenants = (status?.tenants.length || 0) > 0;
-  const hasInvitations = (status?.pendingInvitations.length || 0) > 0;
+  const hasInvitations = (status?.pendingInvitations?.length || 0) > 0;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -191,7 +206,7 @@ export function OnboardingPage() {
               {t('onboarding.pendingInvitations', 'Pending Invitations')}
             </h2>
             <div className="space-y-3">
-              {status?.pendingInvitations.map((inv) => (
+              {status?.pendingInvitations?.map((inv) => (
                 <div
                   key={inv.id}
                   className="flex items-center justify-between p-4 rounded-lg border bg-card"

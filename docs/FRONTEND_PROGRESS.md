@@ -625,22 +625,58 @@ This document tracks the frontend implementation progress for TadHub. Tasks are 
 - **Backoffice:** https://admin.endlessmaker.com ✅
 - **Keycloak:** https://auth.endlessmaker.com ✅
 
-## Session 2026-02-20: Backend-Frontend Alignment Fix
+---
+
+## Session 2026-02-21: Tenant App Authorization & CORS Fix
 
 ### Issues Fixed
-1. **EF Core Query Error** - `ListUserTenantsAsync` was using Include after Select
-2. **Response Format Mismatch** - Frontend used `total`/`perPage`, API used `totalCount`/`pageSize`
-3. **Keycloak Configuration** - JWT audience and role mapping fixed
-4. **CORS Configuration** - Added `admin.endlessmaker.com` to allowed origins
+
+1. **Frontend not sending X-Tenant-Id header**
+   - `ProtectedRoute.tsx` now sets tenant from `/me` response
+   - `OnboardingPage.tsx` updated with same logic
+   - API client already had header logic, just needed tenant to be set
+
+2. **Backend global query filter conflict (403 on tenant-scoped endpoints)**
+   - `AppDbContext` applies global filter: `WHERE TenantId = _tenantContext.TenantId`
+   - `GetUserPermissionsAsync` was querying with explicit tenantId parameter
+   - These filters conflicted, returning 0 results even with correct permissions
+   - **Fix:** Added `.IgnoreQueryFilters()` to bypass global filter
+
+3. **Zod version conflicts**
+   - `packages/types` had zod 4.3.6, apps had 3.23.8
+   - Caused TypeScript build errors in Docker
+   - **Fix:** Unified all packages to zod 3.23.8, @hookform/resolvers 3.3.4
+
+4. **CORS not working**
+   - Wrong env var name: `Cors__Origins__0` instead of `Cors__AllowedOriginsString`
+   - **Fix:** Use `Cors__AllowedOriginsString=https://tadbeer.endlessmaker.com,https://admin.endlessmaker.com`
 
 ### Key Changes
-- `TenantService.cs` - Fixed EF Core Include order
-- `client.ts` - Handle raw API responses (no wrapper)
-- `common.ts` - Updated `PaginatedData` type to match API docs
-- `TenantsListPage.tsx` - Use correct field names
-- Keycloak DB - Added `platform-admin` role and audience mapper
+
+**Frontend (tenant-app):**
+- `src/features/auth/components/ProtectedRoute.tsx` - Set tenant from /me response
+- `src/features/onboarding/OnboardingPage.tsx` - Same tenant-setting logic
+- `package.json` - Fixed zod/hookform versions
+
+**Backend:**
+- `src/Modules/Authorization/Authorization.Core/Services/AuthorizationModuleService.cs`
+  - Added `.IgnoreQueryFilters()` to permission lookup queries
+  - Added debug logging for authorization flow
+
+### Test User Created
+- Email: `tenant.user@example.com`
+- Password: `Test123!`
+- Tenant: Acme Recruitment Agency (`bbbbbbbb-cccc-dddd-eeee-ffffffffffff`)
+- Role: Admin (with all workers.* permissions)
 
 ### Deployment Status
 - **API:** https://api.endlessmaker.com ✅
+- **Tenant App:** https://tadbeer.endlessmaker.com ✅
 - **Backoffice:** https://admin.endlessmaker.com ✅
 - **Keycloak:** https://auth.endlessmaker.com ✅
+
+### Phase 0 Auth Status Update
+- ✅ Tenant selection working (from /me response)
+- ✅ X-Tenant-Id header being sent
+- ✅ Permission-based authorization working
+- ✅ CORS configured correctly

@@ -189,3 +189,26 @@ End-to-end business flow validation.
 - **Boilerplate Foundation Complete**: Multi-tenancy, IAM, JWT auth, MassTransit event bus, Redis caching, SSE, Hangfire jobs, PostgreSQL with EF Core, API response envelope, bracket-notation filters, RFC 9457 error handling.
 - **Backend Only**: Frontend will be developed separately.
 - **Compliance**: Federal Decree-Law No. 9 of 2022, MoHRE Standards, WPS 2025.
+
+---
+
+## Recent Fixes
+
+### 2026-02-21: Authorization Global Query Filter Fix
+
+**Issue:** Tenant-scoped endpoints returning 403 even with correct permissions assigned.
+
+**Root Cause:** `AppDbContext` applies a global query filter `WHERE TenantId = _tenantContext.TenantId` to all `TenantScopedEntity` queries. The `GetUserPermissionsAsync` method was explicitly filtering by `tenantId` parameter, but the global filter was also applied, causing a conflict when `_tenantContext.TenantId` didn't match or was resolved differently.
+
+**Fix:** Added `.IgnoreQueryFilters()` to permission lookup queries in `AuthorizationModuleService.cs` to bypass the global filter when explicitly filtering by tenant.
+
+**Files Changed:**
+- `src/Modules/Authorization/Authorization.Core/Services/AuthorizationModuleService.cs`
+
+### 2026-02-21: CORS Configuration Fix
+
+**Issue:** CORS headers not being sent, causing browser requests to fail.
+
+**Root Cause:** Environment variable naming mismatch. Used `Cors__Origins__0` but `CorsSettings` expects `Cors__AllowedOriginsString` (comma-separated) or `Cors__AllowedOrigins__0`.
+
+**Fix:** Use `Cors__AllowedOriginsString=https://tadbeer.endlessmaker.com,https://admin.endlessmaker.com`
