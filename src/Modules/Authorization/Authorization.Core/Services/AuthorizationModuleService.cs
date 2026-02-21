@@ -444,12 +444,19 @@ public class AuthorizationModuleService : IAuthorizationModuleService
 
     public async Task<UserPermissionsDto> GetUserPermissionsAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
+        _logger.LogInformation(
+            "[AUTH DEBUG] GetUserPermissionsAsync called - TenantId: {TenantId}, UserId: {UserId}",
+            tenantId, userId);
+            
         var cacheKey = $"{PermissionsCacheKeyPrefix}:{tenantId}:{userId}";
 
         // Try cache first
         var cached = await _cache.GetAsync<UserPermissionsDto>(cacheKey, ct);
         if (cached is not null)
+        {
+            _logger.LogInformation("[AUTH DEBUG] Returning cached permissions: {Permissions}", string.Join(", ", cached.Permissions));
             return cached;
+        }
 
         // The userId parameter might be either:
         // 1. The internal user_profiles.id (when called from internal code)
@@ -463,10 +470,14 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             .AsNoTracking()
             .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
         
+        _logger.LogInformation("[AUTH DEBUG] Direct user_roles lookup for {UserId}: {Exists}", userId, directExists);
+        
         if (!directExists)
         {
             // Try to resolve from Keycloak ID (the userId might be the Keycloak sub)
             var keycloakIdStr = userId.ToString();
+            _logger.LogInformation("[AUTH DEBUG] Looking up UserProfile by KeycloakId: {KeycloakId}", keycloakIdStr);
+            
             var userProfile = await _db.Set<UserProfile>()
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.KeycloakId == keycloakIdStr, ct);
@@ -474,10 +485,17 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             if (userProfile is not null)
             {
                 internalUserId = userProfile.Id;
+                _logger.LogInformation("[AUTH DEBUG] Found UserProfile - InternalUserId: {InternalUserId}", internalUserId);
+            }
+            else
+            {
+                _logger.LogWarning("[AUTH DEBUG] UserProfile NOT FOUND for KeycloakId: {KeycloakId}", keycloakIdStr);
             }
         }
 
         // Load from database using the resolved internal user ID
+        _logger.LogInformation("[AUTH DEBUG] Loading user_roles for TenantId: {TenantId}, InternalUserId: {InternalUserId}", tenantId, internalUserId);
+        
         var userRoles = await _db.Set<UserRole>()
             .AsNoTracking()
             .Where(x => x.TenantId == tenantId && x.UserId == internalUserId)
@@ -486,12 +504,17 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             .ThenInclude(x => x.Permission)
             .ToListAsync(ct);
 
+        _logger.LogInformation("[AUTH DEBUG] Found {Count} user_roles", userRoles.Count);
+
         var roles = userRoles.Select(x => x.Role.Name).Distinct().ToList();
         var permissions = userRoles
             .SelectMany(x => x.Role.Permissions)
             .Select(x => x.Permission.Name)
             .Distinct()
             .ToList();
+
+        _logger.LogInformation("[AUTH DEBUG] Resolved roles: [{Roles}], permissions: [{Permissions}]", 
+            string.Join(", ", roles), string.Join(", ", permissions));
 
         var result = new UserPermissionsDto
         {

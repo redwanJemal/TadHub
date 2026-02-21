@@ -30,17 +30,25 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
+        _logger.LogInformation(
+            "[AUTH HANDLER] Checking permission '{Permission}' - IsAuthenticated: {IsAuth}, TenantResolved: {TenantResolved}",
+            requirement.Permission, _currentUser.IsAuthenticated, _tenantContext.IsResolved);
+            
         if (!_currentUser.IsAuthenticated)
         {
-            _logger.LogDebug("Permission check failed: user not authenticated");
+            _logger.LogWarning("[AUTH HANDLER] Permission check failed: user not authenticated");
             return;
         }
 
         if (!_tenantContext.IsResolved)
         {
-            _logger.LogDebug("Permission check failed: no tenant context");
+            _logger.LogWarning("[AUTH HANDLER] Permission check failed: no tenant context. TenantId would be: {TenantId}", _tenantContext.TenantId);
             return;
         }
+
+        _logger.LogInformation(
+            "[AUTH HANDLER] Calling HasPermissionAsync - TenantId: {TenantId}, UserId: {UserId}, Permission: {Permission}",
+            _tenantContext.TenantId, _currentUser.UserId, requirement.Permission);
 
         var hasPermission = await _permissionChecker.HasPermissionAsync(
             _tenantContext.TenantId,
@@ -49,15 +57,15 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
 
         if (hasPermission)
         {
-            _logger.LogDebug(
-                "Permission check passed: user {UserId} has {Permission} in tenant {TenantId}",
+            _logger.LogInformation(
+                "[AUTH HANDLER] Permission check PASSED: user {UserId} has {Permission} in tenant {TenantId}",
                 _currentUser.UserId, requirement.Permission, _tenantContext.TenantId);
             context.Succeed(requirement);
         }
         else
         {
-            _logger.LogDebug(
-                "Permission check failed: user {UserId} lacks {Permission} in tenant {TenantId}",
+            _logger.LogWarning(
+                "[AUTH HANDLER] Permission check FAILED: user {UserId} lacks {Permission} in tenant {TenantId}",
                 _currentUser.UserId, requirement.Permission, _tenantContext.TenantId);
         }
     }
