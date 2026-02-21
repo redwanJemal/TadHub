@@ -186,20 +186,6 @@ export interface PagedList<T> {
   hasPreviousPage: boolean;
 }
 
-// Common nationalities for dropdowns
-export const COMMON_NATIONALITIES = [
-  'Philippines',
-  'Indonesia',
-  'India',
-  'Sri Lanka',
-  'Ethiopia',
-  'Nepal',
-  'Bangladesh',
-  'Uganda',
-  'Kenya',
-  'Myanmar',
-] as const;
-
 // Common religions
 export const RELIGIONS = [
   'Islam',

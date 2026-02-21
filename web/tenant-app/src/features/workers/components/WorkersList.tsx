@@ -40,7 +40,8 @@ import {
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import type { WorkerStatus, WorkerFilterParams } from '../types';
-import { STATUS_COLORS, COMMON_NATIONALITIES } from '../types';
+import { STATUS_COLORS } from '../types';
+import { useCommonNationalities } from '@/features/reference-data/hooks/use-reference-data';
 
 const STATUSES: WorkerStatus[] = [
   'Draft',
@@ -73,6 +74,7 @@ export function WorkersList() {
     ...filters,
     search: searchTerm || undefined,
   });
+  const { data: nationalities } = useCommonNationalities();
 
   const deleteWorker = useDeleteWorker();
 
@@ -182,9 +184,9 @@ export function WorkersList() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t('common:all')}</SelectItem>
-            {COMMON_NATIONALITIES.map((nat) => (
-              <SelectItem key={nat} value={nat}>
-                {nat}
+            {nationalities?.map((country) => (
+              <SelectItem key={country.id} value={country.nameEn}>
+                {country.nameEn}
               </SelectItem>
             ))}
           </SelectContent>
