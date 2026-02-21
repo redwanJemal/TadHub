@@ -192,6 +192,29 @@ End-to-end business flow validation.
 
 ---
 
+## Recent Changes
+
+### 2026-02-21: ReferenceData Module
+
+**Added:** New `ReferenceData` module for global reference data shared across all modules.
+
+**Components:**
+- `Country` entity: ISO 3166-1 codes, bilingual names (en/ar), nationality adjectives, dialing codes
+- `JobCategory` entity: 19 MoHRE official job categories (moved from Worker module)
+- API endpoints: `/api/v1/countries`, `/api/v1/job-categories`
+- Seeders: 70+ countries (10 common Tadbeer nationalities prioritized), 19 job categories
+
+**Files Added:**
+- `src/Modules/ReferenceData/` (new module)
+- `src/TadHub.Api/Controllers/CountriesController.cs`
+- `src/TadHub.Api/Controllers/JobCategoriesController.cs`
+
+**Files Modified:**
+- Worker module now references `ReferenceData.Core.Entities.JobCategory`
+- Migration `AddReferenceDataModule` adds `countries` table
+
+---
+
 ## Recent Fixes
 
 ### 2026-02-21: Authorization Global Query Filter Fix
