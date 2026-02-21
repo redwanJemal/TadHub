@@ -126,8 +126,8 @@ services:
       Storage__SecretKey: ${MINIO_SECRET_KEY}
       Storage__BucketName: tadhub
       Storage__PublicUrl: https://storage.endlessmaker.com
-      Cors__Origins__0: https://tadbeer.endlessmaker.com
-      Cors__Origins__1: https://admin.endlessmaker.com
+      Cors__AllowedOrigins__0: https://tadbeer.endlessmaker.com
+      Cors__AllowedOrigins__1: https://admin.endlessmaker.com
     ports:
       - "5000:5000"
     depends_on:

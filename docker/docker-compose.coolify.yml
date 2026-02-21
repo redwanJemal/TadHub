@@ -130,8 +130,8 @@ services:
       Storage__AccessKey: ${MINIO_ACCESS_KEY}
       Storage__SecretKey: ${MINIO_SECRET_KEY}
       Storage__BucketName: tadhub
-      Cors__Origins__0: https://tadbeer.endlessmaker.com
-      Cors__Origins__1: https://admin.endlessmaker.com
+      Cors__AllowedOrigins__0: https://tadbeer.endlessmaker.com
+      Cors__AllowedOrigins__1: https://admin.endlessmaker.com
     depends_on:
       postgres:
         condition: service_healthy
