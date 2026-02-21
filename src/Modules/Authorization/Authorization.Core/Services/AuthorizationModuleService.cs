@@ -466,7 +466,9 @@ public class AuthorizationModuleService : IAuthorizationModuleService
         var internalUserId = userId;
         
         // First, check if this userId exists directly in user_roles
+        // NOTE: Using IgnoreQueryFilters() since we're explicitly filtering by tenantId
         var directExists = await _db.Set<UserRole>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
         
@@ -494,9 +496,11 @@ public class AuthorizationModuleService : IAuthorizationModuleService
         }
 
         // Load from database using the resolved internal user ID
+        // NOTE: Using IgnoreQueryFilters() to bypass global tenant filter since we're explicitly filtering by tenantId
         _logger.LogInformation("[AUTH DEBUG] Loading user_roles for TenantId: {TenantId}, InternalUserId: {InternalUserId}", tenantId, internalUserId);
         
         var userRoles = await _db.Set<UserRole>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(x => x.TenantId == tenantId && x.UserId == internalUserId)
             .Include(x => x.Role)
