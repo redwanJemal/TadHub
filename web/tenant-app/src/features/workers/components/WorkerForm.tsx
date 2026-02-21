@@ -9,7 +9,6 @@ import {
   useWorker, 
   useCreateWorker, 
   useUpdateWorker,
-  useJobCategories 
 } from '../hooks/use-workers';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
@@ -32,8 +31,8 @@ import {
   FormMessage,
 } from '@/shared/components/ui/form';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { JobCategorySelect, NationalitySelect } from '@/features/reference-data';
 import { 
-  COMMON_NATIONALITIES, 
   RELIGIONS, 
   MARITAL_STATUSES, 
   EDUCATION_LEVELS,
@@ -69,7 +68,6 @@ export function WorkerForm() {
   const navigate = useNavigate();
 
   const { data: worker, isLoading: isLoadingWorker } = useWorker(id || '', ['jobCategory']);
-  const { data: jobCategories, isLoading: isLoadingCategories } = useJobCategories();
   const createWorker = useCreateWorker();
   const updateWorker = useUpdateWorker();
 
@@ -280,22 +278,17 @@ export function WorkerForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('form.fields.nationality')}</FormLabel>
-                    <Select 
-                      value={field.value} 
-                      onValueChange={field.onChange}
-                      disabled={isEditMode}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('form.placeholders.selectNationality')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {COMMON_NATIONALITIES.map((nat) => (
-                          <SelectItem key={nat} value={nat}>{nat}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <NationalitySelect
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isEditMode}
+                        placeholder={t('form.placeholders.selectNationality')}
+                        valueType="name"
+                        commonOnly
+                        error={!!form.formState.errors.nationality}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -443,24 +436,15 @@ export function WorkerForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('form.fields.jobCategory')}</FormLabel>
-                    <Select 
-                      value={field.value} 
-                      onValueChange={field.onChange}
-                      disabled={isLoadingCategories}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('form.placeholders.selectJobCategory')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {jobCategories?.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id}>
-                            {cat.name} ({cat.moHRECode})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <JobCategorySelect
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder={t('form.placeholders.selectJobCategory')}
+                        showCode
+                        error={!!form.formState.errors.jobCategoryId}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

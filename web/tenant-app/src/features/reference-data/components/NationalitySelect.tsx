@@ -11,9 +11,9 @@ import { getFlagEmoji } from '../types';
 import type { CountryRefDto } from '../types';
 
 export interface NationalitySelectProps {
-  /** Selected country ID (nationality is derived from country) */
+  /** Selected value (country ID or name, based on valueType) */
   value?: string;
-  /** Change handler */
+  /** Change handler - returns value based on valueType */
   onChange?: (value: string, country?: CountryRefDto) => void;
   /** Whether the select is disabled */
   disabled?: boolean;
@@ -23,6 +23,8 @@ export interface NationalitySelectProps {
   commonOnly?: boolean;
   /** Show country flag emoji */
   showFlag?: boolean;
+  /** What value to use - 'id' for country UUID, 'name' for country nameEn */
+  valueType?: 'id' | 'name';
   /** Additional class names */
   className?: string;
   /** Error state */
@@ -59,6 +61,7 @@ export function NationalitySelect({
   placeholder = 'Select nationality',
   commonOnly = false,
   showFlag = true,
+  valueType = 'id',
   className,
   error,
   id,
@@ -70,13 +73,17 @@ export function NationalitySelect({
   
   const { data: countries, isLoading, isError } = commonOnly ? commonQuery : allQuery;
 
+  // Get the value to use for each country based on valueType
+  const getCountryValue = (country: CountryRefDto) => 
+    valueType === 'name' ? country.nameEn : country.id;
+
   const handleChange = (newValue: string) => {
-    const country = countries?.find((c) => c.id === newValue);
+    const country = countries?.find((c) => getCountryValue(c) === newValue);
     onChange?.(newValue, country);
   };
 
   // Find the selected country for display
-  const selectedCountry = countries?.find((c) => c.id === value);
+  const selectedCountry = countries?.find((c) => getCountryValue(c) === value);
 
   if (isLoading) {
     return <Skeleton className="h-10 w-full" />;
@@ -116,7 +123,7 @@ export function NationalitySelect({
       </SelectTrigger>
       <SelectContent>
         {countries?.map((country) => (
-          <SelectItem key={country.id} value={country.id}>
+          <SelectItem key={country.id} value={getCountryValue(country)}>
             <span className="flex items-center gap-2">
               {showFlag && (
                 <span className="text-lg">{getFlagEmoji(country.code)}</span>
