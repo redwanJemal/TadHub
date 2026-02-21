@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="MassTransit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReferenceData.Contracts\ReferenceData.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\TadHub.Infrastructure\TadHub.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -21,6 +21,7 @@ using MaritalStatus = Worker.Core.Entities.MaritalStatus;
 using EducationLevel = Worker.Core.Entities.EducationLevel;
 using LanguageProficiency = Worker.Core.Entities.LanguageProficiency;
 using MediaType = Worker.Core.Entities.MediaType;
+using JobCategory = ReferenceData.Core.Entities.JobCategory;
 
 namespace Worker.Core.Services;
 

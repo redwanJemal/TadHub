@@ -124,7 +124,7 @@ public class WorkerConfiguration : IEntityTypeConfiguration<Entities.Worker>
 
         // Relationships
         builder.HasOne(x => x.JobCategory)
-            .WithMany(x => x.Workers)
+            .WithMany() // No inverse navigation in JobCategory
             .HasForeignKey(x => x.JobCategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 

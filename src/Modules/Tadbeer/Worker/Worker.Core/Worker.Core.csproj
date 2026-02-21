@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Worker.Contracts\Worker.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\TadHub.Infrastructure\TadHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\ReferenceData\ReferenceData.Core\ReferenceData.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

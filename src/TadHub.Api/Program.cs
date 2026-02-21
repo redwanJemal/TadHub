@@ -20,6 +20,7 @@ using TadHub.Infrastructure.Tenancy;
 using Tenancy.Core;
 using Worker.Core;
 using ClientManagement.Core;
+using ReferenceData.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -141,11 +142,40 @@ builder.Services.AddAnalyticsModule();
 builder.Services.AddContentModule();
 builder.Services.AddTemplateModule();
 
+// Reference data module
+builder.Services.AddReferenceDataModule();
+
 // Tadbeer domain modules
 builder.Services.AddWorkerModule();
 builder.Services.AddClientManagementModule();
 
 var app = builder.Build();
+
+// =============================================================================
+// Database Seeding (Reference Data)
+// =============================================================================
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    
+    try
+    {
+        // Seed reference data (countries, job categories)
+        var countrySeeder = services.GetRequiredService<ReferenceData.Core.Seeds.CountrySeeder>();
+        var jobCategorySeeder = services.GetRequiredService<ReferenceData.Core.Seeds.JobCategorySeeder>();
+        
+        await jobCategorySeeder.SeedAsync();
+        await countrySeeder.SeedAsync();
+        
+        logger.LogInformation("Reference data seeding completed");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while seeding reference data");
+        // Don't throw - allow app to start even if seeding fails
+    }
+}
 
 // =============================================================================
 // Middleware Pipeline

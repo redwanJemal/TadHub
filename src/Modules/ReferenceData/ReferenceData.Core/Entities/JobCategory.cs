@@ -1,24 +1,24 @@
 using TadHub.SharedKernel.Entities;
 using TadHub.SharedKernel.Localization;
 
-namespace Worker.Core.Entities;
+namespace ReferenceData.Core.Entities;
 
 /// <summary>
-/// Job category (MoHRE-defined).
+/// MoHRE job category entity.
 /// Global entity (not tenant-scoped).
-/// 19 official categories defined by MoHRE.
+/// 19 official categories defined by Ministry of Human Resources and Emiratisation.
 /// </summary>
 public class JobCategory : BaseEntity
 {
     /// <summary>
-    /// Localized name (en/ar).
-    /// </summary>
-    public LocalizedString Name { get; set; } = new();
-
-    /// <summary>
-    /// MoHRE official code.
+    /// MoHRE official code (e.g., "DMW", "HSK", "COK").
     /// </summary>
     public string MoHRECode { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Localized category name (en/ar).
+    /// </summary>
+    public LocalizedString Name { get; set; } = new();
 
     /// <summary>
     /// Whether this category is active.
@@ -27,15 +27,7 @@ public class JobCategory : BaseEntity
 
     /// <summary>
     /// Display order for UI.
+    /// Common categories have lower values.
     /// </summary>
     public int DisplayOrder { get; set; }
-
-    #region Navigation Properties
-
-    /// <summary>
-    /// Workers in this category.
-    /// </summary>
-    public ICollection<Worker> Workers { get; set; } = new List<Worker>();
-
-    #endregion
 }

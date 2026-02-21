@@ -1,3 +1,4 @@
+using ReferenceData.Core.Entities;
 using TadHub.SharedKernel.Entities;
 
 namespace Worker.Core.Entities;
