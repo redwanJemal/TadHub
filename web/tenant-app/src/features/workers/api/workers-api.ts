@@ -190,10 +190,10 @@ export const workersApi = {
  */
 export const jobCategoriesApi = {
   /**
-   * List all job categories
+   * List all job category refs (lightweight for dropdowns)
    */
   async list(): Promise<JobCategoryRefDto[]> {
-    return apiClient.get<JobCategoryRefDto[]>('/job-categories');
+    return apiClient.get<JobCategoryRefDto[]>('/job-categories/refs');
   },
 
   /**

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Search, MoreHorizontal, Shield, ShieldCheck, UserPlus, Trash2, Eye } from 'lucide-react';
-import { useAdminUsers, useCreateAdminUser, useUpdateAdminUser, useRemoveAdminUser } from '../hooks';
-import { AdminUserDto } from '../types';
+import { usePlatformStaff, useCreatePlatformStaff, useUpdatePlatformStaff, useRemovePlatformStaff } from '../hooks';
+import { PlatformStaffDto, PlatformStaffRole } from '../types';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Badge } from '@/shared/components/ui/badge';
@@ -41,8 +41,14 @@ import {
 } from '@/shared/components/ui/dialog';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
-import { Checkbox } from '@/shared/components/ui/checkbox';
 import { Label } from '@/shared/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/components/ui/select';
 
 function getInitials(firstName?: string, lastName?: string): string {
   const f = firstName?.[0] || '';
@@ -61,22 +67,34 @@ function formatDate(dateString?: string): string {
   });
 }
 
+const ROLE_LABELS: Record<string, string> = {
+  'super-admin': 'Super Admin',
+  'admin': 'Admin',
+  'finance': 'Finance',
+  'sales': 'Sales',
+  'support': 'Support',
+};
+
+function getRoleLabel(role: string): string {
+  return ROLE_LABELS[role] || role;
+}
+
 export function PlatformTeamPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [removeTarget, setRemoveTarget] = useState<AdminUserDto | null>(null);
-  const [selectedAdmin, setSelectedAdmin] = useState<AdminUserDto | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<PlatformStaffDto | null>(null);
+  const [selectedStaff, setSelectedStaff] = useState<PlatformStaffDto | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
-  const [newAdminEmail, setNewAdminEmail] = useState('');
-  const [newAdminIsSuperAdmin, setNewAdminIsSuperAdmin] = useState(false);
+  const [newStaffEmail, setNewStaffEmail] = useState('');
+  const [newStaffRole, setNewStaffRole] = useState<PlatformStaffRole>('admin');
   const [addError, setAddError] = useState<string | null>(null);
 
-  const { data: admins, isLoading, error } = useAdminUsers({
+  const { data: staff, isLoading, error } = usePlatformStaff({
     q: searchQuery || undefined,
   });
 
-  const createMutation = useCreateAdminUser();
-  const updateMutation = useUpdateAdminUser();
-  const removeMutation = useRemoveAdminUser();
+  const createMutation = useCreatePlatformStaff();
+  const updateMutation = useUpdatePlatformStaff();
+  const removeMutation = useRemovePlatformStaff();
 
   const handleRemove = async () => {
     if (!removeTarget) return;
@@ -84,38 +102,39 @@ export function PlatformTeamPage() {
       await removeMutation.mutateAsync(removeTarget.id);
       setRemoveTarget(null);
     } catch (err) {
-      console.error('Failed to remove admin:', err);
+      console.error('Failed to remove staff:', err);
     }
   };
 
-  const handleToggleSuperAdmin = async (admin: AdminUserDto) => {
+  const handleToggleSuperAdmin = async (member: PlatformStaffDto) => {
+    const newRole = member.role === 'super-admin' ? 'admin' : 'super-admin';
     try {
       await updateMutation.mutateAsync({
-        id: admin.id,
-        data: { isSuperAdmin: !admin.isSuperAdmin },
+        id: member.id,
+        data: { role: newRole },
       });
     } catch (err) {
-      console.error('Failed to update admin:', err);
+      console.error('Failed to update staff:', err);
     }
   };
 
-  const handleAddAdmin = async () => {
-    if (!newAdminEmail.trim()) return;
+  const handleAddStaff = async () => {
+    if (!newStaffEmail.trim()) return;
     setAddError(null);
     try {
       await createMutation.mutateAsync({
-        email: newAdminEmail.trim(),
-        isSuperAdmin: newAdminIsSuperAdmin,
+        email: newStaffEmail.trim(),
+        role: newStaffRole,
       });
       setAddDialogOpen(false);
-      setNewAdminEmail('');
-      setNewAdminIsSuperAdmin(false);
+      setNewStaffEmail('');
+      setNewStaffRole('admin');
     } catch (err: any) {
-      setAddError(err.message || 'Failed to add admin');
+      setAddError(err.message || 'Failed to add staff member');
     }
   };
 
-  const filteredAdmins = admins || [];
+  const filteredStaff = staff || [];
 
   return (
     <div className="space-y-6">
@@ -137,9 +156,9 @@ export function PlatformTeamPage() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <div className="text-3xl font-bold">{filteredAdmins.length}</div>
+            <div className="text-3xl font-bold">{filteredStaff.length}</div>
             <div className="text-sm text-muted-foreground">
-              {filteredAdmins.filter(a => a.isSuperAdmin).length} super admins
+              {filteredStaff.filter(a => a.role === 'super-admin').length} super admins
             </div>
           </div>
         </CardContent>
@@ -158,7 +177,7 @@ export function PlatformTeamPage() {
         </div>
         <Button onClick={() => setAddDialogOpen(true)}>
           <UserPlus className="h-4 w-4 mr-2" />
-          Add Admin
+          Add Staff
         </Button>
       </div>
 
@@ -175,10 +194,10 @@ export function PlatformTeamPage() {
             Failed to load platform team members. Please try again.
           </CardContent>
         </Card>
-      ) : filteredAdmins.length === 0 ? (
+      ) : filteredStaff.length === 0 ? (
         <Card>
           <CardContent className="py-10 text-center text-muted-foreground">
-            {searchQuery ? 'No admins match your search.' : 'No platform admins yet.'}
+            {searchQuery ? 'No staff match your search.' : 'No platform staff yet. Add your first team member above.'}
           </CardContent>
         </Card>
       ) : (
@@ -194,28 +213,28 @@ export function PlatformTeamPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAdmins.map((admin) => (
-                <TableRow key={admin.id}>
+              {filteredStaff.map((member) => (
+                <TableRow key={member.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
-                        <AvatarImage src={admin.user.avatarUrl} />
+                        <AvatarImage src={member.user.avatarUrl} />
                         <AvatarFallback className="bg-primary/10 text-primary">
-                          {getInitials(admin.user.firstName, admin.user.lastName)}
+                          {getInitials(member.user.firstName, member.user.lastName)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-medium">
-                          {admin.user.firstName} {admin.user.lastName}
+                          {member.user.firstName} {member.user.lastName}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {admin.user.email}
+                          {member.user.email}
                         </div>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    {admin.isSuperAdmin ? (
+                    {member.role === 'super-admin' ? (
                       <Badge className="bg-amber-500 hover:bg-amber-600">
                         <ShieldCheck className="h-3 w-3 mr-1" />
                         Super Admin
@@ -223,15 +242,15 @@ export function PlatformTeamPage() {
                     ) : (
                       <Badge variant="secondary">
                         <Shield className="h-3 w-3 mr-1" />
-                        Admin
+                        {getRoleLabel(member.role)}
                       </Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formatDate(admin.user.lastLoginAt)}
+                    {formatDate(member.user.lastLoginAt)}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formatDate(admin.createdAt)}
+                    {formatDate(member.createdAt)}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -241,21 +260,21 @@ export function PlatformTeamPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setSelectedAdmin(admin)}>
+                        <DropdownMenuItem onClick={() => setSelectedStaff(member)}>
                           <Eye className="h-4 w-4 mr-2" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleToggleSuperAdmin(admin)}>
+                        <DropdownMenuItem onClick={() => handleToggleSuperAdmin(member)}>
                           <ShieldCheck className="h-4 w-4 mr-2" />
-                          {admin.isSuperAdmin ? 'Remove Super Admin' : 'Make Super Admin'}
+                          {member.role === 'super-admin' ? 'Remove Super Admin' : 'Make Super Admin'}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-destructive"
-                          onClick={() => setRemoveTarget(admin)}
+                          onClick={() => setRemoveTarget(member)}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Remove Admin
+                          Remove Staff
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -267,13 +286,13 @@ export function PlatformTeamPage() {
         </div>
       )}
 
-      {/* Add Admin Dialog */}
+      {/* Add Staff Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Platform Admin</DialogTitle>
+            <DialogTitle>Add Platform Staff</DialogTitle>
             <DialogDescription>
-              Add an existing user as a platform admin. The user must have logged in at least once.
+              Add an existing user as a platform staff member. The user must have logged in at least once.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -288,19 +307,24 @@ export function PlatformTeamPage() {
                 id="email"
                 type="email"
                 placeholder="user@example.com"
-                value={newAdminEmail}
-                onChange={(e) => setNewAdminEmail(e.target.value)}
+                value={newStaffEmail}
+                onChange={(e) => setNewStaffEmail(e.target.value)}
               />
             </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="superAdmin"
-                checked={newAdminIsSuperAdmin}
-                onCheckedChange={(checked) => setNewAdminIsSuperAdmin(checked === true)}
-              />
-              <Label htmlFor="superAdmin" className="cursor-pointer">
-                Grant super admin privileges
-              </Label>
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <Select value={newStaffRole} onValueChange={(v) => setNewStaffRole(v as PlatformStaffRole)}>
+                <SelectTrigger id="role">
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="super-admin">Super Admin</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
+                  <SelectItem value="sales">Sales</SelectItem>
+                  <SelectItem value="support">Support</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
@@ -308,10 +332,10 @@ export function PlatformTeamPage() {
               Cancel
             </Button>
             <Button
-              onClick={handleAddAdmin}
-              disabled={!newAdminEmail.trim() || createMutation.isPending}
+              onClick={handleAddStaff}
+              disabled={!newStaffEmail.trim() || createMutation.isPending}
             >
-              {createMutation.isPending ? 'Adding...' : 'Add Admin'}
+              {createMutation.isPending ? 'Adding...' : 'Add Staff'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -321,9 +345,9 @@ export function PlatformTeamPage() {
       <AlertDialog open={!!removeTarget} onOpenChange={() => setRemoveTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove Admin Access</AlertDialogTitle>
+            <AlertDialogTitle>Remove Staff Access</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove admin access from{' '}
+              Are you sure you want to remove staff access from{' '}
               <strong>
                 {removeTarget?.user.firstName} {removeTarget?.user.lastName}
               </strong>
@@ -336,58 +360,58 @@ export function PlatformTeamPage() {
               onClick={handleRemove}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Remove Admin
+              Remove Staff
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       {/* View Details Dialog */}
-      <Dialog open={!!selectedAdmin} onOpenChange={() => setSelectedAdmin(null)}>
+      <Dialog open={!!selectedStaff} onOpenChange={() => setSelectedStaff(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Admin Details</DialogTitle>
+            <DialogTitle>Staff Details</DialogTitle>
           </DialogHeader>
-          {selectedAdmin && (
+          {selectedStaff && (
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={selectedAdmin.user.avatarUrl} />
+                  <AvatarImage src={selectedStaff.user.avatarUrl} />
                   <AvatarFallback className="bg-primary/10 text-primary text-xl">
-                    {getInitials(selectedAdmin.user.firstName, selectedAdmin.user.lastName)}
+                    {getInitials(selectedStaff.user.firstName, selectedStaff.user.lastName)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <div className="text-lg font-semibold">
-                    {selectedAdmin.user.firstName} {selectedAdmin.user.lastName}
+                    {selectedStaff.user.firstName} {selectedStaff.user.lastName}
                   </div>
-                  <div className="text-muted-foreground">{selectedAdmin.user.email}</div>
+                  <div className="text-muted-foreground">{selectedStaff.user.email}</div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <div className="font-medium text-muted-foreground">Role</div>
-                  <div>{selectedAdmin.isSuperAdmin ? 'Super Admin' : 'Admin'}</div>
+                  <div>{getRoleLabel(selectedStaff.role)}</div>
+                </div>
+                <div>
+                  <div className="font-medium text-muted-foreground">Department</div>
+                  <div>{selectedStaff.department || '-'}</div>
                 </div>
                 <div>
                   <div className="font-medium text-muted-foreground">Status</div>
-                  <div>{selectedAdmin.user.isActive ? 'Active' : 'Inactive'}</div>
+                  <div>{selectedStaff.user.isActive ? 'Active' : 'Inactive'}</div>
                 </div>
                 <div>
                   <div className="font-medium text-muted-foreground">Phone</div>
-                  <div>{selectedAdmin.user.phone || '-'}</div>
-                </div>
-                <div>
-                  <div className="font-medium text-muted-foreground">Locale</div>
-                  <div>{selectedAdmin.user.locale || 'en'}</div>
+                  <div>{selectedStaff.user.phone || '-'}</div>
                 </div>
                 <div>
                   <div className="font-medium text-muted-foreground">Last Login</div>
-                  <div>{formatDate(selectedAdmin.user.lastLoginAt)}</div>
+                  <div>{formatDate(selectedStaff.user.lastLoginAt)}</div>
                 </div>
                 <div>
-                  <div className="font-medium text-muted-foreground">Admin Since</div>
-                  <div>{formatDate(selectedAdmin.createdAt)}</div>
+                  <div className="font-medium text-muted-foreground">Staff Since</div>
+                  <div>{formatDate(selectedStaff.createdAt)}</div>
                 </div>
               </div>
             </div>
