@@ -31,6 +31,11 @@ public class PermissionConfiguration : IEntityTypeConfiguration<Permission>
             .IsUnique()
             .HasDatabaseName("ix_permissions_name");
 
+        // Scope stored as string
+        builder.Property(x => x.Scope)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
         // Index for module queries
         builder.HasIndex(x => x.Module)
             .HasDatabaseName("ix_permissions_module");

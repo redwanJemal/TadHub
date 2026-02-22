@@ -11,6 +11,8 @@ public sealed record RoleDto
     public string? Description { get; init; }
     public bool IsDefault { get; init; }
     public bool IsSystem { get; init; }
+    public bool IsCustom { get; init; }
+    public Guid? TemplateId { get; init; }
     public int DisplayOrder { get; init; }
     public IReadOnlyList<PermissionDto> Permissions { get; init; } = [];
     public DateTimeOffset CreatedAt { get; init; }

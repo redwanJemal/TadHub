@@ -1,6 +1,5 @@
 using Identity.Core.Entities;
 using TadHub.SharedKernel.Entities;
-using Tenancy.Contracts.DTOs;
 
 namespace Tenancy.Core.Entities;
 
@@ -25,9 +24,10 @@ public class TenantUserInvitation : BaseEntity
     public string Email { get; set; } = string.Empty;
 
     /// <summary>
-    /// Role to assign when the invitation is accepted.
+    /// Optional RBAC role ID to assign when invitation is accepted.
+    /// FK to Authorization.Role. Null defaults to "Member" role.
     /// </summary>
-    public TenantRole Role { get; set; } = TenantRole.Member;
+    public Guid? DefaultRoleId { get; set; }
 
     /// <summary>
     /// Unique token for accepting the invitation.

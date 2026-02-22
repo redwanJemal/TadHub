@@ -1,12 +1,17 @@
 namespace Identity.Contracts.DTOs;
 
 /// <summary>
-/// Request to update a platform admin user.
+/// Request to update a platform staff member.
 /// </summary>
-public sealed record UpdateAdminUserRequest
+public sealed record UpdatePlatformStaffRequest
 {
     /// <summary>
-    /// Whether this admin should have super admin privileges.
+    /// Platform role: "super-admin", "admin", "finance", "sales", "support"
     /// </summary>
-    public bool? IsSuperAdmin { get; init; }
+    public string? Role { get; init; }
+
+    /// <summary>
+    /// Optional department/notes for organizational clarity.
+    /// </summary>
+    public string? Department { get; init; }
 }

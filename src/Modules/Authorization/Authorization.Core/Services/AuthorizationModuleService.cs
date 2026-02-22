@@ -149,6 +149,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             Description = request.Description,
             IsDefault = false,
             IsSystem = false,
+            IsCustom = true,
             DisplayOrder = 100
         };
 
@@ -261,9 +262,81 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     {
         _logger.LogInformation("Seeding default roles for tenant {TenantId}", tenantId);
 
-        var allPermissions = await _db.Set<Permission>().ToListAsync(ct);
+        // Try to load role templates first
+        var templates = await _db.Set<RoleTemplate>()
+            .Include(t => t.Permissions)
+            .OrderBy(t => t.DisplayOrder)
+            .ToListAsync(ct);
 
-        // Owner role - all permissions
+        if (templates.Count > 0)
+        {
+            _logger.LogInformation("Found {Count} role templates, creating roles from templates", templates.Count);
+
+            Guid? ownerRoleId = null;
+
+            foreach (var template in templates)
+            {
+                var role = new Role
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    Name = template.Name,
+                    Description = template.Description,
+                    IsDefault = true,
+                    IsSystem = template.IsSystem,
+                    IsCustom = false,
+                    TemplateId = template.Id,
+                    DisplayOrder = template.DisplayOrder
+                };
+                _db.Set<Role>().Add(role);
+
+                // Clone template permissions into role permissions
+                foreach (var templatePerm in template.Permissions)
+                {
+                    _db.Set<RolePermission>().Add(new RolePermission
+                    {
+                        Id = Guid.NewGuid(),
+                        RoleId = role.Id,
+                        PermissionId = templatePerm.PermissionId
+                    });
+                }
+
+                // Track the Owner role for user assignment
+                if (template.Name == "Owner")
+                {
+                    ownerRoleId = role.Id;
+                }
+            }
+
+            // Assign Owner role to the creating user
+            if (ownerRoleId.HasValue)
+            {
+                _db.Set<UserRole>().Add(new UserRole
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    UserId = ownerUserId,
+                    RoleId = ownerRoleId.Value,
+                    AssignedAt = _clock.UtcNow
+                });
+            }
+
+            await _db.SaveChangesAsync(ct);
+
+            _logger.LogInformation(
+                "Seeded {Count} roles from templates for tenant {TenantId} and assigned Owner role to user {UserId}",
+                templates.Count, tenantId, ownerUserId);
+            return;
+        }
+
+        // Fallback: no templates found, use hardcoded logic
+        _logger.LogWarning("No role templates found, falling back to hardcoded default roles");
+
+        var allPermissions = await _db.Set<Permission>()
+            .Where(p => p.Scope == PermissionScope.Tenant || p.Scope == PermissionScope.Both)
+            .ToListAsync(ct);
+
+        // Owner role - all tenant-scoped permissions
         var ownerRole = new Role
         {
             Id = Guid.NewGuid(),
@@ -272,6 +345,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             Description = "Full access to all features",
             IsDefault = true,
             IsSystem = true,
+            IsCustom = false,
             DisplayOrder = 1
         };
         _db.Set<Role>().Add(ownerRole);
@@ -295,6 +369,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             Description = "Administrative access",
             IsDefault = true,
             IsSystem = true,
+            IsCustom = false,
             DisplayOrder = 2
         };
         _db.Set<Role>().Add(adminRole);
@@ -319,6 +394,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             Description = "Basic access",
             IsDefault = true,
             IsSystem = true,
+            IsCustom = false,
             DisplayOrder = 3
         };
         _db.Set<Role>().Add(memberRole);
@@ -347,7 +423,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation(
-            "Seeded default roles for tenant {TenantId} and assigned Owner role to user {UserId}",
+            "Seeded default roles (fallback) for tenant {TenantId} and assigned Owner role to user {UserId}",
             tenantId, ownerUserId);
     }
 
@@ -581,6 +657,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
         Name = p.Name,
         Description = p.Description,
         Module = p.Module,
+        Scope = p.Scope.ToString(),
         DisplayOrder = p.DisplayOrder
     };
 
@@ -592,6 +669,8 @@ public class AuthorizationModuleService : IAuthorizationModuleService
         Description = r.Description,
         IsDefault = r.IsDefault,
         IsSystem = r.IsSystem,
+        IsCustom = r.IsCustom,
+        TemplateId = r.TemplateId,
         DisplayOrder = r.DisplayOrder,
         Permissions = r.Permissions.Select(rp => MapPermissionToDto(rp.Permission)).ToList(),
         CreatedAt = r.CreatedAt,

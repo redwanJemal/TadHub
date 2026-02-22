@@ -9,5 +9,6 @@ public sealed record PermissionDto
     public string Name { get; init; } = string.Empty;
     public string? Description { get; init; }
     public string Module { get; init; } = string.Empty;
+    public string Scope { get; init; } = "Tenant";
     public int DisplayOrder { get; init; }
 }

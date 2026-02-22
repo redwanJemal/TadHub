@@ -21,6 +21,7 @@ using Tenancy.Core;
 using Worker.Core;
 using ClientManagement.Core;
 using ReferenceData.Core;
+using Supplier.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -141,6 +142,9 @@ builder.Services.AddAuditModule();
 builder.Services.AddAnalyticsModule();
 builder.Services.AddContentModule();
 builder.Services.AddTemplateModule();
+
+// Supplier module
+builder.Services.AddSupplierModule();
 
 // Reference data module
 builder.Services.AddReferenceDataModule();

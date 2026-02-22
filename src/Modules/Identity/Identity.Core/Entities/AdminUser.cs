@@ -3,23 +3,21 @@ using TadHub.SharedKernel.Entities;
 namespace Identity.Core.Entities;
 
 /// <summary>
-/// Platform admin user. Users with this record have platform-level administrative access.
+/// Platform staff member. Users with this record have platform-level administrative access.
 /// </summary>
-public class AdminUser : BaseEntity
+public class PlatformStaff : BaseEntity
 {
-    /// <summary>
-    /// Reference to the user profile.
-    /// </summary>
     public Guid UserId { get; set; }
-
-    /// <summary>
-    /// Navigation property to the user profile.
-    /// </summary>
     public UserProfile User { get; set; } = null!;
 
     /// <summary>
-    /// Whether this admin has super admin privileges.
-    /// Super admins can manage other admins and have unrestricted access.
+    /// Platform role mirrored from Keycloak realm roles.
+    /// Values: "super-admin", "admin", "finance", "sales", "support"
     /// </summary>
-    public bool IsSuperAdmin { get; set; }
+    public string Role { get; set; } = "admin";
+
+    /// <summary>
+    /// Optional department/notes for organizational clarity.
+    /// </summary>
+    public string? Department { get; set; }
 }

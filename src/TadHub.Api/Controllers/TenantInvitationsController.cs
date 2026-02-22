@@ -36,9 +36,9 @@ public class TenantInvitationsController : ControllerBase
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
-        // Check if user is admin or owner
-        var role = await _tenantService.GetUserRoleAsync(tenantId, _currentUser.UserId, ct);
-        if (role is not (TenantRole.Admin or TenantRole.Owner))
+        // Check if user is owner
+        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
+        if (!isOwner)
             return Forbid();
 
         var result = await _tenantService.GetInvitationsAsync(tenantId, qp, ct);
@@ -47,7 +47,7 @@ public class TenantInvitationsController : ControllerBase
 
     /// <summary>
     /// Creates an invitation to join the tenant.
-    /// Requires admin or owner role.
+    /// Requires owner status.
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(TenantInvitationDto), StatusCodes.Status201Created)]
@@ -58,13 +58,9 @@ public class TenantInvitationsController : ControllerBase
         [FromBody] InviteMemberRequest request,
         CancellationToken ct)
     {
-        // Check if user is admin or owner
-        var role = await _tenantService.GetUserRoleAsync(tenantId, _currentUser.UserId, ct);
-        if (role is not (TenantRole.Admin or TenantRole.Owner))
-            return Forbid();
-
-        // Only owners can invite as owner
-        if (request.Role == TenantRole.Owner && role != TenantRole.Owner)
+        // Check if user is owner
+        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
+        if (!isOwner)
             return Forbid();
 
         var result = await _tenantService.InviteMemberAsync(tenantId, request, ct);
@@ -81,7 +77,7 @@ public class TenantInvitationsController : ControllerBase
 
     /// <summary>
     /// Revokes a pending invitation.
-    /// Requires admin or owner role.
+    /// Requires owner status.
     /// </summary>
     [HttpDelete("{invitationId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -92,9 +88,9 @@ public class TenantInvitationsController : ControllerBase
         Guid invitationId,
         CancellationToken ct)
     {
-        // Check if user is admin or owner
-        var role = await _tenantService.GetUserRoleAsync(tenantId, _currentUser.UserId, ct);
-        if (role is not (TenantRole.Admin or TenantRole.Owner))
+        // Check if user is owner
+        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
+        if (!isOwner)
             return Forbid();
 
         var result = await _tenantService.RevokeInvitationAsync(tenantId, invitationId, ct);
@@ -146,7 +142,7 @@ public class InvitationsController : ControllerBase
     /// </summary>
     [HttpPost("{token}/accept")]
     [Authorize]
-    [ProducesResponseType(typeof(TenantUserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TenantMemberDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AcceptInvitation(string token, CancellationToken ct)

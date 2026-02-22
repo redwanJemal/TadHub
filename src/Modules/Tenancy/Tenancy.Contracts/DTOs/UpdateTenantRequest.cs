@@ -14,9 +14,10 @@ public sealed record UpdateTenantRequest
     public string? Name { get; init; }
 
     /// <summary>
-    /// Tenant type ID.
+    /// Arabic name for bilingual support.
     /// </summary>
-    public Guid? TenantTypeId { get; init; }
+    [MaxLength(255)]
+    public string? NameAr { get; init; }
 
     /// <summary>
     /// Logo URL.

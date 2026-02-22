@@ -19,10 +19,6 @@ public class TenantUserInvitationConfiguration : IEntityTypeConfiguration<Tenant
             .IsRequired()
             .HasMaxLength(255);
 
-        builder.Property(x => x.Role)
-            .HasConversion<string>()
-            .HasMaxLength(20);
-
         builder.Property(x => x.Token)
             .IsRequired()
             .HasMaxLength(100);

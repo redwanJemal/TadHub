@@ -7,10 +7,9 @@ public sealed record TenantDto
 {
     public Guid Id { get; init; }
     public string Name { get; init; } = string.Empty;
+    public string? NameAr { get; init; }
     public string Slug { get; init; } = string.Empty;
     public TenantStatus Status { get; init; }
-    public Guid? TenantTypeId { get; init; }
-    public string? TenantTypeName { get; init; }
     public string? LogoUrl { get; init; }
     public string? Description { get; init; }
     public string? Website { get; init; }

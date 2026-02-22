@@ -27,6 +27,8 @@
     <ProjectReference Include="..\Modules\Subscription\Subscription.Core\Subscription.Core.csproj" />
     <ProjectReference Include="..\Modules\_Template\_Template.Core\_Template.Core.csproj" />
     <ProjectReference Include="..\Modules\Tenancy\Tenancy.Core\Tenancy.Core.csproj" />
+    <!-- Supplier module -->
+    <ProjectReference Include="..\Modules\Supplier\Supplier.Core\Supplier.Core.csproj" />
     <!-- Reference data module -->
     <ProjectReference Include="..\Modules\ReferenceData\ReferenceData.Core\ReferenceData.Core.csproj" />
     <!-- Tadbeer domain modules -->

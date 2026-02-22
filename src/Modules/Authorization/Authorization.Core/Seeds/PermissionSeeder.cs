@@ -55,54 +55,90 @@ public class PermissionSeeder : IHostedService
     {
         return new List<Permission>
         {
-            // Tenancy module
-            new() { Id = Guid.NewGuid(), Name = "tenancy.view", Description = "View tenant details", Module = "tenancy", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "tenancy.manage", Description = "Manage tenant settings", Module = "tenancy", DisplayOrder = 2 },
-            new() { Id = Guid.NewGuid(), Name = "tenancy.delete", Description = "Delete tenant", Module = "tenancy", DisplayOrder = 3 },
+            // Tenancy module (Both — visible at platform and tenant level)
+            new() { Id = Guid.NewGuid(), Name = "tenancy.view", Description = "View tenant details", Module = "tenancy", Scope = PermissionScope.Both, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "tenancy.manage", Description = "Manage tenant settings", Module = "tenancy", Scope = PermissionScope.Both, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "tenancy.delete", Description = "Delete tenant", Module = "tenancy", Scope = PermissionScope.Both, DisplayOrder = 3 },
 
-            // Members module
-            new() { Id = Guid.NewGuid(), Name = "members.view", Description = "View team members", Module = "members", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "members.invite", Description = "Invite new members", Module = "members", DisplayOrder = 2 },
-            new() { Id = Guid.NewGuid(), Name = "members.manage", Description = "Manage member roles", Module = "members", DisplayOrder = 3 },
-            new() { Id = Guid.NewGuid(), Name = "members.remove", Description = "Remove members", Module = "members", DisplayOrder = 4 },
+            // Members module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "members.view", Description = "View team members", Module = "members", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "members.invite", Description = "Invite new members", Module = "members", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "members.manage", Description = "Manage member roles", Module = "members", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "members.remove", Description = "Remove members", Module = "members", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
 
-            // Roles module
-            new() { Id = Guid.NewGuid(), Name = "roles.view", Description = "View roles", Module = "roles", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "roles.manage", Description = "Create and edit roles", Module = "roles", DisplayOrder = 2 },
-            new() { Id = Guid.NewGuid(), Name = "roles.delete", Description = "Delete roles", Module = "roles", DisplayOrder = 3 },
-            new() { Id = Guid.NewGuid(), Name = "roles.assign", Description = "Assign roles to users", Module = "roles", DisplayOrder = 4 },
+            // Roles module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "roles.view", Description = "View roles", Module = "roles", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "roles.manage", Description = "Create and edit roles", Module = "roles", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "roles.delete", Description = "Delete roles", Module = "roles", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "roles.assign", Description = "Assign roles to users", Module = "roles", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
 
-            // Billing module
-            new() { Id = Guid.NewGuid(), Name = "billing.view", Description = "View billing information", Module = "billing", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "billing.manage", Description = "Manage subscription and payments", Module = "billing", DisplayOrder = 2 },
+            // Billing module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "billing.view", Description = "View billing information", Module = "billing", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "billing.manage", Description = "Manage subscription and payments", Module = "billing", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
 
-            // API module
-            new() { Id = Guid.NewGuid(), Name = "api.view", Description = "View API keys", Module = "api", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "api.manage", Description = "Create and revoke API keys", Module = "api", DisplayOrder = 2 },
+            // API module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "api.view", Description = "View API keys", Module = "api", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "api.manage", Description = "Create and revoke API keys", Module = "api", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
 
-            // Settings module
-            new() { Id = Guid.NewGuid(), Name = "settings.view", Description = "View settings", Module = "settings", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "settings.manage", Description = "Manage settings", Module = "settings", DisplayOrder = 2 },
+            // Settings module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "settings.view", Description = "View settings", Module = "settings", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "settings.manage", Description = "Manage settings", Module = "settings", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
 
-            // Portal module
-            new() { Id = Guid.NewGuid(), Name = "portal.view", Description = "View portals", Module = "portal", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "portal.manage", Description = "Create and manage portals", Module = "portal", DisplayOrder = 2 },
-            new() { Id = Guid.NewGuid(), Name = "portal.delete", Description = "Delete portals", Module = "portal", DisplayOrder = 3 },
+            // Portal module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "portal.view", Description = "View portals", Module = "portal", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "portal.manage", Description = "Create and manage portals", Module = "portal", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "portal.delete", Description = "Delete portals", Module = "portal", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
 
-            // Content module
-            new() { Id = Guid.NewGuid(), Name = "content.view", Description = "View content", Module = "content", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "content.create", Description = "Create content", Module = "content", DisplayOrder = 2 },
-            new() { Id = Guid.NewGuid(), Name = "content.edit", Description = "Edit content", Module = "content", DisplayOrder = 3 },
-            new() { Id = Guid.NewGuid(), Name = "content.delete", Description = "Delete content", Module = "content", DisplayOrder = 4 },
-            new() { Id = Guid.NewGuid(), Name = "content.publish", Description = "Publish content", Module = "content", DisplayOrder = 5 },
+            // Content module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "content.view", Description = "View content", Module = "content", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "content.create", Description = "Create content", Module = "content", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "content.edit", Description = "Edit content", Module = "content", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "content.delete", Description = "Delete content", Module = "content", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "content.publish", Description = "Publish content", Module = "content", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
 
-            // Analytics module
-            new() { Id = Guid.NewGuid(), Name = "analytics.view", Description = "View analytics", Module = "analytics", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "analytics.export", Description = "Export analytics data", Module = "analytics", DisplayOrder = 2 },
+            // Analytics module (Both)
+            new() { Id = Guid.NewGuid(), Name = "analytics.view", Description = "View analytics", Module = "analytics", Scope = PermissionScope.Both, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "analytics.export", Description = "Export analytics data", Module = "analytics", Scope = PermissionScope.Both, DisplayOrder = 2 },
 
-            // Notifications module
-            new() { Id = Guid.NewGuid(), Name = "notifications.view", Description = "View notifications", Module = "notifications", DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "notifications.send", Description = "Send notifications to users", Module = "notifications", DisplayOrder = 2 },
+            // Notifications module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "notifications.view", Description = "View notifications", Module = "notifications", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "notifications.send", Description = "Send notifications to users", Module = "notifications", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+
+            // ── New domain permissions ──
+
+            // Platform-scoped permissions
+            new() { Id = Guid.NewGuid(), Name = "tenants.create", Description = "Create new tenants", Module = "platform", Scope = PermissionScope.Platform, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "tenants.suspend", Description = "Suspend tenants", Module = "platform", Scope = PermissionScope.Platform, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "platform.users.manage", Description = "Manage platform users", Module = "platform", Scope = PermissionScope.Platform, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "platform.billing.view", Description = "View platform billing", Module = "platform", Scope = PermissionScope.Platform, DisplayOrder = 4 },
+
+            // Client Management module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "clients.view", Description = "View clients", Module = "clients", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "clients.create", Description = "Create clients", Module = "clients", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "clients.edit", Description = "Edit clients", Module = "clients", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "clients.delete", Description = "Delete clients", Module = "clients", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+
+            // Worker Management module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "workers.view", Description = "View workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "workers.create", Description = "Create workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "workers.edit", Description = "Edit workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "workers.delete", Description = "Delete workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+
+            // Contracts module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "contracts.view", Description = "View contracts", Module = "contracts", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "contracts.create", Description = "Create contracts", Module = "contracts", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "contracts.approve", Description = "Approve contracts", Module = "contracts", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "contracts.delete", Description = "Delete contracts", Module = "contracts", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+
+            // Suppliers module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "suppliers.view", Description = "View suppliers", Module = "suppliers", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "suppliers.manage", Description = "Manage suppliers", Module = "suppliers", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "suppliers.delete", Description = "Delete suppliers", Module = "suppliers", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+
+            // Finance module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "finance.view", Description = "View financial data", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "finance.manage", Description = "Manage financial records", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "finance.approve", Description = "Approve financial transactions", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
         };
     }
 }

@@ -34,6 +34,21 @@ public class Role : TenantScopedEntity
     public int DisplayOrder { get; set; }
 
     /// <summary>
+    /// The role template this role was created from (null if custom).
+    /// </summary>
+    public Guid? TemplateId { get; set; }
+
+    /// <summary>
+    /// Navigation property for the source role template.
+    /// </summary>
+    public RoleTemplate? Template { get; set; }
+
+    /// <summary>
+    /// Whether this is a custom role (not created from a template).
+    /// </summary>
+    public bool IsCustom { get; set; }
+
+    /// <summary>
     /// Navigation property for role-permission mappings.
     /// </summary>
     public ICollection<RolePermission> Permissions { get; set; } = new List<RolePermission>();

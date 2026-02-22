@@ -5,36 +5,36 @@ using Tenancy.Core.Entities;
 namespace Tenancy.Core.Persistence;
 
 /// <summary>
-/// EF Core configuration for TenantUser entity.
+/// EF Core configuration for TenantMembership entity.
 /// </summary>
-public class TenantUserConfiguration : IEntityTypeConfiguration<TenantUser>
+public class TenantMembershipConfiguration : IEntityTypeConfiguration<TenantMembership>
 {
-    public void Configure(EntityTypeBuilder<TenantUser> builder)
+    public void Configure(EntityTypeBuilder<TenantMembership> builder)
     {
-        builder.ToTable("tenant_users");
+        builder.ToTable("tenant_memberships");
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Role)
+        builder.Property(x => x.Status)
             .HasConversion<string>()
             .HasMaxLength(20);
 
         // Unique constraint: user can only be member once per tenant
         builder.HasIndex(x => new { x.TenantId, x.UserId })
             .IsUnique()
-            .HasDatabaseName("ix_tenant_users_tenant_user");
+            .HasDatabaseName("ix_tenant_memberships_tenant_user");
 
         // Index for querying user's tenants
         builder.HasIndex(x => x.UserId)
-            .HasDatabaseName("ix_tenant_users_user_id");
+            .HasDatabaseName("ix_tenant_memberships_user_id");
 
         // Index for querying tenant's members
         builder.HasIndex(x => x.TenantId)
-            .HasDatabaseName("ix_tenant_users_tenant_id");
+            .HasDatabaseName("ix_tenant_memberships_tenant_id");
 
-        // Index for role queries
-        builder.HasIndex(x => x.Role)
-            .HasDatabaseName("ix_tenant_users_role");
+        // Index on IsOwner for "last owner" guard queries
+        builder.HasIndex(x => x.IsOwner)
+            .HasDatabaseName("ix_tenant_memberships_is_owner");
 
         // Relationships
         builder.HasOne(x => x.Tenant)

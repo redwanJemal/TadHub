@@ -5,47 +5,47 @@ using TadHub.SharedKernel.Models;
 namespace Identity.Contracts;
 
 /// <summary>
-/// Service for managing platform admin users.
+/// Service for managing platform staff members.
 /// </summary>
-public interface IAdminUserService
+public interface IPlatformStaffService
 {
     /// <summary>
-    /// Lists all platform admin users with pagination.
+    /// Lists all platform staff with pagination.
     /// </summary>
-    Task<PagedList<AdminUserDto>> ListAsync(QueryParameters qp, CancellationToken ct = default);
+    Task<PagedList<PlatformStaffDto>> ListAsync(QueryParameters qp, CancellationToken ct = default);
 
     /// <summary>
-    /// Gets an admin user by ID.
+    /// Gets a platform staff member by ID.
     /// </summary>
-    Task<Result<AdminUserDto>> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<Result<PlatformStaffDto>> GetByIdAsync(Guid id, CancellationToken ct = default);
 
     /// <summary>
-    /// Gets an admin user by user profile ID.
+    /// Gets a platform staff member by user profile ID.
     /// </summary>
-    Task<Result<AdminUserDto>> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
+    Task<Result<PlatformStaffDto>> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
 
     /// <summary>
-    /// Creates a new admin user.
+    /// Creates a new platform staff member.
     /// </summary>
-    Task<Result<AdminUserDto>> CreateAsync(CreateAdminUserRequest request, CancellationToken ct = default);
+    Task<Result<PlatformStaffDto>> CreateAsync(CreatePlatformStaffRequest request, CancellationToken ct = default);
 
     /// <summary>
-    /// Updates an admin user.
+    /// Updates a platform staff member.
     /// </summary>
-    Task<Result<AdminUserDto>> UpdateAsync(Guid id, UpdateAdminUserRequest request, CancellationToken ct = default);
+    Task<Result<PlatformStaffDto>> UpdateAsync(Guid id, UpdatePlatformStaffRequest request, CancellationToken ct = default);
 
     /// <summary>
-    /// Removes admin status from a user (deletes AdminUser record, keeps UserProfile).
+    /// Removes platform staff status from a user (deletes PlatformStaff record, keeps UserProfile).
     /// </summary>
     Task<Result> DeleteAsync(Guid id, CancellationToken ct = default);
 
     /// <summary>
-    /// Checks if a user is a platform admin.
+    /// Checks if a user is a platform staff member.
     /// </summary>
-    Task<bool> IsAdminAsync(Guid userId, CancellationToken ct = default);
+    Task<bool> IsStaffAsync(Guid userId, CancellationToken ct = default);
 
     /// <summary>
-    /// Checks if a user is a super admin.
+    /// Checks if a user has a specific platform role (e.g., "super-admin", "admin", "finance").
     /// </summary>
-    Task<bool> IsSuperAdminAsync(Guid userId, CancellationToken ct = default);
+    Task<bool> HasRoleAsync(Guid userId, string role, CancellationToken ct = default);
 }

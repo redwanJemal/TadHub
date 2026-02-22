@@ -25,7 +25,7 @@ public interface ITenantService
     /// Lists tenants the user is a member of.
     /// </summary>
     Task<PagedList<TenantDto>> ListUserTenantsAsync(Guid userId, QueryParameters qp, CancellationToken ct = default);
-    
+
     /// <summary>
     /// Lists all tenants (for platform admins).
     /// </summary>
@@ -63,22 +63,17 @@ public interface ITenantService
     /// <summary>
     /// Gets members of a tenant with filtering and pagination.
     /// </summary>
-    Task<PagedList<TenantUserDto>> GetMembersAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default);
+    Task<PagedList<TenantMemberDto>> GetMembersAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default);
 
     /// <summary>
     /// Gets a specific member.
     /// </summary>
-    Task<Result<TenantUserDto>> GetMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default);
+    Task<Result<TenantMemberDto>> GetMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default);
 
     /// <summary>
     /// Adds a user as a member of a tenant.
     /// </summary>
-    Task<Result<TenantUserDto>> AddMemberAsync(Guid tenantId, Guid userId, TenantRole role, CancellationToken ct = default);
-
-    /// <summary>
-    /// Updates a member's role.
-    /// </summary>
-    Task<Result<TenantUserDto>> UpdateMemberRoleAsync(Guid tenantId, Guid userId, TenantRole role, CancellationToken ct = default);
+    Task<Result<TenantMemberDto>> AddMemberAsync(Guid tenantId, Guid userId, bool isOwner = false, CancellationToken ct = default);
 
     /// <summary>
     /// Removes a member from a tenant.
@@ -91,9 +86,9 @@ public interface ITenantService
     Task<bool> IsMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default);
 
     /// <summary>
-    /// Gets the user's role in a tenant.
+    /// Checks if a user is an owner of a tenant.
     /// </summary>
-    Task<TenantRole?> GetUserRoleAsync(Guid tenantId, Guid userId, CancellationToken ct = default);
+    Task<bool> IsOwnerAsync(Guid tenantId, Guid userId, CancellationToken ct = default);
 
     #endregion
 
@@ -112,7 +107,7 @@ public interface ITenantService
     /// <summary>
     /// Accepts an invitation using the token.
     /// </summary>
-    Task<Result<TenantUserDto>> AcceptInvitationAsync(string token, CancellationToken ct = default);
+    Task<Result<TenantMemberDto>> AcceptInvitationAsync(string token, CancellationToken ct = default);
 
     /// <summary>
     /// Revokes a pending invitation.

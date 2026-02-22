@@ -64,7 +64,7 @@ public class UserProfile : BaseEntity
     public DateTimeOffset? LastLoginAt { get; set; }
 
     /// <summary>
-    /// Navigation property for admin user (if this user is an admin).
+    /// Navigation property for platform staff record (if this user is platform staff).
     /// </summary>
-    public AdminUser? AdminUser { get; set; }
+    public PlatformStaff? PlatformStaff { get; set; }
 }
