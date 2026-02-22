@@ -12,10 +12,8 @@ test.describe('Tenant Workers List', () => {
       return;
     }
 
-    // Otherwise should show workers page
-    await expect(
-      page.getByRole('heading', { name: /workers/i }).or(page.getByText(/workers/i).first())
-    ).toBeVisible();
+    // Otherwise should show workers page heading
+    await expect(page.getByRole('heading', { name: /workers/i })).toBeVisible();
   });
 
   test('no JS errors on workers page', async ({ page }) => {
