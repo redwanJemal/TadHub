@@ -28,10 +28,6 @@ public class AdminTenantsController : ControllerBase
     /// <summary>
     /// Lists all tenants with pagination and filtering.
     /// </summary>
-    /// <remarks>
-    /// Filters: status, name, slug
-    /// Sort fields: name, slug, createdAt, updatedAt
-    /// </remarks>
     [HttpGet]
     [ProducesResponseType(typeof(PagedList<TenantDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> ListTenants(
@@ -178,14 +174,13 @@ public class AdminTenantsController : ControllerBase
     /// Gets members of a tenant.
     /// </summary>
     [HttpGet("{id:guid}/members")]
-    [ProducesResponseType(typeof(PagedList<TenantUserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedList<TenantMemberDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMembers(
         Guid id,
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
-        // First check tenant exists
         var tenant = await _tenantService.GetByIdAsync(id, ct);
         if (!tenant.IsSuccess)
             return NotFound(new { error = tenant.Error });
@@ -198,7 +193,7 @@ public class AdminTenantsController : ControllerBase
     /// Gets a specific member of a tenant.
     /// </summary>
     [HttpGet("{tenantId:guid}/members/{userId:guid}")]
-    [ProducesResponseType(typeof(TenantUserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TenantMemberDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMember(
         Guid tenantId,
@@ -217,15 +212,15 @@ public class AdminTenantsController : ControllerBase
     /// Adds a user as a member of a tenant.
     /// </summary>
     [HttpPost("{tenantId:guid}/members")]
-    [ProducesResponseType(typeof(TenantUserDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(TenantMemberDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddMember(
         Guid tenantId,
-        [FromBody] AddMemberRequest request,
+        [FromBody] AdminAddMemberRequest request,
         CancellationToken ct)
     {
-        var result = await _tenantService.AddMemberAsync(tenantId, request.UserId, request.Role, ct);
+        var result = await _tenantService.AddMemberAsync(tenantId, request.UserId, request.IsOwner, ct);
 
         if (!result.IsSuccess)
         {
@@ -241,26 +236,6 @@ public class AdminTenantsController : ControllerBase
             nameof(GetMember),
             new { tenantId, userId = request.UserId },
             result.Value);
-    }
-
-    /// <summary>
-    /// Updates a member's role.
-    /// </summary>
-    [HttpPatch("{tenantId:guid}/members/{userId:guid}")]
-    [ProducesResponseType(typeof(TenantUserDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateMemberRole(
-        Guid tenantId,
-        Guid userId,
-        [FromBody] UpdateMemberRoleRequest request,
-        CancellationToken ct)
-    {
-        var result = await _tenantService.UpdateMemberRoleAsync(tenantId, userId, request.Role, ct);
-
-        if (!result.IsSuccess)
-            return NotFound(new { error = result.Error });
-
-        return Ok(result.Value);
     }
 
     /// <summary>
@@ -342,11 +317,6 @@ public class AdminTenantsController : ControllerBase
 }
 
 /// <summary>
-/// Request to add a member to a tenant.
+/// Request to add a member to a tenant (admin endpoint).
 /// </summary>
-public record AddMemberRequest(Guid UserId, TenantRole Role);
-
-/// <summary>
-/// Request to update a member's role.
-/// </summary>
-public record UpdateMemberRoleRequest(TenantRole Role);
+public record AdminAddMemberRequest(Guid UserId, bool IsOwner = false);

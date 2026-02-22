@@ -56,18 +56,18 @@ public class TenantService : ITenantService
     /// <summary>
     /// Fields available for filtering members.
     /// </summary>
-    private static readonly Dictionary<string, Expression<Func<TenantUser, object>>> MemberFilters = new()
+    private static readonly Dictionary<string, Expression<Func<TenantMembership, object>>> MemberFilters = new()
     {
-        ["role"] = x => x.Role,
+        ["isOwner"] = x => x.IsOwner,
+        ["status"] = x => x.Status,
         ["joinedAt"] = x => x.JoinedAt
     };
 
     /// <summary>
     /// Fields available for sorting members.
     /// </summary>
-    private static readonly Dictionary<string, Expression<Func<TenantUser, object>>> MemberSortable = new()
+    private static readonly Dictionary<string, Expression<Func<TenantMembership, object>>> MemberSortable = new()
     {
-        ["role"] = x => x.Role,
         ["joinedAt"] = x => x.JoinedAt,
         ["createdAt"] = x => x.CreatedAt
     };
@@ -96,7 +96,6 @@ public class TenantService : ITenantService
     {
         var tenant = await _db.Set<Tenant>()
             .AsNoTracking()
-            .Include(x => x.TenantType)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
 
         if (tenant is null)
@@ -109,7 +108,6 @@ public class TenantService : ITenantService
     {
         var tenant = await _db.Set<Tenant>()
             .AsNoTracking()
-            .Include(x => x.TenantType)
             .FirstOrDefaultAsync(x => x.Slug == slug.ToLower(), ct);
 
         if (tenant is null)
@@ -120,15 +118,14 @@ public class TenantService : ITenantService
 
     public async Task<PagedList<TenantDto>> ListUserTenantsAsync(Guid userId, QueryParameters qp, CancellationToken ct = default)
     {
-        // Get tenant IDs for this user first, then query tenants with Include
-        var tenantIds = _db.Set<TenantUser>()
+        // Get tenant IDs for this user first, then query tenants
+        var tenantIds = _db.Set<TenantMembership>()
             .AsNoTracking()
             .Where(x => x.UserId == userId)
             .Select(x => x.TenantId);
 
         var query = _db.Set<Tenant>()
             .AsNoTracking()
-            .Include(x => x.TenantType)
             .Where(x => tenantIds.Contains(x.Id))
             .ApplyFilters(qp.Filters, TenantFilters)
             .ApplySort(qp.GetSortFields(), TenantSortable);
@@ -142,7 +139,6 @@ public class TenantService : ITenantService
     {
         var query = _db.Set<Tenant>()
             .AsNoTracking()
-            .Include(x => x.TenantType)
             .ApplyFilters(qp.Filters, TenantFilters)
             .ApplySort(qp.GetSortFields(), TenantSortable);
 
@@ -179,7 +175,6 @@ public class TenantService : ITenantService
             Name = request.Name,
             Slug = slug,
             Status = TenantStatus.Active,
-            TenantTypeId = request.TenantTypeId,
             LogoUrl = request.LogoUrl,
             Description = request.Description,
             Website = request.Website
@@ -187,17 +182,18 @@ public class TenantService : ITenantService
 
         _db.Set<Tenant>().Add(tenant);
 
-        // Create owner membership for the current user (using internal user ID)
-        var owner = new TenantUser
+        // Create owner membership for the current user
+        var owner = new TenantMembership
         {
             Id = Guid.NewGuid(),
             TenantId = tenant.Id,
             UserId = internalUserId,
-            Role = TenantRole.Owner,
+            IsOwner = true,
+            Status = MembershipStatus.Active,
             JoinedAt = _clock.UtcNow
         };
 
-        _db.Set<TenantUser>().Add(owner);
+        _db.Set<TenantMembership>().Add(owner);
 
         await _db.SaveChangesAsync(ct);
 
@@ -205,7 +201,7 @@ public class TenantService : ITenantService
             "Created tenant {TenantId} ({Slug}) by user {UserId} (Keycloak: {KeycloakId})",
             tenant.Id, tenant.Slug, internalUserId, keycloakId);
 
-        // Publish domain event
+        // Publish domain event — triggers SeedDefaultRolesAsync via TenantCreatedConsumer
         await _publisher.Publish(new TenantCreatedEvent(
             tenant.Id,
             tenant.Name,
@@ -219,7 +215,6 @@ public class TenantService : ITenantService
     public async Task<Result<TenantDto>> UpdateAsync(Guid id, UpdateTenantRequest request, CancellationToken ct = default)
     {
         var tenant = await _db.Set<Tenant>()
-            .Include(x => x.TenantType)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
 
         if (tenant is null)
@@ -228,8 +223,8 @@ public class TenantService : ITenantService
         // Apply updates
         if (request.Name is not null)
             tenant.Name = request.Name;
-        if (request.TenantTypeId.HasValue)
-            tenant.TenantTypeId = request.TenantTypeId;
+        if (request.NameAr is not null)
+            tenant.NameAr = request.NameAr;
         if (request.LogoUrl is not null)
             tenant.LogoUrl = request.LogoUrl;
         if (request.Description is not null)
@@ -302,9 +297,9 @@ public class TenantService : ITenantService
 
     #region Member Operations
 
-    public async Task<PagedList<TenantUserDto>> GetMembersAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
+    public async Task<PagedList<TenantMemberDto>> GetMembersAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
     {
-        var query = _db.Set<TenantUser>()
+        var query = _db.Set<TenantMembership>()
             .AsNoTracking()
             .Where(x => x.TenantId == tenantId)
             .Include(x => x.User)
@@ -316,38 +311,39 @@ public class TenantService : ITenantService
             .ToPagedListAsync(qp, ct);
     }
 
-    public async Task<Result<TenantUserDto>> GetMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
+    public async Task<Result<TenantMemberDto>> GetMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
-        var member = await _db.Set<TenantUser>()
+        var member = await _db.Set<TenantMembership>()
             .AsNoTracking()
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
 
         if (member is null)
-            return Result<TenantUserDto>.NotFound("Member not found");
+            return Result<TenantMemberDto>.NotFound("Member not found");
 
-        return Result<TenantUserDto>.Success(MapMemberToDto(member));
+        return Result<TenantMemberDto>.Success(MapMemberToDto(member));
     }
 
-    public async Task<Result<TenantUserDto>> AddMemberAsync(Guid tenantId, Guid userId, TenantRole role, CancellationToken ct = default)
+    public async Task<Result<TenantMemberDto>> AddMemberAsync(Guid tenantId, Guid userId, bool isOwner = false, CancellationToken ct = default)
     {
         // Check if already a member
-        var exists = await _db.Set<TenantUser>()
+        var exists = await _db.Set<TenantMembership>()
             .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
 
         if (exists)
-            return Result<TenantUserDto>.Conflict("User is already a member of this tenant");
+            return Result<TenantMemberDto>.Conflict("User is already a member of this tenant");
 
-        var member = new TenantUser
+        var member = new TenantMembership
         {
             Id = Guid.NewGuid(),
             TenantId = tenantId,
             UserId = userId,
-            Role = role,
+            IsOwner = isOwner,
+            Status = MembershipStatus.Active,
             JoinedAt = _clock.UtcNow
         };
 
-        _db.Set<TenantUser>().Add(member);
+        _db.Set<TenantMembership>().Add(member);
         await _db.SaveChangesAsync(ct);
 
         // Reload with user
@@ -355,54 +351,25 @@ public class TenantService : ITenantService
         return result;
     }
 
-    public async Task<Result<TenantUserDto>> UpdateMemberRoleAsync(Guid tenantId, Guid userId, TenantRole role, CancellationToken ct = default)
-    {
-        var member = await _db.Set<TenantUser>()
-            .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
-
-        if (member is null)
-            return Result<TenantUserDto>.NotFound("Member not found");
-
-        // Prevent demoting the last owner
-        if (member.Role == TenantRole.Owner && role != TenantRole.Owner)
-        {
-            var ownerCount = await _db.Set<TenantUser>()
-                .CountAsync(x => x.TenantId == tenantId && x.Role == TenantRole.Owner, ct);
-
-            if (ownerCount <= 1)
-                return Result<TenantUserDto>.ValidationError("Cannot demote the last owner");
-        }
-
-        member.Role = role;
-        await _db.SaveChangesAsync(ct);
-
-        _logger.LogInformation(
-            "Updated role for user {UserId} in tenant {TenantId} to {Role}",
-            userId, tenantId, role);
-
-        return Result<TenantUserDto>.Success(MapMemberToDto(member));
-    }
-
     public async Task<Result<bool>> RemoveMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
-        var member = await _db.Set<TenantUser>()
+        var member = await _db.Set<TenantMembership>()
             .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
 
         if (member is null)
             return Result<bool>.NotFound("Member not found");
 
         // Prevent removing the last owner
-        if (member.Role == TenantRole.Owner)
+        if (member.IsOwner)
         {
-            var ownerCount = await _db.Set<TenantUser>()
-                .CountAsync(x => x.TenantId == tenantId && x.Role == TenantRole.Owner, ct);
+            var ownerCount = await _db.Set<TenantMembership>()
+                .CountAsync(x => x.TenantId == tenantId && x.IsOwner, ct);
 
             if (ownerCount <= 1)
                 return Result<bool>.ValidationError("Cannot remove the last owner");
         }
 
-        _db.Set<TenantUser>().Remove(member);
+        _db.Set<TenantMembership>().Remove(member);
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation(
@@ -414,17 +381,14 @@ public class TenantService : ITenantService
 
     public async Task<bool> IsMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
-        return await _db.Set<TenantUser>()
+        return await _db.Set<TenantMembership>()
             .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
     }
 
-    public async Task<TenantRole?> GetUserRoleAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
+    public async Task<bool> IsOwnerAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
-        var member = await _db.Set<TenantUser>()
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
-
-        return member?.Role;
+        return await _db.Set<TenantMembership>()
+            .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId && x.IsOwner, ct);
     }
 
     #endregion
@@ -434,7 +398,7 @@ public class TenantService : ITenantService
     public async Task<Result<TenantInvitationDto>> InviteMemberAsync(Guid tenantId, InviteMemberRequest request, CancellationToken ct = default)
     {
         // Check if already a member
-        var existingMember = await _db.Set<TenantUser>()
+        var existingMember = await _db.Set<TenantMembership>()
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.User.Email.ToLower() == request.Email.ToLower(), ct);
 
@@ -443,7 +407,7 @@ public class TenantService : ITenantService
 
         // Check for existing pending invitation
         var existingInvite = await _db.Set<TenantUserInvitation>()
-            .FirstOrDefaultAsync(x => x.TenantId == tenantId 
+            .FirstOrDefaultAsync(x => x.TenantId == tenantId
                 && x.Email.ToLower() == request.Email.ToLower()
                 && x.AcceptedAt == null
                 && x.ExpiresAt > _clock.UtcNow, ct);
@@ -456,7 +420,7 @@ public class TenantService : ITenantService
             Id = Guid.NewGuid(),
             TenantId = tenantId,
             Email = request.Email.ToLower(),
-            Role = request.Role,
+            DefaultRoleId = request.RoleId,
             Token = GenerateInvitationToken(),
             ExpiresAt = _clock.UtcNow.AddDays(7),
             InvitedByUserId = _currentUser.UserId
@@ -495,26 +459,26 @@ public class TenantService : ITenantService
             .ToPagedListAsync(qp, ct);
     }
 
-    public async Task<Result<TenantUserDto>> AcceptInvitationAsync(string token, CancellationToken ct = default)
+    public async Task<Result<TenantMemberDto>> AcceptInvitationAsync(string token, CancellationToken ct = default)
     {
         var invitation = await _db.Set<TenantUserInvitation>()
             .Include(x => x.Tenant)
             .FirstOrDefaultAsync(x => x.Token == token, ct);
 
         if (invitation is null)
-            return Result<TenantUserDto>.NotFound("Invitation not found");
+            return Result<TenantMemberDto>.NotFound("Invitation not found");
 
         if (invitation.IsExpired)
-            return Result<TenantUserDto>.ValidationError("Invitation has expired");
+            return Result<TenantMemberDto>.ValidationError("Invitation has expired");
 
         if (invitation.IsAccepted)
-            return Result<TenantUserDto>.ValidationError("Invitation has already been accepted");
+            return Result<TenantMemberDto>.ValidationError("Invitation has already been accepted");
 
         // Mark invitation as accepted
         invitation.AcceptedAt = _clock.UtcNow;
 
-        // Add user as member
-        var result = await AddMemberAsync(invitation.TenantId, _currentUser.UserId, invitation.Role, ct);
+        // Add user as member (not owner)
+        var result = await AddMemberAsync(invitation.TenantId, _currentUser.UserId, isOwner: false, ct);
 
         if (!result.IsSuccess)
             return result;
@@ -580,10 +544,9 @@ public class TenantService : ITenantService
     {
         Id = tenant.Id,
         Name = tenant.Name,
+        NameAr = tenant.NameAr,
         Slug = tenant.Slug,
         Status = tenant.Status,
-        TenantTypeId = tenant.TenantTypeId,
-        TenantTypeName = tenant.TenantType?.Name,
         LogoUrl = tenant.LogoUrl,
         Description = tenant.Description,
         Website = tenant.Website,
@@ -591,7 +554,7 @@ public class TenantService : ITenantService
         UpdatedAt = tenant.UpdatedAt
     };
 
-    private static TenantUserDto MapMemberToDto(TenantUser member) => new()
+    private static TenantMemberDto MapMemberToDto(TenantMembership member) => new()
     {
         Id = member.Id,
         TenantId = member.TenantId,
@@ -600,7 +563,8 @@ public class TenantService : ITenantService
         FirstName = member.User.FirstName,
         LastName = member.User.LastName,
         AvatarUrl = member.User.AvatarUrl,
-        Role = member.Role,
+        IsOwner = member.IsOwner,
+        Status = member.Status,
         JoinedAt = member.JoinedAt
     };
 
@@ -610,7 +574,7 @@ public class TenantService : ITenantService
         TenantId = invitation.TenantId,
         TenantName = invitation.Tenant.Name,
         Email = invitation.Email,
-        Role = invitation.Role,
+        DefaultRoleId = invitation.DefaultRoleId,
         Token = invitation.Token,
         ExpiresAt = invitation.ExpiresAt,
         AcceptedAt = invitation.AcceptedAt,

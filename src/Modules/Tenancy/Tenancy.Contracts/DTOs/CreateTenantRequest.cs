@@ -22,11 +22,6 @@ public sealed record CreateTenantRequest
     public string? Slug { get; init; }
 
     /// <summary>
-    /// Optional tenant type ID.
-    /// </summary>
-    public Guid? TenantTypeId { get; init; }
-
-    /// <summary>
     /// Optional logo URL.
     /// </summary>
     [Url]

@@ -5,9 +5,10 @@ using Tenancy.Contracts.DTOs;
 namespace Tenancy.Core.Entities;
 
 /// <summary>
-/// Tenant membership - links users to tenants with a role.
+/// Tenant membership - links users to tenants. Structural relationship only.
+/// Authorization is handled by the Authorization module (Role → Permissions).
 /// </summary>
-public class TenantUser : BaseEntity
+public class TenantMembership : BaseEntity
 {
     /// <summary>
     /// The tenant ID.
@@ -30,9 +31,14 @@ public class TenantUser : BaseEntity
     public UserProfile User { get; set; } = null!;
 
     /// <summary>
-    /// Role within this tenant (owner, admin, member).
+    /// Structural ownership — governance, not permissions.
     /// </summary>
-    public TenantRole Role { get; set; } = TenantRole.Member;
+    public bool IsOwner { get; set; }
+
+    /// <summary>
+    /// Membership status.
+    /// </summary>
+    public MembershipStatus Status { get; set; } = MembershipStatus.Active;
 
     /// <summary>
     /// When the user joined this tenant.

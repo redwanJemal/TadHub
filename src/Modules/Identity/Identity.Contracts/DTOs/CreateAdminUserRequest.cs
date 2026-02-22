@@ -1,18 +1,23 @@
 namespace Identity.Contracts.DTOs;
 
 /// <summary>
-/// Request to create a new platform admin user.
+/// Request to create a new platform staff member.
 /// </summary>
-public sealed record CreateAdminUserRequest
+public sealed record CreatePlatformStaffRequest
 {
     /// <summary>
-    /// Email of the user to make an admin.
+    /// Email of the user to make platform staff.
     /// If the user doesn't exist, they'll be looked up in Keycloak.
     /// </summary>
     public required string Email { get; init; }
 
     /// <summary>
-    /// Whether this admin should have super admin privileges.
+    /// Platform role: "super-admin", "admin", "finance", "sales", "support"
     /// </summary>
-    public bool IsSuperAdmin { get; init; }
+    public string Role { get; init; } = "admin";
+
+    /// <summary>
+    /// Optional department/notes for organizational clarity.
+    /// </summary>
+    public string? Department { get; init; }
 }

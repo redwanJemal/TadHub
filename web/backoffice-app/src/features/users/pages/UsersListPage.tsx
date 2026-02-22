@@ -74,8 +74,8 @@ export function UsersListPage() {
 
   const { data, isLoading, error } = useUsers({
     page,
-    perPage: 20,
-    q: searchQuery || undefined,
+    pageSize: 20,
+    search: searchQuery || undefined,
     filter: statusFilter !== 'all' ? { isActive: statusFilter === 'active' ? 'true' : 'false' } : undefined,
   });
 

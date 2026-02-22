@@ -19,7 +19,7 @@ public static class IdentityServiceRegistration
     {
         // Core services
         services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<IAdminUserService, AdminUserService>();
+        services.AddScoped<IPlatformStaffService, PlatformStaffService>();
 
         // Current user (from JWT claims)
         services.AddHttpContextAccessor();

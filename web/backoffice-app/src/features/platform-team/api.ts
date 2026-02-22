@@ -1,45 +1,45 @@
 import { apiClient } from '@/shared/api/client';
 import { QueryParams } from '@/shared/api/types';
-import { AdminUserDto, CreateAdminUserRequest, UpdateAdminUserRequest } from './types';
+import { PlatformStaffDto, CreatePlatformStaffRequest, UpdatePlatformStaffRequest } from './types';
 
 /**
- * List all platform admin users
+ * List all platform staff members
  */
-export async function listAdminUsers(params?: QueryParams): Promise<AdminUserDto[]> {
-  return apiClient.get('/admin/users', params);
+export async function listPlatformStaff(params?: QueryParams): Promise<PlatformStaffDto[]> {
+  return apiClient.get('/platform/staff', params);
 }
 
 /**
- * Get admin user by ID
+ * Get platform staff member by ID
  */
-export async function getAdminUser(id: string): Promise<AdminUserDto> {
-  return apiClient.get(`/admin/users/${id}`);
+export async function getPlatformStaff(id: string): Promise<PlatformStaffDto> {
+  return apiClient.get(`/platform/staff/${id}`);
 }
 
 /**
- * Get current user's admin record (if they are an admin)
+ * Get current user's platform staff record (if they are staff)
  */
-export async function getCurrentAdminUser(): Promise<AdminUserDto> {
-  return apiClient.get('/admin/users/me');
+export async function getCurrentPlatformStaff(): Promise<PlatformStaffDto> {
+  return apiClient.get('/platform/staff/me');
 }
 
 /**
- * Create a new admin user
+ * Create a new platform staff member
  */
-export async function createAdminUser(data: CreateAdminUserRequest): Promise<AdminUserDto> {
-  return apiClient.post('/admin/users', data);
+export async function createPlatformStaff(data: CreatePlatformStaffRequest): Promise<PlatformStaffDto> {
+  return apiClient.post('/platform/staff', data);
 }
 
 /**
- * Update an admin user
+ * Update a platform staff member
  */
-export async function updateAdminUser(id: string, data: UpdateAdminUserRequest): Promise<AdminUserDto> {
-  return apiClient.patch(`/admin/users/${id}`, data);
+export async function updatePlatformStaff(id: string, data: UpdatePlatformStaffRequest): Promise<PlatformStaffDto> {
+  return apiClient.patch(`/platform/staff/${id}`, data);
 }
 
 /**
- * Remove admin status from a user
+ * Remove platform staff status from a user
  */
-export async function removeAdminUser(id: string): Promise<void> {
-  return apiClient.delete(`/admin/users/${id}`);
+export async function removePlatformStaff(id: string): Promise<void> {
+  return apiClient.delete(`/platform/staff/${id}`);
 }

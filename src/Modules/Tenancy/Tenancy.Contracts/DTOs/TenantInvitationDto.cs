@@ -9,7 +9,7 @@ public sealed record TenantInvitationDto
     public Guid TenantId { get; init; }
     public string TenantName { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
-    public TenantRole Role { get; init; }
+    public Guid? DefaultRoleId { get; init; }
     public string Token { get; init; } = string.Empty;
     public DateTimeOffset ExpiresAt { get; init; }
     public DateTimeOffset? AcceptedAt { get; init; }

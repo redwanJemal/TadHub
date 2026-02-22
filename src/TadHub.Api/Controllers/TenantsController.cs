@@ -41,7 +41,7 @@ public class TenantsController : ControllerBase
             var allResult = await _tenantService.ListAllTenantsAsync(qp, ct);
             return Ok(allResult);
         }
-        
+
         // Regular users see only their tenants
         var result = await _tenantService.ListUserTenantsAsync(_currentUser.UserId, qp, ct);
         return Ok(result);
@@ -112,7 +112,7 @@ public class TenantsController : ControllerBase
     }
 
     /// <summary>
-    /// Updates a tenant.
+    /// Updates a tenant. Requires ownership.
     /// </summary>
     [HttpPatch("{id:guid}")]
     [TenantMemberRequired]
@@ -123,9 +123,9 @@ public class TenantsController : ControllerBase
         [FromBody] UpdateTenantRequest request,
         CancellationToken ct)
     {
-        // Check if user is admin or owner
-        var role = await _tenantService.GetUserRoleAsync(id, _currentUser.UserId, ct);
-        if (role is not (TenantRole.Admin or TenantRole.Owner))
+        // Check if user is owner (use RBAC for finer-grained checks)
+        var isOwner = await _tenantService.IsOwnerAsync(id, _currentUser.UserId, ct);
+        if (!isOwner)
             return Forbid();
 
         var result = await _tenantService.UpdateAsync(id, request, ct);
@@ -181,8 +181,8 @@ public class TenantsController : ControllerBase
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         // Only owner can delete
-        var role = await _tenantService.GetUserRoleAsync(id, _currentUser.UserId, ct);
-        if (role != TenantRole.Owner)
+        var isOwner = await _tenantService.IsOwnerAsync(id, _currentUser.UserId, ct);
+        if (!isOwner)
             return Forbid();
 
         var result = await _tenantService.DeleteAsync(id, ct);

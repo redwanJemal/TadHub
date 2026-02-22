@@ -8,7 +8,7 @@ namespace TadHub.Api.Filters;
 
 /// <summary>
 /// Action filter that requires the current user to be a member of the specified tenant.
-/// Must be used after [Authorize] and [TenantRequired].
+/// Uses TenantMembership table for membership checks.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
 public class TenantMemberRequiredAttribute : ActionFilterAttribute
@@ -31,7 +31,7 @@ public class TenantMemberRequiredAttribute : ActionFilterAttribute
 
         // Try to get tenant ID from route
         Guid tenantId = Guid.Empty;
-        
+
         if (context.ActionArguments.TryGetValue(TenantIdParameter, out var idValue) && idValue is Guid id)
         {
             tenantId = id;
@@ -58,9 +58,9 @@ public class TenantMemberRequiredAttribute : ActionFilterAttribute
             return;
         }
 
-        // Check membership
+        // Check membership via TenantMembership table
         var isMember = await tenantService.IsMemberAsync(tenantId, currentUser.UserId, context.HttpContext.RequestAborted);
-        
+
         if (!isMember)
         {
             context.Result = new ObjectResult(

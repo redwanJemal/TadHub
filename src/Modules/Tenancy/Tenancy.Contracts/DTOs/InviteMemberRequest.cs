@@ -15,20 +15,8 @@ public sealed record InviteMemberRequest
     public string Email { get; init; } = string.Empty;
 
     /// <summary>
-    /// Role to assign to the invited user.
+    /// Optional RBAC role ID to assign when invitation is accepted.
+    /// Defaults to "Member" role if not specified.
     /// </summary>
-    [Required]
-    public TenantRole Role { get; init; } = TenantRole.Member;
-}
-
-/// <summary>
-/// Request to update a member's role.
-/// </summary>
-public sealed record UpdateMemberRoleRequest
-{
-    /// <summary>
-    /// New role for the member.
-    /// </summary>
-    [Required]
-    public TenantRole Role { get; init; }
+    public Guid? RoleId { get; init; }
 }

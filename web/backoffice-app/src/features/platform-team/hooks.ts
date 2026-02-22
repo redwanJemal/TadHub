@@ -1,50 +1,50 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QueryParams } from '@/shared/api/types';
 import * as api from './api';
-import { CreateAdminUserRequest, UpdateAdminUserRequest } from './types';
+import { CreatePlatformStaffRequest, UpdatePlatformStaffRequest } from './types';
 
-const QUERY_KEY = 'admin-users';
+const QUERY_KEY = 'platform-staff';
 
 /**
- * Hook to list all platform admin users
+ * Hook to list all platform staff members
  */
-export function useAdminUsers(params?: QueryParams) {
+export function usePlatformStaff(params?: QueryParams) {
   return useQuery({
     queryKey: [QUERY_KEY, params],
-    queryFn: () => api.listAdminUsers(params),
+    queryFn: () => api.listPlatformStaff(params),
   });
 }
 
 /**
- * Hook to get a single admin user
+ * Hook to get a single platform staff member
  */
-export function useAdminUser(id: string) {
+export function usePlatformStaffMember(id: string) {
   return useQuery({
     queryKey: [QUERY_KEY, id],
-    queryFn: () => api.getAdminUser(id),
+    queryFn: () => api.getPlatformStaff(id),
     enabled: !!id,
   });
 }
 
 /**
- * Hook to get current user's admin record
+ * Hook to get current user's platform staff record
  */
-export function useCurrentAdminUser() {
+export function useCurrentPlatformStaff() {
   return useQuery({
     queryKey: [QUERY_KEY, 'me'],
-    queryFn: () => api.getCurrentAdminUser(),
-    retry: false, // Don't retry if user is not an admin
+    queryFn: () => api.getCurrentPlatformStaff(),
+    retry: false,
   });
 }
 
 /**
- * Hook to create a new admin user
+ * Hook to create a new platform staff member
  */
-export function useCreateAdminUser() {
+export function useCreatePlatformStaff() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateAdminUserRequest) => api.createAdminUser(data),
+    mutationFn: (data: CreatePlatformStaffRequest) => api.createPlatformStaff(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
     },
@@ -52,14 +52,14 @@ export function useCreateAdminUser() {
 }
 
 /**
- * Hook to update an admin user
+ * Hook to update a platform staff member
  */
-export function useUpdateAdminUser() {
+export function useUpdatePlatformStaff() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateAdminUserRequest }) =>
-      api.updateAdminUser(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdatePlatformStaffRequest }) =>
+      api.updatePlatformStaff(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
     },
@@ -67,13 +67,13 @@ export function useUpdateAdminUser() {
 }
 
 /**
- * Hook to remove admin status from a user
+ * Hook to remove platform staff status from a user
  */
-export function useRemoveAdminUser() {
+export function useRemovePlatformStaff() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => api.removeAdminUser(id),
+    mutationFn: (id: string) => api.removePlatformStaff(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
     },

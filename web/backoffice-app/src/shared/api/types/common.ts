@@ -60,10 +60,9 @@ export interface PaginatedData<T> {
  */
 export interface QueryParams {
   page?: number;
-  perPage?: number;
+  pageSize?: number;
   sort?: string;
-  order?: 'asc' | 'desc';
-  q?: string;
+  search?: string;
   include?: string;
   fields?: string;
   filter?: Record<string, string | Record<string, string>>;

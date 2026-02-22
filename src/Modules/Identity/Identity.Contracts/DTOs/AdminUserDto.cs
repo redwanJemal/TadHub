@@ -1,14 +1,15 @@
 namespace Identity.Contracts.DTOs;
 
 /// <summary>
-/// Admin user data transfer object.
+/// Platform staff data transfer object.
 /// </summary>
-public sealed record AdminUserDto
+public sealed record PlatformStaffDto
 {
     public Guid Id { get; init; }
     public Guid UserId { get; init; }
     public UserProfileDto User { get; init; } = null!;
-    public bool IsSuperAdmin { get; init; }
+    public string Role { get; init; } = "admin";
+    public string? Department { get; init; }
     public DateTimeOffset CreatedAt { get; init; }
     public DateTimeOffset UpdatedAt { get; init; }
 }

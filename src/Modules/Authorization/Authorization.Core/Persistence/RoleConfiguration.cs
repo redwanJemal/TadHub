@@ -34,6 +34,12 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
         // Index for tenant queries
         builder.HasIndex(x => x.TenantId)
             .HasDatabaseName("ix_roles_tenant_id");
+
+        // Foreign key to role template (optional)
+        builder.HasOne(x => x.Template)
+            .WithMany()
+            .HasForeignKey(x => x.TemplateId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
 

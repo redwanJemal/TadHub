@@ -20,9 +20,9 @@ function buildWorkerQueryParams(params: WorkerFilterParams): QueryParams {
   const query: QueryParams = {};
 
   if (params.page) query['page'] = params.page;
-  if (params.pageSize) query['perPage'] = params.pageSize;
+  if (params.pageSize) query['pageSize'] = params.pageSize;
   if (params.sort) query['sort'] = params.sort;
-  if (params.search) query['q'] = params.search;
+  if (params.search) query['search'] = params.search;
   if (params.include?.length) query['include'] = params.include.join(',');
 
   // Build filter object
@@ -132,7 +132,7 @@ export const workersApi = {
   ): Promise<PagedList<WorkerStateHistoryDto>> {
     return apiClient.get<PagedList<WorkerStateHistoryDto>>(
       `${BASE_PATH}/${id}/history`,
-      { page, perPage: pageSize }
+      { page, pageSize }
     );
   },
 
@@ -190,10 +190,10 @@ export const workersApi = {
  */
 export const jobCategoriesApi = {
   /**
-   * List all job categories
+   * List all job category refs (lightweight for dropdowns)
    */
   async list(): Promise<JobCategoryRefDto[]> {
-    return apiClient.get<JobCategoryRefDto[]>('/job-categories');
+    return apiClient.get<JobCategoryRefDto[]>('/job-categories/refs');
   },
 
   /**

@@ -13,32 +13,33 @@ using TadHub.SharedKernel.Models;
 namespace Identity.Core.Services;
 
 /// <summary>
-/// Service for managing platform admin users.
+/// Service for managing platform staff members.
 /// </summary>
-public class AdminUserService : IAdminUserService
+public class PlatformStaffService : IPlatformStaffService
 {
     private readonly AppDbContext _db;
     private readonly IIdentityService _identityService;
     private readonly IClock _clock;
-    private readonly ILogger<AdminUserService> _logger;
+    private readonly ILogger<PlatformStaffService> _logger;
 
     /// <summary>
     /// Fields available for sorting in list queries.
     /// </summary>
-    private static readonly Dictionary<string, Expression<Func<AdminUser, object>>> SortableFields = new()
+    private static readonly Dictionary<string, Expression<Func<PlatformStaff, object>>> SortableFields = new()
     {
         ["createdAt"] = x => x.CreatedAt,
         ["updatedAt"] = x => x.UpdatedAt,
         ["email"] = x => x.User.Email,
         ["firstName"] = x => x.User.FirstName,
-        ["lastName"] = x => x.User.LastName
+        ["lastName"] = x => x.User.LastName,
+        ["role"] = x => x.Role
     };
 
-    public AdminUserService(
+    public PlatformStaffService(
         AppDbContext db,
         IIdentityService identityService,
         IClock clock,
-        ILogger<AdminUserService> logger)
+        ILogger<PlatformStaffService> logger)
     {
         _db = db;
         _identityService = identityService;
@@ -46,9 +47,9 @@ public class AdminUserService : IAdminUserService
         _logger = logger;
     }
 
-    public async Task<PagedList<AdminUserDto>> ListAsync(QueryParameters qp, CancellationToken ct = default)
+    public async Task<PagedList<PlatformStaffDto>> ListAsync(QueryParameters qp, CancellationToken ct = default)
     {
-        var query = _db.Set<AdminUser>()
+        var query = _db.Set<PlatformStaff>()
             .AsNoTracking()
             .Include(x => x.User)
             .AsQueryable();
@@ -64,13 +65,11 @@ public class AdminUserService : IAdminUserService
         }
 
         // Apply filters
-        var isSuperAdminFilter = qp.Filters.FirstOrDefault(f => f.Name == "isSuperAdmin");
-        if (isSuperAdminFilter != null && isSuperAdminFilter.Values.Count > 0)
+        var roleFilter = qp.Filters.FirstOrDefault(f => f.Name == "role");
+        if (roleFilter != null && roleFilter.Values.Count > 0)
         {
-            if (bool.TryParse(isSuperAdminFilter.Values[0], out var isSuperAdmin))
-            {
-                query = query.Where(x => x.IsSuperAdmin == isSuperAdmin);
-            }
+            var roleValue = roleFilter.Values[0];
+            query = query.Where(x => x.Role == roleValue);
         }
 
         // Apply sorting
@@ -104,171 +103,176 @@ public class AdminUserService : IAdminUserService
             .Select(x => MapToDto(x))
             .ToListAsync(ct);
 
-        return new PagedList<AdminUserDto>(items, totalCount, qp.Page, qp.PageSize);
+        return new PagedList<PlatformStaffDto>(items, totalCount, qp.Page, qp.PageSize);
     }
 
-    public async Task<Result<AdminUserDto>> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<Result<PlatformStaffDto>> GetByIdAsync(Guid id, CancellationToken ct = default)
     {
-        var adminUser = await _db.Set<AdminUser>()
+        var staff = await _db.Set<PlatformStaff>()
             .AsNoTracking()
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
 
-        if (adminUser is null)
-            return Result<AdminUserDto>.NotFound($"Admin user with ID {id} not found");
+        if (staff is null)
+            return Result<PlatformStaffDto>.NotFound($"Platform staff with ID {id} not found");
 
-        return Result<AdminUserDto>.Success(MapToDto(adminUser));
+        return Result<PlatformStaffDto>.Success(MapToDto(staff));
     }
 
-    public async Task<Result<AdminUserDto>> GetByUserIdAsync(Guid userId, CancellationToken ct = default)
+    public async Task<Result<PlatformStaffDto>> GetByUserIdAsync(Guid userId, CancellationToken ct = default)
     {
-        var adminUser = await _db.Set<AdminUser>()
+        var staff = await _db.Set<PlatformStaff>()
             .AsNoTracking()
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.UserId == userId, ct);
 
-        if (adminUser is null)
-            return Result<AdminUserDto>.NotFound($"Admin user with user ID {userId} not found");
+        if (staff is null)
+            return Result<PlatformStaffDto>.NotFound($"Platform staff with user ID {userId} not found");
 
-        return Result<AdminUserDto>.Success(MapToDto(adminUser));
+        return Result<PlatformStaffDto>.Success(MapToDto(staff));
     }
 
-    public async Task<Result<AdminUserDto>> CreateAsync(CreateAdminUserRequest request, CancellationToken ct = default)
+    public async Task<Result<PlatformStaffDto>> CreateAsync(CreatePlatformStaffRequest request, CancellationToken ct = default)
     {
         // Find user profile by email
         var userResult = await _identityService.GetByEmailAsync(request.Email, ct);
-        
+
         UserProfile? userProfile;
-        
+
         if (!userResult.IsSuccess)
         {
             // User doesn't exist - for now, return an error
             // In the future, we could create the user in Keycloak here
-            return Result<AdminUserDto>.NotFound(
-                $"User with email {request.Email} not found. The user must log in at least once before being made an admin.");
+            return Result<PlatformStaffDto>.NotFound(
+                $"User with email {request.Email} not found. The user must log in at least once before being made platform staff.");
         }
-        
+
         // Get the user profile entity
         userProfile = await _db.Set<UserProfile>()
             .FirstOrDefaultAsync(x => x.Email.ToLower() == request.Email.ToLower(), ct);
 
         if (userProfile is null)
-            return Result<AdminUserDto>.NotFound($"User profile not found");
+            return Result<PlatformStaffDto>.NotFound("User profile not found");
 
-        // Check if already an admin
-        var existingAdmin = await _db.Set<AdminUser>()
+        // Check if already platform staff
+        var existingStaff = await _db.Set<PlatformStaff>()
             .AnyAsync(x => x.UserId == userProfile.Id, ct);
 
-        if (existingAdmin)
-            return Result<AdminUserDto>.Conflict($"User {request.Email} is already a platform admin");
+        if (existingStaff)
+            return Result<PlatformStaffDto>.Conflict($"User {request.Email} is already platform staff");
 
-        // Create admin user record
-        var adminUser = new AdminUser
+        // Create platform staff record
+        var staff = new PlatformStaff
         {
             Id = Guid.NewGuid(),
             UserId = userProfile.Id,
-            IsSuperAdmin = request.IsSuperAdmin,
+            Role = request.Role,
+            Department = request.Department,
             CreatedAt = _clock.UtcNow,
             UpdatedAt = _clock.UtcNow
         };
 
-        _db.Set<AdminUser>().Add(adminUser);
+        _db.Set<PlatformStaff>().Add(staff);
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation(
-            "Created admin user {AdminId} for user {UserId} ({Email}), IsSuperAdmin: {IsSuperAdmin}",
-            adminUser.Id, userProfile.Id, request.Email, request.IsSuperAdmin);
+            "Created platform staff {StaffId} for user {UserId} ({Email}), Role: {Role}, Department: {Department}",
+            staff.Id, userProfile.Id, request.Email, request.Role, request.Department);
 
         // Load the user for the DTO
-        adminUser.User = userProfile;
+        staff.User = userProfile;
 
-        return Result<AdminUserDto>.Success(MapToDto(adminUser));
+        return Result<PlatformStaffDto>.Success(MapToDto(staff));
     }
 
-    public async Task<Result<AdminUserDto>> UpdateAsync(Guid id, UpdateAdminUserRequest request, CancellationToken ct = default)
+    public async Task<Result<PlatformStaffDto>> UpdateAsync(Guid id, UpdatePlatformStaffRequest request, CancellationToken ct = default)
     {
-        var adminUser = await _db.Set<AdminUser>()
+        var staff = await _db.Set<PlatformStaff>()
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
 
-        if (adminUser is null)
-            return Result<AdminUserDto>.NotFound($"Admin user with ID {id} not found");
+        if (staff is null)
+            return Result<PlatformStaffDto>.NotFound($"Platform staff with ID {id} not found");
 
         // Apply updates
-        if (request.IsSuperAdmin.HasValue)
-            adminUser.IsSuperAdmin = request.IsSuperAdmin.Value;
+        if (request.Role is not null)
+            staff.Role = request.Role;
 
-        adminUser.UpdatedAt = _clock.UtcNow;
+        if (request.Department is not null)
+            staff.Department = request.Department;
+
+        staff.UpdatedAt = _clock.UtcNow;
         await _db.SaveChangesAsync(ct);
 
-        _logger.LogInformation("Updated admin user {AdminId}, IsSuperAdmin: {IsSuperAdmin}",
-            adminUser.Id, adminUser.IsSuperAdmin);
+        _logger.LogInformation("Updated platform staff {StaffId}, Role: {Role}, Department: {Department}",
+            staff.Id, staff.Role, staff.Department);
 
-        return Result<AdminUserDto>.Success(MapToDto(adminUser));
+        return Result<PlatformStaffDto>.Success(MapToDto(staff));
     }
 
     public async Task<Result> DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        var adminUser = await _db.Set<AdminUser>()
+        var staff = await _db.Set<PlatformStaff>()
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id, ct);
 
-        if (adminUser is null)
-            return Result.NotFound($"Admin user with ID {id} not found");
+        if (staff is null)
+            return Result.NotFound($"Platform staff with ID {id} not found");
 
-        // Prevent removing the last super admin
-        if (adminUser.IsSuperAdmin)
+        // Prevent removing the last super-admin
+        if (staff.Role == "super-admin")
         {
-            var superAdminCount = await _db.Set<AdminUser>()
-                .CountAsync(x => x.IsSuperAdmin, ct);
+            var superAdminCount = await _db.Set<PlatformStaff>()
+                .CountAsync(x => x.Role == "super-admin", ct);
 
             if (superAdminCount <= 1)
-                return Result.ValidationError("Cannot remove the last super admin");
+                return Result.ValidationError("Cannot remove the last super-admin");
         }
 
-        _db.Set<AdminUser>().Remove(adminUser);
+        _db.Set<PlatformStaff>().Remove(staff);
         await _db.SaveChangesAsync(ct);
 
-        _logger.LogInformation("Removed admin status from user {UserId} ({Email})",
-            adminUser.UserId, adminUser.User.Email);
+        _logger.LogInformation("Removed platform staff status from user {UserId} ({Email})",
+            staff.UserId, staff.User.Email);
 
         return Result.Success();
     }
 
-    public async Task<bool> IsAdminAsync(Guid userId, CancellationToken ct = default)
+    public async Task<bool> IsStaffAsync(Guid userId, CancellationToken ct = default)
     {
-        return await _db.Set<AdminUser>()
+        return await _db.Set<PlatformStaff>()
             .AnyAsync(x => x.UserId == userId, ct);
     }
 
-    public async Task<bool> IsSuperAdminAsync(Guid userId, CancellationToken ct = default)
+    public async Task<bool> HasRoleAsync(Guid userId, string role, CancellationToken ct = default)
     {
-        return await _db.Set<AdminUser>()
-            .AnyAsync(x => x.UserId == userId && x.IsSuperAdmin, ct);
+        return await _db.Set<PlatformStaff>()
+            .AnyAsync(x => x.UserId == userId && x.Role == role, ct);
     }
 
-    private static AdminUserDto MapToDto(AdminUser adminUser) => new()
+    private static PlatformStaffDto MapToDto(PlatformStaff staff) => new()
     {
-        Id = adminUser.Id,
-        UserId = adminUser.UserId,
+        Id = staff.Id,
+        UserId = staff.UserId,
         User = new UserProfileDto
         {
-            Id = adminUser.User.Id,
-            KeycloakId = adminUser.User.KeycloakId,
-            Email = adminUser.User.Email,
-            FirstName = adminUser.User.FirstName,
-            LastName = adminUser.User.LastName,
-            AvatarUrl = adminUser.User.AvatarUrl,
-            Phone = adminUser.User.Phone,
-            Locale = adminUser.User.Locale,
-            DefaultTenantId = adminUser.User.DefaultTenantId,
-            IsActive = adminUser.User.IsActive,
-            LastLoginAt = adminUser.User.LastLoginAt,
-            CreatedAt = adminUser.User.CreatedAt,
-            UpdatedAt = adminUser.User.UpdatedAt
+            Id = staff.User.Id,
+            KeycloakId = staff.User.KeycloakId,
+            Email = staff.User.Email,
+            FirstName = staff.User.FirstName,
+            LastName = staff.User.LastName,
+            AvatarUrl = staff.User.AvatarUrl,
+            Phone = staff.User.Phone,
+            Locale = staff.User.Locale,
+            DefaultTenantId = staff.User.DefaultTenantId,
+            IsActive = staff.User.IsActive,
+            LastLoginAt = staff.User.LastLoginAt,
+            CreatedAt = staff.User.CreatedAt,
+            UpdatedAt = staff.User.UpdatedAt
         },
-        IsSuperAdmin = adminUser.IsSuperAdmin,
-        CreatedAt = adminUser.CreatedAt,
-        UpdatedAt = adminUser.UpdatedAt
+        Role = staff.Role,
+        Department = staff.Department,
+        CreatedAt = staff.CreatedAt,
+        UpdatedAt = staff.UpdatedAt
     };
 }

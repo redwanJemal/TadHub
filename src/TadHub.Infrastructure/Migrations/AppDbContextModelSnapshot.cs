@@ -671,125 +671,6 @@ namespace SaasKit.Migrations
                     b.ToTable("webhook_deliveries", (string)null);
                 });
 
-            modelBuilder.Entity("Authorization.Core.Entities.Group", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_groups");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_groups_tenant_id");
-
-                    b.HasIndex("TenantId", "Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_groups_tenant_name");
-
-                    b.ToTable("groups", (string)null);
-                });
-
-            modelBuilder.Entity("Authorization.Core.Entities.GroupRole", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("group_id");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("role_id");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_group_roles");
-
-                    b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_group_roles_role_id");
-
-                    b.HasIndex("GroupId", "RoleId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_group_roles_group_role");
-
-                    b.ToTable("group_roles", (string)null);
-                });
-
-            modelBuilder.Entity("Authorization.Core.Entities.GroupUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("group_id");
-
-                    b.Property<DateTimeOffset>("JoinedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("joined_at");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_group_users");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_group_users_user_id");
-
-                    b.HasIndex("GroupId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_group_users_group_user");
-
-                    b.ToTable("group_users", (string)null);
-                });
-
             modelBuilder.Entity("Authorization.Core.Entities.Permission", b =>
                 {
                     b.Property<Guid>("Id")
@@ -821,6 +702,12 @@ namespace SaasKit.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("scope");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -859,6 +746,10 @@ namespace SaasKit.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("display_order");
 
+                    b.Property<bool>("IsCustom")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_custom");
+
                     b.Property<bool>("IsDefault")
                         .HasColumnType("boolean")
                         .HasColumnName("is_default");
@@ -873,6 +764,10 @@ namespace SaasKit.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
+                    b.Property<Guid?>("TemplateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("template_id");
+
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid")
                         .HasColumnName("tenant_id");
@@ -886,6 +781,9 @@ namespace SaasKit.Migrations
 
                     b.HasIndex("IsDefault")
                         .HasDatabaseName("ix_roles_is_default");
+
+                    b.HasIndex("TemplateId")
+                        .HasDatabaseName("ix_roles_template_id");
 
                     b.HasIndex("TenantId")
                         .HasDatabaseName("ix_roles_tenant_id");
@@ -931,6 +829,86 @@ namespace SaasKit.Migrations
                         .HasDatabaseName("ix_role_permissions_role_permission");
 
                     b.ToTable("role_permissions", (string)null);
+                });
+
+            modelBuilder.Entity("Authorization.Core.Entities.RoleTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("display_order");
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_system");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_role_templates");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_role_templates_name");
+
+                    b.ToTable("role_templates", (string)null);
+                });
+
+            modelBuilder.Entity("Authorization.Core.Entities.RoleTemplatePermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("permission_id");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("template_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_role_template_permissions");
+
+                    b.HasIndex("PermissionId")
+                        .HasDatabaseName("ix_role_template_permissions_permission_id");
+
+                    b.HasIndex("TemplateId", "PermissionId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_role_template_permissions_template_permission");
+
+                    b.ToTable("role_template_permissions", (string)null);
                 });
 
             modelBuilder.Entity("Authorization.Core.Entities.UserRole", b =>
@@ -2470,7 +2448,7 @@ namespace SaasKit.Migrations
                     b.ToTable("feature_flag_filters", (string)null);
                 });
 
-            modelBuilder.Entity("Identity.Core.Entities.AdminUser", b =>
+            modelBuilder.Entity("Identity.Core.Entities.PlatformStaff", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -2481,11 +2459,18 @@ namespace SaasKit.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<bool>("IsSuperAdmin")
+                    b.Property<string>("Department")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("department");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_super_admin");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("admin")
+                        .HasColumnName("role");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -2496,13 +2481,13 @@ namespace SaasKit.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_admin_users");
+                        .HasName("pk_platform_staff");
 
                     b.HasIndex("UserId")
                         .IsUnique()
-                        .HasDatabaseName("ix_admin_users_user_id");
+                        .HasDatabaseName("ix_platform_staff_user_id");
 
-                    b.ToTable("admin_users", (string)null);
+                    b.ToTable("platform_staff", (string)null);
                 });
 
             modelBuilder.Entity("Identity.Core.Entities.UserProfile", b =>
@@ -4375,6 +4360,242 @@ namespace SaasKit.Migrations
                     b.ToTable("tenant_usage_records", (string)null);
                 });
 
+            modelBuilder.Entity("Supplier.Core.Entities.Supplier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("country");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("LicenseNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("license_number");
+
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name_ar");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name_en");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Website")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("website");
+
+                    b.HasKey("Id")
+                        .HasName("pk_suppliers");
+
+                    b.HasIndex("Country")
+                        .HasDatabaseName("ix_suppliers_country");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_suppliers_created_at");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("ix_suppliers_is_active");
+
+                    b.HasIndex("LicenseNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ix_suppliers_license_number")
+                        .HasFilter("license_number IS NOT NULL");
+
+                    b.HasIndex("NameEn")
+                        .HasDatabaseName("ix_suppliers_name_en");
+
+                    b.ToTable("suppliers", (string)null);
+                });
+
+            modelBuilder.Entity("Supplier.Core.Entities.SupplierContact", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("full_name");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsPrimary")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_primary");
+
+                    b.Property<string>("JobTitle")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("job_title");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("supplier_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_supplier_contacts");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("ix_supplier_contacts_is_active");
+
+                    b.HasIndex("SupplierId")
+                        .HasDatabaseName("ix_supplier_contacts_supplier_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_supplier_contacts_user_id");
+
+                    b.HasIndex("SupplierId", "Email")
+                        .IsUnique()
+                        .HasDatabaseName("ix_supplier_contacts_supplier_id_email")
+                        .HasFilter("email IS NOT NULL");
+
+                    b.ToTable("supplier_contacts", (string)null);
+                });
+
+            modelBuilder.Entity("Supplier.Core.Entities.TenantSupplier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("AgreementEndDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("agreement_end_date");
+
+                    b.Property<DateTimeOffset?>("AgreementStartDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("agreement_start_date");
+
+                    b.Property<string>("ContractReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("contract_reference");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("supplier_id");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_tenant_suppliers");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_tenant_suppliers_created_at");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_tenant_suppliers_status");
+
+                    b.HasIndex("SupplierId")
+                        .HasDatabaseName("ix_tenant_suppliers_supplier_id");
+
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_tenant_suppliers_tenant_id");
+
+                    b.HasIndex("TenantId", "SupplierId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_tenant_suppliers_tenant_id_supplier_id");
+
+                    b.ToTable("tenant_suppliers", (string)null);
+                });
+
             modelBuilder.Entity("Tenancy.Core.Entities.SharedPoolAgreement", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4628,9 +4849,10 @@ namespace SaasKit.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name");
 
-                    b.Property<Guid?>("ParentTenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("parent_tenant_id");
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("name_ar");
 
                     b.Property<string>("Settings")
                         .HasColumnType("jsonb")
@@ -4657,10 +4879,6 @@ namespace SaasKit.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("tax_registration_number");
-
-                    b.Property<Guid?>("TenantTypeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_type_id");
 
                     b.Property<DateTimeOffset?>("TradeLicenseExpiry")
                         .HasColumnType("timestamp with time zone")
@@ -4692,9 +4910,6 @@ namespace SaasKit.Migrations
                     b.HasIndex("IsActive")
                         .HasDatabaseName("ix_tenants_is_active");
 
-                    b.HasIndex("ParentTenantId")
-                        .HasDatabaseName("ix_tenants_parent_tenant_id");
-
                     b.HasIndex("Slug")
                         .IsUnique()
                         .HasDatabaseName("ix_tenants_slug");
@@ -4707,13 +4922,10 @@ namespace SaasKit.Migrations
                         .HasDatabaseName("ix_tenants_tadbeer_license")
                         .HasFilter("tadbeer_license_number IS NOT NULL");
 
-                    b.HasIndex("TenantTypeId")
-                        .HasDatabaseName("ix_tenants_tenant_type_id");
-
                     b.ToTable("tenants", (string)null);
                 });
 
-            modelBuilder.Entity("Tenancy.Core.Entities.TenantType", b =>
+            modelBuilder.Entity("Tenancy.Core.Entities.TenantMembership", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -4724,98 +4936,19 @@ namespace SaasKit.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("description");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer")
-                        .HasColumnName("display_order");
-
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("IsOwner")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_active");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tenant_types");
-
-                    b.HasIndex("DisplayOrder")
-                        .HasDatabaseName("ix_tenant_types_display_order");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tenant_types_name");
-
-                    b.ToTable("tenant_types", (string)null);
-                });
-
-            modelBuilder.Entity("Tenancy.Core.Entities.TenantTypeRelationship", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("ChildTypeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("child_type_id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid>("ParentTypeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("parent_type_id");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tenant_type_relationships");
-
-                    b.HasIndex("ChildTypeId")
-                        .HasDatabaseName("ix_tenant_type_relationships_child_type_id");
-
-                    b.HasIndex("ParentTypeId", "ChildTypeId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tenant_type_relationships_parent_child");
-
-                    b.ToTable("tenant_type_relationships", (string)null);
-                });
-
-            modelBuilder.Entity("Tenancy.Core.Entities.TenantUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnName("is_owner");
 
                     b.Property<DateTimeOffset>("JoinedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("joined_at");
 
-                    b.Property<string>("Role")
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasColumnName("role");
+                        .HasColumnName("status");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid")
@@ -4830,22 +4963,22 @@ namespace SaasKit.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_tenant_users");
+                        .HasName("pk_tenant_memberships");
 
-                    b.HasIndex("Role")
-                        .HasDatabaseName("ix_tenant_users_role");
+                    b.HasIndex("IsOwner")
+                        .HasDatabaseName("ix_tenant_memberships_is_owner");
 
                     b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_tenant_users_tenant_id");
+                        .HasDatabaseName("ix_tenant_memberships_tenant_id");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_tenant_users_user_id");
+                        .HasDatabaseName("ix_tenant_memberships_user_id");
 
                     b.HasIndex("TenantId", "UserId")
                         .IsUnique()
-                        .HasDatabaseName("ix_tenant_users_tenant_user");
+                        .HasDatabaseName("ix_tenant_memberships_tenant_user");
 
-                    b.ToTable("tenant_users", (string)null);
+                    b.ToTable("tenant_memberships", (string)null);
                 });
 
             modelBuilder.Entity("Tenancy.Core.Entities.TenantUserInvitation", b =>
@@ -4863,6 +4996,10 @@ namespace SaasKit.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<Guid?>("DefaultRoleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("default_role_id");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -4876,12 +5013,6 @@ namespace SaasKit.Migrations
                     b.Property<Guid>("InvitedByUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("invited_by_user_id");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("role");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid")
@@ -5530,46 +5661,15 @@ namespace SaasKit.Migrations
                     b.Navigation("Webhook");
                 });
 
-            modelBuilder.Entity("Authorization.Core.Entities.GroupRole", b =>
+            modelBuilder.Entity("Authorization.Core.Entities.Role", b =>
                 {
-                    b.HasOne("Authorization.Core.Entities.Group", "Group")
-                        .WithMany("Roles")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_roles_groups_group_id");
-
-                    b.HasOne("Authorization.Core.Entities.Role", "Role")
+                    b.HasOne("Authorization.Core.Entities.RoleTemplate", "Template")
                         .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_roles_role_role_id");
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_roles_role_template_template_id");
 
-                    b.Navigation("Group");
-
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("Authorization.Core.Entities.GroupUser", b =>
-                {
-                    b.HasOne("Authorization.Core.Entities.Group", "Group")
-                        .WithMany("Members")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_users_groups_group_id");
-
-                    b.HasOne("Identity.Core.Entities.UserProfile", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_users_user_profiles_user_id");
-
-                    b.Navigation("Group");
-
-                    b.Navigation("User");
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("Authorization.Core.Entities.RolePermission", b =>
@@ -5591,6 +5691,27 @@ namespace SaasKit.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Authorization.Core.Entities.RoleTemplatePermission", b =>
+                {
+                    b.HasOne("Authorization.Core.Entities.Permission", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_template_permissions_permissions_permission_id");
+
+                    b.HasOne("Authorization.Core.Entities.RoleTemplate", "Template")
+                        .WithMany("Permissions")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_template_permissions_role_templates_template_id");
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("Authorization.Core.Entities.UserRole", b =>
@@ -5805,14 +5926,14 @@ namespace SaasKit.Migrations
                     b.Navigation("FeatureFlag");
                 });
 
-            modelBuilder.Entity("Identity.Core.Entities.AdminUser", b =>
+            modelBuilder.Entity("Identity.Core.Entities.PlatformStaff", b =>
                 {
                     b.HasOne("Identity.Core.Entities.UserProfile", "User")
-                        .WithOne("AdminUser")
-                        .HasForeignKey("Identity.Core.Entities.AdminUser", "UserId")
+                        .WithOne("PlatformStaff")
+                        .HasForeignKey("Identity.Core.Entities.PlatformStaff", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_admin_users_user_profile_user_id");
+                        .HasConstraintName("fk_platform_staff_user_profile_user_id");
 
                     b.Navigation("User");
                 });
@@ -6062,6 +6183,38 @@ namespace SaasKit.Migrations
                     b.Navigation("TenantSubscription");
                 });
 
+            modelBuilder.Entity("Supplier.Core.Entities.SupplierContact", b =>
+                {
+                    b.HasOne("Supplier.Core.Entities.Supplier", "Supplier")
+                        .WithMany("Contacts")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_supplier_contacts_suppliers_supplier_id");
+
+                    b.HasOne("Identity.Core.Entities.UserProfile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_supplier_contacts_user_profiles_user_id");
+
+                    b.Navigation("Supplier");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Supplier.Core.Entities.TenantSupplier", b =>
+                {
+                    b.HasOne("Supplier.Core.Entities.Supplier", "Supplier")
+                        .WithMany("TenantRelationships")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_tenant_suppliers_suppliers_supplier_id");
+
+                    b.Navigation("Supplier");
+                });
+
             modelBuilder.Entity("Tenancy.Core.Entities.SharedPoolAgreement", b =>
                 {
                     b.HasOne("Tenancy.Core.Entities.Tenant", "FromTenant")
@@ -6107,61 +6260,21 @@ namespace SaasKit.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("Tenancy.Core.Entities.Tenant", b =>
-                {
-                    b.HasOne("Tenancy.Core.Entities.Tenant", "ParentTenant")
-                        .WithMany("ChildTenants")
-                        .HasForeignKey("ParentTenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_tenants_tenants_parent_tenant_id");
-
-                    b.HasOne("Tenancy.Core.Entities.TenantType", "TenantType")
-                        .WithMany("Tenants")
-                        .HasForeignKey("TenantTypeId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_tenants_tenant_type_tenant_type_id");
-
-                    b.Navigation("ParentTenant");
-
-                    b.Navigation("TenantType");
-                });
-
-            modelBuilder.Entity("Tenancy.Core.Entities.TenantTypeRelationship", b =>
-                {
-                    b.HasOne("Tenancy.Core.Entities.TenantType", "ChildType")
-                        .WithMany("ParentTypes")
-                        .HasForeignKey("ChildTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tenant_type_relationships_tenant_types_child_type_id");
-
-                    b.HasOne("Tenancy.Core.Entities.TenantType", "ParentType")
-                        .WithMany("AllowedChildTypes")
-                        .HasForeignKey("ParentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tenant_type_relationships_tenant_types_parent_type_id");
-
-                    b.Navigation("ChildType");
-
-                    b.Navigation("ParentType");
-                });
-
-            modelBuilder.Entity("Tenancy.Core.Entities.TenantUser", b =>
+            modelBuilder.Entity("Tenancy.Core.Entities.TenantMembership", b =>
                 {
                     b.HasOne("Tenancy.Core.Entities.Tenant", "Tenant")
                         .WithMany("Members")
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_tenant_users_tenants_tenant_id");
+                        .HasConstraintName("fk_tenant_memberships_tenants_tenant_id");
 
                     b.HasOne("Identity.Core.Entities.UserProfile", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_tenant_users_user_profiles_user_id");
+                        .HasConstraintName("fk_tenant_memberships_user_profiles_user_id");
 
                     b.Navigation("Tenant");
 
@@ -6271,13 +6384,6 @@ namespace SaasKit.Migrations
                     b.Navigation("Deliveries");
                 });
 
-            modelBuilder.Entity("Authorization.Core.Entities.Group", b =>
-                {
-                    b.Navigation("Members");
-
-                    b.Navigation("Roles");
-                });
-
             modelBuilder.Entity("Authorization.Core.Entities.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
@@ -6288,6 +6394,11 @@ namespace SaasKit.Migrations
                     b.Navigation("Permissions");
 
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Authorization.Core.Entities.RoleTemplate", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("ClientManagement.Core.Entities.Client", b =>
@@ -6352,7 +6463,7 @@ namespace SaasKit.Migrations
 
             modelBuilder.Entity("Identity.Core.Entities.UserProfile", b =>
                 {
-                    b.Navigation("AdminUser");
+                    b.Navigation("PlatformStaff");
                 });
 
             modelBuilder.Entity("Portal.Core.Entities.Portal", b =>
@@ -6390,6 +6501,13 @@ namespace SaasKit.Migrations
                     b.Navigation("Prices");
                 });
 
+            modelBuilder.Entity("Supplier.Core.Entities.Supplier", b =>
+                {
+                    b.Navigation("Contacts");
+
+                    b.Navigation("TenantRelationships");
+                });
+
             modelBuilder.Entity("Tenancy.Core.Entities.SharedPoolAgreement", b =>
                 {
                     b.Navigation("SharedWorkers");
@@ -6397,8 +6515,6 @@ namespace SaasKit.Migrations
 
             modelBuilder.Entity("Tenancy.Core.Entities.Tenant", b =>
                 {
-                    b.Navigation("ChildTenants");
-
                     b.Navigation("IncomingPoolAgreements");
 
                     b.Navigation("Invitations");
@@ -6408,15 +6524,6 @@ namespace SaasKit.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("OutgoingPoolAgreements");
-                });
-
-            modelBuilder.Entity("Tenancy.Core.Entities.TenantType", b =>
-                {
-                    b.Navigation("AllowedChildTypes");
-
-                    b.Navigation("ParentTypes");
-
-                    b.Navigation("Tenants");
                 });
 
             modelBuilder.Entity("Worker.Core.Entities.Worker", b =>

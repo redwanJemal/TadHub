@@ -59,19 +59,8 @@ export interface CountryRefDto {
   nameAr: string;
 }
 
-// =============================================================================
-// Paginated Response (matches backend)
-// =============================================================================
-
-export interface PagedList<T> {
-  items: T[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
+// Re-export PagedList from shared types for backwards compatibility
+export type { PagedList } from '@/shared/api/types';
 
 // =============================================================================
 // Filter Parameters

@@ -158,16 +158,16 @@ export async function revokeTenantInvitation(tenantId: string, invitationId: str
  * List all users (admin)
  */
 export async function listUsers(params?: QueryParams): Promise<PaginatedData<UserProfileDto>> {
-  return apiClient.get<PaginatedData<UserProfileDto>>('/admin/users', params);
+  return apiClient.get<PaginatedData<UserProfileDto>>('/users', params);
 }
 
 /**
  * Search users by email or name
  */
 export async function searchUsers(query: string): Promise<PaginatedData<UserProfileDto>> {
-  return apiClient.get<PaginatedData<UserProfileDto>>('/admin/users', {
-    q: query,
-    perPage: 10,
+  return apiClient.get<PaginatedData<UserProfileDto>>('/users', {
+    search: query,
+    pageSize: 10,
   });
 }
 
@@ -175,5 +175,5 @@ export async function searchUsers(query: string): Promise<PaginatedData<UserProf
  * Get user by ID
  */
 export async function getUser(userId: string): Promise<UserProfileDto> {
-  return apiClient.get<UserProfileDto>(`/admin/users/${userId}`);
+  return apiClient.get<UserProfileDto>(`/users/${userId}`);
 }

@@ -56,9 +56,9 @@ export interface DataTableAdvancedProps<T> {
   page?: number;
   totalPages?: number;
   total?: number;
-  perPage?: number;
+  pageSize?: number;
   onPageChange?: (page: number) => void;
-  onPerPageChange?: (perPage: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
   // Selection
   selectable?: boolean;
   selectedIds?: string[];
@@ -82,9 +82,9 @@ export function DataTableAdvanced<T extends { id: string }>({
   page = 1,
   totalPages = 1,
   total,
-  perPage = 20,
+  pageSize = 20,
   onPageChange,
-  onPerPageChange,
+  onPageSizeChange,
   selectable,
   selectedIds = [],
   onSelectionChange,
@@ -288,10 +288,10 @@ export function DataTableAdvanced<T extends { id: string }>({
           {total !== undefined && (
             <span>{t("table.totalResults", { count: total })}</span>
           )}
-          {onPerPageChange && (
+          {onPageSizeChange && (
             <Select
-              value={String(perPage)}
-              onValueChange={(v) => onPerPageChange(Number(v))}
+              value={String(pageSize)}
+              onValueChange={(v) => onPageSizeChange(Number(v))}
             >
               <SelectTrigger className="w-[80px] h-8">
                 <SelectValue />

@@ -19,6 +19,9 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(x => x.NameAr)
+            .HasMaxLength(255);
+
         builder.Property(x => x.Slug)
             .IsRequired()
             .HasMaxLength(100);
@@ -103,17 +106,5 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
         // Index for created at
         builder.HasIndex(x => x.CreatedAt)
             .HasDatabaseName("ix_tenants_created_at");
-
-        // Self-referential relationship for hierarchy
-        builder.HasOne(x => x.ParentTenant)
-            .WithMany(x => x.ChildTenants)
-            .HasForeignKey(x => x.ParentTenantId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        // Relationship to tenant type
-        builder.HasOne(x => x.TenantType)
-            .WithMany(x => x.Tenants)
-            .HasForeignKey(x => x.TenantTypeId)
-            .OnDelete(DeleteBehavior.SetNull);
     }
 }

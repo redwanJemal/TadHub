@@ -1,28 +1,36 @@
 import { UserProfileDto } from '../users/types';
 
 /**
- * Admin user DTO - represents a platform team member
+ * Platform staff DTO - represents a platform team member
  */
-export interface AdminUserDto {
+export interface PlatformStaffDto {
   id: string;
   userId: string;
   user: UserProfileDto;
-  isSuperAdmin: boolean;
+  role: string;
+  department?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 /**
- * Request to create a new admin user
+ * Platform staff roles
  */
-export interface CreateAdminUserRequest {
+export type PlatformStaffRole = 'super-admin' | 'admin' | 'finance' | 'sales' | 'support';
+
+/**
+ * Request to create a new platform staff member
+ */
+export interface CreatePlatformStaffRequest {
   email: string;
-  isSuperAdmin: boolean;
+  role: PlatformStaffRole;
+  department?: string;
 }
 
 /**
- * Request to update an admin user
+ * Request to update a platform staff member
  */
-export interface UpdateAdminUserRequest {
-  isSuperAdmin?: boolean;
+export interface UpdatePlatformStaffRequest {
+  role?: PlatformStaffRole;
+  department?: string;
 }

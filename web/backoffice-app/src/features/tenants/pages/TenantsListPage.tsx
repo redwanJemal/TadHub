@@ -72,8 +72,8 @@ export function TenantsListPage() {
 
   const { data, isLoading, error } = useTenants({
     page,
-    perPage: 20,
-    q: searchQuery || undefined,
+    pageSize: 20,
+    search: searchQuery || undefined,
     filter: statusFilter !== 'all' ? { status: statusFilter } : undefined,
   });
 

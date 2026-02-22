@@ -5,11 +5,11 @@ export interface ResponseMeta {
   requestId: string;
   timestamp: string;
   page?: number;
-  perPage?: number;
-  total?: number;
+  pageSize?: number;
+  totalCount?: number;
   totalPages?: number;
-  hasNext?: boolean;
-  hasPrev?: boolean;
+  hasNextPage?: boolean;
+  hasPreviousPage?: boolean;
 }
 
 /**
@@ -53,21 +53,27 @@ export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
  */
 export interface PaginatedData<T> {
   items: T[];
-  total: number;
+  totalCount: number;
   page: number;
-  perPage: number;
+  pageSize: number;
   totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
+
+/**
+ * Alias matching the backend PagedList<T> naming convention
+ */
+export type PagedList<T> = PaginatedData<T>;
 
 /**
  * Query parameters for list endpoints
  */
 export interface QueryParams {
   page?: number;
-  perPage?: number;
+  pageSize?: number;
   sort?: string;
-  order?: 'asc' | 'desc';
-  q?: string;
+  search?: string;
   include?: string;
   fields?: string;
   filter?: Record<string, string | Record<string, string>>;
