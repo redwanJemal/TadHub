@@ -89,7 +89,7 @@ export function PlatformTeamPage() {
   const [addError, setAddError] = useState<string | null>(null);
 
   const { data: staff, isLoading, error } = usePlatformStaff({
-    q: searchQuery || undefined,
+    search: searchQuery || undefined,
   });
 
   const createMutation = useCreatePlatformStaff();

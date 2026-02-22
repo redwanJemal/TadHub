@@ -11,7 +11,7 @@ export type SortOrder = 'asc' | 'desc';
  */
 export interface PaginationState {
   page: number;
-  perPage: number;
+  pageSize: number;
   sort: string;
   order: SortOrder;
 }
@@ -25,7 +25,7 @@ export type FilterState = Record<string, string | Record<string, string>>;
  * Search state
  */
 export interface SearchState {
-  q: string;
+  search: string;
 }
 
 /**
@@ -42,27 +42,27 @@ export interface PaginationControls {
   // State
   state: QueryState;
   params: QueryParams;
-  
+
   // Pagination
   setPage: (page: number) => void;
-  setPerPage: (perPage: number) => void;
+  setPageSize: (pageSize: number) => void;
   nextPage: () => void;
   prevPage: () => void;
   goToPage: (page: number) => void;
-  
+
   // Sorting
   setSort: (field: string, order?: SortOrder) => void;
   toggleSort: (field: string) => void;
-  
+
   // Search
   setSearch: (query: string) => void;
   clearSearch: () => void;
-  
+
   // Filters
   setFilter: (field: string, value: string | Record<string, string>) => void;
   removeFilter: (field: string) => void;
   clearFilters: () => void;
-  
+
   // Reset
   reset: () => void;
 }
@@ -72,22 +72,31 @@ export interface PaginationControls {
  */
 export interface UsePaginationOptions {
   defaultPage?: number;
-  defaultPerPage?: number;
+  defaultPageSize?: number;
   defaultSort?: string;
   defaultOrder?: SortOrder;
-  perPageOptions?: number[];
+  pageSizeOptions?: number[];
 }
 
 const DEFAULT_OPTIONS: Required<UsePaginationOptions> = {
   defaultPage: 1,
-  defaultPerPage: 20,
+  defaultPageSize: 20,
   defaultSort: 'createdAt',
   defaultOrder: 'desc',
-  perPageOptions: [10, 20, 50, 100],
+  pageSizeOptions: [10, 20, 50, 100],
 };
 
 /**
- * Hook for managing pagination, sorting, search, and filter state
+ * Build sort string with -prefix for descending.
+ * Matches backend QueryParameters.Sort format: "-createdAt,name"
+ */
+function buildSortString(field: string, order: SortOrder): string {
+  return order === 'desc' ? `-${field}` : field;
+}
+
+/**
+ * Hook for managing pagination, sorting, search, and filter state.
+ * Emits QueryParams matching the backend QueryParameters contract.
  */
 export function usePagination(
   options?: UsePaginationOptions
@@ -96,24 +105,23 @@ export function usePagination(
 
   const [state, setState] = useState<QueryState>({
     page: opts.defaultPage,
-    perPage: opts.defaultPerPage,
+    pageSize: opts.defaultPageSize,
     sort: opts.defaultSort,
     order: opts.defaultOrder,
-    q: '',
+    search: '',
     filter: {},
   });
 
-  // Convert state to query params
+  // Convert state to query params matching backend contract
   const params = useMemo<QueryParams>(() => {
     const p: QueryParams = {
       page: state.page,
-      perPage: state.perPage,
-      sort: state.sort,
-      order: state.order,
+      pageSize: state.pageSize,
+      sort: buildSortString(state.sort, state.order),
     };
 
-    if (state.q) {
-      p.q = state.q;
+    if (state.search) {
+      p.search = state.search;
     }
 
     if (Object.keys(state.filter).length > 0) {
@@ -128,8 +136,8 @@ export function usePagination(
     setState(s => ({ ...s, page: Math.max(1, page) }));
   }, []);
 
-  const setPerPage = useCallback((perPage: number) => {
-    setState(s => ({ ...s, perPage, page: 1 })); // Reset to page 1
+  const setPageSize = useCallback((pageSize: number) => {
+    setState(s => ({ ...s, pageSize, page: 1 }));
   }, []);
 
   const nextPage = useCallback(() => {
@@ -150,7 +158,7 @@ export function usePagination(
       ...s,
       sort: field,
       order: order ?? s.order,
-      page: 1, // Reset to page 1
+      page: 1,
     }));
   }, []);
 
@@ -165,11 +173,11 @@ export function usePagination(
 
   // Search
   const setSearch = useCallback((query: string) => {
-    setState(s => ({ ...s, q: query, page: 1 }));
+    setState(s => ({ ...s, search: query, page: 1 }));
   }, []);
 
   const clearSearch = useCallback(() => {
-    setState(s => ({ ...s, q: '', page: 1 }));
+    setState(s => ({ ...s, search: '', page: 1 }));
   }, []);
 
   // Filters
@@ -187,7 +195,7 @@ export function usePagination(
   const removeFilter = useCallback((field: string) => {
     setState(s => {
       const { [field]: _removed, ...rest } = s.filter;
-      void _removed; // Suppress unused variable warning
+      void _removed;
       return { ...s, filter: rest, page: 1 };
     });
   }, []);
@@ -200,10 +208,10 @@ export function usePagination(
   const reset = useCallback(() => {
     setState({
       page: opts.defaultPage,
-      perPage: opts.defaultPerPage,
+      pageSize: opts.defaultPageSize,
       sort: opts.defaultSort,
       order: opts.defaultOrder,
-      q: '',
+      search: '',
       filter: {},
     });
   }, [opts]);
@@ -212,7 +220,7 @@ export function usePagination(
     state,
     params,
     setPage,
-    setPerPage,
+    setPageSize,
     nextPage,
     prevPage,
     goToPage,

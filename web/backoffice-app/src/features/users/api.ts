@@ -55,5 +55,5 @@ export async function reactivateUser(userId: string): Promise<void> {
  * Search users by query
  */
 export async function searchUsers(query: string): Promise<PaginatedData<UserProfileDto>> {
-  return apiClient.get('/users', { q: query });
+  return apiClient.get('/users', { search: query });
 }

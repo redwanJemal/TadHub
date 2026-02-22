@@ -175,16 +175,8 @@ export interface WorkerFilterParams {
   include?: ('skills' | 'languages' | 'media' | 'jobCategory')[];
 }
 
-// Paginated response
-export interface PagedList<T> {
-  items: T[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
+// Re-export PagedList from shared types for backwards compatibility
+export type { PagedList } from '@/shared/api/types';
 
 // Common religions
 export const RELIGIONS = [
