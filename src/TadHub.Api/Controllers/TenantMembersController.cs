@@ -36,13 +36,17 @@ public class TenantMembersController : ControllerBase
     /// Lists members of a tenant with filtering and pagination.
     /// </summary>
     [HttpGet]
-    [HasPermission("members.view")]
     [ProducesResponseType(typeof(IEnumerable<TenantMemberDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetMembers(
         Guid tenantId,
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.view", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _tenantService.GetMembersAsync(tenantId, qp, ct);
         return Ok(result);
     }
@@ -51,11 +55,15 @@ public class TenantMembersController : ControllerBase
     /// Gets a specific member.
     /// </summary>
     [HttpGet("{userId:guid}")]
-    [HasPermission("members.view")]
     [ProducesResponseType(typeof(TenantMemberDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMember(Guid tenantId, Guid userId, CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.view", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _tenantService.GetMemberAsync(tenantId, userId, ct);
 
         if (!result.IsSuccess)

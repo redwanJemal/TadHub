@@ -7,6 +7,8 @@ import { useTenantStore } from './hooks/useTenant';
 // Store for managing auth state across the app (for non-React contexts like API client)
 let accessToken: string | null = null;
 let tenantId: string | null = null;
+// Once ProtectedRoute resolves the correct tenant from /me, prevent JWT overwriting it
+let tenantResolvedFromApi = false;
 
 export function getAccessToken(): string | null {
   return accessToken;
@@ -15,7 +17,7 @@ export function getAccessToken(): string | null {
 export function getTenantId(): string | null {
   // First try the module-level variable, then fall back to store
   if (tenantId) return tenantId;
-  
+
   // Get from zustand store (for SSR/hydration scenarios)
   const state = useTenantStore.getState();
   return state.currentTenant?.id ?? null;
@@ -23,6 +25,7 @@ export function getTenantId(): string | null {
 
 export function setTenantId(id: string | null): void {
   tenantId = id;
+  if (id) tenantResolvedFromApi = true;
 }
 
 // Inner component to sync auth state
@@ -33,24 +36,27 @@ function AuthSync({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (auth.isAuthenticated && auth.user?.access_token) {
       accessToken = auth.user.access_token;
-      
-      // Extract tenant_id from token claims if available
-      const profile = auth.user.profile as Record<string, unknown>;
-      const tokenTenantId = profile?.tenant_id as string | undefined;
-      const tokenTenantName = profile?.tenant_name as string | undefined;
-      const tokenTenantSlug = profile?.tenant_slug as string | undefined;
-      
-      if (tokenTenantId) {
-        tenantId = tokenTenantId;
-        setCurrentTenant({
-          id: tokenTenantId,
-          name: tokenTenantName ?? 'Tenant',
-          slug: tokenTenantSlug ?? tokenTenantId,
-        });
+
+      // Set tenant from JWT claims only if not already resolved from /me API
+      if (!tenantResolvedFromApi) {
+        const profile = auth.user.profile as Record<string, unknown>;
+        const tokenTenantId = profile?.tenant_id as string | undefined;
+        const tokenTenantName = profile?.tenant_name as string | undefined;
+        const tokenTenantSlug = profile?.tenant_slug as string | undefined;
+
+        if (tokenTenantId) {
+          tenantId = tokenTenantId;
+          setCurrentTenant({
+            id: tokenTenantId,
+            name: tokenTenantName ?? 'Tenant',
+            slug: tokenTenantSlug ?? tokenTenantId,
+          });
+        }
       }
     } else {
       accessToken = null;
       tenantId = null;
+      tenantResolvedFromApi = false;
       clearTenant();
     }
   }, [auth.isAuthenticated, auth.user, setCurrentTenant, clearTenant]);

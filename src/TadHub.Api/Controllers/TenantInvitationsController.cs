@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TadHub.Infrastructure.Auth;
 using TadHub.Api.Filters;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Interfaces;
 using Tenancy.Contracts;
 using Tenancy.Contracts.DTOs;
 
@@ -18,23 +19,34 @@ namespace TadHub.Api.Controllers;
 public class TenantInvitationsController : ControllerBase
 {
     private readonly ITenantService _tenantService;
+    private readonly CurrentUser _currentUser;
+    private readonly IPermissionChecker _permissionChecker;
 
-    public TenantInvitationsController(ITenantService tenantService)
+    public TenantInvitationsController(
+        ITenantService tenantService,
+        CurrentUser currentUser,
+        IPermissionChecker permissionChecker)
     {
         _tenantService = tenantService;
+        _currentUser = currentUser;
+        _permissionChecker = permissionChecker;
     }
 
     /// <summary>
     /// Lists pending invitations for a tenant.
     /// </summary>
     [HttpGet]
-    [HasPermission("members.invite")]
     [ProducesResponseType(typeof(IEnumerable<TenantInvitationDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetInvitations(
         Guid tenantId,
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.invite", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _tenantService.GetInvitationsAsync(tenantId, qp, ct);
         return Ok(result);
     }
@@ -43,7 +55,6 @@ public class TenantInvitationsController : ControllerBase
     /// Creates an invitation to join the tenant.
     /// </summary>
     [HttpPost]
-    [HasPermission("members.invite")]
     [ProducesResponseType(typeof(TenantInvitationDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -52,6 +63,11 @@ public class TenantInvitationsController : ControllerBase
         [FromBody] InviteMemberRequest request,
         CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.invite", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _tenantService.InviteMemberAsync(tenantId, request, ct);
 
         if (!result.IsSuccess)
@@ -68,7 +84,6 @@ public class TenantInvitationsController : ControllerBase
     /// Revokes a pending invitation.
     /// </summary>
     [HttpDelete("{invitationId:guid}")]
-    [HasPermission("members.invite")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -77,6 +92,11 @@ public class TenantInvitationsController : ControllerBase
         Guid invitationId,
         CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.invite", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _tenantService.RevokeInvitationAsync(tenantId, invitationId, ct);
 
         if (!result.IsSuccess)
