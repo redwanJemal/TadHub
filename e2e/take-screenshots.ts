@@ -84,6 +84,13 @@ async function main() {
   const taContext = await browser.newContext({ viewport: { width: 1440, height: 900 }, ignoreHTTPSErrors: true });
   const taPage = await taContext.newPage();
 
+  // Collect page errors
+  const pageErrors: string[] = [];
+  taPage.on('pageerror', err => {
+    console.warn('  [PAGE ERROR]', err.message);
+    pageErrors.push(err.message);
+  });
+
   // Navigate and login
   await taPage.goto(TENANT_URL);
   await taPage.waitForTimeout(3000);
@@ -98,17 +105,75 @@ async function main() {
   await taPage.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/01-home.png`, fullPage: false });
   console.log('  done: home');
 
-  // Workers list
-  await taPage.goto(`${TENANT_URL}/workers`);
+  // Team page - Members tab
+  await taPage.goto(`${TENANT_URL}/team`);
   await taPage.waitForTimeout(3000);
-  await taPage.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/02-workers-list.png`, fullPage: false });
-  console.log('  done: workers list');
+  await taPage.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/02-team-members.png`, fullPage: false });
+  console.log('  done: team members');
 
-  // Worker form
-  await taPage.goto(`${TENANT_URL}/workers/new`);
-  await taPage.waitForTimeout(3000);
-  await taPage.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/03-worker-form.png`, fullPage: false });
-  console.log('  done: worker form');
+  // Team page - Invitations tab
+  const invitationsTab = taPage.getByRole('tab', { name: /invitations/i });
+  if (await invitationsTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await invitationsTab.click();
+    await taPage.waitForTimeout(2000);
+    await taPage.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/03-team-invitations.png`, fullPage: false });
+    console.log('  done: team invitations');
+  }
+
+  // Invite member dialog
+  const inviteBtn = taPage.getByRole('button', { name: /invite member/i });
+  if (await inviteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await inviteBtn.click();
+    await taPage.waitForTimeout(1000);
+    await taPage.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/04-invite-member-dialog.png`, fullPage: false });
+    console.log('  done: invite member dialog');
+
+    // Close dialog
+    const cancelBtn = taPage.getByRole('button', { name: /cancel/i });
+    if (await cancelBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await cancelBtn.click();
+      await taPage.waitForTimeout(500);
+    }
+  }
+
+  // Switch back to Members tab and try Change Role dialog
+  const membersTab = taPage.getByRole('tab', { name: /members/i });
+  if (await membersTab.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await membersTab.click();
+    await taPage.waitForTimeout(2000);
+
+    // Try to open actions dropdown on first member row
+    const actionBtn = taPage.locator('table tbody tr').first().getByRole('button');
+    if (await actionBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await actionBtn.click();
+      await taPage.waitForTimeout(500);
+      await taPage.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/05-member-actions-dropdown.png`, fullPage: false });
+      console.log('  done: member actions dropdown');
+
+      // Click "Change Role" if visible
+      const changeRoleItem = taPage.getByText(/change role/i);
+      if (await changeRoleItem.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await changeRoleItem.click();
+        await taPage.waitForTimeout(1000);
+        await taPage.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/06-change-role-dialog.png`, fullPage: false });
+        console.log('  done: change role dialog');
+
+        // Close dialog
+        const cancelBtn2 = taPage.getByRole('button', { name: /cancel/i });
+        if (await cancelBtn2.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await cancelBtn2.click();
+          await taPage.waitForTimeout(500);
+        }
+      }
+    }
+  }
+
+  // Report errors
+  if (pageErrors.length > 0) {
+    console.warn(`\n  WARNING: ${pageErrors.length} page error(s) detected during tenant app screenshots`);
+  } else {
+    console.log('\n  No JS errors detected');
+  }
 
   await taContext.close();
   await browser.close();
