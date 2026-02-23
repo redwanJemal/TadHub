@@ -93,12 +93,9 @@ services:
       KEYCLOAK_ADMIN: ${KC_ADMIN_USER:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.tadhub-keycloak.rule=Host(`auth.endlessmaker.com`)
-      - traefik.http.routers.tadhub-keycloak.entrypoints=https
-      - traefik.http.routers.tadhub-keycloak.tls=true
-      - traefik.http.routers.tadhub-keycloak.tls.certresolver=letsencrypt
-      - traefik.http.services.tadhub-keycloak.loadbalancer.server.port=8080
+      # Routing is handled by Traefik dynamic file config (/traefik/dynamic/tadhub.yaml)
+      # Docker labels disabled to avoid duplicate router conflicts
+      - traefik.enable=false
     depends_on:
       postgres:
         condition: service_healthy
