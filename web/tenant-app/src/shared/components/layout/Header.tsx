@@ -13,6 +13,7 @@ import {
   LogOut,
   Settings,
   User,
+  KeyRound,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { keycloakUrls } from "@/lib/auth-config";
@@ -214,6 +215,16 @@ export function Header({ onMenuClick }: HeaderProps) {
                 >
                   <User className="h-4 w-4" />
                   {t("profile")}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    window.open(keycloakUrls.account + '/#/security/signingin', '_blank');
+                  }}
+                  className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-muted"
+                >
+                  <KeyRound className="h-4 w-4" />
+                  {t("changePassword")}
                 </button>
                 <div className="border-t my-1" />
                 <button
