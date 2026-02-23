@@ -16,7 +16,7 @@ import {
   searchUsers,
 } from './api';
 import {
-  CreateTenantRequest,
+  AdminCreateTenantRequest,
   UpdateTenantRequest,
   AddTenantMemberRequest,
   UpdateMemberRoleRequest,
@@ -69,7 +69,7 @@ export function useCreateTenant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateTenantRequest) => createTenant(data),
+    mutationFn: (data: AdminCreateTenantRequest) => createTenant(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
     },

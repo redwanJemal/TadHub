@@ -26,8 +26,8 @@ import {
 } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 
-// Form validation schema
-const tenantFormSchema = z.object({
+// Base tenant fields shared between create and edit
+const baseTenantFields = {
   name: z.string().min(2, 'Name must be at least 2 characters').max(200, 'Name is too long'),
   slug: z
     .string()
@@ -39,9 +39,21 @@ const tenantFormSchema = z.object({
   description: z.string().max(1000, 'Description is too long').optional().or(z.literal('')),
   website: z.string().url('Invalid URL').optional().or(z.literal('')),
   logoUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
+};
+
+// Create form includes owner fields
+const createTenantSchema = z.object({
+  ...baseTenantFields,
+  ownerEmail: z.string().email('Invalid email address'),
+  ownerPassword: z.string().min(8, 'Password must be at least 8 characters'),
+  ownerFirstName: z.string().min(1, 'First name is required').max(100),
+  ownerLastName: z.string().min(1, 'Last name is required').max(100),
 });
 
-type TenantFormValues = z.infer<typeof tenantFormSchema>;
+// Edit form — no owner fields
+const editTenantSchema = z.object(baseTenantFields);
+
+type CreateTenantFormValues = z.infer<typeof createTenantSchema>;
 
 export function TenantFormPage() {
   const navigate = useNavigate();
@@ -52,14 +64,20 @@ export function TenantFormPage() {
   const createMutation = useCreateTenant();
   const updateMutation = useUpdateTenant();
 
-  const form = useForm<TenantFormValues>({
-    resolver: zodResolver(tenantFormSchema),
+  const form = useForm<CreateTenantFormValues>({
+    resolver: zodResolver(isEditing ? editTenantSchema : createTenantSchema),
     defaultValues: {
       name: '',
       slug: '',
       description: '',
       website: '',
       logoUrl: '',
+      ...(!isEditing && {
+        ownerEmail: '',
+        ownerPassword: '',
+        ownerFirstName: '',
+        ownerLastName: '',
+      }),
     },
   });
 
@@ -76,21 +94,30 @@ export function TenantFormPage() {
     }
   }, [tenant, form]);
 
-  const onSubmit = async (values: TenantFormValues) => {
+  const onSubmit = async (values: CreateTenantFormValues) => {
     try {
-      // Clean up empty strings
-      const data = {
-        name: values.name,
-        slug: values.slug || undefined,
-        description: values.description || undefined,
-        website: values.website || undefined,
-        logoUrl: values.logoUrl || undefined,
-      };
-
       if (isEditing && tenantId) {
+        const data = {
+          name: values.name,
+          slug: values.slug || undefined,
+          description: values.description || undefined,
+          website: values.website || undefined,
+          logoUrl: values.logoUrl || undefined,
+        };
         await updateMutation.mutateAsync({ tenantId, data });
         navigate(`/tenants/${tenantId}`);
       } else {
+        const data = {
+          name: values.name,
+          slug: values.slug || undefined,
+          description: values.description || undefined,
+          website: values.website || undefined,
+          logoUrl: values.logoUrl || undefined,
+          ownerEmail: values.ownerEmail,
+          ownerPassword: values.ownerPassword,
+          ownerFirstName: values.ownerFirstName,
+          ownerLastName: values.ownerLastName,
+        };
         const newTenant = await createMutation.mutateAsync(data);
         navigate(`/tenants/${newTenant.id}`);
       }
@@ -264,6 +291,83 @@ export function TenantFormPage() {
               />
             </CardContent>
           </Card>
+
+          {/* Owner Information — only shown when creating */}
+          {!isEditing && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Owner Account</CardTitle>
+                <CardDescription>
+                  The owner user who will manage this tenant. A new account will be created with these credentials.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="ownerFirstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="ownerLastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Doe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="ownerEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email *</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="owner@example.com" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        This will be used as the login email for the owner account
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="ownerPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password *</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Minimum 8 characters" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        The owner can change this after their first login
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Form Actions */}
           <div className="flex items-center gap-4">

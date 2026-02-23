@@ -21,7 +21,7 @@ export interface TenantDto {
 }
 
 /**
- * Create tenant request
+ * Create tenant request (self-service)
  */
 export interface CreateTenantRequest {
   name: string;
@@ -30,6 +30,21 @@ export interface CreateTenantRequest {
   logoUrl?: string;
   description?: string;
   website?: string;
+}
+
+/**
+ * Admin create tenant request — includes owner user details
+ */
+export interface AdminCreateTenantRequest {
+  name: string;
+  slug?: string;
+  logoUrl?: string;
+  description?: string;
+  website?: string;
+  ownerEmail: string;
+  ownerPassword: string;
+  ownerFirstName: string;
+  ownerLastName: string;
 }
 
 /**

@@ -37,6 +37,12 @@ public interface ITenantService
     Task<Result<TenantDto>> CreateAsync(CreateTenantRequest request, CancellationToken ct = default);
 
     /// <summary>
+    /// Creates a new tenant with a dedicated owner user (admin-only).
+    /// Creates the user in Keycloak, provisions a local profile, and sets up ownership.
+    /// </summary>
+    Task<Result<TenantDto>> AdminCreateAsync(AdminCreateTenantRequest request, CancellationToken ct = default);
+
+    /// <summary>
     /// Updates a tenant.
     /// </summary>
     Task<Result<TenantDto>> UpdateAsync(Guid id, UpdateTenantRequest request, CancellationToken ct = default);

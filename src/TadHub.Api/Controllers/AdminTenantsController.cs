@@ -71,17 +71,17 @@ public class AdminTenantsController : ControllerBase
     }
 
     /// <summary>
-    /// Creates a new tenant.
+    /// Creates a new tenant with a dedicated owner user.
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(TenantDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateTenant(
-        [FromBody] CreateTenantRequest request,
+        [FromBody] AdminCreateTenantRequest request,
         CancellationToken ct)
     {
-        var result = await _tenantService.CreateAsync(request, ct);
+        var result = await _tenantService.AdminCreateAsync(request, ct);
 
         if (!result.IsSuccess)
         {
@@ -89,6 +89,8 @@ public class AdminTenantsController : ControllerBase
             {
                 "CONFLICT" => Conflict(new { error = result.Error }),
                 "UNAUTHORIZED" => Unauthorized(new { error = result.Error }),
+                "KEYCLOAK_ERROR" => StatusCode(StatusCodes.Status502BadGateway, new { error = result.Error }),
+                "IDENTITY_ERROR" => StatusCode(StatusCodes.Status500InternalServerError, new { error = result.Error }),
                 _ => BadRequest(new { error = result.Error })
             };
         }

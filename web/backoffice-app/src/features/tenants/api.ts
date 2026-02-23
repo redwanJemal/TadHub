@@ -2,7 +2,7 @@ import { apiClient } from '@/shared/api/client';
 import { PaginatedData, QueryParams } from '@/shared/api/types';
 import {
   TenantDto,
-  CreateTenantRequest,
+  AdminCreateTenantRequest,
   UpdateTenantRequest,
   TenantUserDto,
   AddTenantMemberRequest,
@@ -36,9 +36,9 @@ export async function getTenantBySlug(slug: string): Promise<TenantDto> {
 }
 
 /**
- * Create a new tenant
+ * Create a new tenant (admin — includes owner user creation)
  */
-export async function createTenant(data: CreateTenantRequest): Promise<TenantDto> {
+export async function createTenant(data: AdminCreateTenantRequest): Promise<TenantDto> {
   return apiClient.post<TenantDto>('/admin/tenants', data);
 }
 

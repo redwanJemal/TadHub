@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Security.Cryptography;
 using Identity.Contracts;
+using Identity.Contracts.DTOs;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,8 @@ using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Events;
 using TadHub.SharedKernel.Extensions;
 using TadHub.SharedKernel.Interfaces;
+using TadHub.Infrastructure.Keycloak;
+using TadHub.Infrastructure.Keycloak.Models;
 using TadHub.SharedKernel.Models;
 using Tenancy.Contracts;
 using Tenancy.Contracts.DTOs;
@@ -28,6 +31,7 @@ public class TenantService : ITenantService
     private readonly ICurrentUser _currentUser;
     private readonly CurrentUser _currentUserImpl;
     private readonly IIdentityService _identityService;
+    private readonly IKeycloakAdminClient _keycloakAdmin;
     private readonly IClock _clock;
     private readonly ILogger<TenantService> _logger;
 
@@ -78,6 +82,7 @@ public class TenantService : ITenantService
         ICurrentUser currentUser,
         CurrentUser currentUserImpl,
         IIdentityService identityService,
+        IKeycloakAdminClient keycloakAdmin,
         IClock clock,
         ILogger<TenantService> logger)
     {
@@ -86,6 +91,7 @@ public class TenantService : ITenantService
         _currentUser = currentUser;
         _currentUserImpl = currentUserImpl;
         _identityService = identityService;
+        _keycloakAdmin = keycloakAdmin;
         _clock = clock;
         _logger = logger;
     }
@@ -210,6 +216,127 @@ public class TenantService : ITenantService
             _clock.UtcNow), ct);
 
         return Result<TenantDto>.Success(MapToDto(tenant));
+    }
+
+    public async Task<Result<TenantDto>> AdminCreateAsync(AdminCreateTenantRequest request, CancellationToken ct = default)
+    {
+        // 1. Check email uniqueness — local DB
+        var existingLocal = await _identityService.GetByEmailAsync(request.OwnerEmail, ct);
+        if (existingLocal.IsSuccess)
+            return Result<TenantDto>.Conflict($"A user with email '{request.OwnerEmail}' already exists");
+
+        // 1b. Check email uniqueness — Keycloak
+        var existingKc = await _keycloakAdmin.GetUserByEmailAsync(request.OwnerEmail, ct);
+        if (existingKc is not null)
+            return Result<TenantDto>.Conflict($"A user with email '{request.OwnerEmail}' already exists in the identity provider");
+
+        // 2. Validate slug uniqueness
+        var slug = request.Slug?.ToLower() ?? request.Name.ToSlug();
+        var slugExists = await _db.Set<Tenant>().AnyAsync(x => x.Slug == slug, ct);
+        if (slugExists)
+            return Result<TenantDto>.Conflict($"Tenant with slug '{slug}' already exists");
+
+        // 3. Create Keycloak user
+        string keycloakUserId;
+        try
+        {
+            var kcUser = new KeycloakUserRepresentation
+            {
+                Username = request.OwnerEmail.ToLower(),
+                Email = request.OwnerEmail.ToLower(),
+                FirstName = request.OwnerFirstName,
+                LastName = request.OwnerLastName,
+                Enabled = true,
+                EmailVerified = true,
+                Credentials = new List<KeycloakCredentialRepresentation>
+                {
+                    new()
+                    {
+                        Type = "password",
+                        Value = request.OwnerPassword,
+                        Temporary = false
+                    }
+                }
+            };
+
+            keycloakUserId = await _keycloakAdmin.CreateUserAsync(kcUser, ct);
+            _logger.LogInformation("Created Keycloak user {KeycloakUserId} for {Email}", keycloakUserId, request.OwnerEmail);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create Keycloak user for {Email}", request.OwnerEmail);
+            return Result<TenantDto>.Failure("Failed to create user in identity provider", "KEYCLOAK_ERROR");
+        }
+
+        try
+        {
+            // 4. Create local UserProfile
+            var profileResult = await _identityService.CreateAsync(new CreateUserProfileRequest
+            {
+                KeycloakId = keycloakUserId,
+                Email = request.OwnerEmail.ToLower(),
+                FirstName = request.OwnerFirstName,
+                LastName = request.OwnerLastName
+            }, ct);
+
+            if (!profileResult.IsSuccess)
+            {
+                await RollbackKeycloakUserAsync(keycloakUserId);
+                return Result<TenantDto>.Failure(
+                    profileResult.Error ?? "Failed to create user profile",
+                    "IDENTITY_ERROR");
+            }
+
+            var internalUserId = profileResult.Value!.Id;
+
+            // 5. Create Tenant + owner TenantMembership
+            var tenant = new Tenant
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Name,
+                Slug = slug,
+                Status = TenantStatus.Active,
+                LogoUrl = request.LogoUrl,
+                Description = request.Description,
+                Website = request.Website
+            };
+
+            _db.Set<Tenant>().Add(tenant);
+
+            var owner = new TenantMembership
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenant.Id,
+                UserId = internalUserId,
+                IsOwner = true,
+                Status = MembershipStatus.Active,
+                JoinedAt = _clock.UtcNow
+            };
+
+            _db.Set<TenantMembership>().Add(owner);
+            await _db.SaveChangesAsync(ct);
+
+            _logger.LogInformation(
+                "Admin-created tenant {TenantId} ({Slug}) with owner {UserId} (Keycloak: {KeycloakId})",
+                tenant.Id, tenant.Slug, internalUserId, keycloakUserId);
+
+            // 6. Publish domain event — triggers role seeding
+            await _publisher.Publish(new TenantCreatedEvent(
+                tenant.Id,
+                tenant.Name,
+                tenant.Slug,
+                internalUserId,
+                _clock.UtcNow), ct);
+
+            return Result<TenantDto>.Success(MapToDto(tenant));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create tenant/profile for {Email}; rolling back Keycloak user {KeycloakUserId}",
+                request.OwnerEmail, keycloakUserId);
+            await RollbackKeycloakUserAsync(keycloakUserId);
+            throw;
+        }
     }
 
     public async Task<Result<TenantDto>> UpdateAsync(Guid id, UpdateTenantRequest request, CancellationToken ct = default)
@@ -528,6 +655,19 @@ public class TenantService : ITenantService
     #endregion
 
     #region Helpers
+
+    private async Task RollbackKeycloakUserAsync(string keycloakUserId)
+    {
+        try
+        {
+            await _keycloakAdmin.DeleteUserAsync(keycloakUserId);
+            _logger.LogInformation("Rolled back Keycloak user {KeycloakUserId}", keycloakUserId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to rollback Keycloak user {KeycloakUserId}. Manual cleanup required.", keycloakUserId);
+        }
+    }
 
     private static string GenerateInvitationToken()
     {

@@ -123,6 +123,8 @@ services:
       dockerfile: docker/Dockerfile.api
     container_name: tadhub-api
     restart: always
+    extra_hosts:
+      - "auth.endlessmaker.com:10.0.1.3"
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:5000
@@ -131,8 +133,11 @@ services:
       RabbitMQ__Host: rabbitmq
       RabbitMQ__Username: ${RABBITMQ_USER:-tadhub}
       RabbitMQ__Password: ${RABBITMQ_PASSWORD}
-      Auth__Authority: https://auth.endlessmaker.com/realms/tadhub
-      Auth__Audience: tadhub-api
+      Keycloak__Authority: https://auth.endlessmaker.com/realms/tadhub
+      Keycloak__Audience: tadhub-api
+      Keycloak__ClientId: tadhub-api
+      Keycloak__ClientSecret: ${KC_API_CLIENT_SECRET}
+      Keycloak__RequireHttpsMetadata: true
       Storage__Endpoint: https://storage.endlessmaker.com
       Storage__AccessKey: ${MINIO_ACCESS_KEY}
       Storage__SecretKey: ${MINIO_SECRET_KEY}
