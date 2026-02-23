@@ -219,7 +219,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                 <button
                   onClick={() => {
                     setShowUserMenu(false);
-                    window.open(keycloakUrls.account + '/#/security/signingin', '_blank');
+                    window.open(keycloakUrls.account + '/account-security/signing-in', '_blank');
                   }}
                   className="flex w-full items-center gap-3 px-4 py-2 text-sm hover:bg-muted"
                 >
