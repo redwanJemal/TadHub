@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/shared/lib/cn";
 import { useSidebar } from "./DashboardLayout";
 import { useAppAuth } from "@/features/auth/AuthProvider";
+import { keycloakUrls } from "@/lib/auth-config";
 import {
   LayoutDashboard,
   Building2,
@@ -11,6 +12,7 @@ import {
   FileText,
   X,
   LogOut,
+  KeyRound,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
@@ -137,6 +139,21 @@ export function Sidebar({ onClose }: SidebarProps) {
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10"
+                    onClick={() => window.open(keycloakUrls.account + '/#/security/signingin', '_blank')}
+                  >
+                    <KeyRound className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side={isRtl ? "left" : "right"} sideOffset={8}>
+                  {t("auth:changePassword")}
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-10 w-10" onClick={logout}>
                     <LogOut className="h-5 w-5" />
                   </Button>
@@ -147,21 +164,32 @@ export function Sidebar({ onClose }: SidebarProps) {
               </Tooltip>
             </div>
           ) : (
-            <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
-              <Avatar className="h-10 w-10 shrink-0">
-                <AvatarImage src={employee?.avatar} alt={employee?.firstName} />
-                <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
-                  {userInitials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
-                  {employee?.firstName} {employee?.lastName}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">{employee?.email}</p>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
+                <Avatar className="h-10 w-10 shrink-0">
+                  <AvatarImage src={employee?.avatar} alt={employee?.firstName} />
+                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+                    {userInitials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">
+                    {employee?.firstName} {employee?.lastName}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">{employee?.email}</p>
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={logout}>
+                  <LogOut className="h-4 w-4" />
+                </Button>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={logout}>
-                <LogOut className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start gap-2 text-muted-foreground"
+                onClick={() => window.open(keycloakUrls.account + '/#/security/signingin', '_blank')}
+              >
+                <KeyRound className="h-4 w-4" />
+                {t("auth:changePassword")}
               </Button>
             </div>
           )}

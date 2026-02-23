@@ -10,5 +10,6 @@
     "loading": "Signing in...",
     "forgotPassword": "Forgot password?"
   },
-  "logout": "Logout"
+  "logout": "Logout",
+  "changePassword": "Change Password"
 }
