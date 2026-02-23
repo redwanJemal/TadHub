@@ -18,38 +18,32 @@ namespace TadHub.Api.Controllers;
 public class TenantInvitationsController : ControllerBase
 {
     private readonly ITenantService _tenantService;
-    private readonly CurrentUser _currentUser;
 
-    public TenantInvitationsController(ITenantService tenantService, CurrentUser currentUser)
+    public TenantInvitationsController(ITenantService tenantService)
     {
         _tenantService = tenantService;
-        _currentUser = currentUser;
     }
 
     /// <summary>
     /// Lists pending invitations for a tenant.
     /// </summary>
     [HttpGet]
+    [HasPermission("members.invite")]
     [ProducesResponseType(typeof(IEnumerable<TenantInvitationDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetInvitations(
         Guid tenantId,
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
-        // Check if user is owner
-        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
-        if (!isOwner)
-            return Forbid();
-
         var result = await _tenantService.GetInvitationsAsync(tenantId, qp, ct);
         return Ok(result);
     }
 
     /// <summary>
     /// Creates an invitation to join the tenant.
-    /// Requires owner status.
     /// </summary>
     [HttpPost]
+    [HasPermission("members.invite")]
     [ProducesResponseType(typeof(TenantInvitationDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -58,11 +52,6 @@ public class TenantInvitationsController : ControllerBase
         [FromBody] InviteMemberRequest request,
         CancellationToken ct)
     {
-        // Check if user is owner
-        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
-        if (!isOwner)
-            return Forbid();
-
         var result = await _tenantService.InviteMemberAsync(tenantId, request, ct);
 
         if (!result.IsSuccess)
@@ -77,9 +66,9 @@ public class TenantInvitationsController : ControllerBase
 
     /// <summary>
     /// Revokes a pending invitation.
-    /// Requires owner status.
     /// </summary>
     [HttpDelete("{invitationId:guid}")]
+    [HasPermission("members.invite")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -88,11 +77,6 @@ public class TenantInvitationsController : ControllerBase
         Guid invitationId,
         CancellationToken ct)
     {
-        // Check if user is owner
-        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
-        if (!isOwner)
-            return Forbid();
-
         var result = await _tenantService.RevokeInvitationAsync(tenantId, invitationId, ct);
 
         if (!result.IsSuccess)

@@ -12,6 +12,9 @@ const CallbackPage = lazy(() => import('@/features/auth/CallbackPage').then(m =>
 // Onboarding
 const OnboardingPage = lazy(() => import('@/features/onboarding').then(m => ({ default: m.OnboardingPage })));
 
+// Team
+const TeamPage = lazy(() => import('@/features/team').then(m => ({ default: m.TeamPage })));
+
 // Placeholder home
 function HomePage() {
   return (
@@ -54,6 +57,7 @@ export function AppRouter() {
         >
           <Route index element={<HomePage />} />
           <Route path="dashboard" element={<HomePage />} />
+          <Route path="team" element={<TeamPage />} />
         </Route>
 
         {/* Catch all */}

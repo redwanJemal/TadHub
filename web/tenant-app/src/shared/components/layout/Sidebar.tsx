@@ -5,12 +5,14 @@ import { useSidebar } from "./DashboardLayout";
 import { useAuth } from "react-oidc-context";
 import {
   LayoutDashboard,
+  Users,
   X,
   LogOut,
 } from "lucide-react";
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
+  { path: "/team", icon: Users, labelKey: "nav.team" },
 ];
 
 interface SidebarProps {

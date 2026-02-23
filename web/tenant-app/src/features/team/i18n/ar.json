@@ -1,0 +1,67 @@
+{
+  "title": "إدارة الفريق",
+  "description": "إدارة أعضاء فريقك والدعوات",
+  "tabs": {
+    "members": "الأعضاء",
+    "invitations": "الدعوات"
+  },
+  "members": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "roles": "الأدوار",
+    "joinedAt": "تاريخ الانضمام",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "owner": "المالك",
+    "searchPlaceholder": "البحث عن أعضاء...",
+    "changeRole": "تغيير الدور",
+    "removeMember": "إزالة العضو",
+    "removeSelected": "إزالة المحدد",
+    "confirmRemove": "هل أنت متأكد من إزالة هذا العضو؟",
+    "confirmRemoveMultiple": "هل أنت متأكد من إزالة {{count}} أعضاء؟",
+    "removeSuccess": "تمت إزالة العضو بنجاح",
+    "noRoles": "لا توجد أدوار"
+  },
+  "invitations": {
+    "email": "البريد الإلكتروني",
+    "invitedBy": "دعوة من",
+    "role": "الدور",
+    "expires": "تنتهي في",
+    "status": "الحالة",
+    "actions": "الإجراءات",
+    "revoke": "إلغاء",
+    "confirmRevoke": "هل أنت متأكد من إلغاء هذه الدعوة؟",
+    "revokeSuccess": "تم إلغاء الدعوة بنجاح",
+    "pending": "معلقة",
+    "expired": "منتهية"
+  },
+  "invite": {
+    "title": "دعوة عضو",
+    "description": "إرسال دعوة للانضمام إلى مساحة عملك",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "colleague@example.com",
+    "roleLabel": "الدور",
+    "rolePlaceholder": "اختر دوراً (اختياري)",
+    "submit": "إرسال الدعوة",
+    "success": "تم إرسال الدعوة بنجاح"
+  },
+  "changeRole": {
+    "title": "تغيير الأدوار",
+    "description": "إدارة أدوار {{name}}",
+    "currentRoles": "الأدوار الحالية",
+    "availableRoles": "الأدوار المتاحة",
+    "noRoles": "لا توجد أدوار معينة",
+    "save": "حفظ التغييرات",
+    "success": "تم تحديث الأدوار بنجاح"
+  },
+  "empty": {
+    "members": {
+      "title": "لا يوجد أعضاء في الفريق",
+      "description": "ادعُ أعضاء الفريق للتعاون في مساحة عملك."
+    },
+    "invitations": {
+      "title": "لا توجد دعوات معلقة",
+      "description": "ادعُ أعضاء الفريق باستخدام الزر أعلاه."
+    }
+  }
+}

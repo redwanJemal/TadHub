@@ -17,6 +17,7 @@ using TadHub.Infrastructure.Keycloak.Models;
 using TadHub.SharedKernel.Models;
 using Tenancy.Contracts;
 using Tenancy.Contracts.DTOs;
+using Authorization.Core.Entities;
 using Tenancy.Core.Entities;
 
 namespace Tenancy.Core.Services;
@@ -433,9 +434,23 @@ public class TenantService : ITenantService
             .ApplyFilters(qp.Filters, MemberFilters)
             .ApplySort(qp.GetSortFields(), MemberSortable);
 
-        return await query
-            .Select(x => MapMemberToDto(x))
-            .ToPagedListAsync(qp, ct);
+        var pagedMembers = await query.ToPagedListAsync(qp, ct);
+
+        // Load roles for all members in the page in one query
+        var memberUserIds = pagedMembers.Items.Select(m => m.UserId).ToList();
+        var userRoles = await _db.Set<UserRole>()
+            .AsNoTracking()
+            .Where(ur => ur.TenantId == tenantId && memberUserIds.Contains(ur.UserId))
+            .Include(ur => ur.Role)
+            .ToListAsync(ct);
+
+        var rolesLookup = userRoles
+            .GroupBy(ur => ur.UserId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(ur => new MemberRoleInfo { Id = ur.RoleId, Name = ur.Role.Name }).ToList());
+
+        return pagedMembers.Map(m => MapMemberToDto(m, rolesLookup));
     }
 
     public async Task<Result<TenantMemberDto>> GetMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
@@ -448,7 +463,15 @@ public class TenantService : ITenantService
         if (member is null)
             return Result<TenantMemberDto>.NotFound("Member not found");
 
-        return Result<TenantMemberDto>.Success(MapMemberToDto(member));
+        var roles = await _db.Set<UserRole>()
+            .AsNoTracking()
+            .Where(ur => ur.TenantId == tenantId && ur.UserId == userId)
+            .Include(ur => ur.Role)
+            .Select(ur => new MemberRoleInfo { Id = ur.RoleId, Name = ur.Role.Name })
+            .ToListAsync(ct);
+
+        var rolesLookup = new Dictionary<Guid, List<MemberRoleInfo>> { [userId] = roles };
+        return Result<TenantMemberDto>.Success(MapMemberToDto(member, rolesLookup));
     }
 
     public async Task<Result<TenantMemberDto>> AddMemberAsync(Guid tenantId, Guid userId, bool isOwner = false, CancellationToken ct = default)
@@ -694,7 +717,9 @@ public class TenantService : ITenantService
         UpdatedAt = tenant.UpdatedAt
     };
 
-    private static TenantMemberDto MapMemberToDto(TenantMembership member) => new()
+    private static TenantMemberDto MapMemberToDto(
+        TenantMembership member,
+        Dictionary<Guid, List<MemberRoleInfo>>? rolesLookup = null) => new()
     {
         Id = member.Id,
         TenantId = member.TenantId,
@@ -705,6 +730,8 @@ public class TenantService : ITenantService
         AvatarUrl = member.User.AvatarUrl,
         IsOwner = member.IsOwner,
         Status = member.Status,
+        Roles = rolesLookup?.GetValueOrDefault(member.UserId)?.AsReadOnly()
+            ?? (IReadOnlyList<MemberRoleInfo>)[],
         JoinedAt = member.JoinedAt
     };
 
