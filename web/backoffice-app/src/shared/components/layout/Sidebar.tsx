@@ -143,7 +143,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                     variant="ghost"
                     size="icon"
                     className="h-10 w-10"
-                    onClick={() => window.open(keycloakUrls.account + '/#/security/signingin', '_blank')}
+                    onClick={() => window.open(keycloakUrls.account + '/account-security/signing-in', '_blank')}
                   >
                     <KeyRound className="h-5 w-5" />
                   </Button>
@@ -186,7 +186,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                 variant="ghost"
                 size="sm"
                 className="w-full justify-start gap-2 text-muted-foreground"
-                onClick={() => window.open(keycloakUrls.account + '/#/security/signingin', '_blank')}
+                onClick={() => window.open(keycloakUrls.account + '/account-security/signing-in', '_blank')}
               >
                 <KeyRound className="h-4 w-4" />
                 {t("auth:changePassword")}
