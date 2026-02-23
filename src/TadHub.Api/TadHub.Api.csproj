@@ -31,11 +31,6 @@
     <ProjectReference Include="..\Modules\Supplier\Supplier.Core\Supplier.Core.csproj" />
     <!-- Reference data module -->
     <ProjectReference Include="..\Modules\ReferenceData\ReferenceData.Core\ReferenceData.Core.csproj" />
-    <!-- Tadbeer domain modules -->
-    <ProjectReference Include="..\Modules\Tadbeer\Worker\Worker.Core\Worker.Core.csproj" />
-    <ProjectReference Include="..\Modules\Tadbeer\Worker\Worker.Api\Worker.Api.csproj" />
-    <ProjectReference Include="..\Modules\Tadbeer\ClientManagement\ClientManagement.Core\ClientManagement.Core.csproj" />
-    <ProjectReference Include="..\Modules\Tadbeer\ClientManagement\ClientManagement.Api\ClientManagement.Api.csproj" />
   </ItemGroup>
 
 </Project>

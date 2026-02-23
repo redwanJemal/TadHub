@@ -12,33 +12,14 @@ const CallbackPage = lazy(() => import('@/features/auth/CallbackPage').then(m =>
 // Onboarding
 const OnboardingPage = lazy(() => import('@/features/onboarding').then(m => ({ default: m.OnboardingPage })));
 
-// Workers Module
-const WorkersList = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkersList })));
-const WorkerDetail = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkerDetail })));
-const WorkerForm = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkerForm })));
-
 // Placeholder home
 function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
       <h1 className="text-3xl font-bold mb-4">TadHub - Tenant Portal</h1>
-      <p className="text-muted-foreground mb-8">
-        Tadbeer ERP Platform for UAE Domestic Worker Recruitment
+      <p className="text-muted-foreground">
+        Welcome to your workspace. Select an option from the sidebar to get started.
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-2xl">
-        <div className="p-4 border rounded-lg">
-          <h3 className="font-semibold mb-2">🧑‍💼 Workers</h3>
-          <p className="text-sm text-muted-foreground">CV management, state machine, passport custody</p>
-        </div>
-        <div className="p-4 border rounded-lg">
-          <h3 className="font-semibold mb-2">👥 Clients</h3>
-          <p className="text-sm text-muted-foreground">Employer management, verification, documents</p>
-        </div>
-        <div className="p-4 border rounded-lg">
-          <h3 className="font-semibold mb-2">📊 Leads</h3>
-          <p className="text-sm text-muted-foreground">Sales pipeline, follow-ups</p>
-        </div>
-      </div>
     </div>
   );
 }
@@ -73,12 +54,6 @@ export function AppRouter() {
         >
           <Route index element={<HomePage />} />
           <Route path="dashboard" element={<HomePage />} />
-          
-          {/* Workers Module */}
-          <Route path="workers" element={<WorkersList />} />
-          <Route path="workers/new" element={<WorkerForm />} />
-          <Route path="workers/:id" element={<WorkerDetail />} />
-          <Route path="workers/:id/edit" element={<WorkerForm />} />
         </Route>
 
         {/* Catch all */}

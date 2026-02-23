@@ -18,8 +18,6 @@ using TadHub.Infrastructure;
 using TadHub.Infrastructure.Settings;
 using TadHub.Infrastructure.Tenancy;
 using Tenancy.Core;
-using Worker.Core;
-using ClientManagement.Core;
 using ReferenceData.Core;
 using Supplier.Core;
 
@@ -148,10 +146,6 @@ builder.Services.AddSupplierModule();
 
 // Reference data module
 builder.Services.AddReferenceDataModule();
-
-// Tadbeer domain modules
-builder.Services.AddWorkerModule();
-builder.Services.AddClientManagementModule();
 
 var app = builder.Build();
 
