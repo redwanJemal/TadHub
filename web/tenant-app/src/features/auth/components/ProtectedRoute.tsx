@@ -42,6 +42,18 @@ interface UserStatus {
   role?: 'Owner' | 'Admin' | 'Member';
 }
 
+function getRealmRoles(accessToken: string | null | undefined): string[] {
+  if (!accessToken) return [];
+  try {
+    const payload = accessToken.split('.')[1] as string | undefined;
+    if (!payload) return [];
+    const decoded = JSON.parse(atob(payload));
+    return decoded?.realm_access?.roles ?? [];
+  } catch {
+    return [];
+  }
+}
+
 // Role hierarchy: Owner > Admin > Member
 const ROLE_HIERARCHY: Record<string, number> = {
   'Member': 1,
@@ -118,6 +130,19 @@ export function ProtectedRoute({
         </div>
       </div>
     );
+  }
+
+  // Block platform-admins with no tenant memberships
+  if (userStatus) {
+    const isPlatformAdmin = getRealmRoles(auth.user?.access_token).includes('platform-admin');
+
+    if (isPlatformAdmin && userStatus.tenants.length === 0) {
+      return (
+        <ForbiddenPage
+          message="This portal is for agency staff with tenant memberships. Your account is a platform administrator without tenant access. Please use the backoffice portal instead."
+        />
+      );
+    }
   }
 
   // For onboarding route - only allow if user needs onboarding
