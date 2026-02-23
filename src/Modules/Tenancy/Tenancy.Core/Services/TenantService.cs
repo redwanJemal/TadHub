@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using System.Security.Cryptography;
 using Identity.Contracts;
 using Identity.Contracts.DTOs;
+using Identity.Core.Entities;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -437,8 +438,10 @@ public class TenantService : ITenantService
         var pagedMembers = await query.ToPagedListAsync(qp, ct);
 
         // Load roles for all members in the page in one query
+        // IgnoreQueryFilters: bypass global tenant filter since we're explicitly filtering by tenantId
         var memberUserIds = pagedMembers.Items.Select(m => m.UserId).ToList();
         var userRoles = await _db.Set<UserRole>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(ur => ur.TenantId == tenantId && memberUserIds.Contains(ur.UserId))
             .Include(ur => ur.Role)
@@ -464,6 +467,7 @@ public class TenantService : ITenantService
             return Result<TenantMemberDto>.NotFound("Member not found");
 
         var roles = await _db.Set<UserRole>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(ur => ur.TenantId == tenantId && ur.UserId == userId)
             .Include(ur => ur.Role)
@@ -531,14 +535,50 @@ public class TenantService : ITenantService
 
     public async Task<bool> IsMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
+        var internalId = await ResolveInternalUserIdAsync(userId, ct);
         return await _db.Set<TenantMembership>()
-            .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
+            .AnyAsync(x => x.TenantId == tenantId && x.UserId == internalId, ct);
     }
 
     public async Task<bool> IsOwnerAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
+        var internalId = await ResolveInternalUserIdAsync(userId, ct);
         return await _db.Set<TenantMembership>()
-            .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId && x.IsOwner, ct);
+            .AnyAsync(x => x.TenantId == tenantId && x.UserId == internalId && x.IsOwner, ct);
+    }
+
+    /// <summary>
+    /// Resolves a user ID that may be a Keycloak sub claim to the internal user_profiles ID.
+    /// If the ID already matches a TenantMembership or UserProfile.Id, returns it as-is.
+    /// Otherwise looks up by KeycloakId.
+    /// </summary>
+    private async Task<Guid> ResolveInternalUserIdAsync(Guid userId, CancellationToken ct)
+    {
+        // Check if this userId exists directly in user_profiles
+        var directExists = await _db.Set<UserProfile>()
+            .AsNoTracking()
+            .AnyAsync(x => x.Id == userId, ct);
+
+        if (directExists)
+            return userId;
+
+        // Try to resolve from Keycloak ID
+        var keycloakIdStr = userId.ToString();
+        var userProfile = await _db.Set<UserProfile>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.KeycloakId == keycloakIdStr, ct);
+
+        if (userProfile is not null)
+        {
+            _logger.LogDebug(
+                "Resolved Keycloak ID {KeycloakId} to internal user ID {InternalId}",
+                keycloakIdStr, userProfile.Id);
+            return userProfile.Id;
+        }
+
+        // Fallback: return the original (will likely not match anything)
+        _logger.LogWarning("Could not resolve user ID {UserId} to internal user ID", userId);
+        return userId;
     }
 
     #endregion

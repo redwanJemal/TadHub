@@ -73,7 +73,12 @@ async function main() {
     console.warn('  Team Management heading did not appear, continuing...');
   }
   // Wait for data to load (skeleton -> actual content)
-  await page.waitForTimeout(5000);
+  try {
+    await page.locator('table tbody td').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  table data did not appear, continuing...');
+  }
+  await page.waitForTimeout(2000);
   await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/02-team-members.png`, fullPage: false });
   console.log('  done: team members');
 
