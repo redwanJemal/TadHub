@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using TadHub.Infrastructure.Auth;
 using TadHub.Infrastructure.Sse;
 
 namespace TadHub.Api.Endpoints;
@@ -32,8 +33,8 @@ public static class SseEndpoint
         ISseConnectionManager connectionManager,
         CancellationToken cancellationToken)
     {
-        // Extract user info from claims
-        var userId = GetUserId(context.User);
+        // Extract user info from claims / middleware-resolved ID
+        var userId = GetUserId(context);
         var tenantId = GetTenantId(context.User);
 
         if (userId == Guid.Empty)
@@ -87,11 +88,19 @@ public static class SseEndpoint
         }
     }
 
-    private static Guid GetUserId(ClaimsPrincipal user)
+    private static Guid GetUserId(HttpContext context)
     {
-        var subClaim = user.FindFirst(ClaimTypes.NameIdentifier) 
-            ?? user.FindFirst("sub");
-        
+        // Use the internal user ID resolved by UserIdentityResolutionMiddleware
+        if (context.Items.TryGetValue(UserIdentityResolutionMiddleware.InternalUserIdKey, out var resolved)
+            && resolved is Guid internalId)
+        {
+            return internalId;
+        }
+
+        // Fallback to JWT sub claim
+        var subClaim = context.User.FindFirst(ClaimTypes.NameIdentifier)
+            ?? context.User.FindFirst("sub");
+
         if (subClaim != null && Guid.TryParse(subClaim.Value, out var userId))
             return userId;
 

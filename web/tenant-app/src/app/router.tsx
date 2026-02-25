@@ -15,6 +15,9 @@ const OnboardingPage = lazy(() => import('@/features/onboarding').then(m => ({ d
 // Team
 const TeamPage = lazy(() => import('@/features/team').then(m => ({ default: m.TeamPage })));
 
+// Suppliers
+const SuppliersPage = lazy(() => import('@/features/suppliers').then(m => ({ default: m.SuppliersPage })));
+
 // Placeholder home
 function HomePage() {
   return (
@@ -58,6 +61,7 @@ export function AppRouter() {
           <Route index element={<HomePage />} />
           <Route path="dashboard" element={<HomePage />} />
           <Route path="team" element={<TeamPage />} />
+          <Route path="suppliers" element={<SuppliersPage />} />
         </Route>
 
         {/* Catch all */}

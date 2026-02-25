@@ -6,6 +6,7 @@ import { useAuth } from "react-oidc-context";
 import {
   LayoutDashboard,
   Users,
+  Truck,
   X,
   LogOut,
 } from "lucide-react";
@@ -13,6 +14,7 @@ import {
 const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
   { path: "/team", icon: Users, labelKey: "nav.team" },
+  { path: "/suppliers", icon: Truck, labelKey: "nav.suppliers" },
 ];
 
 interface SidebarProps {

@@ -35,4 +35,10 @@ public interface ICurrentUser
     /// Checks if the current user has any of the specified roles.
     /// </summary>
     bool HasAnyRole(params string[] roles);
+
+    /// <summary>
+    /// The Keycloak user ID (sub claim) as a Guid.
+    /// This is the external identity provider ID, not the internal user_profiles.Id.
+    /// </summary>
+    Guid KeycloakUserId { get; }
 }

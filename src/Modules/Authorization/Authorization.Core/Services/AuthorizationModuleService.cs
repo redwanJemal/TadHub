@@ -4,7 +4,6 @@ using System.Text.Json;
 using Authorization.Contracts;
 using Authorization.Contracts.DTOs;
 using Authorization.Core.Entities;
-using Identity.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TadHub.Infrastructure.Api;
@@ -540,31 +539,11 @@ public class AuthorizationModuleService : IAuthorizationModuleService
         if (_permissionCache.TryGetValue(cacheKey, out var cached) && cached.ExpiresAt > DateTime.UtcNow)
             return cached.Data;
 
-        // Resolve Keycloak ID → internal ID
-        var internalUserId = userId;
-        var directExists = await _db.Set<UserRole>()
-            .IgnoreQueryFilters()
-            .AsNoTracking()
-            .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
-
-        if (!directExists)
-        {
-            var keycloakIdStr = userId.ToString();
-            var userProfile = await _db.Set<UserProfile>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.KeycloakId == keycloakIdStr, ct);
-
-            if (userProfile is not null)
-                internalUserId = userProfile.Id;
-            else
-                _logger.LogWarning("UserProfile not found for KeycloakId {KeycloakId}", keycloakIdStr);
-        }
-
         // Load roles and permissions from database
         var userRoles = await _db.Set<UserRole>()
             .IgnoreQueryFilters()
             .AsNoTracking()
-            .Where(x => x.TenantId == tenantId && x.UserId == internalUserId)
+            .Where(x => x.TenantId == tenantId && x.UserId == userId)
             .Include(x => x.Role)
             .ThenInclude(x => x.Permissions)
             .ThenInclude(x => x.Permission)
@@ -579,7 +558,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
 
         var result = new UserPermissionsDto
         {
-            UserId = internalUserId,
+            UserId = userId,
             TenantId = tenantId,
             Permissions = permissions,
             Roles = roles

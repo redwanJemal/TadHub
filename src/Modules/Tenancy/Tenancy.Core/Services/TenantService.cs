@@ -2,12 +2,10 @@ using System.Linq.Expressions;
 using System.Security.Cryptography;
 using Identity.Contracts;
 using Identity.Contracts.DTOs;
-using Identity.Core.Entities;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TadHub.Infrastructure.Api;
-using TadHub.Infrastructure.Auth;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Events;
@@ -31,7 +29,6 @@ public class TenantService : ITenantService
     private readonly AppDbContext _db;
     private readonly IPublishEndpoint _publisher;
     private readonly ICurrentUser _currentUser;
-    private readonly CurrentUser _currentUserImpl;
     private readonly IIdentityService _identityService;
     private readonly IKeycloakAdminClient _keycloakAdmin;
     private readonly IClock _clock;
@@ -82,7 +79,6 @@ public class TenantService : ITenantService
         AppDbContext db,
         IPublishEndpoint publisher,
         ICurrentUser currentUser,
-        CurrentUser currentUserImpl,
         IIdentityService identityService,
         IKeycloakAdminClient keycloakAdmin,
         IClock clock,
@@ -91,7 +87,6 @@ public class TenantService : ITenantService
         _db = db;
         _publisher = publisher;
         _currentUser = currentUser;
-        _currentUserImpl = currentUserImpl;
         _identityService = identityService;
         _keycloakAdmin = keycloakAdmin;
         _clock = clock;
@@ -157,15 +152,7 @@ public class TenantService : ITenantService
 
     public async Task<Result<TenantDto>> CreateAsync(CreateTenantRequest request, CancellationToken ct = default)
     {
-        // Resolve internal user ID from Keycloak ID
-        var keycloakId = _currentUserImpl.KeycloakId;
-        var userProfile = await _identityService.GetByKeycloakIdAsync(keycloakId, ct);
-        if (!userProfile.IsSuccess)
-        {
-            _logger.LogWarning("Could not find user profile for Keycloak ID {KeycloakId}", keycloakId);
-            return Result<TenantDto>.Unauthorized("User profile not found. Please try logging out and back in.");
-        }
-        var internalUserId = userProfile.Value!.Id;
+        var internalUserId = _currentUser.UserId;
 
         // Generate slug from name if not provided
         var slug = request.Slug?.ToLower() ?? request.Name.ToSlug();
@@ -206,8 +193,8 @@ public class TenantService : ITenantService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation(
-            "Created tenant {TenantId} ({Slug}) by user {UserId} (Keycloak: {KeycloakId})",
-            tenant.Id, tenant.Slug, internalUserId, keycloakId);
+            "Created tenant {TenantId} ({Slug}) by user {UserId}",
+            tenant.Id, tenant.Slug, internalUserId);
 
         // Publish domain event — triggers SeedDefaultRolesAsync via TenantCreatedConsumer
         await _publisher.Publish(new TenantCreatedEvent(
@@ -535,50 +522,14 @@ public class TenantService : ITenantService
 
     public async Task<bool> IsMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
-        var internalId = await ResolveInternalUserIdAsync(userId, ct);
         return await _db.Set<TenantMembership>()
-            .AnyAsync(x => x.TenantId == tenantId && x.UserId == internalId, ct);
+            .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
     }
 
     public async Task<bool> IsOwnerAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
-        var internalId = await ResolveInternalUserIdAsync(userId, ct);
         return await _db.Set<TenantMembership>()
-            .AnyAsync(x => x.TenantId == tenantId && x.UserId == internalId && x.IsOwner, ct);
-    }
-
-    /// <summary>
-    /// Resolves a user ID that may be a Keycloak sub claim to the internal user_profiles ID.
-    /// If the ID already matches a TenantMembership or UserProfile.Id, returns it as-is.
-    /// Otherwise looks up by KeycloakId.
-    /// </summary>
-    private async Task<Guid> ResolveInternalUserIdAsync(Guid userId, CancellationToken ct)
-    {
-        // Check if this userId exists directly in user_profiles
-        var directExists = await _db.Set<UserProfile>()
-            .AsNoTracking()
-            .AnyAsync(x => x.Id == userId, ct);
-
-        if (directExists)
-            return userId;
-
-        // Try to resolve from Keycloak ID
-        var keycloakIdStr = userId.ToString();
-        var userProfile = await _db.Set<UserProfile>()
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.KeycloakId == keycloakIdStr, ct);
-
-        if (userProfile is not null)
-        {
-            _logger.LogDebug(
-                "Resolved Keycloak ID {KeycloakId} to internal user ID {InternalId}",
-                keycloakIdStr, userProfile.Id);
-            return userProfile.Id;
-        }
-
-        // Fallback: return the original (will likely not match anything)
-        _logger.LogWarning("Could not resolve user ID {UserId} to internal user ID", userId);
-        return userId;
+            .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId && x.IsOwner, ct);
     }
 
     #endregion
@@ -587,6 +538,8 @@ public class TenantService : ITenantService
 
     public async Task<Result<TenantInvitationDto>> InviteMemberAsync(Guid tenantId, InviteMemberRequest request, CancellationToken ct = default)
     {
+        var internalUserId = _currentUser.UserId;
+
         // Check if already a member
         var existingMember = await _db.Set<TenantMembership>()
             .Include(x => x.User)
@@ -613,7 +566,7 @@ public class TenantService : ITenantService
             DefaultRoleId = request.RoleId,
             Token = GenerateInvitationToken(),
             ExpiresAt = _clock.UtcNow.AddDays(7),
-            InvitedByUserId = _currentUser.UserId
+            InvitedByUserId = internalUserId
         };
 
         _db.Set<TenantUserInvitation>().Add(invitation);
@@ -667,8 +620,10 @@ public class TenantService : ITenantService
         // Mark invitation as accepted
         invitation.AcceptedAt = _clock.UtcNow;
 
+        var internalUserId = _currentUser.UserId;
+
         // Add user as member (not owner)
-        var result = await AddMemberAsync(invitation.TenantId, _currentUser.UserId, isOwner: false, ct);
+        var result = await AddMemberAsync(invitation.TenantId, internalUserId, isOwner: false, ct);
 
         if (!result.IsSuccess)
             return result;
@@ -677,7 +632,7 @@ public class TenantService : ITenantService
 
         _logger.LogInformation(
             "User {UserId} accepted invitation to tenant {TenantId}",
-            _currentUser.UserId, invitation.TenantId);
+            internalUserId, invitation.TenantId);
 
         return result;
     }

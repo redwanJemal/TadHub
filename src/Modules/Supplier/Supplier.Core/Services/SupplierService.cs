@@ -353,6 +353,50 @@ public class SupplierService : ISupplierService
         return pagedList;
     }
 
+    public async Task<Result<TenantSupplierDto>> CreateAndLinkAsync(Guid tenantId, CreateSupplierRequest request, CancellationToken ct = default)
+    {
+        // Check for duplicate license number if provided
+        if (!string.IsNullOrWhiteSpace(request.LicenseNumber))
+        {
+            var existsByLicense = await _db.Set<Entities.Supplier>()
+                .AnyAsync(x => x.LicenseNumber == request.LicenseNumber, ct);
+            if (existsByLicense)
+                return Result<TenantSupplierDto>.Conflict($"Supplier with license number '{request.LicenseNumber}' already exists");
+        }
+
+        var supplier = new Entities.Supplier
+        {
+            Id = Guid.NewGuid(),
+            NameEn = request.NameEn,
+            NameAr = request.NameAr,
+            Country = request.Country,
+            City = request.City,
+            LicenseNumber = request.LicenseNumber,
+            Phone = request.Phone,
+            Email = request.Email,
+            Website = request.Website,
+            Notes = request.Notes,
+            IsActive = true
+        };
+
+        var tenantSupplier = new TenantSupplier
+        {
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            SupplierId = supplier.Id,
+            Status = SupplierRelationshipStatus.Active,
+        };
+
+        _db.Set<Entities.Supplier>().Add(supplier);
+        _db.Set<TenantSupplier>().Add(tenantSupplier);
+        await _db.SaveChangesAsync(ct);
+
+        _logger.LogInformation("Created and linked supplier {SupplierId} to tenant {TenantId}", supplier.Id, tenantId);
+
+        tenantSupplier.Supplier = supplier;
+        return Result<TenantSupplierDto>.Success(MapTenantSupplierToDto(tenantSupplier, includeSupplier: true));
+    }
+
     public async Task<Result<TenantSupplierDto>> LinkSupplierToTenantAsync(Guid tenantId, LinkSupplierRequest request, CancellationToken ct = default)
     {
         // Check that the supplier exists

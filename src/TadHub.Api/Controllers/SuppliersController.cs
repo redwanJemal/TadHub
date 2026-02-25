@@ -226,7 +226,7 @@ public class TenantSuppliersController : ControllerBase
     /// - search=acme (searches supplier name, contract reference)
     /// </remarks>
     [HttpGet]
-    [HasPermission("supplier.view")]
+    [HasPermission("suppliers.view")]
     [ProducesResponseType(typeof(PagedList<TenantSupplierDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> List(
         Guid tenantId,
@@ -238,10 +238,41 @@ public class TenantSuppliersController : ControllerBase
     }
 
     /// <summary>
-    /// Links a supplier to this tenant.
+    /// Creates a new supplier and links it to this tenant in one step.
+    /// </summary>
+    [HttpPost("create")]
+    [HasPermission("suppliers.manage")]
+    [ProducesResponseType(typeof(TenantSupplierDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> CreateAndLink(
+        Guid tenantId,
+        [FromBody] CreateSupplierRequest request,
+        CancellationToken ct)
+    {
+        var result = await _supplierService.CreateAndLinkAsync(tenantId, request, ct);
+
+        if (!result.IsSuccess)
+        {
+            return result.ErrorCode switch
+            {
+                "CONFLICT" => Conflict(new { error = result.Error }),
+                "VALIDATION_ERROR" => BadRequest(new { error = result.Error }),
+                _ => BadRequest(new { error = result.Error })
+            };
+        }
+
+        return CreatedAtAction(
+            nameof(GetById),
+            new { tenantId, id = result.Value!.Id },
+            result.Value);
+    }
+
+    /// <summary>
+    /// Links an existing supplier to this tenant.
     /// </summary>
     [HttpPost]
-    [HasPermission("supplier.manage")]
+    [HasPermission("suppliers.manage")]
     [ProducesResponseType(typeof(TenantSupplierDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -274,7 +305,7 @@ public class TenantSuppliersController : ControllerBase
     /// Gets a tenant-supplier relationship by ID.
     /// </summary>
     [HttpGet("{id:guid}")]
-    [HasPermission("supplier.view")]
+    [HasPermission("suppliers.view")]
     [ProducesResponseType(typeof(TenantSupplierDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(
@@ -295,7 +326,7 @@ public class TenantSuppliersController : ControllerBase
     /// Updates a tenant-supplier relationship (partial update).
     /// </summary>
     [HttpPatch("{id:guid}")]
-    [HasPermission("supplier.manage")]
+    [HasPermission("suppliers.manage")]
     [ProducesResponseType(typeof(TenantSupplierDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -324,7 +355,7 @@ public class TenantSuppliersController : ControllerBase
     /// Unlinks a supplier from this tenant (deletes the relationship).
     /// </summary>
     [HttpDelete("{id:guid}")]
-    [HasPermission("supplier.manage")]
+    [HasPermission("suppliers.manage")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Unlink(
