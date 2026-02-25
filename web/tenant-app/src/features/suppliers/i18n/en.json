@@ -1,0 +1,59 @@
+{
+  "title": "Suppliers",
+  "description": "Manage your supplier relationships and agreements.",
+  "addSupplier": "Add Supplier",
+  "searchPlaceholder": "Search suppliers...",
+  "columns": {
+    "name": "Name",
+    "country": "Country",
+    "contact": "Contact",
+    "status": "Status",
+    "agreement": "Agreement",
+    "actions": "Actions"
+  },
+  "status": {
+    "Active": "Active",
+    "Suspended": "Suspended",
+    "Terminated": "Terminated"
+  },
+  "empty": {
+    "title": "No suppliers yet",
+    "description": "Add your first supplier to manage vendor relationships."
+  },
+  "add": {
+    "title": "Add New Supplier",
+    "description": "Create a new supplier and link them to your workspace.",
+    "nameEn": "Name (English)",
+    "nameEnPlaceholder": "e.g., Acme Corporation",
+    "nameAr": "Name (Arabic)",
+    "nameArPlaceholder": "e.g., شركة أكمي",
+    "country": "Country",
+    "countryPlaceholder": "e.g., SA",
+    "city": "City",
+    "cityPlaceholder": "e.g., Riyadh",
+    "licenseNumber": "License Number",
+    "licenseNumberPlaceholder": "e.g., CR-12345",
+    "phone": "Phone",
+    "phonePlaceholder": "e.g., +966 50 123 4567",
+    "email": "Email",
+    "emailPlaceholder": "e.g., info@supplier.com",
+    "website": "Website",
+    "websitePlaceholder": "e.g., https://supplier.com",
+    "notes": "Notes",
+    "notesPlaceholder": "Internal notes about this supplier...",
+    "submit": "Add Supplier",
+    "submitting": "Adding..."
+  },
+  "actions": {
+    "viewDetails": "View Details",
+    "suspend": "Suspend",
+    "reactivate": "Reactivate",
+    "remove": "Remove"
+  },
+  "remove": {
+    "title": "Remove Supplier",
+    "description": "Are you sure you want to remove this supplier from your workspace? This will unlink the supplier but not delete their global record.",
+    "confirm": "Remove"
+  },
+  "noContact": "No contact info"
+}

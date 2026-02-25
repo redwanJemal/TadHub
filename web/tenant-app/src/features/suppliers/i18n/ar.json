@@ -1,0 +1,59 @@
+{
+  "title": "الموردون",
+  "description": "إدارة علاقات الموردين والاتفاقيات.",
+  "addSupplier": "إضافة مورد",
+  "searchPlaceholder": "البحث عن الموردين...",
+  "columns": {
+    "name": "الاسم",
+    "country": "الدولة",
+    "contact": "التواصل",
+    "status": "الحالة",
+    "agreement": "الاتفاقية",
+    "actions": "الإجراءات"
+  },
+  "status": {
+    "Active": "نشط",
+    "Suspended": "معلق",
+    "Terminated": "منتهي"
+  },
+  "empty": {
+    "title": "لا يوجد موردون بعد",
+    "description": "أضف أول مورد لإدارة علاقات الموردين."
+  },
+  "add": {
+    "title": "إضافة مورد جديد",
+    "description": "أنشئ مورد جديد وأربطه بمساحة عملك.",
+    "nameEn": "الاسم (إنجليزي)",
+    "nameEnPlaceholder": "مثال: شركة أكمي",
+    "nameAr": "الاسم (عربي)",
+    "nameArPlaceholder": "مثال: شركة أكمي",
+    "country": "الدولة",
+    "countryPlaceholder": "مثال: SA",
+    "city": "المدينة",
+    "cityPlaceholder": "مثال: الرياض",
+    "licenseNumber": "رقم الرخصة",
+    "licenseNumberPlaceholder": "مثال: CR-12345",
+    "phone": "الهاتف",
+    "phonePlaceholder": "مثال: 966501234567+",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "مثال: info@supplier.com",
+    "website": "الموقع الإلكتروني",
+    "websitePlaceholder": "مثال: https://supplier.com",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات داخلية عن هذا المورد...",
+    "submit": "إضافة مورد",
+    "submitting": "جاري الإضافة..."
+  },
+  "actions": {
+    "viewDetails": "عرض التفاصيل",
+    "suspend": "تعليق",
+    "reactivate": "إعادة تفعيل",
+    "remove": "إزالة"
+  },
+  "remove": {
+    "title": "إزالة المورد",
+    "description": "هل أنت متأكد من إزالة هذا المورد من مساحة عملك؟ سيتم إلغاء الربط فقط دون حذف سجل المورد.",
+    "confirm": "إزالة"
+  },
+  "noContact": "لا توجد معلومات اتصال"
+}

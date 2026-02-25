@@ -30,16 +30,16 @@ public class UserIdentityResolutionMiddleware
 
             if (!string.IsNullOrEmpty(keycloakId))
             {
-                var internalId = await db.Database
-                    .SqlQuery<Guid?>($"SELECT id FROM user_profiles WHERE keycloak_id = {keycloakId} LIMIT 1")
+                var result = await db.Database
+                    .SqlQuery<UserIdResult>($"SELECT id FROM user_profiles WHERE keycloak_id = {keycloakId} LIMIT 1")
                     .FirstOrDefaultAsync(context.RequestAborted);
 
-                if (internalId.HasValue)
+                if (result is not null)
                 {
-                    context.Items[InternalUserIdKey] = internalId.Value;
+                    context.Items[InternalUserIdKey] = result.Id;
                     _logger.LogDebug(
                         "Resolved Keycloak ID {KeycloakId} to internal user ID {InternalId}",
-                        keycloakId, internalId.Value);
+                        keycloakId, result.Id);
                 }
                 else
                 {
@@ -52,4 +52,6 @@ public class UserIdentityResolutionMiddleware
 
         await _next(context);
     }
+
+    private sealed record UserIdResult(Guid Id);
 }
