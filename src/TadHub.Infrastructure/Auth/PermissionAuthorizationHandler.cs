@@ -110,7 +110,7 @@ public class PermissionPolicyProvider : IAuthorizationPolicyProvider
     {
         // Permission names contain dots (e.g., workers.view, clients.manage)
         // and are typically lowercase
-        return policyName.Contains('.') && 
-               policyName.All(c => char.IsLower(c) || c == '.');
+        return policyName.Contains('.') &&
+               policyName.All(c => char.IsLower(c) || c == '.' || c == '_');
     }
 }

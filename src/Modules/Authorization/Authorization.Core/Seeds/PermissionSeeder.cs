@@ -139,6 +139,13 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "finance.view", Description = "View financial data", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
             new() { Id = Guid.NewGuid(), Name = "finance.manage", Description = "Manage financial records", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
             new() { Id = Guid.NewGuid(), Name = "finance.approve", Description = "Approve financial transactions", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+
+            // Candidates module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "candidates.view", Description = "View candidates", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "candidates.create", Description = "Create candidates", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "candidates.edit", Description = "Edit candidate profiles", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "candidates.manage_status", Description = "Transition candidate status", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "candidates.delete", Description = "Delete candidates", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
         };
     }
 }
