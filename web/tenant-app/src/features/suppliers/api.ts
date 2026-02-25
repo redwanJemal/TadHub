@@ -40,9 +40,9 @@ export function unlinkSupplier(id: string) {
   return apiClient.delete<void>(tenantPath(`/suppliers/${id}`));
 }
 
-// Global suppliers (platform-admin creates these, but tenants can search to link)
-export function createSupplier(data: CreateSupplierRequest) {
-  return apiClient.post<Supplier>('/suppliers', data);
+// Create and link a supplier to the current tenant in one step
+export function createAndLinkSupplier(data: CreateSupplierRequest) {
+  return apiClient.post<TenantSupplier>(tenantPath('/suppliers/create'), data);
 }
 
 export function listSuppliers(params?: QueryParams) {

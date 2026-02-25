@@ -98,6 +98,11 @@ public interface ISupplierService
     Task<PagedList<TenantSupplierDto>> ListTenantSuppliersAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default);
 
     /// <summary>
+    /// Creates a new supplier and immediately links it to the tenant.
+    /// </summary>
+    Task<Result<TenantSupplierDto>> CreateAndLinkAsync(Guid tenantId, CreateSupplierRequest request, CancellationToken ct = default);
+
+    /// <summary>
     /// Links a supplier to a tenant.
     /// </summary>
     /// <param name="tenantId">The tenant ID.</param>

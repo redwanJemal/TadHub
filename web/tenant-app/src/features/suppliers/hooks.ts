@@ -27,12 +27,7 @@ export function useSupplier(id: string) {
 export function useCreateAndLinkSupplier() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: CreateSupplierRequest) => {
-      // Step 1: Create the global supplier
-      const supplier = await api.createSupplier(data);
-      // Step 2: Link it to the current tenant
-      return api.linkSupplier({ supplierId: supplier.id });
-    },
+    mutationFn: (data: CreateSupplierRequest) => api.createAndLinkSupplier(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [SUPPLIERS_KEY] });
     },

@@ -6,10 +6,9 @@ namespace TadHub.Infrastructure.Auth;
 /// <summary>
 /// Implementation of ITenantContext that extracts tenant information from the request.
 /// Tenant can be resolved from:
-/// 1. HTTP header (X-Tenant-Id)
+/// 1. HTTP header (X-Tenant-Id) - primary method, set by frontend
 /// 2. JWT claim (tenant_id)
-/// 3. Query parameter (tenantId) - for development only
-/// 4. Subdomain - if configured
+/// 3. Subdomain - via TenantResolutionMiddleware calling SetTenant()
 /// </summary>
 public class TenantContext : ITenantContext
 {
@@ -100,15 +99,8 @@ public class TenantContext : ITenantContext
             _tenantSlug = httpContext.User.FindFirst(TenantSlugClaim)?.Value;
         }
 
-        // 3. Try query parameter (development convenience)
-        if (!_tenantId.HasValue)
-        {
-            var queryTenantId = httpContext.Request.Query["tenantId"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(queryTenantId) && Guid.TryParse(queryTenantId, out var queryGuid))
-            {
-                _tenantId = queryGuid;
-            }
-        }
+        // Tenant context must come from trusted sources only (header or subdomain).
+        // Route params and query params are NOT used for tenant resolution.
     }
 
     /// <summary>

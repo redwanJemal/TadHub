@@ -185,13 +185,14 @@ app.UseInfrastructure(builder.Configuration);
 
 app.UseCors();
 app.UseAuthentication();
-app.UseAuthorization();
 
-// Resolve Keycloak sub → internal user_profiles.Id (after auth, before tenant resolution)
+// Resolve Keycloak sub → internal user_profiles.Id (after auth, before authorization)
 app.UseMiddleware<UserIdentityResolutionMiddleware>();
 
 // Tenant resolution (after auth, so JWT claims are available)
 app.UseMiddleware<TenantResolutionMiddleware>();
+
+app.UseAuthorization();
 
 // =============================================================================
 // Basic Health Endpoint (quick liveness check)
