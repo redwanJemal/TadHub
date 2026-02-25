@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using TadHub.Infrastructure;
+using TadHub.Infrastructure.Auth;
 using TadHub.Infrastructure.Settings;
 using TadHub.Infrastructure.Tenancy;
 using Tenancy.Core;
@@ -185,6 +186,9 @@ app.UseInfrastructure(builder.Configuration);
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Resolve Keycloak sub → internal user_profiles.Id (after auth, before tenant resolution)
+app.UseMiddleware<UserIdentityResolutionMiddleware>();
 
 // Tenant resolution (after auth, so JWT claims are available)
 app.UseMiddleware<TenantResolutionMiddleware>();

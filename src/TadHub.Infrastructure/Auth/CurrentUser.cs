@@ -18,7 +18,21 @@ public class CurrentUser : ICurrentUser
     }
 
     /// <inheritdoc />
-    public Guid UserId => _httpContextAccessor.HttpContext?.User.GetUserId() ?? Guid.Empty;
+    public Guid UserId
+    {
+        get
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context?.Items.TryGetValue(UserIdentityResolutionMiddleware.InternalUserIdKey, out var resolved) == true
+                && resolved is Guid internalId)
+            {
+                return internalId;
+            }
+
+            // Fallback to JWT sub (e.g. before middleware runs, or no profile exists yet)
+            return context?.User.GetUserId() ?? Guid.Empty;
+        }
+    }
 
     /// <inheritdoc />
     public string Email => _httpContextAccessor.HttpContext?.User.GetEmail() ?? string.Empty;
@@ -43,6 +57,9 @@ public class CurrentUser : ICurrentUser
     /// Gets the Keycloak ID (sub claim) as string.
     /// </summary>
     public string KeycloakId => _httpContextAccessor.HttpContext?.User.GetKeycloakId() ?? string.Empty;
+
+    /// <inheritdoc />
+    public Guid KeycloakUserId => _httpContextAccessor.HttpContext?.User.GetUserId() ?? Guid.Empty;
 
     /// <summary>
     /// Gets the user's first name.

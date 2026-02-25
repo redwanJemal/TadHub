@@ -90,21 +90,28 @@ export function TeamPage() {
     {
       key: 'roles',
       header: t('members.roles'),
-      cell: (row) => (
-        <div className="flex flex-wrap gap-1">
-          {row.isOwner && (
-            <Badge variant="default">{t('members.owner')}</Badge>
-          )}
-          {row.roles.map((role) => (
-            <Badge key={role.id} variant="secondary">
-              {role.name}
-            </Badge>
-          ))}
-          {!row.isOwner && row.roles.length === 0 && (
-            <span className="text-xs text-muted-foreground">{t('members.noRoles')}</span>
-          )}
-        </div>
-      ),
+      cell: (row) => {
+        // Filter out the "Owner" role when isOwner is true to avoid duplicate badge
+        const displayRoles = row.isOwner
+          ? row.roles.filter((role) => role.name !== 'Owner')
+          : row.roles;
+
+        return (
+          <div className="flex flex-wrap gap-1">
+            {row.isOwner && (
+              <Badge variant="default">{t('members.owner')}</Badge>
+            )}
+            {displayRoles.map((role) => (
+              <Badge key={role.id} variant="secondary">
+                {role.name}
+              </Badge>
+            ))}
+            {!row.isOwner && displayRoles.length === 0 && (
+              <span className="text-xs text-muted-foreground">{t('members.noRoles')}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: 'joinedAt',
