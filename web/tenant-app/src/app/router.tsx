@@ -18,6 +18,11 @@ const TeamPage = lazy(() => import('@/features/team').then(m => ({ default: m.Te
 // Suppliers
 const SuppliersPage = lazy(() => import('@/features/suppliers').then(m => ({ default: m.SuppliersPage })));
 
+// Candidates
+const CandidatesPage = lazy(() => import('@/features/candidates').then(m => ({ default: m.CandidatesPage })));
+const CreateCandidatePage = lazy(() => import('@/features/candidates').then(m => ({ default: m.CreateCandidatePage })));
+const CandidateDetailPage = lazy(() => import('@/features/candidates').then(m => ({ default: m.CandidateDetailPage })));
+
 // Placeholder home
 function HomePage() {
   return (
@@ -62,6 +67,9 @@ export function AppRouter() {
           <Route path="dashboard" element={<HomePage />} />
           <Route path="team" element={<TeamPage />} />
           <Route path="suppliers" element={<SuppliersPage />} />
+          <Route path="candidates" element={<CandidatesPage />} />
+          <Route path="candidates/new" element={<CreateCandidatePage />} />
+          <Route path="candidates/:id" element={<CandidateDetailPage />} />
         </Route>
 
         {/* Catch all */}
