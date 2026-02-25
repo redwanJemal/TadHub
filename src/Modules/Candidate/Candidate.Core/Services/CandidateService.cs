@@ -1,0 +1,408 @@
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Candidate.Contracts;
+using Candidate.Contracts.DTOs;
+using Candidate.Core.Entities;
+using Supplier.Core.Entities;
+using TadHub.Infrastructure.Api;
+using TadHub.Infrastructure.Persistence;
+using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Interfaces;
+using TadHub.SharedKernel.Models;
+
+namespace Candidate.Core.Services;
+
+/// <summary>
+/// Service for managing candidates within a tenant.
+/// </summary>
+public class CandidateService : ICandidateService
+{
+    private readonly AppDbContext _db;
+    private readonly IClock _clock;
+    private readonly ICurrentUser _currentUser;
+    private readonly ILogger<CandidateService> _logger;
+
+    private static readonly Dictionary<string, Expression<Func<Entities.Candidate, object>>> FilterableFields = new()
+    {
+        ["status"] = x => x.Status,
+        ["sourceType"] = x => x.SourceType,
+        ["nationality"] = x => x.Nationality,
+        ["tenantSupplierId"] = x => x.TenantSupplierId!,
+        ["gender"] = x => x.Gender!,
+        ["createdAt"] = x => x.CreatedAt,
+        ["createdBy"] = x => x.CreatedBy!,
+        ["passportNumber"] = x => x.PassportNumber!,
+        ["externalReference"] = x => x.ExternalReference!,
+    };
+
+    private static readonly Dictionary<string, Expression<Func<Entities.Candidate, object>>> SortableFields = new()
+    {
+        ["fullNameEn"] = x => x.FullNameEn,
+        ["nationality"] = x => x.Nationality,
+        ["status"] = x => x.Status,
+        ["sourceType"] = x => x.SourceType,
+        ["createdAt"] = x => x.CreatedAt,
+        ["updatedAt"] = x => x.UpdatedAt,
+        ["statusChangedAt"] = x => x.StatusChangedAt!,
+    };
+
+    public CandidateService(
+        AppDbContext db,
+        IClock clock,
+        ICurrentUser currentUser,
+        ILogger<CandidateService> logger)
+    {
+        _db = db;
+        _clock = clock;
+        _currentUser = currentUser;
+        _logger = logger;
+    }
+
+    public async Task<PagedList<CandidateListDto>> ListAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
+    {
+        var query = _db.Set<Entities.Candidate>()
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(x => x.TenantId == tenantId && !x.IsDeleted)
+            .ApplyFilters(qp.Filters, FilterableFields)
+            .ApplySort(qp.GetSortFields(), SortableFields);
+
+        if (!string.IsNullOrWhiteSpace(qp.Search))
+        {
+            var searchLower = qp.Search.ToLower();
+            query = query.Where(x =>
+                x.FullNameEn.ToLower().Contains(searchLower) ||
+                (x.FullNameAr != null && x.FullNameAr.ToLower().Contains(searchLower)) ||
+                (x.PassportNumber != null && x.PassportNumber.ToLower().Contains(searchLower)) ||
+                (x.ExternalReference != null && x.ExternalReference.ToLower().Contains(searchLower)));
+        }
+
+        return await query
+            .Select(x => MapToListDto(x))
+            .ToPagedListAsync(qp, ct);
+    }
+
+    public async Task<Result<CandidateDto>> GetByIdAsync(Guid tenantId, Guid id, QueryParameters? qp = null, CancellationToken ct = default)
+    {
+        var includes = qp?.GetIncludeList() ?? [];
+        var includeStatusHistory = includes.Contains("statusHistory", StringComparer.OrdinalIgnoreCase);
+
+        var query = _db.Set<Entities.Candidate>()
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(x => x.TenantId == tenantId && !x.IsDeleted);
+
+        if (includeStatusHistory)
+        {
+            query = query.Include(x => x.StatusHistory.OrderByDescending(h => h.ChangedAt));
+        }
+
+        var candidate = await query.FirstOrDefaultAsync(x => x.Id == id, ct);
+
+        if (candidate is null)
+            return Result<CandidateDto>.NotFound($"Candidate with ID {id} not found");
+
+        return Result<CandidateDto>.Success(MapToDto(candidate, includeStatusHistory));
+    }
+
+    public async Task<Result<CandidateDto>> CreateAsync(Guid tenantId, CreateCandidateRequest request, CancellationToken ct = default)
+    {
+        // Parse and validate source type
+        if (!Enum.TryParse<CandidateSourceType>(request.SourceType, ignoreCase: true, out var sourceType))
+            return Result<CandidateDto>.ValidationError($"Invalid source type '{request.SourceType}'. Valid values: Supplier, Local");
+
+        // Validate supplier relationship
+        if (sourceType == CandidateSourceType.Supplier)
+        {
+            if (request.TenantSupplierId is null)
+                return Result<CandidateDto>.ValidationError("TenantSupplierId is required for supplier-sourced candidates");
+
+            var supplierExists = await _db.Set<TenantSupplier>()
+                .IgnoreQueryFilters()
+                .AnyAsync(x => x.Id == request.TenantSupplierId && x.TenantId == tenantId, ct);
+
+            if (!supplierExists)
+                return Result<CandidateDto>.NotFound($"TenantSupplier with ID {request.TenantSupplierId} not found in this tenant");
+        }
+        else
+        {
+            if (request.TenantSupplierId is not null)
+                return Result<CandidateDto>.ValidationError("TenantSupplierId must be null for local candidates");
+        }
+
+        // Check duplicate passport number within tenant
+        if (!string.IsNullOrWhiteSpace(request.PassportNumber))
+        {
+            var existsByPassport = await _db.Set<Entities.Candidate>()
+                .IgnoreQueryFilters()
+                .AnyAsync(x => x.TenantId == tenantId && !x.IsDeleted && x.PassportNumber == request.PassportNumber, ct);
+
+            if (existsByPassport)
+                return Result<CandidateDto>.Conflict($"Candidate with passport number '{request.PassportNumber}' already exists in this tenant");
+        }
+
+        var now = _clock.UtcNow;
+        var candidate = new Entities.Candidate
+        {
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            FullNameEn = request.FullNameEn,
+            FullNameAr = request.FullNameAr,
+            Nationality = request.Nationality,
+            DateOfBirth = request.DateOfBirth,
+            Gender = request.Gender,
+            PassportNumber = request.PassportNumber,
+            Phone = request.Phone,
+            Email = request.Email,
+            SourceType = sourceType,
+            TenantSupplierId = request.TenantSupplierId,
+            Status = CandidateStatus.Received,
+            StatusChangedAt = now,
+            PassportExpiry = request.PassportExpiry,
+            MedicalStatus = request.MedicalStatus,
+            VisaStatus = request.VisaStatus,
+            ExpectedArrivalDate = request.ExpectedArrivalDate,
+            Notes = request.Notes,
+            ExternalReference = request.ExternalReference,
+        };
+
+        // Initial status history entry
+        var history = new CandidateStatusHistory
+        {
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            CandidateId = candidate.Id,
+            FromStatus = null,
+            ToStatus = CandidateStatus.Received,
+            ChangedAt = now,
+            ChangedBy = _currentUser.UserId,
+        };
+
+        _db.Set<Entities.Candidate>().Add(candidate);
+        _db.Set<CandidateStatusHistory>().Add(history);
+        await _db.SaveChangesAsync(ct);
+
+        _logger.LogInformation("Created candidate {CandidateId} ({FullNameEn}) for tenant {TenantId}", candidate.Id, candidate.FullNameEn, tenantId);
+
+        return Result<CandidateDto>.Success(MapToDto(candidate, includeStatusHistory: false));
+    }
+
+    public async Task<Result<CandidateDto>> UpdateAsync(Guid tenantId, Guid id, UpdateCandidateRequest request, CancellationToken ct = default)
+    {
+        var candidate = await _db.Set<Entities.Candidate>()
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(x => x.Id == id && x.TenantId == tenantId && !x.IsDeleted, ct);
+
+        if (candidate is null)
+            return Result<CandidateDto>.NotFound($"Candidate with ID {id} not found");
+
+        // Check duplicate passport number if being changed
+        if (request.PassportNumber is not null && request.PassportNumber != candidate.PassportNumber)
+        {
+            if (!string.IsNullOrWhiteSpace(request.PassportNumber))
+            {
+                var existsByPassport = await _db.Set<Entities.Candidate>()
+                    .IgnoreQueryFilters()
+                    .AnyAsync(x => x.TenantId == tenantId && !x.IsDeleted && x.PassportNumber == request.PassportNumber && x.Id != id, ct);
+
+                if (existsByPassport)
+                    return Result<CandidateDto>.Conflict($"Candidate with passport number '{request.PassportNumber}' already exists in this tenant");
+            }
+        }
+
+        // Apply updates (only non-null values)
+        if (request.FullNameEn is not null)
+            candidate.FullNameEn = request.FullNameEn;
+        if (request.FullNameAr is not null)
+            candidate.FullNameAr = request.FullNameAr;
+        if (request.Nationality is not null)
+            candidate.Nationality = request.Nationality;
+        if (request.DateOfBirth.HasValue)
+            candidate.DateOfBirth = request.DateOfBirth;
+        if (request.Gender is not null)
+            candidate.Gender = request.Gender;
+        if (request.PassportNumber is not null)
+            candidate.PassportNumber = request.PassportNumber;
+        if (request.Phone is not null)
+            candidate.Phone = request.Phone;
+        if (request.Email is not null)
+            candidate.Email = request.Email;
+        if (request.PassportExpiry.HasValue)
+            candidate.PassportExpiry = request.PassportExpiry;
+        if (request.MedicalStatus is not null)
+            candidate.MedicalStatus = request.MedicalStatus;
+        if (request.VisaStatus is not null)
+            candidate.VisaStatus = request.VisaStatus;
+        if (request.ExpectedArrivalDate.HasValue)
+            candidate.ExpectedArrivalDate = request.ExpectedArrivalDate;
+        if (request.ActualArrivalDate.HasValue)
+            candidate.ActualArrivalDate = request.ActualArrivalDate;
+        if (request.Notes is not null)
+            candidate.Notes = request.Notes;
+        if (request.ExternalReference is not null)
+            candidate.ExternalReference = request.ExternalReference;
+
+        await _db.SaveChangesAsync(ct);
+
+        _logger.LogInformation("Updated candidate {CandidateId}", id);
+
+        return Result<CandidateDto>.Success(MapToDto(candidate, includeStatusHistory: false));
+    }
+
+    public async Task<Result<CandidateDto>> TransitionStatusAsync(Guid tenantId, Guid id, TransitionStatusRequest request, CancellationToken ct = default)
+    {
+        var candidate = await _db.Set<Entities.Candidate>()
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(x => x.Id == id && x.TenantId == tenantId && !x.IsDeleted, ct);
+
+        if (candidate is null)
+            return Result<CandidateDto>.NotFound($"Candidate with ID {id} not found");
+
+        if (!Enum.TryParse<CandidateStatus>(request.Status, ignoreCase: true, out var targetStatus))
+            return Result<CandidateDto>.ValidationError($"Invalid status '{request.Status}'");
+
+        var error = CandidateStatusMachine.Validate(candidate.SourceType, candidate.Status, targetStatus, request.Reason);
+        if (error is not null)
+            return Result<CandidateDto>.ValidationError(error);
+
+        var now = _clock.UtcNow;
+        var fromStatus = candidate.Status;
+
+        candidate.Status = targetStatus;
+        candidate.StatusChangedAt = now;
+        candidate.StatusReason = request.Reason;
+
+        var history = new CandidateStatusHistory
+        {
+            Id = Guid.NewGuid(),
+            TenantId = tenantId,
+            CandidateId = candidate.Id,
+            FromStatus = fromStatus,
+            ToStatus = targetStatus,
+            ChangedAt = now,
+            ChangedBy = _currentUser.UserId,
+            Reason = request.Reason,
+            Notes = request.Notes,
+        };
+
+        _db.Set<CandidateStatusHistory>().Add(history);
+        await _db.SaveChangesAsync(ct);
+
+        _logger.LogInformation("Transitioned candidate {CandidateId} from {FromStatus} to {ToStatus}", id, fromStatus, targetStatus);
+
+        return Result<CandidateDto>.Success(MapToDto(candidate, includeStatusHistory: false));
+    }
+
+    public async Task<Result<List<CandidateStatusHistoryDto>>> GetStatusHistoryAsync(Guid tenantId, Guid id, CancellationToken ct = default)
+    {
+        var candidateExists = await _db.Set<Entities.Candidate>()
+            .IgnoreQueryFilters()
+            .AnyAsync(x => x.Id == id && x.TenantId == tenantId && !x.IsDeleted, ct);
+
+        if (!candidateExists)
+            return Result<List<CandidateStatusHistoryDto>>.NotFound($"Candidate with ID {id} not found");
+
+        var history = await _db.Set<CandidateStatusHistory>()
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(x => x.CandidateId == id && x.TenantId == tenantId)
+            .OrderByDescending(x => x.ChangedAt)
+            .Select(x => MapToHistoryDto(x))
+            .ToListAsync(ct);
+
+        return Result<List<CandidateStatusHistoryDto>>.Success(history);
+    }
+
+    public async Task<Result> DeleteAsync(Guid tenantId, Guid id, CancellationToken ct = default)
+    {
+        var candidate = await _db.Set<Entities.Candidate>()
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(x => x.Id == id && x.TenantId == tenantId && !x.IsDeleted, ct);
+
+        if (candidate is null)
+            return Result.NotFound($"Candidate with ID {id} not found");
+
+        candidate.MarkAsDeleted(_currentUser.UserId);
+        await _db.SaveChangesAsync(ct);
+
+        _logger.LogInformation("Soft-deleted candidate {CandidateId}", id);
+
+        return Result.Success();
+    }
+
+    #region Mapping
+
+    private static CandidateDto MapToDto(Entities.Candidate c, bool includeStatusHistory)
+    {
+        return new CandidateDto
+        {
+            Id = c.Id,
+            TenantId = c.TenantId,
+            FullNameEn = c.FullNameEn,
+            FullNameAr = c.FullNameAr,
+            Nationality = c.Nationality,
+            DateOfBirth = c.DateOfBirth,
+            Gender = c.Gender,
+            PassportNumber = c.PassportNumber,
+            Phone = c.Phone,
+            Email = c.Email,
+            SourceType = c.SourceType.ToString(),
+            TenantSupplierId = c.TenantSupplierId,
+            Status = c.Status.ToString(),
+            StatusChangedAt = c.StatusChangedAt,
+            StatusReason = c.StatusReason,
+            PassportExpiry = c.PassportExpiry,
+            MedicalStatus = c.MedicalStatus,
+            VisaStatus = c.VisaStatus,
+            ExpectedArrivalDate = c.ExpectedArrivalDate,
+            ActualArrivalDate = c.ActualArrivalDate,
+            Notes = c.Notes,
+            ExternalReference = c.ExternalReference,
+            CreatedBy = c.CreatedBy,
+            UpdatedBy = c.UpdatedBy,
+            CreatedAt = c.CreatedAt,
+            UpdatedAt = c.UpdatedAt,
+            StatusHistory = includeStatusHistory
+                ? c.StatusHistory.Select(MapToHistoryDto).ToList()
+                : null,
+        };
+    }
+
+    private static CandidateListDto MapToListDto(Entities.Candidate c)
+    {
+        return new CandidateListDto
+        {
+            Id = c.Id,
+            FullNameEn = c.FullNameEn,
+            FullNameAr = c.FullNameAr,
+            Nationality = c.Nationality,
+            PassportNumber = c.PassportNumber,
+            SourceType = c.SourceType.ToString(),
+            TenantSupplierId = c.TenantSupplierId,
+            Status = c.Status.ToString(),
+            Gender = c.Gender,
+            ExternalReference = c.ExternalReference,
+            CreatedBy = c.CreatedBy,
+            CreatedAt = c.CreatedAt,
+            UpdatedAt = c.UpdatedAt,
+        };
+    }
+
+    private static CandidateStatusHistoryDto MapToHistoryDto(CandidateStatusHistory h)
+    {
+        return new CandidateStatusHistoryDto
+        {
+            Id = h.Id,
+            CandidateId = h.CandidateId,
+            FromStatus = h.FromStatus?.ToString(),
+            ToStatus = h.ToStatus.ToString(),
+            ChangedAt = h.ChangedAt,
+            ChangedBy = h.ChangedBy,
+            Reason = h.Reason,
+            Notes = h.Notes,
+        };
+    }
+
+    #endregion
+}

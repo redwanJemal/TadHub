@@ -21,6 +21,7 @@ using TadHub.Infrastructure.Tenancy;
 using Tenancy.Core;
 using ReferenceData.Core;
 using Supplier.Core;
+using Candidate.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -147,6 +148,9 @@ builder.Services.AddSupplierModule();
 
 // Reference data module
 builder.Services.AddReferenceDataModule();
+
+// Candidate module
+builder.Services.AddCandidateModule();
 
 var app = builder.Build();
 

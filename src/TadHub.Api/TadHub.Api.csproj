@@ -31,6 +31,8 @@
     <ProjectReference Include="..\Modules\Supplier\Supplier.Core\Supplier.Core.csproj" />
     <!-- Reference data module -->
     <ProjectReference Include="..\Modules\ReferenceData\ReferenceData.Core\ReferenceData.Core.csproj" />
+    <!-- Candidate module -->
+    <ProjectReference Include="..\Modules\Candidate\Candidate.Core\Candidate.Core.csproj" />
   </ItemGroup>
 
 </Project>

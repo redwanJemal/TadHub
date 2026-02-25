@@ -91,18 +91,41 @@ public class AppDbContext : DbContext, IUnitOfWork
         var notDeleted = System.Linq.Expressions.Expression.Not(isDeletedProperty);
         var lambda = System.Linq.Expressions.Expression.Lambda(notDeleted, parameter);
 
-        // Combine with existing filter if one exists
+        // Combine with existing filter if one exists (e.g., tenant filter)
         var existingFilter = modelBuilder.Entity(entityType).Metadata.GetQueryFilter();
-        if (existingFilter != null)
+        if (existingFilter is System.Linq.Expressions.LambdaExpression existingLambda)
         {
-            // Combine: existingFilter && !e.IsDeleted
-            var body = System.Linq.Expressions.Expression.AndAlso(
-                System.Linq.Expressions.Expression.Invoke(existingFilter, parameter),
-                notDeleted);
-            lambda = System.Linq.Expressions.Expression.Lambda(body, parameter);
+            // Replace the existing filter's parameter with our parameter, then AND the bodies.
+            // This avoids Expression.Invoke which EF Core cannot translate to SQL.
+            var rewrittenBody = new ParameterReplacer(existingLambda.Parameters[0], parameter)
+                .Visit(existingLambda.Body);
+            var combined = System.Linq.Expressions.Expression.AndAlso(rewrittenBody, notDeleted);
+            lambda = System.Linq.Expressions.Expression.Lambda(combined, parameter);
         }
 
         modelBuilder.Entity(entityType).HasQueryFilter(lambda);
+    }
+
+    /// <summary>
+    /// Replaces all occurrences of one ParameterExpression with another in an expression tree.
+    /// Used to combine query filter expressions without Expression.Invoke.
+    /// </summary>
+    private sealed class ParameterReplacer : System.Linq.Expressions.ExpressionVisitor
+    {
+        private readonly System.Linq.Expressions.ParameterExpression _oldParam;
+        private readonly System.Linq.Expressions.ParameterExpression _newParam;
+
+        public ParameterReplacer(
+            System.Linq.Expressions.ParameterExpression oldParam,
+            System.Linq.Expressions.ParameterExpression newParam)
+        {
+            _oldParam = oldParam;
+            _newParam = newParam;
+        }
+
+        protected override System.Linq.Expressions.Expression VisitParameter(
+            System.Linq.Expressions.ParameterExpression node)
+            => node == _oldParam ? _newParam : base.VisitParameter(node);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
