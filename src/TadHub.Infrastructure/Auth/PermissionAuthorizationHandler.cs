@@ -30,25 +30,14 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
         AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
-        _logger.LogInformation(
-            "[AUTH HANDLER] Checking permission '{Permission}' - IsAuthenticated: {IsAuth}, TenantResolved: {TenantResolved}",
-            requirement.Permission, _currentUser.IsAuthenticated, _tenantContext.IsResolved);
-            
         if (!_currentUser.IsAuthenticated)
-        {
-            _logger.LogWarning("[AUTH HANDLER] Permission check failed: user not authenticated");
             return;
-        }
 
         if (!_tenantContext.IsResolved)
         {
-            _logger.LogWarning("[AUTH HANDLER] Permission check failed: no tenant context. TenantId would be: {TenantId}", _tenantContext.TenantId);
+            _logger.LogWarning("Permission check failed: no tenant context for {Permission}", requirement.Permission);
             return;
         }
-
-        _logger.LogInformation(
-            "[AUTH HANDLER] Calling HasPermissionAsync - TenantId: {TenantId}, UserId: {UserId}, Permission: {Permission}",
-            _tenantContext.TenantId, _currentUser.UserId, requirement.Permission);
 
         var hasPermission = await _permissionChecker.HasPermissionAsync(
             _tenantContext.TenantId,
@@ -56,18 +45,10 @@ public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionReq
             requirement.Permission);
 
         if (hasPermission)
-        {
-            _logger.LogInformation(
-                "[AUTH HANDLER] Permission check PASSED: user {UserId} has {Permission} in tenant {TenantId}",
-                _currentUser.UserId, requirement.Permission, _tenantContext.TenantId);
             context.Succeed(requirement);
-        }
         else
-        {
-            _logger.LogWarning(
-                "[AUTH HANDLER] Permission check FAILED: user {UserId} lacks {Permission} in tenant {TenantId}",
+            _logger.LogDebug("User {UserId} lacks {Permission} in tenant {TenantId}",
                 _currentUser.UserId, requirement.Permission, _tenantContext.TenantId);
-        }
     }
 }
 

@@ -103,20 +103,13 @@ export function usePermissions() {
     can,
     
     // Convenience methods for common permissions
-    canViewWorkers: hasPermission('workers.view'),
-    canCreateWorkers: hasPermission('workers.create'),
-    canManageWorkers: hasPermission('workers.manage'),
-    
-    canViewClients: hasPermission('clients.view'),
-    canCreateClients: hasPermission('clients.create'),
-    canManageClients: hasPermission('clients.manage'),
-    
-    canViewLeads: hasPermission('leads.view'),
-    canCreateLeads: hasPermission('leads.create'),
-    canManageLeads: hasPermission('leads.manage'),
-    
-    canManageTeam: hasPermission('tenant.members.manage'),
-    canManageRoles: hasPermission('tenant.roles.manage'),
+    canViewMembers: hasPermission('members.view'),
+    canInviteMembers: hasPermission('members.invite'),
+    canManageMembers: hasPermission('members.manage'),
+    canRemoveMembers: hasPermission('members.remove'),
+
+    canViewRoles: hasPermission('roles.view'),
+    canManageRoles: hasPermission('roles.manage'),
     canManageSettings: hasPermission('tenant.settings.manage'),
   };
 }

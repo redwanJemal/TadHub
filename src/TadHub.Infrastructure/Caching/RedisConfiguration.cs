@@ -21,21 +21,23 @@ public static class RedisConfiguration
         var connectionString = configuration.GetConnectionString("Redis")
             ?? "localhost:6379";
 
+        // Ensure the connection string has AbortOnConnectFail=false
+        var fullConnectionString = connectionString.Contains("abortConnect")
+            ? connectionString
+            : connectionString + ",abortConnect=false,connectRetry=5,connectTimeout=10000";
+
         // Register IConnectionMultiplexer as singleton for direct Redis access
         services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
-            var options = ConfigurationOptions.Parse(connectionString);
-            options.AbortOnConnectFail = false;
-            options.ConnectRetry = 3;
-            options.ConnectTimeout = 5000;
+            var options = ConfigurationOptions.Parse(fullConnectionString);
             return ConnectionMultiplexer.Connect(options);
         });
 
         // Register IDistributedCache for standard caching operations
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = connectionString;
-            options.InstanceName = "saaskit:";
+            options.Configuration = fullConnectionString;
+            options.InstanceName = "tadhub:";
         });
 
         // Register our custom cache service

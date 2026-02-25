@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TadHub.Infrastructure.Auth;
 using TadHub.Api.Filters;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Interfaces;
 using Tenancy.Contracts;
 using Tenancy.Contracts.DTOs;
 
@@ -19,11 +20,16 @@ public class TenantMembersController : ControllerBase
 {
     private readonly ITenantService _tenantService;
     private readonly CurrentUser _currentUser;
+    private readonly IPermissionChecker _permissionChecker;
 
-    public TenantMembersController(ITenantService tenantService, CurrentUser currentUser)
+    public TenantMembersController(
+        ITenantService tenantService,
+        CurrentUser currentUser,
+        IPermissionChecker permissionChecker)
     {
         _tenantService = tenantService;
         _currentUser = currentUser;
+        _permissionChecker = permissionChecker;
     }
 
     /// <summary>
@@ -36,6 +42,11 @@ public class TenantMembersController : ControllerBase
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.view", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _tenantService.GetMembersAsync(tenantId, qp, ct);
         return Ok(result);
     }
@@ -48,6 +59,11 @@ public class TenantMembersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMember(Guid tenantId, Guid userId, CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.view", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _tenantService.GetMemberAsync(tenantId, userId, ct);
 
         if (!result.IsSuccess)
@@ -58,7 +74,7 @@ public class TenantMembersController : ControllerBase
 
     /// <summary>
     /// Removes a member from the tenant.
-    /// Requires owner status or self-removal.
+    /// Allows self-removal without permission, otherwise requires members.remove permission.
     /// </summary>
     [HttpDelete("{userId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -66,12 +82,13 @@ public class TenantMembersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RemoveMember(Guid tenantId, Guid userId, CancellationToken ct)
     {
-        // Allow self-removal or owner removal
+        // Allow self-removal; otherwise require members.remove permission
         var isSelf = userId == _currentUser.UserId;
         if (!isSelf)
         {
-            var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
-            if (!isOwner)
+            var hasPermission = await _permissionChecker.HasPermissionAsync(
+                tenantId, _currentUser.UserId, "members.remove", ct);
+            if (!hasPermission)
                 return Forbid();
         }
 

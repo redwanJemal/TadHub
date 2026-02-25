@@ -1,0 +1,67 @@
+{
+  "title": "Team Management",
+  "description": "Manage your team members and invitations",
+  "tabs": {
+    "members": "Members",
+    "invitations": "Invitations"
+  },
+  "members": {
+    "name": "Name",
+    "email": "Email",
+    "roles": "Roles",
+    "joinedAt": "Joined",
+    "status": "Status",
+    "actions": "Actions",
+    "owner": "Owner",
+    "searchPlaceholder": "Search members...",
+    "changeRole": "Change Role",
+    "removeMember": "Remove Member",
+    "removeSelected": "Remove Selected",
+    "confirmRemove": "Are you sure you want to remove this member?",
+    "confirmRemoveMultiple": "Are you sure you want to remove {{count}} members?",
+    "removeSuccess": "Member removed successfully",
+    "noRoles": "No roles"
+  },
+  "invitations": {
+    "email": "Email",
+    "invitedBy": "Invited By",
+    "role": "Role",
+    "expires": "Expires",
+    "status": "Status",
+    "actions": "Actions",
+    "revoke": "Revoke",
+    "confirmRevoke": "Are you sure you want to revoke this invitation?",
+    "revokeSuccess": "Invitation revoked successfully",
+    "pending": "Pending",
+    "expired": "Expired"
+  },
+  "invite": {
+    "title": "Invite Member",
+    "description": "Send an invitation to join your workspace",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "colleague@example.com",
+    "roleLabel": "Role",
+    "rolePlaceholder": "Select a role (optional)",
+    "submit": "Send Invitation",
+    "success": "Invitation sent successfully"
+  },
+  "changeRole": {
+    "title": "Change Roles",
+    "description": "Manage roles for {{name}}",
+    "currentRoles": "Current Roles",
+    "availableRoles": "Available Roles",
+    "noRoles": "No roles assigned",
+    "save": "Save Changes",
+    "success": "Roles updated successfully"
+  },
+  "empty": {
+    "members": {
+      "title": "No team members",
+      "description": "Invite team members to collaborate on your workspace."
+    },
+    "invitations": {
+      "title": "No pending invitations",
+      "description": "Invite team members using the button above."
+    }
+  }
+}

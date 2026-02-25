@@ -57,7 +57,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   useEffect(() => {
     const handleForbidden = (event: CustomEvent<{ message: string; code: string }>) => {
       // You can show a toast notification here
-      console.warn('Permission denied:', event.detail.message);
+      console.warn('Permission denied:', event.detail?.message);
     };
 
     window.addEventListener('auth:forbidden', handleForbidden as EventListener);

@@ -25,5 +25,15 @@ public sealed record TenantMemberDto
     public string? AvatarUrl { get; init; }
     public bool IsOwner { get; init; }
     public MembershipStatus Status { get; init; }
+    public IReadOnlyList<MemberRoleInfo> Roles { get; init; } = [];
     public DateTimeOffset JoinedAt { get; init; }
+}
+
+/// <summary>
+/// Lightweight role info for tenant member listings.
+/// </summary>
+public sealed record MemberRoleInfo
+{
+    public Guid Id { get; init; }
+    public string Name { get; init; } = string.Empty;
 }

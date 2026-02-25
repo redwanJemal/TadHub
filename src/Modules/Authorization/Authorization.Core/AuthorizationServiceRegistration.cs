@@ -27,13 +27,9 @@ public static class AuthorizationServiceRegistration
 
         // Permission seeders (run on startup)
         services.AddHostedService<PermissionSeeder>();
-        services.AddHostedService<TadbeerPermissionSeeder>();
 
         // Role template seeder (run on startup, after permissions)
         services.AddHostedService<RoleTemplateSeeder>();
-
-        // Tadbeer role seeder (used by TenantCreatedConsumer)
-        services.AddScoped<TadbeerRoleSeeder>();
 
         // Authorization policy provider
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();

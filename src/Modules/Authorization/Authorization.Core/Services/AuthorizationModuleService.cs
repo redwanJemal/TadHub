@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Text.Json;
 using Authorization.Contracts;
@@ -28,6 +29,9 @@ public class AuthorizationModuleService : IAuthorizationModuleService
 
     private const string PermissionsCacheKeyPrefix = "permissions";
     private static readonly TimeSpan PermissionsCacheDuration = TimeSpan.FromMinutes(5);
+
+    // Fast in-memory permission cache (avoids Redis round-trips for hot-path permission checks)
+    private static readonly ConcurrentDictionary<string, (UserPermissionsDto Data, DateTime ExpiresAt)> _permissionCache = new();
 
     private static readonly Dictionary<string, Expression<Func<Permission, object>>> PermissionFilters = new()
     {
@@ -102,6 +106,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     public async Task<PagedList<RoleDto>> GetRolesAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
     {
         var query = _db.Set<Role>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(x => x.TenantId == tenantId)
             .Include(x => x.Permissions)
@@ -121,6 +126,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     public async Task<Result<RoleDto>> GetRoleByIdAsync(Guid tenantId, Guid roleId, CancellationToken ct = default)
     {
         var role = await _db.Set<Role>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Include(x => x.Permissions)
             .ThenInclude(x => x.Permission)
@@ -136,6 +142,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     {
         // Check for duplicate name
         var exists = await _db.Set<Role>()
+            .IgnoreQueryFilters()
             .AnyAsync(x => x.TenantId == tenantId && x.Name == request.Name, ct);
 
         if (exists)
@@ -180,6 +187,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     public async Task<Result<RoleDto>> UpdateRoleAsync(Guid tenantId, Guid roleId, UpdateRoleRequest request, CancellationToken ct = default)
     {
         var role = await _db.Set<Role>()
+            .IgnoreQueryFilters()
             .Include(x => x.Permissions)
             .FirstOrDefaultAsync(x => x.Id == roleId && x.TenantId == tenantId, ct);
 
@@ -194,6 +202,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
         {
             // Check for duplicate name
             var exists = await _db.Set<Role>()
+                .IgnoreQueryFilters()
                 .AnyAsync(x => x.TenantId == tenantId && x.Name == request.Name && x.Id != roleId, ct);
             if (exists)
                 return Result<RoleDto>.Conflict($"Role '{request.Name}' already exists");
@@ -235,6 +244,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     public async Task<Result<bool>> DeleteRoleAsync(Guid tenantId, Guid roleId, CancellationToken ct = default)
     {
         var role = await _db.Set<Role>()
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.Id == roleId && x.TenantId == tenantId, ct);
 
         if (role is null)
@@ -434,6 +444,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     public async Task<IReadOnlyList<RoleDto>> GetUserRolesAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
         var roles = await _db.Set<UserRole>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(x => x.TenantId == tenantId && x.UserId == userId)
             .Include(x => x.Role)
@@ -449,6 +460,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     {
         // Verify role exists and belongs to tenant
         var role = await _db.Set<Role>()
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.Id == request.RoleId && x.TenantId == tenantId, ct);
 
         if (role is null)
@@ -456,6 +468,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
 
         // Check if already assigned
         var exists = await _db.Set<UserRole>()
+            .IgnoreQueryFilters()
             .AnyAsync(x => x.TenantId == tenantId && x.UserId == request.UserId && x.RoleId == request.RoleId, ct);
 
         if (exists)
@@ -496,6 +509,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     public async Task<Result<bool>> RemoveRoleAsync(Guid tenantId, Guid userId, Guid roleId, CancellationToken ct = default)
     {
         var userRole = await _db.Set<UserRole>()
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserId == userId && x.RoleId == roleId, ct);
 
         if (userRole is null)
@@ -520,61 +534,33 @@ public class AuthorizationModuleService : IAuthorizationModuleService
 
     public async Task<UserPermissionsDto> GetUserPermissionsAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
-        _logger.LogInformation(
-            "[AUTH DEBUG] GetUserPermissionsAsync called - TenantId: {TenantId}, UserId: {UserId}",
-            tenantId, userId);
-            
         var cacheKey = $"{PermissionsCacheKeyPrefix}:{tenantId}:{userId}";
 
-        // Try cache first
-        var cached = await _cache.GetAsync<UserPermissionsDto>(cacheKey, ct);
-        if (cached is not null)
-        {
-            _logger.LogInformation("[AUTH DEBUG] Returning cached permissions: {Permissions}", string.Join(", ", cached.Permissions));
-            return cached;
-        }
+        // Fast in-memory cache check (no Redis round-trip)
+        if (_permissionCache.TryGetValue(cacheKey, out var cached) && cached.ExpiresAt > DateTime.UtcNow)
+            return cached.Data;
 
-        // The userId parameter might be either:
-        // 1. The internal user_profiles.id (when called from internal code)
-        // 2. The Keycloak sub claim (when called from authorization handler)
-        // We need to resolve to the internal ID for the user_roles lookup
-        
+        // Resolve Keycloak ID → internal ID
         var internalUserId = userId;
-        
-        // First, check if this userId exists directly in user_roles
-        // NOTE: Using IgnoreQueryFilters() since we're explicitly filtering by tenantId
         var directExists = await _db.Set<UserRole>()
             .IgnoreQueryFilters()
             .AsNoTracking()
             .AnyAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
-        
-        _logger.LogInformation("[AUTH DEBUG] Direct user_roles lookup for {UserId}: {Exists}", userId, directExists);
-        
+
         if (!directExists)
         {
-            // Try to resolve from Keycloak ID (the userId might be the Keycloak sub)
             var keycloakIdStr = userId.ToString();
-            _logger.LogInformation("[AUTH DEBUG] Looking up UserProfile by KeycloakId: {KeycloakId}", keycloakIdStr);
-            
             var userProfile = await _db.Set<UserProfile>()
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.KeycloakId == keycloakIdStr, ct);
-            
+
             if (userProfile is not null)
-            {
                 internalUserId = userProfile.Id;
-                _logger.LogInformation("[AUTH DEBUG] Found UserProfile - InternalUserId: {InternalUserId}", internalUserId);
-            }
             else
-            {
-                _logger.LogWarning("[AUTH DEBUG] UserProfile NOT FOUND for KeycloakId: {KeycloakId}", keycloakIdStr);
-            }
+                _logger.LogWarning("UserProfile not found for KeycloakId {KeycloakId}", keycloakIdStr);
         }
 
-        // Load from database using the resolved internal user ID
-        // NOTE: Using IgnoreQueryFilters() to bypass global tenant filter since we're explicitly filtering by tenantId
-        _logger.LogInformation("[AUTH DEBUG] Loading user_roles for TenantId: {TenantId}, InternalUserId: {InternalUserId}", tenantId, internalUserId);
-        
+        // Load roles and permissions from database
         var userRoles = await _db.Set<UserRole>()
             .IgnoreQueryFilters()
             .AsNoTracking()
@@ -584,17 +570,12 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             .ThenInclude(x => x.Permission)
             .ToListAsync(ct);
 
-        _logger.LogInformation("[AUTH DEBUG] Found {Count} user_roles", userRoles.Count);
-
         var roles = userRoles.Select(x => x.Role.Name).Distinct().ToList();
         var permissions = userRoles
             .SelectMany(x => x.Role.Permissions)
             .Select(x => x.Permission.Name)
             .Distinct()
             .ToList();
-
-        _logger.LogInformation("[AUTH DEBUG] Resolved roles: [{Roles}], permissions: [{Permissions}]", 
-            string.Join(", ", roles), string.Join(", ", permissions));
 
         var result = new UserPermissionsDto
         {
@@ -604,8 +585,9 @@ public class AuthorizationModuleService : IAuthorizationModuleService
             Roles = roles
         };
 
-        // Cache the result
-        await _cache.SetAsync(cacheKey, result, PermissionsCacheDuration, ct);
+        // Cache in-memory (fast) and Redis (shared across instances)
+        _permissionCache[cacheKey] = (result, DateTime.UtcNow.Add(PermissionsCacheDuration));
+        _ = _cache.SetAsync(cacheKey, result, PermissionsCacheDuration, ct); // fire-and-forget
 
         return result;
     }
@@ -631,6 +613,7 @@ public class AuthorizationModuleService : IAuthorizationModuleService
     public async Task InvalidateUserPermissionsCacheAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
         var cacheKey = $"{PermissionsCacheKeyPrefix}:{tenantId}:{userId}";
+        _permissionCache.TryRemove(cacheKey, out _);
         await _cache.RemoveAsync(cacheKey, ct);
     }
 

@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
     <ProjectReference Include="..\..\..\TadHub.Infrastructure\TadHub.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Identity\Identity.Core\Identity.Core.csproj" />
+    <ProjectReference Include="..\..\Authorization\Authorization.Core\Authorization.Core.csproj" />
   </ItemGroup>
 
 </Project>

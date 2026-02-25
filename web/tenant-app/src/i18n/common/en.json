@@ -71,9 +71,6 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "workers": "Workers",
-    "clients": "Clients",
-    "leads": "Leads",
     "contracts": "Contracts",
     "team": "Team",
     "roles": "Roles",

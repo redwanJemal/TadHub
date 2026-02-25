@@ -20,24 +20,33 @@ public class RolesController : ControllerBase
 {
     private readonly IAuthorizationModuleService _authService;
     private readonly ICurrentUser _currentUser;
+    private readonly IPermissionChecker _permissionChecker;
 
-    public RolesController(IAuthorizationModuleService authService, ICurrentUser currentUser)
+    public RolesController(
+        IAuthorizationModuleService authService,
+        ICurrentUser currentUser,
+        IPermissionChecker permissionChecker)
     {
         _authService = authService;
         _currentUser = currentUser;
+        _permissionChecker = permissionChecker;
     }
 
     /// <summary>
     /// Lists roles for a tenant with filtering.
     /// </summary>
     [HttpGet]
-    [HasPermission("roles.view")]
     [ProducesResponseType(typeof(IEnumerable<RoleDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetRoles(
         Guid tenantId,
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "roles.view", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _authService.GetRolesAsync(tenantId, qp, ct);
         return Ok(result);
     }
@@ -46,11 +55,15 @@ public class RolesController : ControllerBase
     /// Gets a role by ID.
     /// </summary>
     [HttpGet("{roleId:guid}")]
-    [HasPermission("roles.view")]
     [ProducesResponseType(typeof(RoleDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetRole(Guid tenantId, Guid roleId, CancellationToken ct)
     {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "roles.view", ct);
+        if (!hasPermission)
+            return Forbid();
+
         var result = await _authService.GetRoleByIdAsync(tenantId, roleId, ct);
 
         if (!result.IsSuccess)

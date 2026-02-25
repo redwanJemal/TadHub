@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TadHub.Infrastructure.Auth;
 using TadHub.Api.Filters;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Interfaces;
 using Tenancy.Contracts;
 using Tenancy.Contracts.DTOs;
 
@@ -19,11 +20,16 @@ public class TenantInvitationsController : ControllerBase
 {
     private readonly ITenantService _tenantService;
     private readonly CurrentUser _currentUser;
+    private readonly IPermissionChecker _permissionChecker;
 
-    public TenantInvitationsController(ITenantService tenantService, CurrentUser currentUser)
+    public TenantInvitationsController(
+        ITenantService tenantService,
+        CurrentUser currentUser,
+        IPermissionChecker permissionChecker)
     {
         _tenantService = tenantService;
         _currentUser = currentUser;
+        _permissionChecker = permissionChecker;
     }
 
     /// <summary>
@@ -36,9 +42,9 @@ public class TenantInvitationsController : ControllerBase
         [FromQuery] QueryParameters qp,
         CancellationToken ct)
     {
-        // Check if user is owner
-        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
-        if (!isOwner)
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.invite", ct);
+        if (!hasPermission)
             return Forbid();
 
         var result = await _tenantService.GetInvitationsAsync(tenantId, qp, ct);
@@ -47,7 +53,6 @@ public class TenantInvitationsController : ControllerBase
 
     /// <summary>
     /// Creates an invitation to join the tenant.
-    /// Requires owner status.
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(TenantInvitationDto), StatusCodes.Status201Created)]
@@ -58,9 +63,9 @@ public class TenantInvitationsController : ControllerBase
         [FromBody] InviteMemberRequest request,
         CancellationToken ct)
     {
-        // Check if user is owner
-        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
-        if (!isOwner)
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.invite", ct);
+        if (!hasPermission)
             return Forbid();
 
         var result = await _tenantService.InviteMemberAsync(tenantId, request, ct);
@@ -77,7 +82,6 @@ public class TenantInvitationsController : ControllerBase
 
     /// <summary>
     /// Revokes a pending invitation.
-    /// Requires owner status.
     /// </summary>
     [HttpDelete("{invitationId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -88,9 +92,9 @@ public class TenantInvitationsController : ControllerBase
         Guid invitationId,
         CancellationToken ct)
     {
-        // Check if user is owner
-        var isOwner = await _tenantService.IsOwnerAsync(tenantId, _currentUser.UserId, ct);
-        if (!isOwner)
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.invite", ct);
+        if (!hasPermission)
             return Forbid();
 
         var result = await _tenantService.RevokeInvitationAsync(tenantId, invitationId, ct);

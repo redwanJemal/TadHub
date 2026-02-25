@@ -122,7 +122,7 @@ public sealed class RedisCacheService : IRedisCacheService
         try
         {
             var server = _redis.GetServer(_redis.GetEndPoints().First());
-            var keys = server.Keys(pattern: $"saaskit:{fullPattern}");
+            var keys = server.Keys(pattern: $"tadhub:{fullPattern}");
 
             var db = _redis.GetDatabase();
             foreach (var key in keys)

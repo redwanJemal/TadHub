@@ -98,16 +98,16 @@ async function handleResponse<T>(response: Response): Promise<T> {
     
     try {
       const json = await response.json();
-      if (json.error?.message) {
+      if (json?.error?.message) {
         errorMessage = json.error.message;
       }
-      if (json.error?.code) {
+      if (json?.error?.code) {
         errorCode = json.error.code;
       }
     } catch {
       // Ignore parse errors for 403
     }
-    
+
     window.dispatchEvent(new CustomEvent('auth:forbidden', {
       detail: { message: errorMessage, code: errorCode }
     }));
@@ -128,7 +128,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
   // Check if response is an error response
   if (!response.ok) {
-    const errorJson = json as { error?: { code?: string; message?: string; details?: unknown } };
+    const errorJson = json as { error?: { code?: string; message?: string; details?: unknown } } | null;
     const error = errorJson?.error;
     throw new ApiError(
       response.status,
@@ -140,10 +140,10 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
   // Handle wrapped response format: { data: T, meta?: ... }
   const wrappedJson = json as { data?: T; success?: boolean; error?: unknown };
-  
+
   // If it has explicit success: false, it's an error
   if (wrappedJson.success === false) {
-    const errorJson = json as { error?: { code?: string; message?: string; details?: unknown } };
+    const errorJson = json as { error?: { code?: string; message?: string; details?: unknown } } | null;
     const error = errorJson?.error;
     throw new ApiError(
       response.status,
@@ -176,13 +176,13 @@ async function handleResponseWithMeta<T>(response: Response): Promise<ApiSuccess
   if (response.status === 403) {
     let errorMessage = 'You do not have permission to perform this action';
     let errorCode = 'FORBIDDEN';
-    
+
     try {
       const json = await response.json();
-      if (json.error?.message) {
+      if (json?.error?.message) {
         errorMessage = json.error.message;
       }
-      if (json.error?.code) {
+      if (json?.error?.code) {
         errorCode = json.error.code;
       }
     } catch {
@@ -332,7 +332,9 @@ export const apiClient = {
     }
 
     if (response.status === 403) {
-      window.dispatchEvent(new CustomEvent('auth:forbidden'));
+      window.dispatchEvent(new CustomEvent('auth:forbidden', {
+        detail: { message: 'Permission denied', code: 'FORBIDDEN' }
+      }));
       throw new ApiError(403, 'FORBIDDEN', 'Permission denied');
     }
 

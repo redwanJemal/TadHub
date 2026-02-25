@@ -6,17 +6,13 @@ import { useAuth } from "react-oidc-context";
 import {
   LayoutDashboard,
   Users,
-  UserCheck,
-  Target,
   X,
   LogOut,
 } from "lucide-react";
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
-  { path: "/workers", icon: Users, labelKey: "nav.workers" },
-  { path: "/clients", icon: UserCheck, labelKey: "nav.clients" },
-  { path: "/leads", icon: Target, labelKey: "nav.leads" },
+  { path: "/team", icon: Users, labelKey: "nav.team" },
 ];
 
 interface SidebarProps {
