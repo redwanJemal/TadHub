@@ -122,6 +122,85 @@ async function main() {
     }
   }
 
+  // ========== CANDIDATES ==========
+  console.log('\n  --- Candidates ---');
+
+  // 6. Candidates list page
+  await page.goto(`${TENANT_URL}/candidates`);
+  try {
+    await page.getByText('Candidates').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Candidates heading did not appear, continuing...');
+  }
+  await page.waitForTimeout(3000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/06-candidates-list.png`, fullPage: false });
+  console.log('  done: candidates list');
+
+  // 7. Candidates list - row actions dropdown (if data exists)
+  const candidateActionBtn = page.locator('table tbody tr').first().getByRole('button');
+  if (await candidateActionBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await candidateActionBtn.click();
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/07-candidate-actions-dropdown.png`, fullPage: false });
+    console.log('  done: candidate actions dropdown');
+
+    // Close dropdown by pressing Escape
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+  }
+
+  // 8. Create candidate page
+  await page.goto(`${TENANT_URL}/candidates/new`);
+  try {
+    await page.getByText('Add New Candidate').waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Create candidate heading did not appear, continuing...');
+  }
+  await page.waitForTimeout(2000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/08-create-candidate.png`, fullPage: true });
+  console.log('  done: create candidate form');
+
+  // 9. Candidate detail page (click first candidate if exists)
+  await page.goto(`${TENANT_URL}/candidates`);
+  try {
+    await page.getByText('Candidates').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Candidates heading did not appear, continuing...');
+  }
+  await page.waitForTimeout(3000);
+  const firstCandidateRow = page.locator('table tbody tr').first();
+  if (await firstCandidateRow.isVisible({ timeout: 3000 }).catch(() => false)) {
+    // Click the View Details action
+    const detailActionBtn = firstCandidateRow.getByRole('button');
+    if (await detailActionBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await detailActionBtn.click();
+      await page.waitForTimeout(500);
+      const viewBtn = page.getByText('View Details');
+      if (await viewBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await viewBtn.click();
+        await page.waitForTimeout(3000);
+        await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/09-candidate-detail.png`, fullPage: true });
+        console.log('  done: candidate detail');
+
+        // 10. Status transition dialog
+        const changeStatusBtn = page.getByRole('button', { name: /change status/i });
+        if (await changeStatusBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await changeStatusBtn.click();
+          await page.waitForTimeout(1000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/10-candidate-status-dialog.png`, fullPage: false });
+          console.log('  done: status transition dialog');
+
+          // Close dialog
+          const cancelBtn = page.getByRole('button', { name: /cancel/i });
+          if (await cancelBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await cancelBtn.click();
+            await page.waitForTimeout(500);
+          }
+        }
+      }
+    }
+  }
+
   // Report errors
   if (pageErrors.length > 0) {
     console.warn(`\n  WARNING: ${pageErrors.length} page error(s) detected during tenant app screenshots`);

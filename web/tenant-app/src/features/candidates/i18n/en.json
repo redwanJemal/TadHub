@@ -1,0 +1,146 @@
+{
+  "title": "Candidates",
+  "description": "Manage your candidate pipeline and track their progress.",
+  "addCandidate": "Add Candidate",
+  "searchPlaceholder": "Search candidates...",
+  "columns": {
+    "name": "Name",
+    "nationality": "Nationality",
+    "sourceType": "Source Type",
+    "supplier": "Supplier",
+    "status": "Status",
+    "createdAt": "Created",
+    "actions": "Actions"
+  },
+  "status": {
+    "Received": "Received",
+    "UnderReview": "Under Review",
+    "Approved": "Approved",
+    "Rejected": "Rejected",
+    "ProcurementPaid": "Procurement Paid",
+    "InTransit": "In Transit",
+    "Arrived": "Arrived",
+    "Converted": "Converted",
+    "Cancelled": "Cancelled",
+    "FailedMedicalAbroad": "Failed Medical Abroad",
+    "VisaDenied": "Visa Denied",
+    "ReturnedAfterArrival": "Returned After Arrival"
+  },
+  "sourceType": {
+    "Supplier": "Supplier",
+    "Local": "Local"
+  },
+  "empty": {
+    "title": "No candidates yet",
+    "description": "Add your first candidate to start tracking the pipeline."
+  },
+  "create": {
+    "title": "Add New Candidate",
+    "backToList": "Back to Candidates",
+    "sections": {
+      "personal": "Personal Information",
+      "contact": "Contact Information",
+      "sourcing": "Sourcing",
+      "documents": "Documents",
+      "additional": "Additional Information"
+    },
+    "fullNameEn": "Full Name (English)",
+    "fullNameEnPlaceholder": "e.g., John Doe",
+    "fullNameAr": "Full Name (Arabic)",
+    "fullNameArPlaceholder": "e.g., جون دو",
+    "nationality": "Nationality",
+    "nationalityPlaceholder": "Select nationality",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "genderPlaceholder": "Select gender",
+    "genderOptions": {
+      "Male": "Male",
+      "Female": "Female"
+    },
+    "passportNumber": "Passport Number",
+    "passportNumberPlaceholder": "e.g., AB1234567",
+    "passportExpiry": "Passport Expiry",
+    "phone": "Phone",
+    "phonePlaceholder": "e.g., +966 50 123 4567",
+    "email": "Email",
+    "emailPlaceholder": "e.g., candidate@email.com",
+    "sourceType": "Source Type",
+    "sourceTypePlaceholder": "Select source type",
+    "supplier": "Supplier",
+    "supplierPlaceholder": "Select supplier",
+    "medicalStatus": "Medical Status",
+    "medicalStatusPlaceholder": "e.g., Pending, Cleared",
+    "visaStatus": "Visa Status",
+    "visaStatusPlaceholder": "e.g., Applied, Approved",
+    "expectedArrivalDate": "Expected Arrival Date",
+    "notes": "Notes",
+    "notesPlaceholder": "Internal notes about this candidate...",
+    "externalReference": "External Reference",
+    "externalReferencePlaceholder": "e.g., EXT-12345",
+    "submit": "Create Candidate",
+    "submitting": "Creating..."
+  },
+  "detail": {
+    "backToList": "Back to Candidates",
+    "personal": "Personal Information",
+    "contact": "Contact Information",
+    "sourcing": "Sourcing Information",
+    "documents": "Document Status",
+    "operational": "Operational Details",
+    "statusHistory": "Status History",
+    "fullNameEn": "Full Name (English)",
+    "fullNameAr": "Full Name (Arabic)",
+    "nationality": "Nationality",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "passportNumber": "Passport Number",
+    "passportExpiry": "Passport Expiry",
+    "phone": "Phone",
+    "email": "Email",
+    "sourceType": "Source Type",
+    "supplier": "Supplier",
+    "medicalStatus": "Medical Status",
+    "visaStatus": "Visa Status",
+    "expectedArrivalDate": "Expected Arrival Date",
+    "actualArrivalDate": "Actual Arrival Date",
+    "externalReference": "External Reference",
+    "notes": "Notes",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "notAvailable": "N/A"
+  },
+  "actions": {
+    "view": "View Details",
+    "changeStatus": "Change Status",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "transition": {
+    "title": "Change Status",
+    "description": "Transition the candidate to a new status.",
+    "targetStatus": "Target Status",
+    "targetStatusPlaceholder": "Select status",
+    "reason": "Reason",
+    "reasonPlaceholder": "Provide a reason for this status change...",
+    "reasonRequired": "Reason is required for this status.",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes...",
+    "submit": "Change Status",
+    "submitting": "Changing..."
+  },
+  "deleteDialog": {
+    "title": "Delete Candidate",
+    "description": "Are you sure you want to delete this candidate? This action cannot be undone.",
+    "confirm": "Delete"
+  },
+  "timeline": {
+    "initialStatus": "Candidate created",
+    "changedTo": "Status changed to",
+    "reason": "Reason",
+    "by": "by"
+  },
+  "filters": {
+    "status": "Status",
+    "sourceType": "Source Type"
+  }
+}

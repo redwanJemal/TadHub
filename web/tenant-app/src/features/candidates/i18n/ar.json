@@ -1,0 +1,146 @@
+{
+  "title": "المرشحون",
+  "description": "إدارة خط أنابيب المرشحين وتتبع تقدمهم.",
+  "addCandidate": "إضافة مرشح",
+  "searchPlaceholder": "البحث عن المرشحين...",
+  "columns": {
+    "name": "الاسم",
+    "nationality": "الجنسية",
+    "sourceType": "نوع المصدر",
+    "supplier": "المورد",
+    "status": "الحالة",
+    "createdAt": "تاريخ الإنشاء",
+    "actions": "الإجراءات"
+  },
+  "status": {
+    "Received": "مستلم",
+    "UnderReview": "قيد المراجعة",
+    "Approved": "معتمد",
+    "Rejected": "مرفوض",
+    "ProcurementPaid": "تم دفع الاستقدام",
+    "InTransit": "في الطريق",
+    "Arrived": "وصل",
+    "Converted": "تم التحويل",
+    "Cancelled": "ملغي",
+    "FailedMedicalAbroad": "فشل الفحص الطبي بالخارج",
+    "VisaDenied": "رفض التأشيرة",
+    "ReturnedAfterArrival": "أُعيد بعد الوصول"
+  },
+  "sourceType": {
+    "Supplier": "مورد",
+    "Local": "محلي"
+  },
+  "empty": {
+    "title": "لا يوجد مرشحون بعد",
+    "description": "أضف أول مرشح لبدء تتبع خط الأنابيب."
+  },
+  "create": {
+    "title": "إضافة مرشح جديد",
+    "backToList": "العودة إلى المرشحين",
+    "sections": {
+      "personal": "المعلومات الشخصية",
+      "contact": "معلومات الاتصال",
+      "sourcing": "المصادر",
+      "documents": "المستندات",
+      "additional": "معلومات إضافية"
+    },
+    "fullNameEn": "الاسم الكامل (إنجليزي)",
+    "fullNameEnPlaceholder": "مثال: John Doe",
+    "fullNameAr": "الاسم الكامل (عربي)",
+    "fullNameArPlaceholder": "مثال: جون دو",
+    "nationality": "الجنسية",
+    "nationalityPlaceholder": "اختر الجنسية",
+    "dateOfBirth": "تاريخ الميلاد",
+    "gender": "الجنس",
+    "genderPlaceholder": "اختر الجنس",
+    "genderOptions": {
+      "Male": "ذكر",
+      "Female": "أنثى"
+    },
+    "passportNumber": "رقم الجواز",
+    "passportNumberPlaceholder": "مثال: AB1234567",
+    "passportExpiry": "تاريخ انتهاء الجواز",
+    "phone": "الهاتف",
+    "phonePlaceholder": "مثال: 966501234567+",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "مثال: candidate@email.com",
+    "sourceType": "نوع المصدر",
+    "sourceTypePlaceholder": "اختر نوع المصدر",
+    "supplier": "المورد",
+    "supplierPlaceholder": "اختر المورد",
+    "medicalStatus": "الحالة الطبية",
+    "medicalStatusPlaceholder": "مثال: قيد الانتظار، تمت الموافقة",
+    "visaStatus": "حالة التأشيرة",
+    "visaStatusPlaceholder": "مثال: مقدمة، معتمدة",
+    "expectedArrivalDate": "تاريخ الوصول المتوقع",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات داخلية عن هذا المرشح...",
+    "externalReference": "المرجع الخارجي",
+    "externalReferencePlaceholder": "مثال: EXT-12345",
+    "submit": "إنشاء مرشح",
+    "submitting": "جاري الإنشاء..."
+  },
+  "detail": {
+    "backToList": "العودة إلى المرشحين",
+    "personal": "المعلومات الشخصية",
+    "contact": "معلومات الاتصال",
+    "sourcing": "معلومات المصادر",
+    "documents": "حالة المستندات",
+    "operational": "التفاصيل التشغيلية",
+    "statusHistory": "سجل الحالة",
+    "fullNameEn": "الاسم الكامل (إنجليزي)",
+    "fullNameAr": "الاسم الكامل (عربي)",
+    "nationality": "الجنسية",
+    "dateOfBirth": "تاريخ الميلاد",
+    "gender": "الجنس",
+    "passportNumber": "رقم الجواز",
+    "passportExpiry": "تاريخ انتهاء الجواز",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "sourceType": "نوع المصدر",
+    "supplier": "المورد",
+    "medicalStatus": "الحالة الطبية",
+    "visaStatus": "حالة التأشيرة",
+    "expectedArrivalDate": "تاريخ الوصول المتوقع",
+    "actualArrivalDate": "تاريخ الوصول الفعلي",
+    "externalReference": "المرجع الخارجي",
+    "notes": "ملاحظات",
+    "createdAt": "تاريخ الإنشاء",
+    "updatedAt": "تاريخ التحديث",
+    "notAvailable": "غير متوفر"
+  },
+  "actions": {
+    "view": "عرض التفاصيل",
+    "changeStatus": "تغيير الحالة",
+    "edit": "تعديل",
+    "delete": "حذف"
+  },
+  "transition": {
+    "title": "تغيير الحالة",
+    "description": "تحويل المرشح إلى حالة جديدة.",
+    "targetStatus": "الحالة المستهدفة",
+    "targetStatusPlaceholder": "اختر الحالة",
+    "reason": "السبب",
+    "reasonPlaceholder": "قدم سبباً لتغيير الحالة...",
+    "reasonRequired": "السبب مطلوب لهذه الحالة.",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات اختيارية...",
+    "submit": "تغيير الحالة",
+    "submitting": "جاري التغيير..."
+  },
+  "deleteDialog": {
+    "title": "حذف المرشح",
+    "description": "هل أنت متأكد من حذف هذا المرشح؟ لا يمكن التراجع عن هذا الإجراء.",
+    "confirm": "حذف"
+  },
+  "timeline": {
+    "initialStatus": "تم إنشاء المرشح",
+    "changedTo": "تم تغيير الحالة إلى",
+    "reason": "السبب",
+    "by": "بواسطة"
+  },
+  "filters": {
+    "status": "الحالة",
+    "sourceType": "نوع المصدر"
+  }
+}

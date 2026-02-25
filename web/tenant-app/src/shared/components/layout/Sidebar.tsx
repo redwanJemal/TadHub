@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Users,
   Truck,
+  UserSearch,
   X,
   LogOut,
 } from "lucide-react";
@@ -15,6 +16,7 @@ const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
   { path: "/team", icon: Users, labelKey: "nav.team" },
   { path: "/suppliers", icon: Truck, labelKey: "nav.suppliers" },
+  { path: "/candidates", icon: UserSearch, labelKey: "nav.candidates" },
 ];
 
 interface SidebarProps {
