@@ -11,6 +11,8 @@ import {
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import { CountrySelect } from '@/features/reference-data';
+import type { CountryRefDto } from '@/features/reference-data';
 import { useCreateAndLinkSupplier } from '../hooks';
 
 interface AddSupplierSheetProps {
@@ -21,7 +23,8 @@ interface AddSupplierSheetProps {
 const initialForm = {
   nameEn: '',
   nameAr: '',
-  country: '',
+  countryId: '',
+  countryCode: '',
   city: '',
   licenseNumber: '',
   phone: '',
@@ -38,14 +41,18 @@ export function AddSupplierSheet({ open, onOpenChange }: AddSupplierSheetProps) 
   const update = (field: string, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
+  const handleCountryChange = (id: string, country?: CountryRefDto) => {
+    setForm((prev) => ({ ...prev, countryId: id, countryCode: country?.code ?? '' }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.nameEn.trim() || !form.country.trim()) return;
+    if (!form.nameEn.trim() || !form.countryCode) return;
 
     await createAndLink.mutateAsync({
       nameEn: form.nameEn.trim(),
       nameAr: form.nameAr.trim() || undefined,
-      country: form.country.trim(),
+      country: form.countryCode,
       city: form.city.trim() || undefined,
       licenseNumber: form.licenseNumber.trim() || undefined,
       phone: form.phone.trim() || undefined,
@@ -100,13 +107,13 @@ export function AddSupplierSheet({ open, onOpenChange }: AddSupplierSheetProps) 
                 <Label htmlFor="country">
                   {t('add.country')} <span className="text-destructive">*</span>
                 </Label>
-                <Input
+                <CountrySelect
                   id="country"
+                  value={form.countryId}
+                  onChange={handleCountryChange}
                   placeholder={t('add.countryPlaceholder')}
-                  value={form.country}
-                  onChange={(e) => update('country', e.target.value)}
-                  maxLength={10}
-                  required
+                  showFlag
+                  showCode
                 />
               </div>
 
@@ -193,7 +200,7 @@ export function AddSupplierSheet({ open, onOpenChange }: AddSupplierSheetProps) 
             </Button>
             <Button
               type="submit"
-              disabled={createAndLink.isPending || !form.nameEn.trim() || !form.country.trim()}
+              disabled={createAndLink.isPending || !form.nameEn.trim() || !form.countryCode}
             >
               {createAndLink.isPending ? t('add.submitting') : t('add.submit')}
             </Button>

@@ -26,10 +26,10 @@ import {
   Ban,
   RotateCcw,
   Trash2,
-  Globe,
   Mail,
   Phone,
 } from 'lucide-react';
+import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
 import { useSuppliers, useUnlinkSupplier, useUpdateTenantSupplier } from '../hooks';
 import { AddSupplierSheet } from '../components/AddSupplierSheet';
 import type { TenantSupplier } from '../types';
@@ -62,8 +62,15 @@ export function SuppliersPage() {
   }), [page, pageSize, search]);
 
   const { data, isLoading, refetch } = useSuppliers(queryParams);
+  const { data: countries } = useCountryRefs();
   const unlinkSupplier = useUnlinkSupplier();
   const updateSupplier = useUpdateTenantSupplier();
+
+  const getCountryName = (code?: string) => {
+    if (!code) return '—';
+    const country = countries?.find((c) => c.code === code);
+    return country?.nameEn ?? code;
+  };
 
   const handleRemove = async () => {
     if (!removeTarget) return;
@@ -95,8 +102,10 @@ export function SuppliersPage() {
       header: t('columns.country'),
       cell: (row) => (
         <div className="flex items-center gap-1.5">
-          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-          <span>{row.supplier?.country ?? '—'}</span>
+          {row.supplier?.country && (
+            <span className="text-lg leading-none">{getFlagEmoji(row.supplier.country)}</span>
+          )}
+          <span>{getCountryName(row.supplier?.country)}</span>
           {row.supplier?.city && (
             <span className="text-muted-foreground">/ {row.supplier.city}</span>
           )}
