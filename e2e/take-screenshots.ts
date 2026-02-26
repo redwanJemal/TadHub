@@ -256,6 +256,146 @@ async function main() {
     }
   }
 
+  // ========== WORKERS ==========
+  console.log('\n  --- Workers ---');
+
+  // 20. Workers list page
+  await page.goto(`${TENANT_URL}/workers`);
+  try {
+    await page.getByText('Workers').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Workers heading did not appear, continuing...');
+  }
+  // Wait for table data to load
+  try {
+    await page.locator('table tbody tr').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  table data did not appear, continuing...');
+  }
+  await page.waitForTimeout(3000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/20-workers-list.png`, fullPage: false });
+  console.log('  done: workers list');
+
+  // 21. Workers list - row actions dropdown (if data exists)
+  const workerActionBtn = page.locator('table tbody tr').first().getByRole('button');
+  if (await workerActionBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await workerActionBtn.click();
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/21-worker-actions-dropdown.png`, fullPage: false });
+    console.log('  done: worker actions dropdown');
+
+    // Close dropdown
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+  }
+
+  // --- Navigate to first worker detail ---
+  let workerDetailUrl: string | null = null;
+
+  await page.goto(`${TENANT_URL}/workers`);
+  try {
+    await page.getByText('Workers').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Workers heading did not appear, continuing...');
+  }
+  await page.waitForTimeout(3000);
+
+  const firstWorkerRow = page.locator('table tbody tr').first();
+  if (await firstWorkerRow.isVisible({ timeout: 3000 }).catch(() => false)) {
+    // Click the actions button on first row
+    const workerRowActionBtn = firstWorkerRow.getByRole('button');
+    if (await workerRowActionBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await workerRowActionBtn.click();
+      await page.waitForTimeout(500);
+      const viewWorkerBtn = page.getByText('View', { exact: true });
+      if (await viewWorkerBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await viewWorkerBtn.click();
+        await page.waitForTimeout(3000);
+        workerDetailUrl = page.url();
+
+        // 22. Worker detail - Overview tab
+        await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/22-worker-detail-overview.png`, fullPage: true });
+        console.log('  done: worker detail (Overview tab)');
+
+        // 23. Worker detail - Professional tab
+        const workerProfTab = page.getByRole('tab', { name: /professional/i });
+        if (await workerProfTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await workerProfTab.click();
+          await page.waitForTimeout(2000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/23-worker-detail-professional.png`, fullPage: true });
+          console.log('  done: worker detail (Professional tab)');
+        }
+
+        // 24. Worker detail - Documents tab
+        const workerDocsTab = page.getByRole('tab', { name: /documents/i });
+        if (await workerDocsTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await workerDocsTab.click();
+          await page.waitForTimeout(2000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/24-worker-detail-documents.png`, fullPage: true });
+          console.log('  done: worker detail (Documents tab)');
+        }
+
+        // 25. Worker detail - Status History tab
+        const workerHistoryTab = page.getByRole('tab', { name: /status history/i });
+        if (await workerHistoryTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await workerHistoryTab.click();
+          await page.waitForTimeout(2000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/25-worker-detail-status-history.png`, fullPage: true });
+          console.log('  done: worker detail (Status History tab)');
+        }
+
+        // 26. Worker status transition dialog
+        const workerOverviewTab = page.getByRole('tab', { name: /overview/i });
+        if (await workerOverviewTab.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await workerOverviewTab.click();
+          await page.waitForTimeout(1000);
+        }
+        const changeWorkerStatusBtn = page.getByRole('button', { name: /change status/i });
+        if (await changeWorkerStatusBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await changeWorkerStatusBtn.click();
+          await page.waitForTimeout(1000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/26-worker-status-dialog.png`, fullPage: false });
+          console.log('  done: worker status transition dialog');
+
+          // Close dialog
+          const cancelStatusBtn = page.getByRole('button', { name: /cancel/i });
+          if (await cancelStatusBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await cancelStatusBtn.click();
+            await page.waitForTimeout(500);
+          }
+        }
+
+        // 27. Worker delete confirmation dialog
+        const deleteWorkerBtn = page.getByRole('button', { name: /delete/i });
+        if (await deleteWorkerBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await deleteWorkerBtn.click();
+          await page.waitForTimeout(1000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/27-worker-delete-dialog.png`, fullPage: false });
+          console.log('  done: worker delete confirmation dialog');
+
+          // Close dialog
+          const cancelDeleteBtn = page.getByRole('button', { name: /cancel/i });
+          if (await cancelDeleteBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await cancelDeleteBtn.click();
+            await page.waitForTimeout(500);
+          }
+        }
+      }
+    }
+  }
+
+  // 28. Worker CV page (if we have a worker detail URL)
+  if (workerDetailUrl) {
+    const workerMatch = workerDetailUrl.match(/\/workers\/([^/]+)/);
+    if (workerMatch) {
+      const workerId = workerMatch[1];
+      await page.goto(`${TENANT_URL}/workers/${workerId}/cv`);
+      await page.waitForTimeout(3000);
+      await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/28-worker-cv.png`, fullPage: true });
+      console.log('  done: worker CV page');
+    }
+  }
+
   // Report errors
   if (pageErrors.length > 0) {
     console.warn(`\n  WARNING: ${pageErrors.length} page error(s) detected during tenant app screenshots`);

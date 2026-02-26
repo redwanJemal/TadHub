@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Candidate.Contracts;
@@ -8,6 +9,7 @@ using Supplier.Contracts;
 using TadHub.Infrastructure.Api;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Events;
 using TadHub.SharedKernel.Interfaces;
 using TadHub.SharedKernel.Models;
 
@@ -19,6 +21,7 @@ namespace Candidate.Core.Services;
 public class CandidateService : ICandidateService
 {
     private readonly AppDbContext _db;
+    private readonly IPublishEndpoint _publisher;
     private readonly ISupplierService _supplierService;
     private readonly IClock _clock;
     private readonly ICurrentUser _currentUser;
@@ -54,12 +57,14 @@ public class CandidateService : ICandidateService
 
     public CandidateService(
         AppDbContext db,
+        IPublishEndpoint publisher,
         ISupplierService supplierService,
         IClock clock,
         ICurrentUser currentUser,
         ILogger<CandidateService> logger)
     {
         _db = db;
+        _publisher = publisher;
         _supplierService = supplierService;
         _clock = clock;
         _currentUser = currentUser;
@@ -414,6 +419,61 @@ public class CandidateService : ICandidateService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation("Transitioned candidate {CandidateId} from {FromStatus} to {ToStatus}", id, fromStatus, targetStatus);
+
+        // Publish CandidateConvertedEvent when status transitions to Converted
+        if (targetStatus == CandidateStatus.Converted)
+        {
+            var full = await _db.Set<Entities.Candidate>()
+                .IgnoreQueryFilters()
+                .AsNoTracking()
+                .Include(x => x.Skills)
+                .Include(x => x.Languages)
+                .FirstAsync(x => x.Id == id, ct);
+
+            var snapshot = new CandidateSnapshotDto
+            {
+                FullNameEn = full.FullNameEn,
+                FullNameAr = full.FullNameAr,
+                Nationality = full.Nationality,
+                DateOfBirth = full.DateOfBirth,
+                Gender = full.Gender,
+                PassportNumber = full.PassportNumber,
+                PassportExpiry = full.PassportExpiry,
+                Phone = full.Phone,
+                Email = full.Email,
+                Religion = full.Religion,
+                MaritalStatus = full.MaritalStatus,
+                EducationLevel = full.EducationLevel,
+                JobCategoryId = full.JobCategoryId,
+                ExperienceYears = full.ExperienceYears,
+                MonthlySalary = full.MonthlySalary,
+                PhotoUrl = full.PhotoUrl,
+                VideoUrl = full.VideoUrl,
+                PassportDocumentUrl = full.PassportDocumentUrl,
+                SourceType = full.SourceType.ToString(),
+                TenantSupplierId = full.TenantSupplierId,
+                Skills = full.Skills.Select(s => new CandidateSnapshotSkill
+                {
+                    SkillName = s.SkillName,
+                    ProficiencyLevel = s.ProficiencyLevel.ToString(),
+                }).ToList(),
+                Languages = full.Languages.Select(l => new CandidateSnapshotLanguage
+                {
+                    Language = l.Language,
+                    ProficiencyLevel = l.ProficiencyLevel.ToString(),
+                }).ToList(),
+            };
+
+            await _publisher.Publish(new CandidateConvertedEvent
+            {
+                TenantId = tenantId,
+                CandidateId = id,
+                CandidateData = snapshot,
+                OccurredAt = now,
+            }, ct);
+
+            _logger.LogInformation("Published CandidateConvertedEvent for candidate {CandidateId}", id);
+        }
 
         return Result<CandidateDto>.Success(MapToDto(candidate, includeStatusHistory: false));
     }

@@ -22,6 +22,7 @@ using Tenancy.Core;
 using ReferenceData.Core;
 using Supplier.Core;
 using Candidate.Core;
+using Worker.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -151,6 +152,9 @@ builder.Services.AddReferenceDataModule();
 
 // Candidate module
 builder.Services.AddCandidateModule();
+
+// Worker module
+builder.Services.AddWorkerModule();
 
 var app = builder.Build();
 

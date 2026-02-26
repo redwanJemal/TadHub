@@ -1,0 +1,160 @@
+{
+  "title": "العمالة",
+  "description": "مخزون القوى العاملة — يتم إنشاء العمال تلقائياً عند تحويل المرشحين.",
+  "searchPlaceholder": "بحث بالاسم أو الرمز أو جواز السفر...",
+  "columns": {
+    "workerCode": "الرمز",
+    "name": "الاسم",
+    "nationality": "الجنسية",
+    "sourceType": "المصدر",
+    "supplier": "المورد",
+    "jobCategory": "فئة العمل",
+    "status": "الحالة",
+    "activatedAt": "تاريخ التفعيل",
+    "createdAt": "تاريخ الإنشاء",
+    "actions": "الإجراءات"
+  },
+  "status": {
+    "Active": "نشط",
+    "Deployed": "منتشر",
+    "OnLeave": "في إجازة",
+    "Terminated": "منتهي"
+  },
+  "sourceType": {
+    "Supplier": "مورد",
+    "Local": "محلي"
+  },
+  "filters": {
+    "status": "الحالة",
+    "sourceType": "نوع المصدر"
+  },
+  "actions": {
+    "view": "عرض",
+    "edit": "تعديل",
+    "changeStatus": "تغيير الحالة",
+    "delete": "حذف",
+    "viewCv": "عرض السيرة الذاتية"
+  },
+  "empty": {
+    "title": "لا يوجد عمال بعد",
+    "description": "يتم إنشاء العمال تلقائياً عند تحويل المرشحين."
+  },
+  "deleteDialog": {
+    "title": "حذف العامل",
+    "description": "هل أنت متأكد من حذف هذا العامل؟ لا يمكن التراجع عن هذا الإجراء.",
+    "confirm": "حذف"
+  },
+  "transition": {
+    "title": "تغيير حالة العامل",
+    "description": "اختر حالة جديدة لهذا العامل.",
+    "targetStatus": "الحالة المستهدفة",
+    "targetStatusPlaceholder": "اختر الحالة...",
+    "reason": "السبب",
+    "reasonPlaceholder": "أدخل سبب تغيير الحالة...",
+    "reasonRequired": "السبب مطلوب لهذا التحويل",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات اختيارية...",
+    "submit": "تغيير الحالة",
+    "submitting": "جاري التغيير..."
+  },
+  "detail": {
+    "backToList": "العودة إلى العمالة",
+    "personal": "المعلومات الشخصية",
+    "contact": "التواصل",
+    "sourcing": "المصدر",
+    "media": "الوسائط والمستندات",
+    "professionalProfile": "الملف المهني",
+    "financial": "المالي",
+    "skills": "المهارات",
+    "languages": "اللغات",
+    "documents": "المستندات",
+    "operational": "التشغيل",
+    "statusHistory": "سجل الحالة",
+    "notAvailable": "لا يتوفر سجل حالة.",
+    "fullNameEn": "الاسم الكامل (EN)",
+    "fullNameAr": "الاسم الكامل (AR)",
+    "workerCode": "رمز العامل",
+    "candidateId": "معرّف المرشح",
+    "nationality": "الجنسية",
+    "dateOfBirth": "تاريخ الميلاد",
+    "gender": "الجنس",
+    "passportNumber": "رقم جواز السفر",
+    "passportExpiry": "انتهاء جواز السفر",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "sourceType": "نوع المصدر",
+    "supplier": "المورد",
+    "religion": "الديانة",
+    "maritalStatus": "الحالة الاجتماعية",
+    "educationLevel": "المستوى التعليمي",
+    "jobCategory": "فئة العمل",
+    "experienceYears": "سنوات الخبرة",
+    "monthlySalary": "الراتب الشهري",
+    "activatedAt": "تاريخ التفعيل",
+    "terminatedAt": "تاريخ الإنهاء",
+    "terminationReason": "سبب الإنهاء",
+    "notes": "ملاحظات",
+    "photo": "الصورة",
+    "video": "الفيديو",
+    "passportDocument": "مستند جواز السفر",
+    "viewPassportDocument": "عرض المستند",
+    "createdAt": "تاريخ الإنشاء",
+    "updatedAt": "تاريخ التحديث"
+  },
+  "tabs": {
+    "overview": "نظرة عامة",
+    "professional": "المهني",
+    "documents": "المستندات",
+    "statusHistory": "سجل الحالة"
+  },
+  "cv": {
+    "title": "السيرة الذاتية",
+    "backToDetail": "العودة للعامل",
+    "personal": "المعلومات الشخصية",
+    "professional": "الملف المهني",
+    "skills": "المهارات",
+    "languages": "اللغات",
+    "print": "طباعة السيرة"
+  },
+  "professional": {
+    "religion": {
+      "Islam": "الإسلام",
+      "Christianity": "المسيحية",
+      "Hinduism": "الهندوسية",
+      "Buddhism": "البوذية",
+      "Other": "أخرى"
+    },
+    "maritalStatus": {
+      "Single": "أعزب",
+      "Married": "متزوج",
+      "Divorced": "مطلق",
+      "Widowed": "أرمل"
+    },
+    "educationLevel": {
+      "None": "بدون",
+      "Primary": "ابتدائي",
+      "Secondary": "ثانوي",
+      "HighSchool": "ثانوية عامة",
+      "Diploma": "دبلوم",
+      "Bachelor": "بكالوريوس",
+      "Master": "ماجستير",
+      "PhD": "دكتوراه"
+    }
+  },
+  "skills": {
+    "proficiency": {
+      "Basic": "مبتدئ",
+      "Intermediate": "متوسط",
+      "Advanced": "متقدم",
+      "Expert": "خبير"
+    }
+  },
+  "languages": {
+    "proficiency": {
+      "Basic": "مبتدئ",
+      "Conversational": "محادثة",
+      "Fluent": "بطلاقة",
+      "Native": "لغة أم"
+    }
+  }
+}

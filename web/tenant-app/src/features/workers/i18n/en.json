@@ -1,0 +1,160 @@
+{
+  "title": "Workers",
+  "description": "Active workforce inventory — workers are auto-created when candidates are converted.",
+  "searchPlaceholder": "Search by name, code, or passport...",
+  "columns": {
+    "workerCode": "Code",
+    "name": "Name",
+    "nationality": "Nationality",
+    "sourceType": "Source",
+    "supplier": "Supplier",
+    "jobCategory": "Job Category",
+    "status": "Status",
+    "activatedAt": "Activated",
+    "createdAt": "Created",
+    "actions": "Actions"
+  },
+  "status": {
+    "Active": "Active",
+    "Deployed": "Deployed",
+    "OnLeave": "On Leave",
+    "Terminated": "Terminated"
+  },
+  "sourceType": {
+    "Supplier": "Supplier",
+    "Local": "Local"
+  },
+  "filters": {
+    "status": "Status",
+    "sourceType": "Source Type"
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "changeStatus": "Change Status",
+    "delete": "Delete",
+    "viewCv": "View CV"
+  },
+  "empty": {
+    "title": "No workers yet",
+    "description": "Workers are automatically created when candidates are converted."
+  },
+  "deleteDialog": {
+    "title": "Delete Worker",
+    "description": "Are you sure you want to delete this worker? This action cannot be undone.",
+    "confirm": "Delete"
+  },
+  "transition": {
+    "title": "Change Worker Status",
+    "description": "Select a new status for this worker.",
+    "targetStatus": "Target Status",
+    "targetStatusPlaceholder": "Select status...",
+    "reason": "Reason",
+    "reasonPlaceholder": "Enter reason for status change...",
+    "reasonRequired": "A reason is required for this status transition",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes...",
+    "submit": "Change Status",
+    "submitting": "Changing..."
+  },
+  "detail": {
+    "backToList": "Back to Workers",
+    "personal": "Personal Information",
+    "contact": "Contact",
+    "sourcing": "Source",
+    "media": "Media & Documents",
+    "professionalProfile": "Professional Profile",
+    "financial": "Financial",
+    "skills": "Skills",
+    "languages": "Languages",
+    "documents": "Documents",
+    "operational": "Operational",
+    "statusHistory": "Status History",
+    "notAvailable": "No status history available.",
+    "fullNameEn": "Full Name (EN)",
+    "fullNameAr": "Full Name (AR)",
+    "workerCode": "Worker Code",
+    "candidateId": "Candidate ID",
+    "nationality": "Nationality",
+    "dateOfBirth": "Date of Birth",
+    "gender": "Gender",
+    "passportNumber": "Passport Number",
+    "passportExpiry": "Passport Expiry",
+    "phone": "Phone",
+    "email": "Email",
+    "sourceType": "Source Type",
+    "supplier": "Supplier",
+    "religion": "Religion",
+    "maritalStatus": "Marital Status",
+    "educationLevel": "Education Level",
+    "jobCategory": "Job Category",
+    "experienceYears": "Experience (Years)",
+    "monthlySalary": "Monthly Salary",
+    "activatedAt": "Activated At",
+    "terminatedAt": "Terminated At",
+    "terminationReason": "Termination Reason",
+    "notes": "Notes",
+    "photo": "Photo",
+    "video": "Video",
+    "passportDocument": "Passport Document",
+    "viewPassportDocument": "View Document",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "professional": "Professional",
+    "documents": "Documents",
+    "statusHistory": "Status History"
+  },
+  "cv": {
+    "title": "Worker CV",
+    "backToDetail": "Back to Worker",
+    "personal": "Personal Information",
+    "professional": "Professional Profile",
+    "skills": "Skills",
+    "languages": "Languages",
+    "print": "Print CV"
+  },
+  "professional": {
+    "religion": {
+      "Islam": "Islam",
+      "Christianity": "Christianity",
+      "Hinduism": "Hinduism",
+      "Buddhism": "Buddhism",
+      "Other": "Other"
+    },
+    "maritalStatus": {
+      "Single": "Single",
+      "Married": "Married",
+      "Divorced": "Divorced",
+      "Widowed": "Widowed"
+    },
+    "educationLevel": {
+      "None": "None",
+      "Primary": "Primary",
+      "Secondary": "Secondary",
+      "HighSchool": "High School",
+      "Diploma": "Diploma",
+      "Bachelor": "Bachelor",
+      "Master": "Master",
+      "PhD": "PhD"
+    }
+  },
+  "skills": {
+    "proficiency": {
+      "Basic": "Basic",
+      "Intermediate": "Intermediate",
+      "Advanced": "Advanced",
+      "Expert": "Expert"
+    }
+  },
+  "languages": {
+    "proficiency": {
+      "Basic": "Basic",
+      "Conversational": "Conversational",
+      "Fluent": "Fluent",
+      "Native": "Native"
+    }
+  }
+}

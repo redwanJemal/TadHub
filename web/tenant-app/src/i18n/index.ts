@@ -15,6 +15,8 @@ import suppliersEn from '../features/suppliers/i18n/en.json';
 import suppliersAr from '../features/suppliers/i18n/ar.json';
 import candidatesEn from '../features/candidates/i18n/en.json';
 import candidatesAr from '../features/candidates/i18n/ar.json';
+import workersEn from '../features/workers/i18n/en.json';
+import workersAr from '../features/workers/i18n/ar.json';
 
 const resources = {
   en: {
@@ -23,6 +25,7 @@ const resources = {
     team: teamEn,
     suppliers: suppliersEn,
     candidates: candidatesEn,
+    workers: workersEn,
   },
   ar: {
     common: commonAr,
@@ -30,6 +33,7 @@ const resources = {
     team: teamAr,
     suppliers: suppliersAr,
     candidates: candidatesAr,
+    workers: workersAr,
   },
 };
 
@@ -40,7 +44,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'team', 'suppliers', 'candidates'],
+    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers'],
     interpolation: {
       escapeValue: false,
     },

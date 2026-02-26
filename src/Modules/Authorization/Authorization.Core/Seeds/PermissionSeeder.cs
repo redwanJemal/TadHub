@@ -122,7 +122,8 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "workers.view", Description = "View workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
             new() { Id = Guid.NewGuid(), Name = "workers.create", Description = "Create workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
             new() { Id = Guid.NewGuid(), Name = "workers.edit", Description = "Edit workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
-            new() { Id = Guid.NewGuid(), Name = "workers.delete", Description = "Delete workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "workers.manage_status", Description = "Transition worker status", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "workers.delete", Description = "Delete workers", Module = "workers", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
 
             // Contracts module (Tenant)
             new() { Id = Guid.NewGuid(), Name = "contracts.view", Description = "View contracts", Module = "contracts", Scope = PermissionScope.Tenant, DisplayOrder = 1 },

@@ -8,6 +8,7 @@ import {
   Users,
   Truck,
   UserSearch,
+  HardHat,
   X,
   LogOut,
 } from "lucide-react";
@@ -17,6 +18,7 @@ const navItems = [
   { path: "/team", icon: Users, labelKey: "nav.team" },
   { path: "/suppliers", icon: Truck, labelKey: "nav.suppliers" },
   { path: "/candidates", icon: UserSearch, labelKey: "nav.candidates" },
+  { path: "/workers", icon: HardHat, labelKey: "nav.workers" },
 ];
 
 interface SidebarProps {
