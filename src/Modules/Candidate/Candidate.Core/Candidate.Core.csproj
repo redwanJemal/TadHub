@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Candidate.Contracts\Candidate.Contracts.csproj" />
-    <ProjectReference Include="..\..\Supplier\Supplier.Core\Supplier.Core.csproj" />
+    <ProjectReference Include="..\..\Supplier\Supplier.Contracts\Supplier.Contracts.csproj" />
     <ProjectReference Include="..\..\..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
     <ProjectReference Include="..\..\..\TadHub.Infrastructure\TadHub.Infrastructure.csproj" />
   </ItemGroup>

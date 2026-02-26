@@ -96,13 +96,22 @@ export function CandidatesPage() {
       key: 'name',
       header: t('columns.name'),
       cell: (row) => (
-        <div className="min-w-0">
-          <p className="font-medium truncate">{row.fullNameEn}</p>
-          {row.fullNameAr && (
-            <p className="text-xs text-muted-foreground truncate" dir="rtl">
-              {row.fullNameAr}
-            </p>
+        <div className="flex items-center gap-2 min-w-0">
+          {row.photoUrl ? (
+            <img src={row.photoUrl} alt="" className="h-8 w-8 rounded-full object-cover border shrink-0" />
+          ) : (
+            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium shrink-0">
+              {row.fullNameEn.charAt(0)}
+            </div>
           )}
+          <div className="min-w-0">
+            <p className="font-medium truncate">{row.fullNameEn}</p>
+            {row.fullNameAr && (
+              <p className="text-xs text-muted-foreground truncate" dir="rtl">
+                {row.fullNameAr}
+              </p>
+            )}
+          </div>
         </div>
       ),
     },
@@ -126,7 +135,12 @@ export function CandidatesPage() {
     {
       key: 'supplier',
       header: t('columns.supplier'),
-      cell: (row) => row.tenantSupplierName ?? '—',
+      cell: (row) => row.supplier?.name ?? '—',
+    },
+    {
+      key: 'jobCategory',
+      header: t('columns.jobCategory'),
+      cell: (row) => row.jobCategoryName ?? '—',
     },
     {
       key: 'status',

@@ -40,38 +40,43 @@ public sealed class ApiResponseWrappingMiddleware
 
         // Capture the original response body
         var originalBodyStream = context.Response.Body;
-
-        using var memoryStream = new MemoryStream();
+        var memoryStream = new MemoryStream();
         context.Response.Body = memoryStream;
 
-        await _next(context);
-
-        // Reset position to read the response
-        memoryStream.Position = 0;
-
-        // Skip wrapping for non-success responses, streaming, or already-wrapped responses
-        if (ShouldSkipWrapping(context))
+        try
         {
-            await memoryStream.CopyToAsync(originalBodyStream);
-            context.Response.Body = originalBodyStream;
-            return;
-        }
+            await _next(context);
 
-        // Read and potentially wrap the response
-        var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
-        
-        if (string.IsNullOrWhiteSpace(responseBody))
+            // Reset position to read the response
+            memoryStream.Position = 0;
+
+            // Skip wrapping for non-success responses, streaming, or already-wrapped responses
+            if (ShouldSkipWrapping(context))
+            {
+                await memoryStream.CopyToAsync(originalBodyStream);
+                return;
+            }
+
+            // Read and potentially wrap the response
+            var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
+
+            if (string.IsNullOrWhiteSpace(responseBody))
+            {
+                return;
+            }
+
+            var wrappedResponse = WrapResponse(responseBody, context);
+
+            context.Response.ContentType = "application/json";
+            await originalBodyStream.WriteAsync(System.Text.Encoding.UTF8.GetBytes(wrappedResponse));
+        }
+        finally
         {
+            // Always restore the original body stream so upstream middleware
+            // (ExceptionHandler, CORS) can write to it on error paths
             context.Response.Body = originalBodyStream;
-            return;
+            await memoryStream.DisposeAsync();
         }
-
-        var wrappedResponse = WrapResponse(responseBody, context);
-        
-        context.Response.Body = originalBodyStream;
-        context.Response.ContentType = "application/json";
-        
-        await context.Response.WriteAsync(wrappedResponse);
     }
 
     private static bool ShouldSkipWrapping(HttpContext context)

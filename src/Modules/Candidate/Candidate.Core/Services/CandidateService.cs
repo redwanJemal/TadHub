@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Candidate.Contracts;
 using Candidate.Contracts.DTOs;
 using Candidate.Core.Entities;
-using Supplier.Core.Entities;
+using Supplier.Contracts;
 using TadHub.Infrastructure.Api;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Api;
@@ -19,6 +19,7 @@ namespace Candidate.Core.Services;
 public class CandidateService : ICandidateService
 {
     private readonly AppDbContext _db;
+    private readonly ISupplierService _supplierService;
     private readonly IClock _clock;
     private readonly ICurrentUser _currentUser;
     private readonly ILogger<CandidateService> _logger;
@@ -34,6 +35,10 @@ public class CandidateService : ICandidateService
         ["createdBy"] = x => x.CreatedBy!,
         ["passportNumber"] = x => x.PassportNumber!,
         ["externalReference"] = x => x.ExternalReference!,
+        ["jobCategoryId"] = x => x.JobCategoryId!,
+        ["religion"] = x => x.Religion!,
+        ["maritalStatus"] = x => x.MaritalStatus!,
+        ["educationLevel"] = x => x.EducationLevel!,
     };
 
     private static readonly Dictionary<string, Expression<Func<Entities.Candidate, object>>> SortableFields = new()
@@ -49,11 +54,13 @@ public class CandidateService : ICandidateService
 
     public CandidateService(
         AppDbContext db,
+        ISupplierService supplierService,
         IClock clock,
         ICurrentUser currentUser,
         ILogger<CandidateService> logger)
     {
         _db = db;
+        _supplierService = supplierService;
         _clock = clock;
         _currentUser = currentUser;
         _logger = logger;
@@ -98,6 +105,8 @@ public class CandidateService : ICandidateService
             query = query.Include(x => x.StatusHistory.OrderByDescending(h => h.ChangedAt));
         }
 
+        query = query.Include(x => x.Skills).Include(x => x.Languages);
+
         var candidate = await query.FirstOrDefaultAsync(x => x.Id == id, ct);
 
         if (candidate is null)
@@ -118,11 +127,9 @@ public class CandidateService : ICandidateService
             if (request.TenantSupplierId is null)
                 return Result<CandidateDto>.ValidationError("TenantSupplierId is required for supplier-sourced candidates");
 
-            var supplierExists = await _db.Set<TenantSupplier>()
-                .IgnoreQueryFilters()
-                .AnyAsync(x => x.Id == request.TenantSupplierId && x.TenantId == tenantId, ct);
+            var supplierResult = await _supplierService.GetTenantSupplierByIdAsync(tenantId, request.TenantSupplierId.Value, ct: ct);
 
-            if (!supplierExists)
+            if (!supplierResult.IsSuccess)
                 return Result<CandidateDto>.NotFound($"TenantSupplier with ID {request.TenantSupplierId} not found in this tenant");
         }
         else
@@ -159,6 +166,12 @@ public class CandidateService : ICandidateService
             TenantSupplierId = request.TenantSupplierId,
             Status = CandidateStatus.Received,
             StatusChangedAt = now,
+            Religion = request.Religion,
+            MaritalStatus = request.MaritalStatus,
+            EducationLevel = request.EducationLevel,
+            JobCategoryId = request.JobCategoryId,
+            ExperienceYears = request.ExperienceYears,
+            MonthlySalary = request.MonthlySalary,
             PassportExpiry = request.PassportExpiry,
             MedicalStatus = request.MedicalStatus,
             VisaStatus = request.VisaStatus,
@@ -166,6 +179,44 @@ public class CandidateService : ICandidateService
             Notes = request.Notes,
             ExternalReference = request.ExternalReference,
         };
+
+        // Create child skill entities
+        if (request.Skills is { Count: > 0 })
+        {
+            foreach (var skill in request.Skills)
+            {
+                if (!Enum.TryParse<SkillProficiency>(skill.ProficiencyLevel, ignoreCase: true, out var proficiency))
+                    proficiency = SkillProficiency.Basic;
+
+                candidate.Skills.Add(new CandidateSkill
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    CandidateId = candidate.Id,
+                    SkillName = skill.SkillName,
+                    ProficiencyLevel = proficiency,
+                });
+            }
+        }
+
+        // Create child language entities
+        if (request.Languages is { Count: > 0 })
+        {
+            foreach (var lang in request.Languages)
+            {
+                if (!Enum.TryParse<LanguageProficiency>(lang.ProficiencyLevel, ignoreCase: true, out var proficiency))
+                    proficiency = LanguageProficiency.Basic;
+
+                candidate.Languages.Add(new CandidateLanguage
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    CandidateId = candidate.Id,
+                    Language = lang.Language,
+                    ProficiencyLevel = proficiency,
+                });
+            }
+        }
 
         // Initial status history entry
         var history = new CandidateStatusHistory
@@ -190,9 +241,11 @@ public class CandidateService : ICandidateService
 
     public async Task<Result<CandidateDto>> UpdateAsync(Guid tenantId, Guid id, UpdateCandidateRequest request, CancellationToken ct = default)
     {
-        var candidate = await _db.Set<Entities.Candidate>()
+        var query = _db.Set<Entities.Candidate>()
             .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(x => x.Id == id && x.TenantId == tenantId && !x.IsDeleted, ct);
+            .Where(x => x.Id == id && x.TenantId == tenantId && !x.IsDeleted);
+
+        var candidate = await query.FirstOrDefaultAsync(ct);
 
         if (candidate is null)
             return Result<CandidateDto>.NotFound($"Candidate with ID {id} not found");
@@ -242,6 +295,77 @@ public class CandidateService : ICandidateService
             candidate.Notes = request.Notes;
         if (request.ExternalReference is not null)
             candidate.ExternalReference = request.ExternalReference;
+
+        // Professional profile fields
+        if (request.Religion is not null)
+            candidate.Religion = request.Religion;
+        if (request.MaritalStatus is not null)
+            candidate.MaritalStatus = request.MaritalStatus;
+        if (request.EducationLevel is not null)
+            candidate.EducationLevel = request.EducationLevel;
+        if (request.JobCategoryId.HasValue)
+            candidate.JobCategoryId = request.JobCategoryId;
+        if (request.ExperienceYears.HasValue)
+            candidate.ExperienceYears = request.ExperienceYears;
+        if (request.MonthlySalary.HasValue)
+            candidate.MonthlySalary = request.MonthlySalary;
+        if (request.ProcurementCost.HasValue)
+            candidate.ProcurementCost = request.ProcurementCost;
+
+        // Media
+        if (request.PhotoUrl is not null)
+            candidate.PhotoUrl = request.PhotoUrl;
+        if (request.VideoUrl is not null)
+            candidate.VideoUrl = request.VideoUrl;
+        if (request.PassportDocumentUrl is not null)
+            candidate.PassportDocumentUrl = request.PassportDocumentUrl;
+
+        // Full-replacement semantics for Skills (if provided, remove old + add new; if null, leave untouched)
+        // Use ExecuteDeleteAsync to avoid EF Core batch concurrency issues with mixed DELETE+INSERT
+        if (request.Skills is not null)
+        {
+            await _db.Set<CandidateSkill>()
+                .Where(x => x.CandidateId == candidate.Id && x.TenantId == tenantId)
+                .ExecuteDeleteAsync(ct);
+
+            foreach (var skill in request.Skills)
+            {
+                if (!Enum.TryParse<SkillProficiency>(skill.ProficiencyLevel, ignoreCase: true, out var proficiency))
+                    proficiency = SkillProficiency.Basic;
+
+                _db.Set<CandidateSkill>().Add(new CandidateSkill
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    CandidateId = candidate.Id,
+                    SkillName = skill.SkillName,
+                    ProficiencyLevel = proficiency,
+                });
+            }
+        }
+
+        // Full-replacement semantics for Languages
+        if (request.Languages is not null)
+        {
+            await _db.Set<CandidateLanguage>()
+                .Where(x => x.CandidateId == candidate.Id && x.TenantId == tenantId)
+                .ExecuteDeleteAsync(ct);
+
+            foreach (var lang in request.Languages)
+            {
+                if (!Enum.TryParse<LanguageProficiency>(lang.ProficiencyLevel, ignoreCase: true, out var proficiency))
+                    proficiency = LanguageProficiency.Basic;
+
+                _db.Set<CandidateLanguage>().Add(new CandidateLanguage
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    CandidateId = candidate.Id,
+                    Language = lang.Language,
+                    ProficiencyLevel = proficiency,
+                });
+            }
+        }
 
         await _db.SaveChangesAsync(ct);
 
@@ -352,6 +476,16 @@ public class CandidateService : ICandidateService
             Status = c.Status.ToString(),
             StatusChangedAt = c.StatusChangedAt,
             StatusReason = c.StatusReason,
+            Religion = c.Religion,
+            MaritalStatus = c.MaritalStatus,
+            EducationLevel = c.EducationLevel,
+            JobCategoryId = c.JobCategoryId,
+            ExperienceYears = c.ExperienceYears,
+            PhotoUrl = c.PhotoUrl,
+            VideoUrl = c.VideoUrl,
+            PassportDocumentUrl = c.PassportDocumentUrl,
+            ProcurementCost = c.ProcurementCost,
+            MonthlySalary = c.MonthlySalary,
             PassportExpiry = c.PassportExpiry,
             MedicalStatus = c.MedicalStatus,
             VisaStatus = c.VisaStatus,
@@ -363,6 +497,18 @@ public class CandidateService : ICandidateService
             UpdatedBy = c.UpdatedBy,
             CreatedAt = c.CreatedAt,
             UpdatedAt = c.UpdatedAt,
+            Skills = c.Skills.Select(s => new CandidateSkillDto
+            {
+                Id = s.Id,
+                SkillName = s.SkillName,
+                ProficiencyLevel = s.ProficiencyLevel.ToString(),
+            }).ToList(),
+            Languages = c.Languages.Select(l => new CandidateLanguageDto
+            {
+                Id = l.Id,
+                Language = l.Language,
+                ProficiencyLevel = l.ProficiencyLevel.ToString(),
+            }).ToList(),
             StatusHistory = includeStatusHistory
                 ? c.StatusHistory.Select(MapToHistoryDto).ToList()
                 : null,
@@ -383,6 +529,8 @@ public class CandidateService : ICandidateService
             Status = c.Status.ToString(),
             Gender = c.Gender,
             ExternalReference = c.ExternalReference,
+            JobCategoryId = c.JobCategoryId,
+            PhotoUrl = c.PhotoUrl,
             CreatedBy = c.CreatedBy,
             CreatedAt = c.CreatedAt,
             UpdatedAt = c.UpdatedAt,

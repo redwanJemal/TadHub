@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/select';
-import { ALL_STATUSES } from '../constants';
+import { ALLOWED_TRANSITIONS } from '../constants';
 import { StatusBadge } from './StatusBadge';
 import { useTransitionStatus } from '../hooks';
 import type { CandidateStatus } from '../types';
@@ -52,14 +52,14 @@ export function StatusTransitionDialog({
   const needsReason = REASON_REQUIRED_STATUSES.includes(targetStatus as CandidateStatus);
   const canSubmit = targetStatus && (!needsReason || reason.trim());
 
-  const availableStatuses = ALL_STATUSES.filter((s) => s !== currentStatus);
+  const availableStatuses = ALLOWED_TRANSITIONS[currentStatus] ?? [];
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
     await transition.mutateAsync({
       id: candidateId,
       data: {
-        targetStatus,
+        status: targetStatus,
         reason: reason.trim() || undefined,
         notes: notes.trim() || undefined,
       },

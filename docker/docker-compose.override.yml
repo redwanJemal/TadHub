@@ -26,10 +26,10 @@ services:
       # Keycloak
       - Keycloak__Authority=http://keycloak:8080/realms/saas-platform
       - Keycloak__Audience=saas-api
-      # MinIO
-      - Minio__Endpoint=minio:9000
-      - Minio__AccessKey=${MINIO_ACCESS_KEY:-minioadmin}
-      - Minio__SecretKey=${MINIO_SECRET_KEY:-minioadmin}
+      # MinIO (Storage config section)
+      - Storage__Endpoint=minio:9000
+      - Storage__AccessKey=${MINIO_ACCESS_KEY:-minioadmin}
+      - Storage__SecretKey=${MINIO_SECRET_KEY:-minioadmin}
       # Meilisearch
       - Meilisearch__Url=http://meilisearch:7700
       - Meilisearch__ApiKey=${MEILISEARCH_API_KEY:-meilisearch_dev_key}

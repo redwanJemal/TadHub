@@ -8,6 +8,7 @@
     "nationality": "Nationality",
     "sourceType": "Source Type",
     "supplier": "Supplier",
+    "jobCategory": "Job Category",
     "status": "Status",
     "createdAt": "Created",
     "actions": "Actions"
@@ -41,9 +42,15 @@
       "personal": "Personal Information",
       "contact": "Contact Information",
       "sourcing": "Sourcing",
+      "professional": "Professional Profile",
+      "skills": "Skills",
+      "languages": "Languages",
+      "media": "Media & Documents",
       "documents": "Documents",
       "additional": "Additional Information"
     },
+    "photo": "Candidate Photo",
+    "passport": "Passport Document",
     "fullNameEn": "Full Name (English)",
     "fullNameEnPlaceholder": "e.g., John Doe",
     "fullNameAr": "Full Name (Arabic)",
@@ -68,6 +75,18 @@
     "sourceTypePlaceholder": "Select source type",
     "supplier": "Supplier",
     "supplierPlaceholder": "Select supplier",
+    "religion": "Religion",
+    "religionPlaceholder": "Select religion",
+    "maritalStatus": "Marital Status",
+    "maritalStatusPlaceholder": "Select marital status",
+    "educationLevel": "Education Level",
+    "educationLevelPlaceholder": "Select education level",
+    "jobCategory": "Job Category",
+    "jobCategoryPlaceholder": "Select job category",
+    "experienceYears": "Experience (Years)",
+    "experienceYearsPlaceholder": "e.g., 3",
+    "monthlySalary": "Monthly Salary (AED)",
+    "monthlySalaryPlaceholder": "e.g., 1500",
     "medicalStatus": "Medical Status",
     "medicalStatusPlaceholder": "e.g., Pending, Cleared",
     "visaStatus": "Visa Status",
@@ -80,6 +99,18 @@
     "submit": "Create Candidate",
     "submitting": "Creating..."
   },
+  "edit": {
+    "title": "Edit Candidate",
+    "backToDetail": "Back to Details",
+    "sections": {
+      "media": "Media & Documents"
+    },
+    "photo": "Photo",
+    "video": "Video",
+    "passport": "Passport Document",
+    "submit": "Save Changes",
+    "submitting": "Saving..."
+  },
   "detail": {
     "backToList": "Back to Candidates",
     "personal": "Personal Information",
@@ -88,6 +119,11 @@
     "documents": "Document Status",
     "operational": "Operational Details",
     "statusHistory": "Status History",
+    "professionalProfile": "Professional Profile",
+    "financial": "Financial",
+    "skills": "Skills",
+    "languages": "Languages",
+    "media": "Media",
     "fullNameEn": "Full Name (English)",
     "fullNameAr": "Full Name (Arabic)",
     "nationality": "Nationality",
@@ -99,6 +135,15 @@
     "email": "Email",
     "sourceType": "Source Type",
     "supplier": "Supplier",
+    "religion": "Religion",
+    "maritalStatus": "Marital Status",
+    "educationLevel": "Education Level",
+    "jobCategory": "Job Category",
+    "experienceYears": "Experience (Years)",
+    "monthlySalary": "Monthly Salary",
+    "procurementCost": "Procurement Cost",
+    "photo": "Photo",
+    "video": "Video",
     "medicalStatus": "Medical Status",
     "visaStatus": "Visa Status",
     "expectedArrivalDate": "Expected Arrival Date",
@@ -107,7 +152,10 @@
     "notes": "Notes",
     "createdAt": "Created At",
     "updatedAt": "Updated At",
-    "notAvailable": "N/A"
+    "notAvailable": "N/A",
+    "passportDocument": "Passport Document",
+    "viewPassportDocument": "View Passport Document",
+    "noMedia": "No media uploaded yet"
   },
   "actions": {
     "view": "View Details",
@@ -139,8 +187,93 @@
     "reason": "Reason",
     "by": "by"
   },
+  "tabs": {
+    "overview": "Overview",
+    "professional": "Professional",
+    "documentsOperations": "Documents & Operations",
+    "statusHistory": "Status History"
+  },
   "filters": {
     "status": "Status",
     "sourceType": "Source Type"
+  },
+  "professional": {
+    "religion": {
+      "Islam": "Islam",
+      "Christianity": "Christianity",
+      "Hinduism": "Hinduism",
+      "Buddhism": "Buddhism",
+      "Other": "Other"
+    },
+    "maritalStatus": {
+      "Single": "Single",
+      "Married": "Married",
+      "Divorced": "Divorced",
+      "Widowed": "Widowed"
+    },
+    "educationLevel": {
+      "None": "None",
+      "Primary": "Primary",
+      "Secondary": "Secondary",
+      "HighSchool": "High School",
+      "Diploma": "Diploma",
+      "Bachelor": "Bachelor",
+      "Master": "Master",
+      "PhD": "PhD"
+    }
+  },
+  "skills": {
+    "add": "Add Skill",
+    "selectSkill": "Select skill",
+    "custom": "Custom...",
+    "customPlaceholder": "Enter skill name",
+    "presets": {
+      "Cooking": "Cooking",
+      "Cleaning": "Cleaning",
+      "Childcare": "Childcare",
+      "Eldercare": "Eldercare",
+      "Laundry": "Laundry",
+      "Ironing": "Ironing",
+      "Driving": "Driving"
+    },
+    "proficiency": {
+      "Basic": "Basic",
+      "Intermediate": "Intermediate",
+      "Advanced": "Advanced",
+      "Expert": "Expert"
+    }
+  },
+  "languages": {
+    "add": "Add Language",
+    "selectLanguage": "Select language",
+    "custom": "Custom...",
+    "customPlaceholder": "Enter language name",
+    "presets": {
+      "Arabic": "Arabic",
+      "English": "English",
+      "Hindi": "Hindi",
+      "Urdu": "Urdu",
+      "Tagalog": "Tagalog",
+      "Sinhala": "Sinhala",
+      "Bengali": "Bengali",
+      "Nepali": "Nepali",
+      "Indonesian": "Indonesian",
+      "Amharic": "Amharic"
+    },
+    "proficiency": {
+      "Basic": "Basic",
+      "Conversational": "Conversational",
+      "Fluent": "Fluent",
+      "Native": "Native"
+    }
+  },
+  "fileUpload": {
+    "upload": "Upload",
+    "replace": "Replace",
+    "uploading": "Uploading...",
+    "tooLarge": "File must be less than {{max}}MB",
+    "failed": "Upload failed",
+    "documentUploaded": "Document uploaded",
+    "viewDocument": "View"
   }
 }

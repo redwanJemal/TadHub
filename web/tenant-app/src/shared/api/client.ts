@@ -1,7 +1,7 @@
 import { getAccessToken, getTenantId } from '../../features/auth/AuthProvider';
 import { ApiResponse, ApiSuccessResponse, QueryParams, buildQueryString } from './types';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'https://api.endlessmaker.com/api/v1';
+export const API_BASE = import.meta.env.VITE_API_URL || 'https://api.endlessmaker.com/api/v1';
 
 // Retry configuration
 const RETRY_CONFIG = {
@@ -95,14 +95,12 @@ async function handleResponse<T>(response: Response): Promise<T> {
   if (response.status === 403) {
     let errorMessage = 'You do not have permission to perform this action';
     let errorCode = 'FORBIDDEN';
-    
+
     try {
       const json = await response.json();
-      if (json?.error?.message) {
-        errorMessage = json.error.message;
-      }
-      if (json?.error?.code) {
-        errorCode = json.error.code;
+      // RFC 9457 format
+      if (json?.detail) {
+        errorMessage = json.detail;
       }
     } catch {
       // Ignore parse errors for 403
@@ -128,13 +126,33 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
   // Check if response is an error response
   if (!response.ok) {
-    const errorJson = json as { error?: { code?: string; message?: string; details?: unknown } } | null;
-    const error = errorJson?.error;
+    const errorJson = json as {
+      // RFC 9457 Problem Details
+      type?: string;
+      title?: string;
+      status?: number;
+      detail?: string;
+      instance?: string;
+      // ASP.NET validation errors
+      errors?: Record<string, string[]>;
+    } | null;
+
+    // Handle ASP.NET validation errors: { title, errors: { Field: ["msg"] } }
+    if (errorJson?.errors && typeof errorJson.errors === 'object') {
+      const messages = Object.values(errorJson.errors).flat();
+      throw new ApiError(
+        response.status,
+        'VALIDATION_ERROR',
+        messages.join('. ') || errorJson.detail || errorJson.title || 'Validation failed',
+        errorJson.errors
+      );
+    }
+
+    // RFC 9457 Problem Details format
     throw new ApiError(
       response.status,
-      error?.code ?? 'UNKNOWN_ERROR',
-      error?.message ?? 'An error occurred',
-      error?.details
+      errorJson?.type ?? 'UNKNOWN_ERROR',
+      errorJson?.detail ?? errorJson?.title ?? 'An error occurred'
     );
   }
 
@@ -179,16 +197,13 @@ async function handleResponseWithMeta<T>(response: Response): Promise<ApiSuccess
 
     try {
       const json = await response.json();
-      if (json?.error?.message) {
-        errorMessage = json.error.message;
-      }
-      if (json?.error?.code) {
-        errorCode = json.error.code;
+      if (json?.detail) {
+        errorMessage = json.detail;
       }
     } catch {
       // Ignore parse errors for 403
     }
-    
+
     window.dispatchEvent(new CustomEvent('auth:forbidden', {
       detail: { message: errorMessage, code: errorCode }
     }));
@@ -208,12 +223,20 @@ async function handleResponseWithMeta<T>(response: Response): Promise<ApiSuccess
   }
 
   if (!response.ok || !json.success) {
-    const error = 'error' in json ? json.error : undefined;
+    const errorJson = json as unknown as { type?: string; title?: string; detail?: string; errors?: Record<string, string[]> };
+    if (errorJson?.errors && typeof errorJson.errors === 'object') {
+      const messages = Object.values(errorJson.errors).flat();
+      throw new ApiError(
+        response.status,
+        'VALIDATION_ERROR',
+        messages.join('. ') || errorJson.detail || errorJson.title || 'Validation failed',
+        errorJson.errors
+      );
+    }
     throw new ApiError(
       response.status,
-      error?.code ?? 'UNKNOWN_ERROR',
-      error?.message ?? 'An error occurred',
-      error?.details
+      errorJson?.type ?? 'UNKNOWN_ERROR',
+      errorJson?.detail ?? errorJson?.title ?? 'An error occurred'
     );
   }
 
@@ -346,11 +369,20 @@ export const apiClient = {
     }
 
     if (!response.ok) {
-      const errorJson = json as { error?: { code?: string; message?: string } };
+      const errorJson = json as { type?: string; title?: string; detail?: string; errors?: Record<string, string[]> };
+      if (errorJson?.errors && typeof errorJson.errors === 'object') {
+        const messages = Object.values(errorJson.errors).flat();
+        throw new ApiError(
+          response.status,
+          'VALIDATION_ERROR',
+          messages.join('. ') || errorJson.detail || errorJson.title || 'Validation failed',
+          errorJson.errors
+        );
+      }
       throw new ApiError(
         response.status,
-        errorJson?.error?.code ?? 'UNKNOWN_ERROR',
-        errorJson?.error?.message ?? 'An error occurred'
+        errorJson?.type ?? 'UNKNOWN_ERROR',
+        errorJson?.detail ?? errorJson?.title ?? 'An error occurred'
       );
     }
 

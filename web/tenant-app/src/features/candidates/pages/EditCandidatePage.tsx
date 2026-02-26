@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
@@ -14,11 +14,10 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 import { NationalitySelect, JobCategorySelect } from '@/features/reference-data';
-import { useSuppliers } from '@/features/suppliers/hooks';
-import { useCreateCandidate, useUploadFile } from '../hooks';
+import { useCandidate, useUpdateCandidate, useUploadPhoto, useUploadVideo, useUploadPassport } from '../hooks';
 import {
-  ALL_SOURCE_TYPES,
   RELIGION_OPTIONS,
   MARITAL_STATUS_OPTIONS,
   EDUCATION_LEVEL_OPTIONS,
@@ -28,110 +27,165 @@ import { LanguagesEditor } from '../components/LanguagesEditor';
 import { FileUpload } from '../components/FileUpload';
 import type { CandidateSkillRequest, CandidateLanguageRequest } from '../types';
 
-const initialForm = {
-  fullNameEn: '',
-  fullNameAr: '',
-  nationality: '',
-  dateOfBirth: '',
-  gender: '',
-  passportNumber: '',
-  passportExpiry: '',
-  phone: '',
-  email: '',
-  sourceType: '',
-  tenantSupplierId: '',
-  // Professional Profile
-  religion: '',
-  maritalStatus: '',
-  educationLevel: '',
-  jobCategoryId: '',
-  experienceYears: '',
-  monthlySalary: '',
-  // Documents & Operations
-  medicalStatus: '',
-  visaStatus: '',
-  expectedArrivalDate: '',
-  notes: '',
-  externalReference: '',
-};
-
-export function CreateCandidatePage() {
+export function EditCandidatePage() {
   const { t } = useTranslation('candidates');
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [form, setForm] = useState(initialForm);
+
+  const { data: candidate, isLoading } = useCandidate(id!);
+  const updateCandidate = useUpdateCandidate();
+  const uploadPhoto = useUploadPhoto();
+  const uploadVideo = useUploadVideo();
+  const uploadPassport = useUploadPassport();
+
+  const [form, setForm] = useState({
+    fullNameEn: '',
+    fullNameAr: '',
+    nationality: '',
+    dateOfBirth: '',
+    gender: '',
+    passportNumber: '',
+    passportExpiry: '',
+    phone: '',
+    email: '',
+    religion: '',
+    maritalStatus: '',
+    educationLevel: '',
+    jobCategoryId: '',
+    experienceYears: '',
+    monthlySalary: '',
+    medicalStatus: '',
+    visaStatus: '',
+    expectedArrivalDate: '',
+    notes: '',
+    externalReference: '',
+  });
   const [skills, setSkills] = useState<CandidateSkillRequest[]>([]);
   const [languages, setLanguages] = useState<CandidateLanguageRequest[]>([]);
-  const [photoFileId, setPhotoFileId] = useState<string | null>(null);
-  const [passportFileId, setPassportFileId] = useState<string | null>(null);
-  const createCandidate = useCreateCandidate();
-  const uploadFile = useUploadFile();
+  const [initialized, setInitialized] = useState(false);
 
-  const isSupplierSource = form.sourceType === 'Supplier';
-  const { data: suppliersData } = useSuppliers({ pageSize: 100 });
+  // Pre-populate form when candidate loads
+  useEffect(() => {
+    if (candidate && !initialized) {
+      setForm({
+        fullNameEn: candidate.fullNameEn || '',
+        fullNameAr: candidate.fullNameAr || '',
+        nationality: candidate.nationality || '',
+        dateOfBirth: candidate.dateOfBirth || '',
+        gender: candidate.gender || '',
+        passportNumber: candidate.passportNumber || '',
+        passportExpiry: candidate.passportExpiry || '',
+        phone: candidate.phone || '',
+        email: candidate.email || '',
+        religion: candidate.religion || '',
+        maritalStatus: candidate.maritalStatus || '',
+        educationLevel: candidate.educationLevel || '',
+        jobCategoryId: candidate.jobCategoryId || '',
+        experienceYears: candidate.experienceYears?.toString() || '',
+        monthlySalary: candidate.monthlySalary?.toString() || '',
+        medicalStatus: candidate.medicalStatus || '',
+        visaStatus: candidate.visaStatus || '',
+        expectedArrivalDate: candidate.expectedArrivalDate || '',
+        notes: candidate.notes || '',
+        externalReference: candidate.externalReference || '',
+      });
+      setSkills(
+        candidate.skills?.map((s) => ({
+          skillName: s.skillName,
+          proficiencyLevel: s.proficiencyLevel,
+        })) ?? []
+      );
+      setLanguages(
+        candidate.languages?.map((l) => ({
+          language: l.language,
+          proficiencyLevel: l.proficiencyLevel,
+        })) ?? []
+      );
+      setInitialized(true);
+    }
+  }, [candidate, initialized]);
 
   const update = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.fullNameEn.trim() || !form.sourceType) return;
-    setIsSubmitting(true);
+    if (!id || !form.fullNameEn.trim()) return;
 
     try {
       const validSkills = skills.filter((s) => s.skillName.trim());
       const validLanguages = languages.filter((l) => l.language.trim());
 
-      const result = await createCandidate.mutateAsync({
-        fullNameEn: form.fullNameEn.trim(),
-        fullNameAr: form.fullNameAr.trim() || undefined,
-        nationality: form.nationality || undefined,
-        dateOfBirth: form.dateOfBirth || undefined,
-        gender: form.gender || undefined,
-        passportNumber: form.passportNumber.trim() || undefined,
-        passportExpiry: form.passportExpiry || undefined,
-        phone: form.phone.trim() || undefined,
-        email: form.email.trim() || undefined,
-        sourceType: form.sourceType,
-        tenantSupplierId: isSupplierSource && form.tenantSupplierId ? form.tenantSupplierId : undefined,
-        religion: form.religion || undefined,
-        maritalStatus: form.maritalStatus || undefined,
-        educationLevel: form.educationLevel || undefined,
-        jobCategoryId: form.jobCategoryId || undefined,
-        experienceYears: form.experienceYears ? parseInt(form.experienceYears) : undefined,
-        monthlySalary: form.monthlySalary ? parseFloat(form.monthlySalary) : undefined,
-        skills: validSkills.length > 0 ? validSkills : undefined,
-        languages: validLanguages.length > 0 ? validLanguages : undefined,
-        photoFileId: photoFileId || undefined,
-        passportFileId: passportFileId || undefined,
-        medicalStatus: form.medicalStatus.trim() || undefined,
-        visaStatus: form.visaStatus.trim() || undefined,
-        expectedArrivalDate: form.expectedArrivalDate || undefined,
-        notes: form.notes.trim() || undefined,
-        externalReference: form.externalReference.trim() || undefined,
+      await updateCandidate.mutateAsync({
+        id,
+        data: {
+          fullNameEn: form.fullNameEn.trim(),
+          fullNameAr: form.fullNameAr.trim() || undefined,
+          nationality: form.nationality || undefined,
+          dateOfBirth: form.dateOfBirth || undefined,
+          gender: form.gender || undefined,
+          passportNumber: form.passportNumber.trim() || undefined,
+          passportExpiry: form.passportExpiry || undefined,
+          phone: form.phone.trim() || undefined,
+          email: form.email.trim() || undefined,
+          religion: form.religion || undefined,
+          maritalStatus: form.maritalStatus || undefined,
+          educationLevel: form.educationLevel || undefined,
+          jobCategoryId: form.jobCategoryId || undefined,
+          experienceYears: form.experienceYears ? parseInt(form.experienceYears) : undefined,
+          monthlySalary: form.monthlySalary ? parseFloat(form.monthlySalary) : undefined,
+          skills: validSkills,
+          languages: validLanguages,
+          medicalStatus: form.medicalStatus.trim() || undefined,
+          visaStatus: form.visaStatus.trim() || undefined,
+          expectedArrivalDate: form.expectedArrivalDate || undefined,
+          notes: form.notes.trim() || undefined,
+          externalReference: form.externalReference.trim() || undefined,
+        },
       });
-      navigate(`/candidates/${result.id}`);
+      navigate(`/candidates/${id}`);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create candidate';
+      const message = err instanceof Error ? err.message : 'Failed to update candidate';
       toast.error(message);
-    } finally {
-      setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-4 w-32 mb-4" />
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
+  if (!candidate) {
+    return (
+      <div className="flex items-center justify-center min-h-[40vh]">
+        <p className="text-muted-foreground">{t('common:noResults')}</p>
+      </div>
+    );
+  }
+
+  const isEditable = candidate.status === 'Received' || candidate.status === 'UnderReview';
+  if (!isEditable) {
+    navigate(`/candidates/${id}`);
+    return null;
+  }
 
   return (
     <div className="space-y-6">
       <div>
         <Link
-          to="/candidates"
+          to={`/candidates/${id}`}
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="h-4 w-4" />
-          {t('create.backToList')}
+          {t('edit.backToDetail')}
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight">{t('create.title')}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t('edit.title')}</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -164,9 +218,7 @@ export function CreateCandidatePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>
-                {t('create.nationality')}
-              </Label>
+              <Label>{t('create.nationality')}</Label>
               <NationalitySelect
                 value={form.nationality}
                 onChange={(value) => update('nationality', value)}
@@ -241,52 +293,6 @@ export function CreateCandidatePage() {
                 placeholder={t('create.emailPlaceholder')}
               />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Sourcing */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('create.sections.sourcing')}</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>
-                {t('create.sourceType')} <span className="text-destructive">*</span>
-              </Label>
-              <Select value={form.sourceType} onValueChange={(v) => {
-                update('sourceType', v);
-                if (v !== 'Supplier') update('tenantSupplierId', '');
-              }}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('create.sourceTypePlaceholder')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {ALL_SOURCE_TYPES.map((st) => (
-                    <SelectItem key={st} value={st}>
-                      {t(`sourceType.${st}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {isSupplierSource && (
-              <div className="space-y-2">
-                <Label>{t('create.supplier')}</Label>
-                <Select value={form.tenantSupplierId} onValueChange={(v) => update('tenantSupplierId', v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('create.supplierPlaceholder')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {suppliersData?.items?.map((ts) => (
-                      <SelectItem key={ts.id} value={ts.id}>
-                        {ts.supplier?.nameEn ?? ts.id}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -399,33 +405,46 @@ export function CreateCandidatePage() {
         {/* Media Uploads */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('create.sections.media')}</CardTitle>
+            <CardTitle>{t('edit.sections.media')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>{t('create.photo')}</Label>
+              <Label>{t('edit.photo')}</Label>
               <FileUpload
                 accept="image/jpeg,image/png,image/webp"
                 maxSizeMB={5}
-                type="photo"
-                isPending={uploadFile.isPending}
+                currentUrl={candidate.photoUrl}
                 onUpload={async (file) => {
-                  const result = await uploadFile.mutateAsync({ file, fileType: 'photo' });
-                  setPhotoFileId(result.id);
+                  await uploadPhoto.mutateAsync({ id: id!, file });
                 }}
+                isPending={uploadPhoto.isPending}
+                type="photo"
               />
             </div>
             <div className="space-y-2">
-              <Label>{t('create.passport')}</Label>
+              <Label>{t('edit.video')}</Label>
+              <FileUpload
+                accept="video/mp4,video/webm"
+                maxSizeMB={50}
+                currentUrl={candidate.videoUrl}
+                onUpload={async (file) => {
+                  await uploadVideo.mutateAsync({ id: id!, file });
+                }}
+                isPending={uploadVideo.isPending}
+                type="video"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>{t('edit.passport')}</Label>
               <FileUpload
                 accept="application/pdf,image/jpeg,image/png"
                 maxSizeMB={10}
-                type="document"
-                isPending={uploadFile.isPending}
+                currentUrl={candidate.passportDocumentUrl}
                 onUpload={async (file) => {
-                  const result = await uploadFile.mutateAsync({ file, fileType: 'passport' });
-                  setPassportFileId(result.id);
+                  await uploadPassport.mutateAsync({ id: id!, file });
                 }}
+                isPending={uploadPassport.isPending}
+                type="document"
               />
             </div>
           </CardContent>
@@ -497,14 +516,14 @@ export function CreateCandidatePage() {
 
         {/* Submit */}
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={() => navigate('/candidates')}>
+          <Button type="button" variant="outline" onClick={() => navigate(`/candidates/${id}`)}>
             {t('common:cancel')}
           </Button>
           <Button
             type="submit"
-            disabled={!form.fullNameEn.trim() || !form.sourceType || isSubmitting}
+            disabled={!form.fullNameEn.trim() || updateCandidate.isPending}
           >
-            {isSubmitting ? t('create.submitting') : t('create.submit')}
+            {updateCandidate.isPending ? t('edit.submitting') : t('edit.submit')}
           </Button>
         </div>
       </form>

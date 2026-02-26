@@ -25,19 +25,29 @@ public static class StorageConfiguration
         // Register MinIO client
         services.AddSingleton<IMinioClient>(_ =>
         {
+            var endpoint = settings.Endpoint;
+            var useSsl = settings.UseHttps;
+
+            // Handle full URL format (e.g. "https://storage.example.com")
+            if (Uri.TryCreate(endpoint, UriKind.Absolute, out var uri)
+                && (uri.Scheme == "https" || uri.Scheme == "http"))
+            {
+                endpoint = uri.Host + (uri.IsDefaultPort ? "" : $":{uri.Port}");
+                useSsl = uri.Scheme == "https";
+            }
+
             var client = new MinioClient()
-                .WithEndpoint(settings.Endpoint)
+                .WithEndpoint(endpoint)
                 .WithCredentials(settings.AccessKey, settings.SecretKey);
 
-            if (!settings.UseHttps)
-            {
-                // MinIO defaults to HTTPS, explicitly use HTTP for local dev
-            }
+            if (useSsl)
+                client.WithSSL();
 
             return client.Build();
         });
 
         services.AddScoped<IFileStorageService, MinioFileStorageService>();
+        services.AddScoped<ITenantFileService, TenantFileService>();
 
         return services;
     }
