@@ -396,6 +396,125 @@ async function main() {
     }
   }
 
+  // ========== CLIENTS ==========
+  console.log('\n  --- Clients ---');
+
+  // 30. Clients list page
+  await page.goto(`${TENANT_URL}/clients`);
+  try {
+    await page.getByText('Clients').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Clients heading did not appear, continuing...');
+  }
+  await page.waitForTimeout(3000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/30-clients-list.png`, fullPage: false });
+  console.log('  done: clients list');
+
+  // 31. Add Client sheet
+  const addClientBtn = page.getByRole('button', { name: /add client/i });
+  if (await addClientBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await addClientBtn.click();
+    await page.waitForTimeout(1000);
+    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/31-add-client-sheet.png`, fullPage: false });
+    console.log('  done: add client sheet');
+
+    // Fill in a test client and submit
+    const nameEnField = page.locator('input[name="nameEn"]');
+    if (await nameEnField.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await nameEnField.fill('Test Client Company');
+      const nameArField = page.locator('input[name="nameAr"]');
+      if (await nameArField.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await nameArField.fill('شركة عميل تجريبية');
+      }
+      const phoneField = page.locator('input[name="phone"]');
+      if (await phoneField.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await phoneField.fill('+966501234567');
+      }
+      const emailField = page.locator('input[name="email"]');
+      if (await emailField.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await emailField.fill('test@client.com');
+      }
+      const cityField = page.locator('input[name="city"]');
+      if (await cityField.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await cityField.fill('Riyadh');
+      }
+
+      await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/32-add-client-filled.png`, fullPage: false });
+      console.log('  done: add client sheet (filled)');
+
+      // Submit
+      const submitBtn = page.getByRole('button', { name: /create|save|add/i }).last();
+      if (await submitBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await submitBtn.click();
+        await page.waitForTimeout(3000);
+        await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/33-clients-list-after-add.png`, fullPage: false });
+        console.log('  done: clients list (after adding client)');
+      }
+    } else {
+      // Close the sheet
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(500);
+    }
+  }
+
+  // 34. Clients list - row actions dropdown (if data exists)
+  const clientActionBtn = page.locator('table tbody tr').first().getByRole('button');
+  if (await clientActionBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await clientActionBtn.click();
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/34-client-actions-dropdown.png`, fullPage: false });
+    console.log('  done: client actions dropdown');
+
+    // 35. Edit client sheet
+    const editClientBtn = page.getByText('Edit');
+    if (await editClientBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await editClientBtn.click();
+      await page.waitForTimeout(1000);
+      await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/35-edit-client-sheet.png`, fullPage: false });
+      console.log('  done: edit client sheet');
+
+      // Close edit sheet
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(500);
+    } else {
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(300);
+    }
+  }
+
+  // 36. Client delete confirmation
+  const clientActionBtn2 = page.locator('table tbody tr').first().getByRole('button');
+  if (await clientActionBtn2.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await clientActionBtn2.click();
+    await page.waitForTimeout(500);
+    const deleteClientBtn = page.getByText('Delete');
+    if (await deleteClientBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await deleteClientBtn.click();
+      await page.waitForTimeout(1000);
+      await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/36-client-delete-dialog.png`, fullPage: false });
+      console.log('  done: client delete confirmation dialog');
+
+      // Cancel delete
+      const cancelDeleteBtn = page.getByRole('button', { name: /cancel/i });
+      if (await cancelDeleteBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await cancelDeleteBtn.click();
+        await page.waitForTimeout(500);
+      }
+    } else {
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(300);
+    }
+  }
+
+  // ========== SIDEBAR ==========
+  console.log('\n  --- Sidebar ---');
+
+  // 40. Sidebar showing all navigation items including Clients
+  await page.goto(`${TENANT_URL}/`);
+  await page.waitForTimeout(3000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/40-sidebar-full.png`, fullPage: false });
+  console.log('  done: sidebar with all nav items');
+
   // Report errors
   if (pageErrors.length > 0) {
     console.warn(`\n  WARNING: ${pageErrors.length} page error(s) detected during tenant app screenshots`);

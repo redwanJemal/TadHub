@@ -35,6 +35,8 @@
     <ProjectReference Include="..\Modules\Candidate\Candidate.Core\Candidate.Core.csproj" />
     <!-- Worker module -->
     <ProjectReference Include="..\Modules\Worker\Worker.Core\Worker.Core.csproj" />
+    <!-- Client module -->
+    <ProjectReference Include="..\Modules\Client\Client.Core\Client.Core.csproj" />
   </ItemGroup>
 
 </Project>

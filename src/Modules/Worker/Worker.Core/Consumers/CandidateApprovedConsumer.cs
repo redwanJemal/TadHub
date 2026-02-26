@@ -9,31 +9,31 @@ using TadHub.SharedKernel.Interfaces;
 namespace Worker.Core.Consumers;
 
 /// <summary>
-/// Consumes CandidateConvertedEvent to auto-create a Worker record.
+/// Consumes CandidateApprovedEvent to auto-create a Worker record.
 /// </summary>
-public class CandidateConvertedConsumer : IConsumer<CandidateConvertedEvent>
+public class CandidateApprovedConsumer : IConsumer<CandidateApprovedEvent>
 {
     private readonly AppDbContext _db;
     private readonly IClock _clock;
-    private readonly ILogger<CandidateConvertedConsumer> _logger;
+    private readonly ILogger<CandidateApprovedConsumer> _logger;
 
-    public CandidateConvertedConsumer(
+    public CandidateApprovedConsumer(
         AppDbContext db,
         IClock clock,
-        ILogger<CandidateConvertedConsumer> logger)
+        ILogger<CandidateApprovedConsumer> logger)
     {
         _db = db;
         _clock = clock;
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<CandidateConvertedEvent> context)
+    public async Task Consume(ConsumeContext<CandidateApprovedEvent> context)
     {
         var message = context.Message;
         var ct = context.CancellationToken;
 
         _logger.LogInformation(
-            "Received CandidateConvertedEvent for candidate {CandidateId} in tenant {TenantId}",
+            "Received CandidateApprovedEvent for candidate {CandidateId} in tenant {TenantId}",
             message.CandidateId, message.TenantId);
 
         // Idempotency: skip if worker already exists for this candidate+tenant
@@ -146,7 +146,7 @@ public class CandidateConvertedConsumer : IConsumer<CandidateConvertedEvent>
             ToStatus = WorkerStatus.Active,
             ChangedAt = now,
             ChangedBy = null, // System action
-            Notes = "Auto-created from converted candidate",
+            Notes = "Auto-created from approved candidate",
         };
 
         _db.Set<Entities.Worker>().Add(worker);

@@ -23,6 +23,7 @@ using ReferenceData.Core;
 using Supplier.Core;
 using Candidate.Core;
 using Worker.Core;
+using Client.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -155,6 +156,9 @@ builder.Services.AddCandidateModule();
 
 // Worker module
 builder.Services.AddWorkerModule();
+
+// Client module
+builder.Services.AddClientModule();
 
 var app = builder.Build();
 

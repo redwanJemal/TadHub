@@ -3,14 +3,7 @@ export type CandidateStatus =
   | 'UnderReview'
   | 'Approved'
   | 'Rejected'
-  | 'ProcurementPaid'
-  | 'InTransit'
-  | 'Arrived'
-  | 'Converted'
-  | 'Cancelled'
-  | 'FailedMedicalAbroad'
-  | 'VisaDenied'
-  | 'ReturnedAfterArrival';
+  | 'Cancelled';
 
 export type CandidateSourceType = 'Supplier' | 'Local';
 
@@ -94,13 +87,7 @@ export interface CandidateDto {
   videoUrl?: string;
   passportDocumentUrl?: string;
   // Financial
-  procurementCost?: number;
   monthlySalary?: number;
-  // Documents & Operations
-  medicalStatus?: string;
-  visaStatus?: string;
-  expectedArrivalDate?: string;
-  actualArrivalDate?: string;
   notes?: string;
   externalReference?: string;
   createdAt: string;
@@ -149,10 +136,6 @@ export interface CreateCandidateRequest {
   // Deferred file uploads (TenantFile IDs)
   photoFileId?: string;
   passportFileId?: string;
-  // Documents & Operations
-  medicalStatus?: string;
-  visaStatus?: string;
-  expectedArrivalDate?: string;
   notes?: string;
   externalReference?: string;
 }
@@ -174,17 +157,12 @@ export interface UpdateCandidateRequest {
   jobCategoryId?: string;
   experienceYears?: number;
   monthlySalary?: number;
-  procurementCost?: number;
   photoUrl?: string;
   videoUrl?: string;
   passportDocumentUrl?: string;
   // Skills & Languages
   skills?: CandidateSkillRequest[];
   languages?: CandidateLanguageRequest[];
-  // Documents & Operations
-  medicalStatus?: string;
-  visaStatus?: string;
-  expectedArrivalDate?: string;
   notes?: string;
   externalReference?: string;
 }

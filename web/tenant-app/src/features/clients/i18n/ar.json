@@ -1,0 +1,61 @@
+{
+  "title": "العملاء",
+  "description": "إدارة دليل العملاء.",
+  "addClient": "إضافة عميل",
+  "searchPlaceholder": "البحث عن العملاء...",
+  "columns": {
+    "name": "الاسم",
+    "nationalId": "رقم الهوية",
+    "contact": "التواصل",
+    "city": "المدينة",
+    "status": "الحالة",
+    "actions": "الإجراءات"
+  },
+  "status": {
+    "Active": "نشط",
+    "Inactive": "غير نشط"
+  },
+  "empty": {
+    "title": "لا يوجد عملاء بعد",
+    "description": "أضف أول عميل للبدء."
+  },
+  "add": {
+    "title": "إضافة عميل جديد",
+    "description": "إنشاء سجل عميل جديد.",
+    "nameEn": "الاسم (إنجليزي)",
+    "nameEnPlaceholder": "مثال: Mohammed Al-Ali",
+    "nameAr": "الاسم (عربي)",
+    "nameArPlaceholder": "مثال: محمد العلي",
+    "nationalId": "رقم الهوية",
+    "nationalIdPlaceholder": "مثال: 1234567890",
+    "phone": "الهاتف",
+    "phonePlaceholder": "مثال: 966501234567+",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "مثال: client@email.com",
+    "address": "العنوان",
+    "addressPlaceholder": "مثال: 123 شارع الرئيسي",
+    "city": "المدينة",
+    "cityPlaceholder": "مثال: الرياض",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات داخلية عن هذا العميل...",
+    "submit": "إضافة عميل",
+    "submitting": "جاري الإضافة..."
+  },
+  "edit": {
+    "title": "تعديل العميل",
+    "description": "تحديث معلومات العميل.",
+    "submit": "حفظ التغييرات",
+    "submitting": "جاري الحفظ..."
+  },
+  "actions": {
+    "edit": "تعديل",
+    "deactivate": "إلغاء التفعيل",
+    "activate": "تفعيل",
+    "delete": "حذف"
+  },
+  "delete": {
+    "title": "حذف العميل",
+    "description": "هل أنت متأكد من حذف هذا العميل؟ سيتم إلغاء تفعيل سجل العميل.",
+    "confirm": "حذف"
+  }
+}

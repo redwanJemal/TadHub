@@ -22,13 +22,7 @@ import { StatusBadge } from './StatusBadge';
 import { useTransitionStatus } from '../hooks';
 import type { CandidateStatus } from '../types';
 
-const REASON_REQUIRED_STATUSES: CandidateStatus[] = [
-  'Rejected',
-  'Cancelled',
-  'FailedMedicalAbroad',
-  'VisaDenied',
-  'ReturnedAfterArrival',
-];
+const REASON_REQUIRED_STATUSES: CandidateStatus[] = ['Rejected', 'Cancelled'];
 
 interface StatusTransitionDialogProps {
   open: boolean;
@@ -88,6 +82,11 @@ export function StatusTransitionDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label>{t('transition.currentStatus')}</Label>
+            <div><StatusBadge status={currentStatus} /></div>
+          </div>
+
           <div className="space-y-2">
             <Label>{t('transition.targetStatus')}</Label>
             <Select value={targetStatus} onValueChange={setTargetStatus}>

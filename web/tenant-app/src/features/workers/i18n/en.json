@@ -47,6 +47,7 @@
   "transition": {
     "title": "Change Worker Status",
     "description": "Select a new status for this worker.",
+    "currentStatus": "Current Status",
     "targetStatus": "Target Status",
     "targetStatusPlaceholder": "Select status...",
     "reason": "Reason",

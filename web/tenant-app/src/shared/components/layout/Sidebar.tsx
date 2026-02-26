@@ -9,6 +9,7 @@ import {
   Truck,
   UserSearch,
   HardHat,
+  UserRound,
   X,
   LogOut,
 } from "lucide-react";
@@ -18,6 +19,7 @@ const navItems = [
   { path: "/team", icon: Users, labelKey: "nav.team" },
   { path: "/suppliers", icon: Truck, labelKey: "nav.suppliers" },
   { path: "/candidates", icon: UserSearch, labelKey: "nav.candidates" },
+  { path: "/clients", icon: UserRound, labelKey: "nav.clients" },
   { path: "/workers", icon: HardHat, labelKey: "nav.workers" },
 ];
 

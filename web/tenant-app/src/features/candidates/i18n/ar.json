@@ -18,14 +18,7 @@
     "UnderReview": "قيد المراجعة",
     "Approved": "معتمد",
     "Rejected": "مرفوض",
-    "ProcurementPaid": "تم دفع الاستقدام",
-    "InTransit": "في الطريق",
-    "Arrived": "وصل",
-    "Converted": "تم التحويل",
-    "Cancelled": "ملغي",
-    "FailedMedicalAbroad": "فشل الفحص الطبي بالخارج",
-    "VisaDenied": "رفض التأشيرة",
-    "ReturnedAfterArrival": "أُعيد بعد الوصول"
+    "Cancelled": "ملغي"
   },
   "sourceType": {
     "Supplier": "مورد",
@@ -166,6 +159,7 @@
   "transition": {
     "title": "تغيير الحالة",
     "description": "تحويل المرشح إلى حالة جديدة.",
+    "currentStatus": "الحالة الحالية",
     "targetStatus": "الحالة المستهدفة",
     "targetStatusPlaceholder": "اختر الحالة",
     "reason": "السبب",

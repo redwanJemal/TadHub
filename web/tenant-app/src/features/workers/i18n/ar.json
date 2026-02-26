@@ -47,6 +47,7 @@
   "transition": {
     "title": "تغيير حالة العامل",
     "description": "اختر حالة جديدة لهذا العامل.",
+    "currentStatus": "الحالة الحالية",
     "targetStatus": "الحالة المستهدفة",
     "targetStatusPlaceholder": "اختر الحالة...",
     "reason": "السبب",

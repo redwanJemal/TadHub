@@ -76,7 +76,16 @@ public class CandidateService : ICandidateService
         var query = _db.Set<Entities.Candidate>()
             .IgnoreQueryFilters()
             .AsNoTracking()
-            .Where(x => x.TenantId == tenantId && !x.IsDeleted)
+            .Where(x => x.TenantId == tenantId && !x.IsDeleted);
+
+        // Exclude Approved candidates by default unless status filter is explicitly provided
+        var hasStatusFilter = qp.Filters.Any(f => f.Name == "status");
+        if (!hasStatusFilter)
+        {
+            query = query.Where(x => x.Status != CandidateStatus.Approved);
+        }
+
+        query = query
             .ApplyFilters(qp.Filters, FilterableFields)
             .ApplySort(qp.GetSortFields(), SortableFields);
 
@@ -420,8 +429,8 @@ public class CandidateService : ICandidateService
 
         _logger.LogInformation("Transitioned candidate {CandidateId} from {FromStatus} to {ToStatus}", id, fromStatus, targetStatus);
 
-        // Publish CandidateConvertedEvent when status transitions to Converted
-        if (targetStatus == CandidateStatus.Converted)
+        // Publish CandidateApprovedEvent when status transitions to Approved
+        if (targetStatus == CandidateStatus.Approved)
         {
             var full = await _db.Set<Entities.Candidate>()
                 .IgnoreQueryFilters()
@@ -464,7 +473,7 @@ public class CandidateService : ICandidateService
                 }).ToList(),
             };
 
-            await _publisher.Publish(new CandidateConvertedEvent
+            await _publisher.Publish(new CandidateApprovedEvent
             {
                 TenantId = tenantId,
                 CandidateId = id,
@@ -472,7 +481,7 @@ public class CandidateService : ICandidateService
                 OccurredAt = now,
             }, ct);
 
-            _logger.LogInformation("Published CandidateConvertedEvent for candidate {CandidateId}", id);
+            _logger.LogInformation("Published CandidateApprovedEvent for candidate {CandidateId}", id);
         }
 
         return Result<CandidateDto>.Success(MapToDto(candidate, includeStatusHistory: false));

@@ -322,17 +322,6 @@ export function CandidateDetailPage() {
               </CardContent>
             </Card>
 
-            {/* Financial */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('detail.financial')}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-4 sm:grid-cols-2">
-                <InfoItem label={t('detail.procurementCost')} value={candidate.procurementCost ? `${candidate.procurementCost} AED` : undefined} />
-                <InfoItem label={t('detail.monthlySalary')} value={candidate.monthlySalary ? `${candidate.monthlySalary} AED` : undefined} />
-              </CardContent>
-            </Card>
-
             {/* Skills */}
             <Card>
               <CardHeader>
@@ -380,21 +369,9 @@ export function CandidateDetailPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>{t('detail.documents')}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-4 sm:grid-cols-2">
-                <InfoItem label={t('detail.medicalStatus')} value={candidate.medicalStatus} />
-                <InfoItem label={t('detail.visaStatus')} value={candidate.visaStatus} />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
                 <CardTitle>{t('detail.operational')}</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4 sm:grid-cols-2">
-                <InfoItem label={t('detail.expectedArrivalDate')} value={candidate.expectedArrivalDate} />
-                <InfoItem label={t('detail.actualArrivalDate')} value={candidate.actualArrivalDate} />
                 <InfoItem label={t('detail.createdAt')} value={new Date(candidate.createdAt).toLocaleString()} />
                 <InfoItem label={t('detail.updatedAt')} value={new Date(candidate.updatedAt).toLocaleString()} />
                 <div className="sm:col-span-2">

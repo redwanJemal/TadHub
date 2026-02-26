@@ -54,9 +54,6 @@ export function EditCandidatePage() {
     jobCategoryId: '',
     experienceYears: '',
     monthlySalary: '',
-    medicalStatus: '',
-    visaStatus: '',
-    expectedArrivalDate: '',
     notes: '',
     externalReference: '',
   });
@@ -83,9 +80,6 @@ export function EditCandidatePage() {
         jobCategoryId: candidate.jobCategoryId || '',
         experienceYears: candidate.experienceYears?.toString() || '',
         monthlySalary: candidate.monthlySalary?.toString() || '',
-        medicalStatus: candidate.medicalStatus || '',
-        visaStatus: candidate.visaStatus || '',
-        expectedArrivalDate: candidate.expectedArrivalDate || '',
         notes: candidate.notes || '',
         externalReference: candidate.externalReference || '',
       });
@@ -137,9 +131,6 @@ export function EditCandidatePage() {
           monthlySalary: form.monthlySalary ? parseFloat(form.monthlySalary) : undefined,
           skills: validSkills,
           languages: validLanguages,
-          medicalStatus: form.medicalStatus.trim() || undefined,
-          visaStatus: form.visaStatus.trim() || undefined,
-          expectedArrivalDate: form.expectedArrivalDate || undefined,
           notes: form.notes.trim() || undefined,
           externalReference: form.externalReference.trim() || undefined,
         },
@@ -450,48 +441,12 @@ export function EditCandidatePage() {
           </CardContent>
         </Card>
 
-        {/* Documents */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('create.sections.documents')}</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="medicalStatus">{t('create.medicalStatus')}</Label>
-              <Input
-                id="medicalStatus"
-                value={form.medicalStatus}
-                onChange={(e) => update('medicalStatus', e.target.value)}
-                placeholder={t('create.medicalStatusPlaceholder')}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="visaStatus">{t('create.visaStatus')}</Label>
-              <Input
-                id="visaStatus"
-                value={form.visaStatus}
-                onChange={(e) => update('visaStatus', e.target.value)}
-                placeholder={t('create.visaStatusPlaceholder')}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Additional */}
         <Card>
           <CardHeader>
             <CardTitle>{t('create.sections.additional')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="expectedArrivalDate">{t('create.expectedArrivalDate')}</Label>
-              <Input
-                id="expectedArrivalDate"
-                type="date"
-                value={form.expectedArrivalDate}
-                onChange={(e) => update('expectedArrivalDate', e.target.value)}
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="externalReference">{t('create.externalReference')}</Label>
               <Input

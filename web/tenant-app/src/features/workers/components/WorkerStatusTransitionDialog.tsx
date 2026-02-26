@@ -81,6 +81,11 @@ export function WorkerStatusTransitionDialog({
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
+            <Label>{t('transition.currentStatus')}</Label>
+            <div><WorkerStatusBadge status={currentStatus} /></div>
+          </div>
+
+          <div className="space-y-2">
             <Label>{t('transition.targetStatus')}</Label>
             <Select value={targetStatus} onValueChange={setTargetStatus}>
               <SelectTrigger>

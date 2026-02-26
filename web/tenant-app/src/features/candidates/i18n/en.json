@@ -18,14 +18,7 @@
     "UnderReview": "Under Review",
     "Approved": "Approved",
     "Rejected": "Rejected",
-    "ProcurementPaid": "Procurement Paid",
-    "InTransit": "In Transit",
-    "Arrived": "Arrived",
-    "Converted": "Converted",
-    "Cancelled": "Cancelled",
-    "FailedMedicalAbroad": "Failed Medical Abroad",
-    "VisaDenied": "Visa Denied",
-    "ReturnedAfterArrival": "Returned After Arrival"
+    "Cancelled": "Cancelled"
   },
   "sourceType": {
     "Supplier": "Supplier",
@@ -166,6 +159,7 @@
   "transition": {
     "title": "Change Status",
     "description": "Transition the candidate to a new status.",
+    "currentStatus": "Current Status",
     "targetStatus": "Target Status",
     "targetStatusPlaceholder": "Select status",
     "reason": "Reason",

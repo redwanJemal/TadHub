@@ -1,0 +1,61 @@
+{
+  "title": "Clients",
+  "description": "Manage your client directory.",
+  "addClient": "Add Client",
+  "searchPlaceholder": "Search clients...",
+  "columns": {
+    "name": "Name",
+    "nationalId": "National ID",
+    "contact": "Contact",
+    "city": "City",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "status": {
+    "Active": "Active",
+    "Inactive": "Inactive"
+  },
+  "empty": {
+    "title": "No clients yet",
+    "description": "Add your first client to get started."
+  },
+  "add": {
+    "title": "Add New Client",
+    "description": "Create a new client record.",
+    "nameEn": "Name (English)",
+    "nameEnPlaceholder": "e.g., Mohammed Al-Ali",
+    "nameAr": "Name (Arabic)",
+    "nameArPlaceholder": "e.g., محمد العلي",
+    "nationalId": "National ID",
+    "nationalIdPlaceholder": "e.g., 1234567890",
+    "phone": "Phone",
+    "phonePlaceholder": "e.g., +966 50 123 4567",
+    "email": "Email",
+    "emailPlaceholder": "e.g., client@email.com",
+    "address": "Address",
+    "addressPlaceholder": "e.g., 123 Main St",
+    "city": "City",
+    "cityPlaceholder": "e.g., Riyadh",
+    "notes": "Notes",
+    "notesPlaceholder": "Internal notes about this client...",
+    "submit": "Add Client",
+    "submitting": "Adding..."
+  },
+  "edit": {
+    "title": "Edit Client",
+    "description": "Update client information.",
+    "submit": "Save Changes",
+    "submitting": "Saving..."
+  },
+  "actions": {
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "delete": "Delete"
+  },
+  "delete": {
+    "title": "Delete Client",
+    "description": "Are you sure you want to delete this client? This will deactivate the client record.",
+    "confirm": "Delete"
+  }
+}

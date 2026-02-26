@@ -57,10 +57,10 @@ public sealed record CandidateSnapshotDto
 }
 
 /// <summary>
-/// Raised when a candidate is converted to a worker.
+/// Raised when a candidate is approved.
 /// The Worker module consumes this to auto-create a Worker record.
 /// </summary>
-public sealed record CandidateConvertedEvent : IDomainEvent
+public sealed record CandidateApprovedEvent : IDomainEvent
 {
     public Guid EventId { get; init; } = Guid.NewGuid();
     public DateTimeOffset OccurredAt { get; init; }
@@ -68,5 +68,5 @@ public sealed record CandidateConvertedEvent : IDomainEvent
     public Guid CandidateId { get; init; }
     public CandidateSnapshotDto CandidateData { get; init; } = new();
 
-    public CandidateConvertedEvent() { }
+    public CandidateApprovedEvent() { }
 }

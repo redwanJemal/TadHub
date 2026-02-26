@@ -47,10 +47,6 @@ const initialForm = {
   jobCategoryId: '',
   experienceYears: '',
   monthlySalary: '',
-  // Documents & Operations
-  medicalStatus: '',
-  visaStatus: '',
-  expectedArrivalDate: '',
   notes: '',
   externalReference: '',
 };
@@ -106,9 +102,6 @@ export function CreateCandidatePage() {
         languages: validLanguages.length > 0 ? validLanguages : undefined,
         photoFileId: photoFileId || undefined,
         passportFileId: passportFileId || undefined,
-        medicalStatus: form.medicalStatus.trim() || undefined,
-        visaStatus: form.visaStatus.trim() || undefined,
-        expectedArrivalDate: form.expectedArrivalDate || undefined,
         notes: form.notes.trim() || undefined,
         externalReference: form.externalReference.trim() || undefined,
       });
@@ -431,48 +424,12 @@ export function CreateCandidatePage() {
           </CardContent>
         </Card>
 
-        {/* Documents */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('create.sections.documents')}</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="medicalStatus">{t('create.medicalStatus')}</Label>
-              <Input
-                id="medicalStatus"
-                value={form.medicalStatus}
-                onChange={(e) => update('medicalStatus', e.target.value)}
-                placeholder={t('create.medicalStatusPlaceholder')}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="visaStatus">{t('create.visaStatus')}</Label>
-              <Input
-                id="visaStatus"
-                value={form.visaStatus}
-                onChange={(e) => update('visaStatus', e.target.value)}
-                placeholder={t('create.visaStatusPlaceholder')}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Additional */}
         <Card>
           <CardHeader>
             <CardTitle>{t('create.sections.additional')}</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="expectedArrivalDate">{t('create.expectedArrivalDate')}</Label>
-              <Input
-                id="expectedArrivalDate"
-                type="date"
-                value={form.expectedArrivalDate}
-                onChange={(e) => update('expectedArrivalDate', e.target.value)}
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="externalReference">{t('create.externalReference')}</Label>
               <Input
