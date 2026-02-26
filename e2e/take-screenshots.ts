@@ -65,91 +65,40 @@ async function main() {
   await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/01-home.png`, fullPage: false });
   console.log('  done: home');
 
-  // 2. Team page - Members tab
-  await page.goto(`${TENANT_URL}/team`);
-  try {
-    await page.getByText('Team Management').waitFor({ timeout: 15_000 });
-  } catch {
-    console.warn('  Team Management heading did not appear, continuing...');
-  }
-  // Wait for data to load (skeleton -> actual content)
-  try {
-    await page.locator('table tbody td').first().waitFor({ timeout: 15_000 });
-  } catch {
-    console.warn('  table data did not appear, continuing...');
-  }
-  await page.waitForTimeout(2000);
-  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/02-team-members.png`, fullPage: false });
-  console.log('  done: team members');
-
-  // 3. Team page - Invitations tab
-  const invitationsTab = page.getByRole('tab', { name: /invitations/i });
-  if (await invitationsTab.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await invitationsTab.click();
-    await page.waitForTimeout(3000);
-    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/03-team-invitations.png`, fullPage: false });
-    console.log('  done: team invitations');
-  }
-
-  // 4. Invite Member dialog
-  const inviteBtn = page.getByRole('button', { name: /invite member/i });
-  if (await inviteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await inviteBtn.click();
-    await page.waitForTimeout(1000);
-    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/04-invite-member-dialog.png`, fullPage: false });
-    console.log('  done: invite member dialog');
-
-    // Close dialog
-    const cancelBtn = page.getByRole('button', { name: /cancel/i });
-    if (await cancelBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await cancelBtn.click();
-      await page.waitForTimeout(500);
-    }
-  }
-
-  // 5. Members tab - actions dropdown
-  const membersTab = page.getByRole('tab', { name: /members/i });
-  if (await membersTab.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await membersTab.click();
-    await page.waitForTimeout(3000);
-
-    const actionBtn = page.locator('table tbody tr').first().getByRole('button');
-    if (await actionBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await actionBtn.click();
-      await page.waitForTimeout(500);
-      await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/05-member-actions-dropdown.png`, fullPage: false });
-      console.log('  done: member actions dropdown');
-    }
-  }
-
   // ========== CANDIDATES ==========
   console.log('\n  --- Candidates ---');
 
-  // 6. Candidates list page
+  // 2. Candidates list page
   await page.goto(`${TENANT_URL}/candidates`);
   try {
     await page.getByText('Candidates').first().waitFor({ timeout: 15_000 });
   } catch {
     console.warn('  Candidates heading did not appear, continuing...');
   }
+  // Wait for table data to load
+  try {
+    await page.locator('table tbody tr').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  table data did not appear, continuing...');
+  }
   await page.waitForTimeout(3000);
-  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/06-candidates-list.png`, fullPage: false });
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/02-candidates-list.png`, fullPage: false });
   console.log('  done: candidates list');
 
-  // 7. Candidates list - row actions dropdown (if data exists)
+  // 3. Candidates list - row actions dropdown (if data exists)
   const candidateActionBtn = page.locator('table tbody tr').first().getByRole('button');
   if (await candidateActionBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await candidateActionBtn.click();
     await page.waitForTimeout(500);
-    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/07-candidate-actions-dropdown.png`, fullPage: false });
+    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/03-candidate-actions-dropdown.png`, fullPage: false });
     console.log('  done: candidate actions dropdown');
 
-    // Close dropdown by pressing Escape
+    // Close dropdown
     await page.keyboard.press('Escape');
     await page.waitForTimeout(300);
   }
 
-  // 8. Create candidate page
+  // 4. Create candidate page (full page to capture all sections including media)
   await page.goto(`${TENANT_URL}/candidates/new`);
   try {
     await page.getByText('Add New Candidate').waitFor({ timeout: 15_000 });
@@ -157,10 +106,22 @@ async function main() {
     console.warn('  Create candidate heading did not appear, continuing...');
   }
   await page.waitForTimeout(2000);
-  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/08-create-candidate.png`, fullPage: true });
-  console.log('  done: create candidate form');
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/04-create-candidate-top.png`, fullPage: false });
+  console.log('  done: create candidate form (top)');
 
-  // 9. Candidate detail page (click first candidate if exists)
+  // 5. Create candidate - scroll to bottom to show media section
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForTimeout(1000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/05-create-candidate-bottom.png`, fullPage: false });
+  console.log('  done: create candidate form (bottom with media section)');
+
+  // 6. Full page screenshot of create form
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/06-create-candidate-full.png`, fullPage: true });
+  console.log('  done: create candidate form (full page)');
+
+  // --- Navigate to first candidate detail ---
+  let candidateDetailUrl: string | null = null;
+
   await page.goto(`${TENANT_URL}/candidates`);
   try {
     await page.getByText('Candidates').first().waitFor({ timeout: 15_000 });
@@ -168,26 +129,63 @@ async function main() {
     console.warn('  Candidates heading did not appear, continuing...');
   }
   await page.waitForTimeout(3000);
-  const firstCandidateRow = page.locator('table tbody tr').first();
-  if (await firstCandidateRow.isVisible({ timeout: 3000 }).catch(() => false)) {
-    // Click the View Details action
-    const detailActionBtn = firstCandidateRow.getByRole('button');
-    if (await detailActionBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await detailActionBtn.click();
+
+  const firstRow = page.locator('table tbody tr').first();
+  if (await firstRow.isVisible({ timeout: 3000 }).catch(() => false)) {
+    // Click the actions button on first row
+    const rowActionBtn = firstRow.getByRole('button');
+    if (await rowActionBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await rowActionBtn.click();
       await page.waitForTimeout(500);
       const viewBtn = page.getByText('View Details');
       if (await viewBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         await viewBtn.click();
         await page.waitForTimeout(3000);
-        await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/09-candidate-detail.png`, fullPage: true });
-        console.log('  done: candidate detail');
+        candidateDetailUrl = page.url();
 
-        // 10. Status transition dialog
+        // 7. Candidate detail - Overview tab
+        await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/07-candidate-detail-overview.png`, fullPage: true });
+        console.log('  done: candidate detail (Overview tab)');
+
+        // 8. Candidate detail - Professional tab
+        const professionalTab = page.getByRole('tab', { name: /professional/i });
+        if (await professionalTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await professionalTab.click();
+          await page.waitForTimeout(2000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/08-candidate-detail-professional.png`, fullPage: true });
+          console.log('  done: candidate detail (Professional tab)');
+        }
+
+        // 9. Candidate detail - Documents & Operations tab
+        const docsTab = page.getByRole('tab', { name: /documents/i });
+        if (await docsTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await docsTab.click();
+          await page.waitForTimeout(2000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/09-candidate-detail-documents.png`, fullPage: true });
+          console.log('  done: candidate detail (Documents & Operations tab)');
+        }
+
+        // 10. Candidate detail - Status History tab
+        const historyTab = page.getByRole('tab', { name: /status history/i });
+        if (await historyTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await historyTab.click();
+          await page.waitForTimeout(2000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/10-candidate-detail-status-history.png`, fullPage: true });
+          console.log('  done: candidate detail (Status History tab)');
+        }
+
+        // 11. Status transition dialog
+        // Go back to overview tab first
+        const overviewTab = page.getByRole('tab', { name: /overview/i });
+        if (await overviewTab.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await overviewTab.click();
+          await page.waitForTimeout(1000);
+        }
         const changeStatusBtn = page.getByRole('button', { name: /change status/i });
         if (await changeStatusBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
           await changeStatusBtn.click();
           await page.waitForTimeout(1000);
-          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/10-candidate-status-dialog.png`, fullPage: false });
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/11-candidate-status-dialog.png`, fullPage: false });
           console.log('  done: status transition dialog');
 
           // Close dialog
@@ -197,6 +195,63 @@ async function main() {
             await page.waitForTimeout(500);
           }
         }
+
+        // 12. Delete confirmation dialog
+        const deleteBtn = page.getByRole('button', { name: /delete/i });
+        if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await deleteBtn.click();
+          await page.waitForTimeout(1000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/12-candidate-delete-dialog.png`, fullPage: false });
+          console.log('  done: delete confirmation dialog');
+
+          // Close dialog
+          const cancelBtn = page.getByRole('button', { name: /cancel/i });
+          if (await cancelBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await cancelBtn.click();
+            await page.waitForTimeout(500);
+          }
+        }
+
+        // 13. Edit candidate page
+        if (candidateDetailUrl) {
+          // Extract candidate ID from URL
+          const match = candidateDetailUrl.match(/\/candidates\/([^/]+)/);
+          if (match) {
+            const candidateId = match[1];
+            // Try Edit button first (only visible if status is Received or UnderReview)
+            const editBtn = page.getByRole('button', { name: /^edit$/i });
+            if (await editBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+              await editBtn.click();
+              await page.waitForTimeout(3000);
+              await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/13-edit-candidate-top.png`, fullPage: false });
+              console.log('  done: edit candidate (top)');
+
+              // Scroll to see media section
+              await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+              await page.waitForTimeout(1000);
+              await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/14-edit-candidate-bottom.png`, fullPage: false });
+              console.log('  done: edit candidate (bottom with media)');
+
+              // Full page
+              await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/15-edit-candidate-full.png`, fullPage: true });
+              console.log('  done: edit candidate (full page)');
+            } else {
+              // Navigate directly to edit page
+              await page.goto(`${TENANT_URL}/candidates/${candidateId}/edit`);
+              await page.waitForTimeout(3000);
+              await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/13-edit-candidate-top.png`, fullPage: false });
+              console.log('  done: edit candidate (top - direct nav)');
+
+              await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+              await page.waitForTimeout(1000);
+              await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/14-edit-candidate-bottom.png`, fullPage: false });
+              console.log('  done: edit candidate (bottom with media)');
+
+              await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/15-edit-candidate-full.png`, fullPage: true });
+              console.log('  done: edit candidate (full page)');
+            }
+          }
+        }
       }
     }
   }
@@ -204,6 +259,7 @@ async function main() {
   // Report errors
   if (pageErrors.length > 0) {
     console.warn(`\n  WARNING: ${pageErrors.length} page error(s) detected during tenant app screenshots`);
+    pageErrors.forEach(e => console.warn(`    - ${e}`));
   } else {
     console.log('\n  No JS errors detected');
   }
@@ -211,7 +267,7 @@ async function main() {
   await ctx.close();
   await browser.close();
 
-  console.log('\nAll screenshots saved to test-screenshots/');
+  console.log('\nAll screenshots saved to test-screenshots/tenant/');
 }
 
 main().catch(err => {

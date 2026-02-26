@@ -1,5 +1,5 @@
-import { apiClient } from '@/shared/api/client';
-import { getTenantId } from '@/features/auth/AuthProvider';
+import { apiClient, API_BASE } from '@/shared/api/client';
+import { getTenantId, getAccessToken } from '@/features/auth/AuthProvider';
 import type { QueryParams } from '@/shared/api/types/common';
 import type {
   CandidateDto,
@@ -8,6 +8,7 @@ import type {
   CreateCandidateRequest,
   UpdateCandidateRequest,
   TransitionStatusRequest,
+  TenantFileDto,
 } from './types';
 
 function tenantPath(path: string) {
@@ -41,4 +42,44 @@ export function getStatusHistory(id: string) {
 
 export function deleteCandidate(id: string) {
   return apiClient.delete<void>(tenantPath(`/candidates/${id}`));
+}
+
+async function authenticatedUpload<T>(path: string, file: File, errorMsg: string): Promise<T> {
+  const tenantId = getTenantId();
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const token = getAccessToken();
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      'X-Tenant-ID': tenantId || '',
+    },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || errorMsg);
+  }
+
+  const json = await res.json();
+  return json.data ?? json;
+}
+
+export function uploadCandidatePhoto(id: string, file: File): Promise<CandidateDto> {
+  return authenticatedUpload(tenantPath(`/candidates/${id}/photo`), file, 'Photo upload failed');
+}
+
+export function uploadCandidateVideo(id: string, file: File): Promise<CandidateDto> {
+  return authenticatedUpload(tenantPath(`/candidates/${id}/video`), file, 'Video upload failed');
+}
+
+export function uploadCandidatePassport(id: string, file: File): Promise<CandidateDto> {
+  return authenticatedUpload(tenantPath(`/candidates/${id}/passport`), file, 'Passport upload failed');
+}
+
+export function uploadFile(file: File, fileType: string): Promise<TenantFileDto> {
+  return authenticatedUpload(tenantPath(`/files?fileType=${fileType}`), file, 'File upload failed');
 }

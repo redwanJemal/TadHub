@@ -2,7 +2,7 @@ namespace TadHub.Infrastructure.Settings;
 
 public sealed class MinioSettings
 {
-    public const string SectionName = "Minio";
+    public const string SectionName = "Storage";
 
     public string Endpoint { get; init; } = "localhost:9000";
     public string AccessKey { get; init; } = string.Empty;

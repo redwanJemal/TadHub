@@ -184,10 +184,12 @@ using (var scope = app.Services.CreateScope())
 // Middleware Pipeline
 // =============================================================================
 
+// CORS must be before everything else so error responses also include CORS headers
+app.UseCors();
+
 // Infrastructure middleware (exception handler, response wrapping)
 app.UseInfrastructure(builder.Configuration);
 
-app.UseCors();
 app.UseAuthentication();
 
 // Resolve Keycloak sub → internal user_profiles.Id (after auth, before authorization)

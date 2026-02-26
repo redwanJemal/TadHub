@@ -70,6 +70,43 @@ public sealed record CreateCandidateRequest
     /// </summary>
     public Guid? TenantSupplierId { get; init; }
 
+    // Professional Profile
+
+    [MaxLength(50)]
+    public string? Religion { get; init; }
+
+    [MaxLength(20)]
+    public string? MaritalStatus { get; init; }
+
+    [MaxLength(50)]
+    public string? EducationLevel { get; init; }
+
+    public Guid? JobCategoryId { get; init; }
+
+    public int? ExperienceYears { get; init; }
+
+    public decimal? MonthlySalary { get; init; }
+
+    /// <summary>
+    /// Skills to associate with the candidate.
+    /// </summary>
+    public List<CandidateSkillRequest>? Skills { get; init; }
+
+    /// <summary>
+    /// Languages to associate with the candidate.
+    /// </summary>
+    public List<CandidateLanguageRequest>? Languages { get; init; }
+
+    /// <summary>
+    /// TenantFile ID for a photo uploaded before form submission (deferred upload).
+    /// </summary>
+    public Guid? PhotoFileId { get; init; }
+
+    /// <summary>
+    /// TenantFile ID for a passport document uploaded before form submission (deferred upload).
+    /// </summary>
+    public Guid? PassportFileId { get; init; }
+
     /// <summary>
     /// Passport expiry date.
     /// </summary>

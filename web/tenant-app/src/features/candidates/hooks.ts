@@ -12,14 +12,14 @@ const CANDIDATES_KEY = 'candidates';
 export function useCandidates(params?: QueryParams) {
   return useQuery({
     queryKey: [CANDIDATES_KEY, params],
-    queryFn: () => api.listCandidates(params),
+    queryFn: () => api.listCandidates({ ...params, include: 'supplier' }),
   });
 }
 
 export function useCandidate(id: string) {
   return useQuery({
     queryKey: [CANDIDATES_KEY, id],
-    queryFn: () => api.getCandidate(id, { include: 'statusHistory' }),
+    queryFn: () => api.getCandidate(id, { include: 'statusHistory,supplier' }),
     enabled: !!id,
   });
 }
@@ -71,5 +71,45 @@ export function useDeleteCandidate() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [CANDIDATES_KEY] });
     },
+  });
+}
+
+export function useUploadPhoto() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) =>
+      api.uploadCandidatePhoto(id, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [CANDIDATES_KEY] });
+    },
+  });
+}
+
+export function useUploadVideo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) =>
+      api.uploadCandidateVideo(id, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [CANDIDATES_KEY] });
+    },
+  });
+}
+
+export function useUploadPassport() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File }) =>
+      api.uploadCandidatePassport(id, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [CANDIDATES_KEY] });
+    },
+  });
+}
+
+export function useUploadFile() {
+  return useMutation({
+    mutationFn: ({ file, fileType }: { file: File; fileType: string }) =>
+      api.uploadFile(file, fileType),
   });
 }

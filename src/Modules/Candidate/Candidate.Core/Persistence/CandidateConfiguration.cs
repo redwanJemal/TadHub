@@ -68,20 +68,56 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Entities.Candidat
         builder.Property(x => x.ExternalReference)
             .HasMaxLength(100);
 
+        // Professional Profile
+        builder.Property(x => x.Religion)
+            .HasMaxLength(50);
+
+        builder.Property(x => x.MaritalStatus)
+            .HasMaxLength(20);
+
+        builder.Property(x => x.EducationLevel)
+            .HasMaxLength(50);
+
+        // Media
+        builder.Property(x => x.PhotoUrl)
+            .HasMaxLength(500);
+
+        builder.Property(x => x.VideoUrl)
+            .HasMaxLength(500);
+
+        builder.Property(x => x.PassportDocumentUrl)
+            .HasMaxLength(500);
+
+        // Financial
+        builder.Property(x => x.ProcurementCost)
+            .HasPrecision(18, 2);
+
+        builder.Property(x => x.MonthlySalary)
+            .HasPrecision(18, 2);
+
         // Unique index on (TenantId, PassportNumber) — one passport per tenant, filtered for non-null
         builder.HasIndex(x => new { x.TenantId, x.PassportNumber })
             .IsUnique()
             .HasFilter("passport_number IS NOT NULL")
             .HasDatabaseName("ix_candidates_tenant_id_passport_number");
 
-        // FK to TenantSupplier with SetNull delete (candidate survives if supplier is unlinked)
-        builder.HasOne(x => x.TenantSupplier)
-            .WithMany()
-            .HasForeignKey(x => x.TenantSupplierId)
-            .OnDelete(DeleteBehavior.SetNull);
+        // TenantSupplierId is a cross-module reference (Supplier module).
+        // No navigation property — module boundary. FK constraint exists at DB level from migration.
 
         // FK to StatusHistory with Cascade delete
         builder.HasMany(x => x.StatusHistory)
+            .WithOne(x => x.Candidate)
+            .HasForeignKey(x => x.CandidateId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // FK to Skills with Cascade delete
+        builder.HasMany(x => x.Skills)
+            .WithOne(x => x.Candidate)
+            .HasForeignKey(x => x.CandidateId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // FK to Languages with Cascade delete
+        builder.HasMany(x => x.Languages)
             .WithOne(x => x.Candidate)
             .HasForeignKey(x => x.CandidateId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -110,6 +146,9 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Entities.Candidat
 
         builder.HasIndex(x => x.FullNameEn)
             .HasDatabaseName("ix_candidates_full_name_en");
+
+        builder.HasIndex(x => x.JobCategoryId)
+            .HasDatabaseName("ix_candidates_job_category_id");
 
         // Note: Soft delete and tenant query filters are applied globally by AppDbContext.
         // Do NOT add HasQueryFilter here — it would override the global composite filter.

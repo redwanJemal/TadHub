@@ -8,6 +8,7 @@
     "nationality": "الجنسية",
     "sourceType": "نوع المصدر",
     "supplier": "المورد",
+    "jobCategory": "فئة العمل",
     "status": "الحالة",
     "createdAt": "تاريخ الإنشاء",
     "actions": "الإجراءات"
@@ -41,9 +42,15 @@
       "personal": "المعلومات الشخصية",
       "contact": "معلومات الاتصال",
       "sourcing": "المصادر",
+      "professional": "الملف المهني",
+      "skills": "المهارات",
+      "languages": "اللغات",
+      "media": "الوسائط والمستندات",
       "documents": "المستندات",
       "additional": "معلومات إضافية"
     },
+    "photo": "صورة المرشح",
+    "passport": "وثيقة جواز السفر",
     "fullNameEn": "الاسم الكامل (إنجليزي)",
     "fullNameEnPlaceholder": "مثال: John Doe",
     "fullNameAr": "الاسم الكامل (عربي)",
@@ -68,6 +75,18 @@
     "sourceTypePlaceholder": "اختر نوع المصدر",
     "supplier": "المورد",
     "supplierPlaceholder": "اختر المورد",
+    "religion": "الديانة",
+    "religionPlaceholder": "اختر الديانة",
+    "maritalStatus": "الحالة الاجتماعية",
+    "maritalStatusPlaceholder": "اختر الحالة الاجتماعية",
+    "educationLevel": "المستوى التعليمي",
+    "educationLevelPlaceholder": "اختر المستوى التعليمي",
+    "jobCategory": "فئة العمل",
+    "jobCategoryPlaceholder": "اختر فئة العمل",
+    "experienceYears": "سنوات الخبرة",
+    "experienceYearsPlaceholder": "مثال: 3",
+    "monthlySalary": "الراتب الشهري (درهم)",
+    "monthlySalaryPlaceholder": "مثال: 1500",
     "medicalStatus": "الحالة الطبية",
     "medicalStatusPlaceholder": "مثال: قيد الانتظار، تمت الموافقة",
     "visaStatus": "حالة التأشيرة",
@@ -80,6 +99,18 @@
     "submit": "إنشاء مرشح",
     "submitting": "جاري الإنشاء..."
   },
+  "edit": {
+    "title": "تعديل المرشح",
+    "backToDetail": "العودة إلى التفاصيل",
+    "sections": {
+      "media": "الوسائط والمستندات"
+    },
+    "photo": "الصورة",
+    "video": "الفيديو",
+    "passport": "وثيقة جواز السفر",
+    "submit": "حفظ التغييرات",
+    "submitting": "جاري الحفظ..."
+  },
   "detail": {
     "backToList": "العودة إلى المرشحين",
     "personal": "المعلومات الشخصية",
@@ -88,6 +119,11 @@
     "documents": "حالة المستندات",
     "operational": "التفاصيل التشغيلية",
     "statusHistory": "سجل الحالة",
+    "professionalProfile": "الملف المهني",
+    "financial": "المالية",
+    "skills": "المهارات",
+    "languages": "اللغات",
+    "media": "الوسائط",
     "fullNameEn": "الاسم الكامل (إنجليزي)",
     "fullNameAr": "الاسم الكامل (عربي)",
     "nationality": "الجنسية",
@@ -99,6 +135,15 @@
     "email": "البريد الإلكتروني",
     "sourceType": "نوع المصدر",
     "supplier": "المورد",
+    "religion": "الديانة",
+    "maritalStatus": "الحالة الاجتماعية",
+    "educationLevel": "المستوى التعليمي",
+    "jobCategory": "فئة العمل",
+    "experienceYears": "سنوات الخبرة",
+    "monthlySalary": "الراتب الشهري",
+    "procurementCost": "تكلفة الاستقدام",
+    "photo": "الصورة",
+    "video": "الفيديو",
     "medicalStatus": "الحالة الطبية",
     "visaStatus": "حالة التأشيرة",
     "expectedArrivalDate": "تاريخ الوصول المتوقع",
@@ -107,7 +152,10 @@
     "notes": "ملاحظات",
     "createdAt": "تاريخ الإنشاء",
     "updatedAt": "تاريخ التحديث",
-    "notAvailable": "غير متوفر"
+    "notAvailable": "غير متوفر",
+    "passportDocument": "وثيقة جواز السفر",
+    "viewPassportDocument": "عرض وثيقة جواز السفر",
+    "noMedia": "لم يتم رفع أي وسائط بعد"
   },
   "actions": {
     "view": "عرض التفاصيل",
@@ -139,8 +187,93 @@
     "reason": "السبب",
     "by": "بواسطة"
   },
+  "tabs": {
+    "overview": "نظرة عامة",
+    "professional": "الملف المهني",
+    "documentsOperations": "المستندات والعمليات",
+    "statusHistory": "سجل الحالة"
+  },
   "filters": {
     "status": "الحالة",
     "sourceType": "نوع المصدر"
+  },
+  "professional": {
+    "religion": {
+      "Islam": "الإسلام",
+      "Christianity": "المسيحية",
+      "Hinduism": "الهندوسية",
+      "Buddhism": "البوذية",
+      "Other": "أخرى"
+    },
+    "maritalStatus": {
+      "Single": "أعزب",
+      "Married": "متزوج",
+      "Divorced": "مطلق",
+      "Widowed": "أرمل"
+    },
+    "educationLevel": {
+      "None": "بدون",
+      "Primary": "ابتدائي",
+      "Secondary": "متوسط",
+      "HighSchool": "ثانوي",
+      "Diploma": "دبلوم",
+      "Bachelor": "بكالوريوس",
+      "Master": "ماجستير",
+      "PhD": "دكتوراه"
+    }
+  },
+  "skills": {
+    "add": "إضافة مهارة",
+    "selectSkill": "اختر المهارة",
+    "custom": "مخصص...",
+    "customPlaceholder": "أدخل اسم المهارة",
+    "presets": {
+      "Cooking": "الطبخ",
+      "Cleaning": "التنظيف",
+      "Childcare": "رعاية الأطفال",
+      "Eldercare": "رعاية كبار السن",
+      "Laundry": "الغسيل",
+      "Ironing": "الكي",
+      "Driving": "القيادة"
+    },
+    "proficiency": {
+      "Basic": "مبتدئ",
+      "Intermediate": "متوسط",
+      "Advanced": "متقدم",
+      "Expert": "خبير"
+    }
+  },
+  "languages": {
+    "add": "إضافة لغة",
+    "selectLanguage": "اختر اللغة",
+    "custom": "مخصص...",
+    "customPlaceholder": "أدخل اسم اللغة",
+    "presets": {
+      "Arabic": "العربية",
+      "English": "الإنجليزية",
+      "Hindi": "الهندية",
+      "Urdu": "الأردية",
+      "Tagalog": "التاغالوغ",
+      "Sinhala": "السنهالية",
+      "Bengali": "البنغالية",
+      "Nepali": "النيبالية",
+      "Indonesian": "الإندونيسية",
+      "Amharic": "الأمهرية"
+    },
+    "proficiency": {
+      "Basic": "مبتدئ",
+      "Conversational": "محادثة",
+      "Fluent": "طلاقة",
+      "Native": "لغة أم"
+    }
+  },
+  "fileUpload": {
+    "upload": "رفع",
+    "replace": "استبدال",
+    "uploading": "جاري الرفع...",
+    "tooLarge": "حجم الملف يجب أن يكون أقل من {{max}} ميجابايت",
+    "failed": "فشل الرفع",
+    "documentUploaded": "تم رفع المستند",
+    "viewDocument": "عرض"
   }
 }

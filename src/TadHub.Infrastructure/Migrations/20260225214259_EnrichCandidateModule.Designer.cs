@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TadHub.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using TadHub.Infrastructure.Persistence;
 namespace SaasKit.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260225214259_EnrichCandidateModule")]
+    partial class EnrichCandidateModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1068,11 +1071,6 @@ namespace SaasKit.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("notes");
-
-                    b.Property<string>("PassportDocumentUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("passport_document_url");
 
                     b.Property<DateOnly?>("PassportExpiry")
                         .HasColumnType("date")
@@ -4548,89 +4546,6 @@ namespace SaasKit.Migrations
                         .HasDatabaseName("ix_tenant_suppliers_tenant_id_supplier_id");
 
                     b.ToTable("tenant_suppliers", (string)null);
-                });
-
-            modelBuilder.Entity("TadHub.Infrastructure.Storage.TenantFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("content_type");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by");
-
-                    b.Property<Guid?>("EntityId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("entity_id");
-
-                    b.Property<string>("EntityType")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("entity_type");
-
-                    b.Property<long>("FileSizeBytes")
-                        .HasColumnType("bigint")
-                        .HasColumnName("file_size_bytes");
-
-                    b.Property<string>("FileType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("file_type");
-
-                    b.Property<bool>("IsAttached")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_attached");
-
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("original_file_name");
-
-                    b.Property<string>("StorageKey")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("storage_key");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tenant_files");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_tenant_files_tenant_id");
-
-                    b.HasIndex("EntityType", "EntityId")
-                        .HasDatabaseName("ix_tenant_files_entity_type_entity_id");
-
-                    b.HasIndex("IsAttached", "CreatedAt")
-                        .HasDatabaseName("ix_tenant_files_is_attached_created_at");
-
-                    b.ToTable("tenant_files", (string)null);
                 });
 
             modelBuilder.Entity("Tenancy.Core.Entities.SharedPoolAgreement", b =>

@@ -1,4 +1,3 @@
-using Supplier.Core.Entities;
 using TadHub.SharedKernel.Entities;
 
 namespace Candidate.Core.Entities;
@@ -33,6 +32,22 @@ public class Candidate : SoftDeletableEntity, IAuditable
     public string? MedicalStatus { get; set; }
     public string? VisaStatus { get; set; }
 
+    // Professional Profile
+    public string? Religion { get; set; }
+    public string? MaritalStatus { get; set; }
+    public string? EducationLevel { get; set; }
+    public Guid? JobCategoryId { get; set; }
+    public int? ExperienceYears { get; set; }
+
+    // Media
+    public string? PhotoUrl { get; set; }
+    public string? VideoUrl { get; set; }
+    public string? PassportDocumentUrl { get; set; }
+
+    // Financial
+    public decimal? ProcurementCost { get; set; }
+    public decimal? MonthlySalary { get; set; }
+
     // Operational
     public DateOnly? ExpectedArrivalDate { get; set; }
     public DateOnly? ActualArrivalDate { get; set; }
@@ -44,6 +59,7 @@ public class Candidate : SoftDeletableEntity, IAuditable
     public Guid? UpdatedBy { get; set; }
 
     // Navigation
-    public TenantSupplier? TenantSupplier { get; set; }
     public ICollection<CandidateStatusHistory> StatusHistory { get; set; } = new List<CandidateStatusHistory>();
+    public ICollection<CandidateSkill> Skills { get; set; } = new List<CandidateSkill>();
+    public ICollection<CandidateLanguage> Languages { get; set; } = new List<CandidateLanguage>();
 }

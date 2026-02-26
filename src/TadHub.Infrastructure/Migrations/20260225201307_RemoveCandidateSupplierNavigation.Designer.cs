@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TadHub.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using TadHub.Infrastructure.Persistence;
 namespace SaasKit.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260225201307_RemoveCandidateSupplierNavigation")]
+    partial class RemoveCandidateSupplierNavigation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -996,11 +999,6 @@ namespace SaasKit.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("deleted_by");
 
-                    b.Property<string>("EducationLevel")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("education_level");
-
                     b.Property<string>("Email")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
@@ -1009,10 +1007,6 @@ namespace SaasKit.Migrations
                     b.Property<DateOnly?>("ExpectedArrivalDate")
                         .HasColumnType("date")
                         .HasColumnName("expected_arrival_date");
-
-                    b.Property<int?>("ExperienceYears")
-                        .HasColumnType("integer")
-                        .HasColumnName("experience_years");
 
                     b.Property<string>("ExternalReference")
                         .HasMaxLength(100)
@@ -1039,24 +1033,10 @@ namespace SaasKit.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<Guid?>("JobCategoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("job_category_id");
-
-                    b.Property<string>("MaritalStatus")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("marital_status");
-
                     b.Property<string>("MedicalStatus")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("medical_status");
-
-                    b.Property<decimal?>("MonthlySalary")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("monthly_salary");
 
                     b.Property<string>("Nationality")
                         .IsRequired()
@@ -1068,11 +1048,6 @@ namespace SaasKit.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("notes");
-
-                    b.Property<string>("PassportDocumentUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("passport_document_url");
 
                     b.Property<DateOnly?>("PassportExpiry")
                         .HasColumnType("date")
@@ -1087,21 +1062,6 @@ namespace SaasKit.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("phone");
-
-                    b.Property<string>("PhotoUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("photo_url");
-
-                    b.Property<decimal?>("ProcurementCost")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("procurement_cost");
-
-                    b.Property<string>("Religion")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("religion");
 
                     b.Property<string>("SourceType")
                         .IsRequired()
@@ -1140,11 +1100,6 @@ namespace SaasKit.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("updated_by");
 
-                    b.Property<string>("VideoUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("video_url");
-
                     b.Property<string>("VisaStatus")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
@@ -1158,9 +1113,6 @@ namespace SaasKit.Migrations
 
                     b.HasIndex("FullNameEn")
                         .HasDatabaseName("ix_candidates_full_name_en");
-
-                    b.HasIndex("JobCategoryId")
-                        .HasDatabaseName("ix_candidates_job_category_id");
 
                     b.HasIndex("Nationality")
                         .HasDatabaseName("ix_candidates_nationality");
@@ -1186,108 +1138,6 @@ namespace SaasKit.Migrations
                         .HasDatabaseName("ix_candidates_tenant_id_status");
 
                     b.ToTable("candidates", (string)null);
-                });
-
-            modelBuilder.Entity("Candidate.Core.Entities.CandidateLanguage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("CandidateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("candidate_id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("language");
-
-                    b.Property<string>("ProficiencyLevel")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
-                        .HasColumnName("proficiency_level");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_candidate_languages");
-
-                    b.HasIndex("CandidateId")
-                        .HasDatabaseName("ix_candidate_languages_candidate_id");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_candidate_languages_tenant_id");
-
-                    b.HasIndex("CandidateId", "Language")
-                        .IsUnique()
-                        .HasDatabaseName("ix_candidate_languages_candidate_id_language");
-
-                    b.ToTable("candidate_languages", (string)null);
-                });
-
-            modelBuilder.Entity("Candidate.Core.Entities.CandidateSkill", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("CandidateId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("candidate_id");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("ProficiencyLevel")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("character varying(30)")
-                        .HasColumnName("proficiency_level");
-
-                    b.Property<string>("SkillName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("skill_name");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_candidate_skills");
-
-                    b.HasIndex("CandidateId")
-                        .HasDatabaseName("ix_candidate_skills_candidate_id");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_candidate_skills_tenant_id");
-
-                    b.HasIndex("CandidateId", "SkillName")
-                        .IsUnique()
-                        .HasDatabaseName("ix_candidate_skills_candidate_id_skill_name");
-
-                    b.ToTable("candidate_skills", (string)null);
                 });
 
             modelBuilder.Entity("Candidate.Core.Entities.CandidateStatusHistory", b =>
@@ -4550,89 +4400,6 @@ namespace SaasKit.Migrations
                     b.ToTable("tenant_suppliers", (string)null);
                 });
 
-            modelBuilder.Entity("TadHub.Infrastructure.Storage.TenantFile", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("content_type");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by");
-
-                    b.Property<Guid?>("EntityId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("entity_id");
-
-                    b.Property<string>("EntityType")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("entity_type");
-
-                    b.Property<long>("FileSizeBytes")
-                        .HasColumnType("bigint")
-                        .HasColumnName("file_size_bytes");
-
-                    b.Property<string>("FileType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("file_type");
-
-                    b.Property<bool>("IsAttached")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_attached");
-
-                    b.Property<string>("OriginalFileName")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("original_file_name");
-
-                    b.Property<string>("StorageKey")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("storage_key");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tenant_id");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tenant_files");
-
-                    b.HasIndex("TenantId")
-                        .HasDatabaseName("ix_tenant_files_tenant_id");
-
-                    b.HasIndex("EntityType", "EntityId")
-                        .HasDatabaseName("ix_tenant_files_entity_type_entity_id");
-
-                    b.HasIndex("IsAttached", "CreatedAt")
-                        .HasDatabaseName("ix_tenant_files_is_attached_created_at");
-
-                    b.ToTable("tenant_files", (string)null);
-                });
-
             modelBuilder.Entity("Tenancy.Core.Entities.SharedPoolAgreement", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5236,30 +5003,6 @@ namespace SaasKit.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Candidate.Core.Entities.CandidateLanguage", b =>
-                {
-                    b.HasOne("Candidate.Core.Entities.Candidate", "Candidate")
-                        .WithMany("Languages")
-                        .HasForeignKey("CandidateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_candidate_languages_candidates_candidate_id");
-
-                    b.Navigation("Candidate");
-                });
-
-            modelBuilder.Entity("Candidate.Core.Entities.CandidateSkill", b =>
-                {
-                    b.HasOne("Candidate.Core.Entities.Candidate", "Candidate")
-                        .WithMany("Skills")
-                        .HasForeignKey("CandidateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_candidate_skills_candidates_candidate_id");
-
-                    b.Navigation("Candidate");
-                });
-
             modelBuilder.Entity("Candidate.Core.Entities.CandidateStatusHistory", b =>
                 {
                     b.HasOne("Candidate.Core.Entities.Candidate", "Candidate")
@@ -5821,10 +5564,6 @@ namespace SaasKit.Migrations
 
             modelBuilder.Entity("Candidate.Core.Entities.Candidate", b =>
                 {
-                    b.Navigation("Languages");
-
-                    b.Navigation("Skills");
-
                     b.Navigation("StatusHistory");
                 });
 
