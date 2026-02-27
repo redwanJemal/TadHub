@@ -46,7 +46,7 @@ async function main() {
   // Login via Keycloak if redirected
   if (page.url().includes('auth.endlessmaker.com')) {
     console.log('  logging in via Keycloak...');
-    await loginKeycloak(page, 'red@gmail.com', 'Test@1234');
+    await loginKeycloak(page, 'owner@testalpha.com', 'Test1234');
     await page.waitForURL(url => url.toString().includes('tadbeer.endlessmaker.com'), { timeout: 30_000 });
     console.log(`  after login, URL: ${page.url()}`);
   }
