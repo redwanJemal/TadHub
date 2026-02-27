@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Contract.Contracts;
@@ -7,6 +8,7 @@ using Contract.Core.Entities;
 using TadHub.Infrastructure.Api;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Events;
 using TadHub.SharedKernel.Interfaces;
 using TadHub.SharedKernel.Models;
 using Worker.Core.Entities;
@@ -18,6 +20,7 @@ public class ContractService : IContractService
     private readonly AppDbContext _db;
     private readonly IClock _clock;
     private readonly ICurrentUser _currentUser;
+    private readonly IPublishEndpoint _publisher;
     private readonly ILogger<ContractService> _logger;
 
     private static readonly Dictionary<string, Expression<Func<Entities.Contract, object>>> FilterableFields = new()
@@ -43,11 +46,13 @@ public class ContractService : IContractService
         AppDbContext db,
         IClock clock,
         ICurrentUser currentUser,
+        IPublishEndpoint publisher,
         ILogger<ContractService> logger)
     {
         _db = db;
         _clock = clock;
         _currentUser = currentUser;
+        _publisher = publisher;
         _logger = logger;
     }
 
@@ -257,9 +262,6 @@ public class ContractService : IContractService
             contract.TerminationReason = request.Reason;
         }
 
-        // Sync worker status
-        await SyncWorkerStatus(tenantId, contract.WorkerId, fromStatus, targetStatus, request.Reason, now, ct);
-
         var history = new ContractStatusHistory
         {
             Id = Guid.NewGuid(),
@@ -277,6 +279,19 @@ public class ContractService : IContractService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation("Transitioned contract {ContractId} from {FromStatus} to {ToStatus}", id, fromStatus, targetStatus);
+
+        // Publish event for Worker module to sync inventory status
+        await _publisher.Publish(new ContractStatusChangedEvent
+        {
+            OccurredAt = now,
+            TenantId = tenantId,
+            ContractId = contract.Id,
+            WorkerId = contract.WorkerId,
+            FromStatus = fromStatus.ToString(),
+            ToStatus = targetStatus.ToString(),
+            Reason = request.Reason,
+            ChangedByUserId = _currentUser.UserId.ToString(),
+        }, ct);
 
         return Result<ContractDto>.Success(MapToDto(contract, includeStatusHistory: false));
     }
@@ -317,68 +332,6 @@ public class ContractService : IContractService
 
         return Result.Success();
     }
-
-    #region Worker Status Sync
-
-    private async Task SyncWorkerStatus(
-        Guid tenantId, Guid workerId,
-        ContractStatus fromContract, ContractStatus toContract,
-        string? reason, DateTimeOffset now,
-        CancellationToken ct)
-    {
-        var worker = await _db.Set<Worker.Core.Entities.Worker>()
-            .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(x => x.Id == workerId && x.TenantId == tenantId && !x.IsDeleted, ct);
-
-        if (worker is null) return;
-
-        WorkerStatus? targetWorkerStatus = (fromContract, toContract) switch
-        {
-            (ContractStatus.Draft, ContractStatus.Confirmed) => WorkerStatus.Booked,
-            (ContractStatus.Confirmed, ContractStatus.OnProbation) => WorkerStatus.OnProbation,
-            (ContractStatus.Confirmed, ContractStatus.Active) => WorkerStatus.Active,
-            (ContractStatus.OnProbation, ContractStatus.Active) => WorkerStatus.Active,
-            (_, ContractStatus.Cancelled) when worker.Status == WorkerStatus.Booked => WorkerStatus.Available,
-            (_, ContractStatus.Cancelled) when worker.Status == WorkerStatus.OnProbation => WorkerStatus.Available,
-            (_, ContractStatus.Terminated) => WorkerStatus.PendingReplacement,
-            (ContractStatus.Completed, ContractStatus.Closed) => WorkerStatus.Available,
-            (ContractStatus.Terminated, ContractStatus.Closed) => WorkerStatus.Available,
-            _ => null,
-        };
-
-        if (targetWorkerStatus is null) return;
-
-        var fromWorkerStatus = worker.Status;
-        worker.Status = targetWorkerStatus.Value;
-        worker.StatusChangedAt = now;
-        worker.StatusReason = reason;
-
-        if (targetWorkerStatus == WorkerStatus.Active && worker.ActivatedAt is null)
-            worker.ActivatedAt = now;
-
-        if (targetWorkerStatus == WorkerStatus.PendingReplacement || targetWorkerStatus == WorkerStatus.Terminated)
-        {
-            worker.TerminatedAt = now;
-            worker.TerminationReason = reason;
-        }
-
-        var workerHistory = new WorkerStatusHistory
-        {
-            Id = Guid.NewGuid(),
-            TenantId = tenantId,
-            WorkerId = worker.Id,
-            FromStatus = fromWorkerStatus,
-            ToStatus = targetWorkerStatus.Value,
-            ChangedAt = now,
-            ChangedBy = _currentUser.UserId,
-            Reason = $"Contract status changed: {fromContract} → {toContract}",
-            Notes = reason,
-        };
-
-        _db.Set<WorkerStatusHistory>().Add(workerHistory);
-    }
-
-    #endregion
 
     #region Mapping
 
