@@ -1,0 +1,132 @@
+{
+  "title": "Contracts",
+  "description": "Manage placement contracts between workers and clients.",
+  "searchPlaceholder": "Search by contract code...",
+  "addContract": "New Contract",
+  "columns": {
+    "contractCode": "Code",
+    "type": "Type",
+    "worker": "Worker",
+    "client": "Client",
+    "status": "Status",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "rate": "Rate",
+    "createdAt": "Created",
+    "actions": "Actions"
+  },
+  "status": {
+    "Draft": "Draft",
+    "Confirmed": "Confirmed",
+    "OnProbation": "On Probation",
+    "Active": "Active",
+    "Completed": "Completed",
+    "Terminated": "Terminated",
+    "Cancelled": "Cancelled",
+    "Closed": "Closed"
+  },
+  "type": {
+    "Traditional": "Traditional",
+    "Temporary": "Temporary",
+    "Flexible": "Flexible"
+  },
+  "ratePeriod": {
+    "Monthly": "Monthly",
+    "Daily": "Daily",
+    "Hourly": "Hourly"
+  },
+  "filters": {
+    "status": "Status",
+    "type": "Type"
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "changeStatus": "Change Status",
+    "delete": "Delete"
+  },
+  "empty": {
+    "title": "No contracts yet",
+    "description": "Create your first contract to place a worker with a client."
+  },
+  "deleteDialog": {
+    "title": "Delete Contract",
+    "description": "Are you sure you want to delete this contract? This action cannot be undone.",
+    "confirm": "Delete"
+  },
+  "transition": {
+    "title": "Change Contract Status",
+    "description": "Select a new status for this contract.",
+    "currentStatus": "Current Status",
+    "targetStatus": "Target Status",
+    "targetStatusPlaceholder": "Select status...",
+    "reason": "Reason",
+    "reasonPlaceholder": "Enter reason for status change...",
+    "reasonRequired": "A reason is required for this status transition",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes...",
+    "submit": "Change Status",
+    "submitting": "Changing..."
+  },
+  "create": {
+    "title": "Create Contract",
+    "description": "Create a new placement contract between a worker and a client.",
+    "backToList": "Back to Contracts",
+    "worker": "Worker",
+    "workerPlaceholder": "Select an available worker...",
+    "client": "Client",
+    "clientPlaceholder": "Select an active client...",
+    "type": "Contract Type",
+    "typePlaceholder": "Select type...",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "probationEndDate": "Probation End Date",
+    "guaranteeEndDate": "Guarantee End Date",
+    "rate": "Rate",
+    "ratePeriod": "Rate Period",
+    "ratePeriodPlaceholder": "Select period...",
+    "currency": "Currency",
+    "totalValue": "Total Value",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes...",
+    "submit": "Create Contract",
+    "submitting": "Creating..."
+  },
+  "detail": {
+    "backToList": "Back to Contracts",
+    "overview": "Overview",
+    "parties": "Parties",
+    "dates": "Dates & Terms",
+    "financial": "Financial",
+    "termination": "Termination",
+    "operational": "Operational",
+    "statusHistory": "Status History",
+    "notAvailable": "No status history available.",
+    "contractCode": "Contract Code",
+    "type": "Type",
+    "status": "Status",
+    "worker": "Worker",
+    "client": "Client",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "probationEndDate": "Probation End Date",
+    "guaranteeEndDate": "Guarantee End Date",
+    "probationPassed": "Probation Passed",
+    "rate": "Rate",
+    "ratePeriod": "Rate Period",
+    "currency": "Currency",
+    "totalValue": "Total Value",
+    "terminatedAt": "Terminated At",
+    "terminationReason": "Termination Reason",
+    "terminatedBy": "Terminated By",
+    "replacementContractId": "Replacement Contract",
+    "originalContractId": "Original Contract",
+    "notes": "Notes",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "statusHistory": "Status History"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "title": "العقود",
+  "description": "إدارة عقود التوظيف بين العمال والعملاء.",
+  "searchPlaceholder": "بحث برقم العقد...",
+  "addContract": "عقد جديد",
+  "columns": {
+    "contractCode": "الرقم",
+    "type": "النوع",
+    "worker": "العامل",
+    "client": "العميل",
+    "status": "الحالة",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "rate": "السعر",
+    "createdAt": "تاريخ الإنشاء",
+    "actions": "الإجراءات"
+  },
+  "status": {
+    "Draft": "مسودة",
+    "Confirmed": "مؤكد",
+    "OnProbation": "تحت التجربة",
+    "Active": "نشط",
+    "Completed": "مكتمل",
+    "Terminated": "منتهي",
+    "Cancelled": "ملغي",
+    "Closed": "مغلق"
+  },
+  "type": {
+    "Traditional": "تقليدي",
+    "Temporary": "مؤقت",
+    "Flexible": "مرن"
+  },
+  "ratePeriod": {
+    "Monthly": "شهري",
+    "Daily": "يومي",
+    "Hourly": "بالساعة"
+  },
+  "filters": {
+    "status": "الحالة",
+    "type": "النوع"
+  },
+  "actions": {
+    "view": "عرض",
+    "edit": "تعديل",
+    "changeStatus": "تغيير الحالة",
+    "delete": "حذف"
+  },
+  "empty": {
+    "title": "لا توجد عقود بعد",
+    "description": "أنشئ أول عقد لتوظيف عامل لدى عميل."
+  },
+  "deleteDialog": {
+    "title": "حذف العقد",
+    "description": "هل أنت متأكد من حذف هذا العقد؟ لا يمكن التراجع عن هذا الإجراء.",
+    "confirm": "حذف"
+  },
+  "transition": {
+    "title": "تغيير حالة العقد",
+    "description": "اختر حالة جديدة لهذا العقد.",
+    "currentStatus": "الحالة الحالية",
+    "targetStatus": "الحالة المستهدفة",
+    "targetStatusPlaceholder": "اختر الحالة...",
+    "reason": "السبب",
+    "reasonPlaceholder": "أدخل سبب تغيير الحالة...",
+    "reasonRequired": "السبب مطلوب لهذا التحويل",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات اختيارية...",
+    "submit": "تغيير الحالة",
+    "submitting": "جاري التغيير..."
+  },
+  "create": {
+    "title": "إنشاء عقد",
+    "description": "إنشاء عقد توظيف جديد بين عامل وعميل.",
+    "backToList": "العودة إلى العقود",
+    "worker": "العامل",
+    "workerPlaceholder": "اختر عامل متاح...",
+    "client": "العميل",
+    "clientPlaceholder": "اختر عميل نشط...",
+    "type": "نوع العقد",
+    "typePlaceholder": "اختر النوع...",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "probationEndDate": "نهاية فترة التجربة",
+    "guaranteeEndDate": "نهاية فترة الضمان",
+    "rate": "السعر",
+    "ratePeriod": "فترة السعر",
+    "ratePeriodPlaceholder": "اختر الفترة...",
+    "currency": "العملة",
+    "totalValue": "القيمة الإجمالية",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات اختيارية...",
+    "submit": "إنشاء العقد",
+    "submitting": "جاري الإنشاء..."
+  },
+  "detail": {
+    "backToList": "العودة إلى العقود",
+    "overview": "نظرة عامة",
+    "parties": "الأطراف",
+    "dates": "التواريخ والشروط",
+    "financial": "المالي",
+    "termination": "الإنهاء",
+    "operational": "التشغيل",
+    "statusHistory": "سجل الحالة",
+    "notAvailable": "لا يتوفر سجل حالة.",
+    "contractCode": "رقم العقد",
+    "type": "النوع",
+    "status": "الحالة",
+    "worker": "العامل",
+    "client": "العميل",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "probationEndDate": "نهاية فترة التجربة",
+    "guaranteeEndDate": "نهاية فترة الضمان",
+    "probationPassed": "اجتاز التجربة",
+    "rate": "السعر",
+    "ratePeriod": "فترة السعر",
+    "currency": "العملة",
+    "totalValue": "القيمة الإجمالية",
+    "terminatedAt": "تاريخ الإنهاء",
+    "terminationReason": "سبب الإنهاء",
+    "terminatedBy": "تم الإنهاء بواسطة",
+    "replacementContractId": "عقد الاستبدال",
+    "originalContractId": "العقد الأصلي",
+    "notes": "ملاحظات",
+    "createdAt": "تاريخ الإنشاء",
+    "updatedAt": "تاريخ التحديث"
+  },
+  "tabs": {
+    "overview": "نظرة عامة",
+    "statusHistory": "سجل الحالة"
+  }
+}

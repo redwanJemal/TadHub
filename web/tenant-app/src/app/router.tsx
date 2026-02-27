@@ -32,6 +32,11 @@ const WorkersPage = lazy(() => import('@/features/workers').then(m => ({ default
 const WorkerDetailPage = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkerDetailPage })));
 const WorkerCvPage = lazy(() => import('@/features/workers').then(m => ({ default: m.WorkerCvPage })));
 
+// Contracts
+const ContractsPage = lazy(() => import('@/features/contracts').then(m => ({ default: m.ContractsPage })));
+const CreateContractPage = lazy(() => import('@/features/contracts').then(m => ({ default: m.CreateContractPage })));
+const ContractDetailPage = lazy(() => import('@/features/contracts').then(m => ({ default: m.ContractDetailPage })));
+
 // Placeholder home
 function HomePage() {
   return (
@@ -81,6 +86,9 @@ export function AppRouter() {
           <Route path="candidates/:id" element={<CandidateDetailPage />} />
           <Route path="candidates/:id/edit" element={<EditCandidatePage />} />
           <Route path="clients" element={<ClientsPage />} />
+          <Route path="contracts" element={<ContractsPage />} />
+          <Route path="contracts/new" element={<CreateContractPage />} />
+          <Route path="contracts/:id" element={<ContractDetailPage />} />
           <Route path="workers" element={<WorkersPage />} />
           <Route path="workers/:id" element={<WorkerDetailPage />} />
           <Route path="workers/:id/cv" element={<WorkerCvPage />} />

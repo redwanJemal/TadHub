@@ -24,6 +24,7 @@ using Supplier.Core;
 using Candidate.Core;
 using Worker.Core;
 using Client.Core;
+using Contract.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -159,6 +160,9 @@ builder.Services.AddWorkerModule();
 
 // Client module
 builder.Services.AddClientModule();
+
+// Contract module
+builder.Services.AddContractModule();
 
 var app = builder.Build();
 

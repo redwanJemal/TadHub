@@ -38,6 +38,8 @@
     <ProjectReference Include="..\Modules\Worker\Worker.Core\Worker.Core.csproj" />
     <!-- Client module -->
     <ProjectReference Include="..\Modules\Client\Client.Core\Client.Core.csproj" />
+    <!-- Contract module -->
+    <ProjectReference Include="..\Modules\Contract\Contract.Core\Contract.Core.csproj" />
   </ItemGroup>
 
 </Project>
