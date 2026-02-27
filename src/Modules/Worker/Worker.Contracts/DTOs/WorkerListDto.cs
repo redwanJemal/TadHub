@@ -17,6 +17,7 @@ public sealed record WorkerListDto
     public Guid? JobCategoryId { get; init; }
     public JobCategoryInfoDto? JobCategory { get; init; }
     public string Status { get; init; } = string.Empty;
+    public string Location { get; init; } = string.Empty;
     public string? PhotoUrl { get; init; }
     public DateTimeOffset? ActivatedAt { get; init; }
     public DateTimeOffset CreatedAt { get; init; }

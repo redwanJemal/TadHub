@@ -7,6 +7,7 @@ public sealed record WorkerCvDto
 {
     public Guid Id { get; init; }
     public string WorkerCode { get; init; } = string.Empty;
+    public string Location { get; init; } = string.Empty;
 
     // Personal
     public string FullNameEn { get; init; } = string.Empty;

@@ -22,6 +22,7 @@ public class WorkerService : IWorkerService
     private static readonly Dictionary<string, Expression<Func<Entities.Worker, object>>> FilterableFields = new()
     {
         ["status"] = x => x.Status,
+        ["location"] = x => x.Location,
         ["sourceType"] = x => x.SourceType,
         ["nationality"] = x => x.Nationality,
         ["tenantSupplierId"] = x => x.TenantSupplierId!,
@@ -125,6 +126,13 @@ public class WorkerService : IWorkerService
         if (request.ExperienceYears.HasValue) worker.ExperienceYears = request.ExperienceYears;
         if (request.MonthlySalary.HasValue) worker.MonthlySalary = request.MonthlySalary;
 
+        // Location & travel fields
+        if (request.Location is not null && Enum.TryParse<WorkerLocation>(request.Location, ignoreCase: true, out var loc))
+            worker.Location = loc;
+        if (request.ProcurementPaidAt.HasValue) worker.ProcurementPaidAt = request.ProcurementPaidAt;
+        if (request.FlightDate.HasValue) worker.FlightDate = request.FlightDate;
+        if (request.ArrivedAt.HasValue) worker.ArrivedAt = request.ArrivedAt;
+
         // Full-replacement for Skills
         if (request.Skills is not null)
         {
@@ -194,6 +202,17 @@ public class WorkerService : IWorkerService
         worker.Status = targetStatus;
         worker.StatusChangedAt = now;
         worker.StatusReason = request.Reason;
+
+        if (targetStatus == WorkerStatus.Active && worker.ActivatedAt is null)
+        {
+            worker.ActivatedAt = now;
+        }
+
+        if (targetStatus == WorkerStatus.NewArrival)
+        {
+            worker.ArrivedAt = now;
+            worker.Location = WorkerLocation.InCountry;
+        }
 
         if (targetStatus == WorkerStatus.Terminated)
         {
@@ -306,11 +325,15 @@ public class WorkerService : IWorkerService
             SourceType = w.SourceType.ToString(),
             TenantSupplierId = w.TenantSupplierId,
             Status = w.Status.ToString(),
+            Location = w.Location.ToString(),
             StatusChangedAt = w.StatusChangedAt,
             StatusReason = w.StatusReason,
             ActivatedAt = w.ActivatedAt,
             TerminatedAt = w.TerminatedAt,
             TerminationReason = w.TerminationReason,
+            ProcurementPaidAt = w.ProcurementPaidAt,
+            FlightDate = w.FlightDate,
+            ArrivedAt = w.ArrivedAt,
             Notes = w.Notes,
             CreatedBy = w.CreatedBy,
             UpdatedBy = w.UpdatedBy,
@@ -348,6 +371,7 @@ public class WorkerService : IWorkerService
             TenantSupplierId = w.TenantSupplierId,
             JobCategoryId = w.JobCategoryId,
             Status = w.Status.ToString(),
+            Location = w.Location.ToString(),
             PhotoUrl = w.PhotoUrl,
             ActivatedAt = w.ActivatedAt,
             CreatedAt = w.CreatedAt,
@@ -375,6 +399,7 @@ public class WorkerService : IWorkerService
         {
             Id = w.Id,
             WorkerCode = w.WorkerCode,
+            Location = w.Location.ToString(),
             FullNameEn = w.FullNameEn,
             FullNameAr = w.FullNameAr,
             Nationality = w.Nationality,

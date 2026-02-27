@@ -42,11 +42,15 @@ public sealed record WorkerDto
 
     // Status
     public string Status { get; init; } = string.Empty;
+    public string Location { get; init; } = string.Empty;
     public DateTimeOffset? StatusChangedAt { get; init; }
     public string? StatusReason { get; init; }
     public DateTimeOffset? ActivatedAt { get; init; }
     public DateTimeOffset? TerminatedAt { get; init; }
     public string? TerminationReason { get; init; }
+    public DateTimeOffset? ProcurementPaidAt { get; init; }
+    public DateTimeOffset? FlightDate { get; init; }
+    public DateTimeOffset? ArrivedAt { get; init; }
     public string? Notes { get; init; }
 
     // Audit

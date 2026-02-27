@@ -1,4 +1,26 @@
-export type WorkerStatus = 'Active' | 'Deployed' | 'OnLeave' | 'Terminated';
+export type WorkerStatus =
+  | 'Available'
+  | 'InTraining'
+  | 'UnderMedicalTest'
+  | 'NewArrival'
+  | 'Booked'
+  | 'Hired'
+  | 'OnProbation'
+  | 'Active'
+  | 'Renewed'
+  | 'PendingReplacement'
+  | 'Transferred'
+  | 'MedicallyUnfit'
+  | 'Absconded'
+  | 'Terminated'
+  | 'Pregnant'
+  | 'Repatriated'
+  | 'Deported'
+  | 'Deceased';
+
+export type WorkerLocation = 'Abroad' | 'InCountry';
+
+export type WorkerStatusCategory = 'Pool' | 'Arrival' | 'Placement' | 'NegativeSpecial' | 'Terminal';
 
 export type WorkerSourceType = 'Supplier' | 'Local';
 
@@ -27,6 +49,7 @@ export interface WorkerListDto {
   jobCategoryId?: string;
   jobCategory?: { id: string; name: string };
   status: WorkerStatus;
+  location: WorkerLocation;
   photoUrl?: string;
   activatedAt?: string;
   createdAt: string;
@@ -64,11 +87,15 @@ export interface WorkerDto {
   supplier?: { id: string; name: string };
   // Status
   status: WorkerStatus;
+  location: WorkerLocation;
   statusChangedAt?: string;
   statusReason?: string;
   activatedAt?: string;
   terminatedAt?: string;
   terminationReason?: string;
+  procurementPaidAt?: string;
+  flightDate?: string;
+  arrivedAt?: string;
   notes?: string;
   // Audit
   createdBy?: string;
@@ -104,6 +131,10 @@ export interface UpdateWorkerRequest {
   jobCategoryId?: string;
   experienceYears?: number;
   monthlySalary?: number;
+  location?: string;
+  procurementPaidAt?: string;
+  flightDate?: string;
+  arrivedAt?: string;
   skills?: { skillName: string; proficiencyLevel: string }[];
   languages?: { language: string; proficiencyLevel: string }[];
 }
@@ -117,6 +148,7 @@ export interface TransitionWorkerStatusRequest {
 export interface WorkerCvDto {
   id: string;
   workerCode: string;
+  location: WorkerLocation;
   fullNameEn: string;
   fullNameAr?: string;
   nationality: string;

@@ -22,6 +22,11 @@ public class WorkerConfiguration : IEntityTypeConfiguration<Entities.Worker>
             .HasMaxLength(30)
             .HasConversion<string>();
 
+        builder.Property(x => x.Location)
+            .IsRequired()
+            .HasMaxLength(20)
+            .HasConversion<string>();
+
         builder.Property(x => x.StatusReason)
             .HasMaxLength(500);
 
@@ -107,6 +112,9 @@ public class WorkerConfiguration : IEntityTypeConfiguration<Entities.Worker>
 
         builder.HasIndex(x => new { x.TenantId, x.Status })
             .HasDatabaseName("ix_workers_tenant_id_status");
+
+        builder.HasIndex(x => new { x.TenantId, x.Location })
+            .HasDatabaseName("ix_workers_tenant_id_location");
 
         builder.HasIndex(x => new { x.TenantId, x.CandidateId })
             .IsUnique()

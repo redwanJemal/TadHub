@@ -13,12 +13,16 @@ public class Worker : SoftDeletableEntity, IAuditable
 
     // Worker-specific
     public string WorkerCode { get; set; } = string.Empty;
-    public WorkerStatus Status { get; set; } = WorkerStatus.Active;
+    public WorkerStatus Status { get; set; } = WorkerStatus.Available;
+    public WorkerLocation Location { get; set; } = WorkerLocation.Abroad;
     public DateTimeOffset? StatusChangedAt { get; set; }
     public string? StatusReason { get; set; }
     public DateTimeOffset? ActivatedAt { get; set; }
     public DateTimeOffset? TerminatedAt { get; set; }
     public string? TerminationReason { get; set; }
+    public DateTimeOffset? ProcurementPaidAt { get; set; }
+    public DateTimeOffset? FlightDate { get; set; }
+    public DateTimeOffset? ArrivedAt { get; set; }
     public string? Notes { get; set; }
 
     // Personal (snapshot from candidate)

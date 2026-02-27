@@ -36,6 +36,13 @@ public sealed record UpdateWorkerRequest
     public int? ExperienceYears { get; init; }
     public decimal? MonthlySalary { get; init; }
 
+    // Location & travel
+    [MaxLength(20)]
+    public string? Location { get; init; }
+    public DateTimeOffset? ProcurementPaidAt { get; init; }
+    public DateTimeOffset? FlightDate { get; init; }
+    public DateTimeOffset? ArrivedAt { get; init; }
+
     // Skills & Languages (full-replacement semantics)
     public List<WorkerSkillRequest>? Skills { get; init; }
     public List<WorkerLanguageRequest>? Languages { get; init; }

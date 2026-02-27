@@ -20,12 +20,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
+import { Badge } from '@/shared/components/ui/badge';
 import { MoreHorizontal, Trash2, Eye, RefreshCw, FileText } from 'lucide-react';
 import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
 import { useWorkers, useDeleteWorker } from '../hooks';
 import { WorkerStatusBadge } from '../components/WorkerStatusBadge';
 import { WorkerStatusTransitionDialog } from '../components/WorkerStatusTransitionDialog';
-import { ALL_STATUSES, ALL_SOURCE_TYPES } from '../constants';
+import { ALL_STATUSES, ALL_SOURCE_TYPES, ALL_LOCATIONS, LOCATION_CONFIG } from '../constants';
 import type { WorkerListDto } from '../types';
 
 export function WorkersPage() {
@@ -38,6 +39,7 @@ export function WorkersPage() {
   const [pageSize, setPageSize] = useState(20);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [locationFilter, setLocationFilter] = useState<string | undefined>();
   const [sourceTypeFilter, setSourceTypeFilter] = useState<string | undefined>();
 
   // Dialog state
@@ -51,8 +53,9 @@ export function WorkersPage() {
     search: search || undefined,
     sort: '-createdAt',
     'filter[status]': statusFilter,
+    'filter[location]': locationFilter,
     'filter[sourceType]': sourceTypeFilter,
-  }), [page, pageSize, search, statusFilter, sourceTypeFilter]);
+  }), [page, pageSize, search, statusFilter, locationFilter, sourceTypeFilter]);
 
   const { data, isLoading, refetch } = useWorkers(queryParams);
   const { data: countries } = useCountryRefs();
@@ -78,6 +81,12 @@ export function WorkersPage() {
       value: statusFilter,
     },
     {
+      key: 'location',
+      label: t('filters.location'),
+      options: ALL_LOCATIONS.map((l) => ({ label: t(`location.${l}`), value: l })),
+      value: locationFilter,
+    },
+    {
       key: 'sourceType',
       label: t('filters.sourceType'),
       options: ALL_SOURCE_TYPES.map((s) => ({ label: t(`sourceType.${s}`), value: s })),
@@ -87,6 +96,7 @@ export function WorkersPage() {
 
   const handleFilterChange = (key: string, value: string | undefined) => {
     if (key === 'status') setStatusFilter(value);
+    if (key === 'location') setLocationFilter(value);
     if (key === 'sourceType') setSourceTypeFilter(value);
     setPage(1);
   };
@@ -148,6 +158,20 @@ export function WorkersPage() {
       key: 'status',
       header: t('columns.status'),
       cell: (row) => <WorkerStatusBadge status={row.status} />,
+    },
+    {
+      key: 'location',
+      header: t('columns.location'),
+      cell: (row) => {
+        const config = LOCATION_CONFIG[row.location];
+        const Icon = config?.icon;
+        return (
+          <Badge variant={config?.variant ?? 'outline'} className="gap-1">
+            {Icon && <Icon className="h-3 w-3" />}
+            {t(`location.${row.location}`)}
+          </Badge>
+        );
+      },
     },
     {
       key: 'activatedAt',
