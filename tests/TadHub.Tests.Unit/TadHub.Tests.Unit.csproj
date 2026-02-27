@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
     <ProjectReference Include="..\..\src\TadHub.Infrastructure\TadHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\TadHub.Api\TadHub.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

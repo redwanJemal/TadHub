@@ -64,6 +64,15 @@ public interface IFileStorageService
     Task<bool> ExistsAsync(string fileKey, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Downloads file content as a byte array.
+    /// Returns null if the file does not exist.
+    /// </summary>
+    /// <param name="fileKey">The storage key/path of the file.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The file bytes, or null if not found.</returns>
+    Task<byte[]?> DownloadAsync(string fileKey, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Gets file metadata.
     /// </summary>
     /// <param name="fileKey">The storage key/path of the file.</param>

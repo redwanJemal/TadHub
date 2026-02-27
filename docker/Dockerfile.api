@@ -16,8 +16,8 @@ RUN dotnet publish src/TadHub.Api/TadHub.Api.csproj -c Release -o /app/publish -
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
 WORKDIR /app
 
-# Install curl for healthcheck
-RUN apk add --no-cache curl
+# Install curl for healthcheck + fonts for PDF generation
+RUN apk add --no-cache curl fontconfig ttf-dejavu
 
 # Copy published app
 COPY --from=build /app/publish .

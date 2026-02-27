@@ -1,13 +1,14 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Printer, ImageOff } from 'lucide-react';
+import { ArrowLeft, Printer, Download, ImageOff } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Badge } from '@/shared/components/ui/badge';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
-import { getWorkerCv } from '../api';
+import { getWorkerCv, downloadWorkerCvPdf } from '../api';
 
 function CvSkeleton() {
   return (
@@ -60,6 +61,28 @@ export function WorkerCvPage() {
     return code;
   };
 
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    if (!id) return;
+    setDownloading(true);
+    try {
+      const blob = await downloadWorkerCvPdf(id);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `CV-${cv?.workerCode ?? id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      // silently fail — could add toast in the future
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   if (isLoading) return <CvSkeleton />;
 
   if (!cv) {
@@ -85,10 +108,16 @@ export function WorkerCvPage() {
           <h1 className="text-2xl font-bold tracking-tight">{t('cv.title')}</h1>
           <p className="text-muted-foreground font-mono">{cv.workerCode}</p>
         </div>
-        <Button variant="outline" onClick={() => window.print()}>
-          <Printer className="me-2 h-4 w-4" />
-          {t('cv.print')}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleDownloadPdf} disabled={downloading}>
+            <Download className="me-2 h-4 w-4" />
+            {downloading ? t('cv.downloading') : t('cv.downloadPdf')}
+          </Button>
+          <Button variant="outline" onClick={() => window.print()}>
+            <Printer className="me-2 h-4 w-4" />
+            {t('cv.print')}
+          </Button>
+        </div>
       </div>
 
       {/* CV Content */}

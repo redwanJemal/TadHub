@@ -17,6 +17,7 @@ using TadHub.Infrastructure.Persistence.Interceptors;
 using TadHub.Infrastructure.Search;
 using TadHub.Infrastructure.Settings;
 using TadHub.Infrastructure.Sse;
+using TadHub.Infrastructure.Documents;
 using TadHub.Infrastructure.Storage;
 using TadHub.SharedKernel.Interfaces;
 
@@ -140,8 +141,14 @@ public static class InfrastructureServiceRegistration
         // =============================================================================
         // File Storage (MinIO)
         // =============================================================================
-        
+
         services.AddFileStorage(configuration);
+
+        // =============================================================================
+        // Document Generation (QuestPDF)
+        // =============================================================================
+
+        services.AddDocumentGeneration();
 
         // =============================================================================
         // Search (Meilisearch)

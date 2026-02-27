@@ -115,7 +115,9 @@
     "professional": "الملف المهني",
     "skills": "المهارات",
     "languages": "اللغات",
-    "print": "طباعة السيرة"
+    "print": "طباعة السيرة",
+    "downloadPdf": "تحميل PDF",
+    "downloading": "جاري التحميل..."
   },
   "professional": {
     "religion": {

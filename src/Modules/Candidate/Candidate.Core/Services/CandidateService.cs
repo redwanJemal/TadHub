@@ -194,10 +194,10 @@ public class CandidateService : ICandidateService
             ExternalReference = request.ExternalReference,
         };
 
-        // Create child skill entities
+        // Create child skill entities (deduplicate by name to avoid unique constraint violation)
         if (request.Skills is { Count: > 0 })
         {
-            foreach (var skill in request.Skills)
+            foreach (var skill in request.Skills.DistinctBy(s => s.SkillName, StringComparer.OrdinalIgnoreCase))
             {
                 if (!Enum.TryParse<SkillProficiency>(skill.ProficiencyLevel, ignoreCase: true, out var proficiency))
                     proficiency = SkillProficiency.Basic;
@@ -213,10 +213,10 @@ public class CandidateService : ICandidateService
             }
         }
 
-        // Create child language entities
+        // Create child language entities (deduplicate by language to avoid unique constraint violation)
         if (request.Languages is { Count: > 0 })
         {
-            foreach (var lang in request.Languages)
+            foreach (var lang in request.Languages.DistinctBy(l => l.Language, StringComparer.OrdinalIgnoreCase))
             {
                 if (!Enum.TryParse<LanguageProficiency>(lang.ProficiencyLevel, ignoreCase: true, out var proficiency))
                     proficiency = LanguageProficiency.Basic;
@@ -348,10 +348,12 @@ public class CandidateService : ICandidateService
         if (request.Skills is not null)
         {
             await _db.Set<CandidateSkill>()
+                .IgnoreQueryFilters()
                 .Where(x => x.CandidateId == candidate.Id && x.TenantId == tenantId)
                 .ExecuteDeleteAsync(ct);
 
-            foreach (var skill in request.Skills)
+            // Deduplicate by skill name (last wins) to avoid unique constraint violation
+            foreach (var skill in request.Skills.DistinctBy(s => s.SkillName, StringComparer.OrdinalIgnoreCase))
             {
                 if (!Enum.TryParse<SkillProficiency>(skill.ProficiencyLevel, ignoreCase: true, out var proficiency))
                     proficiency = SkillProficiency.Basic;
@@ -371,10 +373,12 @@ public class CandidateService : ICandidateService
         if (request.Languages is not null)
         {
             await _db.Set<CandidateLanguage>()
+                .IgnoreQueryFilters()
                 .Where(x => x.CandidateId == candidate.Id && x.TenantId == tenantId)
                 .ExecuteDeleteAsync(ct);
 
-            foreach (var lang in request.Languages)
+            // Deduplicate by language (last wins) to avoid unique constraint violation
+            foreach (var lang in request.Languages.DistinctBy(l => l.Language, StringComparer.OrdinalIgnoreCase))
             {
                 if (!Enum.TryParse<LanguageProficiency>(lang.ProficiencyLevel, ignoreCase: true, out var proficiency))
                     proficiency = LanguageProficiency.Basic;

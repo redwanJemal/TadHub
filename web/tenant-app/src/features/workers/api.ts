@@ -1,5 +1,5 @@
-import { apiClient } from '@/shared/api/client';
-import { getTenantId } from '@/features/auth/AuthProvider';
+import { apiClient, API_BASE } from '@/shared/api/client';
+import { getTenantId, getAccessToken } from '@/features/auth/AuthProvider';
 import type { QueryParams } from '@/shared/api/types/common';
 import type {
   WorkerDto,
@@ -41,4 +41,24 @@ export function getWorkerCv(id: string) {
 
 export function deleteWorker(id: string) {
   return apiClient.delete<void>(tenantPath(`/workers/${id}`));
+}
+
+export async function downloadWorkerCvPdf(id: string): Promise<Blob> {
+  const token = getAccessToken();
+  const tenantId = getTenantId();
+  const url = `${API_BASE}/tenants/${tenantId}/workers/${id}/cv/pdf`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(tenantId ? { 'X-Tenant-ID': tenantId } : {}),
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to download PDF: ${response.status}`);
+  }
+
+  return response.blob();
 }

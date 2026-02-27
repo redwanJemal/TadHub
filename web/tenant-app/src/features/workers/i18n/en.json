@@ -115,7 +115,9 @@
     "professional": "Professional Profile",
     "skills": "Skills",
     "languages": "Languages",
-    "print": "Print CV"
+    "print": "Print CV",
+    "downloadPdf": "Download PDF",
+    "downloading": "Downloading..."
   },
   "professional": {
     "religion": {

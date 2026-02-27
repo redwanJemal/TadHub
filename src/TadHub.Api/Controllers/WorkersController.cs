@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuestPDF.Fluent;
 using Worker.Contracts;
 using Worker.Contracts.DTOs;
 using ReferenceData.Contracts;
 using Supplier.Contracts;
+using Tenancy.Contracts;
+using TadHub.Api.Documents;
 using TadHub.Api.Filters;
 using TadHub.Infrastructure.Auth;
 using TadHub.Infrastructure.Storage;
@@ -26,17 +29,20 @@ public class WorkersController : ControllerBase
     private readonly ISupplierService _supplierService;
     private readonly IJobCategoryService _jobCategoryService;
     private readonly IFileStorageService _fileStorageService;
+    private readonly ITenantService _tenantService;
 
     public WorkersController(
         IWorkerService workerService,
         ISupplierService supplierService,
         IJobCategoryService jobCategoryService,
-        IFileStorageService fileStorageService)
+        IFileStorageService fileStorageService,
+        ITenantService tenantService)
     {
         _workerService = workerService;
         _supplierService = supplierService;
         _jobCategoryService = jobCategoryService;
         _fileStorageService = fileStorageService;
+        _tenantService = tenantService;
     }
 
     [HttpGet]
@@ -193,6 +199,59 @@ public class WorkersController : ControllerBase
             cv = cv with { PhotoUrl = photoUrl, VideoUrl = videoUrl, PassportDocumentUrl = passportUrl };
 
         return Ok(cv);
+    }
+
+    [HttpGet("{id:guid}/cv/pdf")]
+    [HasPermission("workers.view")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DownloadCvPdf(
+        Guid tenantId,
+        Guid id,
+        CancellationToken ct)
+    {
+        var result = await _workerService.GetCvAsync(tenantId, id, ct);
+        if (!result.IsSuccess)
+            return MapResultError(result);
+
+        var cv = result.Value!;
+
+        // Enrich job category
+        if (cv.JobCategoryId.HasValue)
+        {
+            var catResult = await _jobCategoryService.GetByIdAsync(cv.JobCategoryId.Value, ct);
+            if (catResult.IsSuccess)
+                cv = cv with { JobCategory = new JobCategoryInfoDto(cv.JobCategoryId.Value, catResult.Value!.NameEn) };
+        }
+
+        // Get tenant info for branding
+        var tenantResult = await _tenantService.GetByIdAsync(tenantId, ct);
+        var tenantName = tenantResult.IsSuccess ? tenantResult.Value!.Name : "TadHub";
+        var tenantNameAr = tenantResult.IsSuccess ? tenantResult.Value!.NameAr : null;
+
+        // Download binary assets from MinIO (in parallel for performance)
+        var logoKey = tenantResult.IsSuccess ? tenantResult.Value!.LogoUrl : null;
+        var photoKey = cv.PhotoUrl;
+
+        var logoTask = !string.IsNullOrEmpty(logoKey)
+            ? SafeDownloadAsync(logoKey, ct)
+            : Task.FromResult<byte[]?>(null);
+
+        var photoTask = !string.IsNullOrEmpty(photoKey)
+            ? SafeDownloadAsync(photoKey, ct)
+            : Task.FromResult<byte[]?>(null);
+
+        await Task.WhenAll(logoTask, photoTask);
+
+        var tenantLogo = logoTask.Result;
+        var workerPhoto = photoTask.Result;
+
+        var pdfData = new WorkerCvPdfData(cv, tenantName, tenantNameAr, tenantLogo, workerPhoto);
+        var document = new WorkerCvDocument(pdfData);
+        var pdfBytes = document.GeneratePdf();
+
+        var fileName = $"CV-{cv.WorkerCode}.pdf";
+        return File(pdfBytes, "application/pdf", fileName);
     }
 
     [HttpDelete("{id:guid}")]
@@ -374,6 +433,16 @@ public class WorkersController : ControllerBase
         ).ToList();
 
         return new PagedList<WorkerListDto>(enriched, pagedList.TotalCount, pagedList.Page, pagedList.PageSize);
+    }
+
+    #endregion
+
+    #region File Download Helpers
+
+    private async Task<byte[]?> SafeDownloadAsync(string fileKey, CancellationToken ct)
+    {
+        try { return await _fileStorageService.DownloadAsync(fileKey, ct); }
+        catch { return null; }
     }
 
     #endregion

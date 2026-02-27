@@ -21,6 +21,9 @@
     <!-- Storage -->
     <PackageReference Include="Minio" />
 
+    <!-- Document Generation -->
+    <PackageReference Include="QuestPDF" />
+
     <!-- Search -->
     <PackageReference Include="Meilisearch" />
 

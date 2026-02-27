@@ -112,6 +112,30 @@ public sealed class MinioFileStorageService : IFileStorageService
         _logger.LogDebug("Deleted file {ObjectName} from bucket {Bucket}", fileKey, bucketName);
     }
 
+    public async Task<byte[]?> DownloadAsync(string fileKey, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var bucketName = GetBucketName();
+            using var memoryStream = new MemoryStream();
+
+            var args = new GetObjectArgs()
+                .WithBucket(bucketName)
+                .WithObject(fileKey)
+                .WithCallbackStream(async (stream, ct) =>
+                {
+                    await stream.CopyToAsync(memoryStream, ct);
+                });
+
+            await _minioClient.GetObjectAsync(args, cancellationToken);
+            return memoryStream.ToArray();
+        }
+        catch (Minio.Exceptions.ObjectNotFoundException)
+        {
+            return null;
+        }
+    }
+
     public async Task<bool> ExistsAsync(string fileKey, CancellationToken cancellationToken = default)
     {
         try
