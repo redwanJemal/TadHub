@@ -316,7 +316,7 @@ export function CandidateDetailPage() {
                 <InfoItem label={t('detail.religion')} value={candidate.religion ? t(`professional.religion.${candidate.religion}`, candidate.religion) : undefined} />
                 <InfoItem label={t('detail.maritalStatus')} value={candidate.maritalStatus ? t(`professional.maritalStatus.${candidate.maritalStatus}`, candidate.maritalStatus) : undefined} />
                 <InfoItem label={t('detail.educationLevel')} value={candidate.educationLevel ? t(`professional.educationLevel.${candidate.educationLevel}`, candidate.educationLevel) : undefined} />
-                <InfoItem label={t('detail.jobCategory')} value={candidate.jobCategoryName} />
+                <InfoItem label={t('detail.jobCategory')} value={candidate.jobCategory?.name} />
                 <InfoItem label={t('detail.experienceYears')} value={candidate.experienceYears} />
                 <InfoItem label={t('detail.monthlySalary')} value={candidate.monthlySalary ? `${candidate.monthlySalary} AED` : undefined} />
               </CardContent>

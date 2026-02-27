@@ -326,6 +326,15 @@ public class CandidateService : ICandidateService
         if (request.ProcurementCost.HasValue)
             candidate.ProcurementCost = request.ProcurementCost;
 
+        // Sourcing
+        if (request.SourceType is not null)
+        {
+            if (Enum.TryParse<CandidateSourceType>(request.SourceType, ignoreCase: true, out var sourceType))
+                candidate.SourceType = sourceType;
+        }
+        if (request.TenantSupplierId.HasValue)
+            candidate.TenantSupplierId = request.TenantSupplierId;
+
         // Media
         if (request.PhotoUrl is not null)
             candidate.PhotoUrl = request.PhotoUrl;

@@ -160,6 +160,14 @@ public class WorkersController : ControllerBase
 
         var cv = result.Value!;
 
+        // Enrich job category
+        if (cv.JobCategoryId.HasValue)
+        {
+            var catResult = await _jobCategoryService.GetByIdAsync(cv.JobCategoryId.Value, ct);
+            if (catResult.IsSuccess)
+                cv = cv with { JobCategory = new JobCategoryInfoDto(cv.JobCategoryId.Value, catResult.Value!.NameEn) };
+        }
+
         // Enrich presigned URLs
         var photoUrl = cv.PhotoUrl;
         var videoUrl = cv.VideoUrl;
@@ -277,7 +285,7 @@ public class WorkersController : ControllerBase
 
         var result = await _jobCategoryService.GetByIdAsync(dto.JobCategoryId.Value, ct);
         if (result.IsSuccess)
-            return dto with { JobCategoryName = result.Value!.NameEn };
+            return dto with { JobCategory = new JobCategoryInfoDto(dto.JobCategoryId.Value, result.Value!.NameEn) };
 
         return dto;
     }
@@ -302,7 +310,7 @@ public class WorkersController : ControllerBase
 
         var enriched = pagedList.Items.Select(w =>
             w.JobCategoryId.HasValue && categoryMap.TryGetValue(w.JobCategoryId.Value, out var name)
-                ? w with { JobCategoryName = name }
+                ? w with { JobCategory = new JobCategoryInfoDto(w.JobCategoryId.Value, name) }
                 : w
         ).ToList();
 

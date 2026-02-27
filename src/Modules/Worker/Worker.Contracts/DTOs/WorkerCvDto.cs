@@ -23,7 +23,8 @@ public sealed record WorkerCvDto
     public string? Religion { get; init; }
     public string? MaritalStatus { get; init; }
     public string? EducationLevel { get; init; }
-    public string? JobCategoryName { get; init; }
+    public Guid? JobCategoryId { get; init; }
+    public JobCategoryInfoDto? JobCategory { get; init; }
     public int? ExperienceYears { get; init; }
     public decimal? MonthlySalary { get; init; }
 

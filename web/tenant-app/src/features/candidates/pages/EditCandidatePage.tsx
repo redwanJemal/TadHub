@@ -16,8 +16,10 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { NationalitySelect, JobCategorySelect } from '@/features/reference-data';
+import { useSuppliers } from '@/features/suppliers/hooks';
 import { useCandidate, useUpdateCandidate, useUploadPhoto, useUploadVideo, useUploadPassport } from '../hooks';
 import {
+  ALL_SOURCE_TYPES,
   RELIGION_OPTIONS,
   MARITAL_STATUS_OPTIONS,
   EDUCATION_LEVEL_OPTIONS,
@@ -48,6 +50,8 @@ export function EditCandidatePage() {
     passportExpiry: '',
     phone: '',
     email: '',
+    sourceType: '',
+    tenantSupplierId: '',
     religion: '',
     maritalStatus: '',
     educationLevel: '',
@@ -60,6 +64,9 @@ export function EditCandidatePage() {
   const [skills, setSkills] = useState<CandidateSkillRequest[]>([]);
   const [languages, setLanguages] = useState<CandidateLanguageRequest[]>([]);
   const [initialized, setInitialized] = useState(false);
+
+  const isSupplierSource = form.sourceType === 'Supplier';
+  const { data: suppliersData } = useSuppliers({ pageSize: 100 });
 
   // Pre-populate form when candidate loads
   useEffect(() => {
@@ -74,10 +81,12 @@ export function EditCandidatePage() {
         passportExpiry: candidate.passportExpiry || '',
         phone: candidate.phone || '',
         email: candidate.email || '',
+        sourceType: candidate.sourceType || '',
+        tenantSupplierId: candidate.tenantSupplierId || '',
         religion: candidate.religion || '',
         maritalStatus: candidate.maritalStatus || '',
         educationLevel: candidate.educationLevel || '',
-        jobCategoryId: candidate.jobCategoryId || '',
+        jobCategoryId: candidate.jobCategory?.id || candidate.jobCategoryId || '',
         experienceYears: candidate.experienceYears?.toString() || '',
         monthlySalary: candidate.monthlySalary?.toString() || '',
         notes: candidate.notes || '',
@@ -123,6 +132,8 @@ export function EditCandidatePage() {
           passportExpiry: form.passportExpiry || undefined,
           phone: form.phone.trim() || undefined,
           email: form.email.trim() || undefined,
+          sourceType: form.sourceType || undefined,
+          tenantSupplierId: isSupplierSource && form.tenantSupplierId ? form.tenantSupplierId : undefined,
           religion: form.religion || undefined,
           maritalStatus: form.maritalStatus || undefined,
           educationLevel: form.educationLevel || undefined,
@@ -142,7 +153,7 @@ export function EditCandidatePage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || !initialized) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-4 w-32 mb-4" />
@@ -284,6 +295,50 @@ export function EditCandidatePage() {
                 placeholder={t('create.emailPlaceholder')}
               />
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Sourcing */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('create.sections.sourcing')}</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label>{t('create.sourceType')}</Label>
+              <Select value={form.sourceType} onValueChange={(v) => {
+                update('sourceType', v);
+                if (v !== 'Supplier') update('tenantSupplierId', '');
+              }}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('create.sourceTypePlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {ALL_SOURCE_TYPES.map((st) => (
+                    <SelectItem key={st} value={st}>
+                      {t(`sourceType.${st}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {isSupplierSource && (
+              <div className="space-y-2">
+                <Label>{t('create.supplier')}</Label>
+                <Select value={form.tenantSupplierId} onValueChange={(v) => update('tenantSupplierId', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('create.supplierPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {suppliersData?.items?.map((ts) => (
+                      <SelectItem key={ts.id} value={ts.id}>
+                        {ts.supplier?.nameEn ?? ts.id}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </CardContent>
         </Card>
 

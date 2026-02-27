@@ -127,7 +127,7 @@ export function WorkerCvPage() {
           <InfoItem label={t('detail.religion')} value={cv.religion ? t(`professional.religion.${cv.religion}`, cv.religion) : undefined} />
           <InfoItem label={t('detail.maritalStatus')} value={cv.maritalStatus ? t(`professional.maritalStatus.${cv.maritalStatus}`, cv.maritalStatus) : undefined} />
           <InfoItem label={t('detail.educationLevel')} value={cv.educationLevel ? t(`professional.educationLevel.${cv.educationLevel}`, cv.educationLevel) : undefined} />
-          <InfoItem label={t('detail.jobCategory')} value={cv.jobCategoryName} />
+          <InfoItem label={t('detail.jobCategory')} value={cv.jobCategory?.name} />
           <InfoItem label={t('detail.experienceYears')} value={cv.experienceYears} />
           <InfoItem label={t('detail.monthlySalary')} value={cv.monthlySalary ? `${cv.monthlySalary} AED` : undefined} />
         </CardContent>

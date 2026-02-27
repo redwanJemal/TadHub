@@ -25,7 +25,7 @@ export interface WorkerListDto {
   tenantSupplierId?: string;
   supplier?: { id: string; name: string };
   jobCategoryId?: string;
-  jobCategoryName?: string;
+  jobCategory?: { id: string; name: string };
   status: WorkerStatus;
   photoUrl?: string;
   activatedAt?: string;
@@ -51,7 +51,7 @@ export interface WorkerDto {
   maritalStatus?: string;
   educationLevel?: string;
   jobCategoryId?: string;
-  jobCategoryName?: string;
+  jobCategory?: { id: string; name: string };
   experienceYears?: number;
   monthlySalary?: number;
   // Media
@@ -129,7 +129,8 @@ export interface WorkerCvDto {
   religion?: string;
   maritalStatus?: string;
   educationLevel?: string;
-  jobCategoryName?: string;
+  jobCategoryId?: string;
+  jobCategory?: { id: string; name: string };
   experienceYears?: number;
   monthlySalary?: number;
   photoUrl?: string;

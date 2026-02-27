@@ -387,6 +387,7 @@ public class WorkerService : IWorkerService
             Religion = w.Religion,
             MaritalStatus = w.MaritalStatus,
             EducationLevel = w.EducationLevel,
+            JobCategoryId = w.JobCategoryId,
             ExperienceYears = w.ExperienceYears,
             MonthlySalary = w.MonthlySalary,
             PhotoUrl = w.PhotoUrl,

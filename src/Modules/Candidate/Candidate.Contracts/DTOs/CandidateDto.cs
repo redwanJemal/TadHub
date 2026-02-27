@@ -33,7 +33,7 @@ public sealed record CandidateDto
     public string? MaritalStatus { get; init; }
     public string? EducationLevel { get; init; }
     public Guid? JobCategoryId { get; init; }
-    public string? JobCategoryName { get; init; }
+    public JobCategoryInfoDto? JobCategory { get; init; }
     public int? ExperienceYears { get; init; }
 
     // Media

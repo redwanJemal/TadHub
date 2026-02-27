@@ -142,7 +142,7 @@ export function WorkersPage() {
     {
       key: 'jobCategory',
       header: t('columns.jobCategory'),
-      cell: (row) => row.jobCategoryName ?? '—',
+      cell: (row) => row.jobCategory?.name ?? '—',
     },
     {
       key: 'status',

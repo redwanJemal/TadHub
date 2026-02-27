@@ -15,7 +15,7 @@ public sealed record WorkerListDto
     public Guid? TenantSupplierId { get; init; }
     public WorkerSupplierDto? Supplier { get; init; }
     public Guid? JobCategoryId { get; init; }
-    public string? JobCategoryName { get; init; }
+    public JobCategoryInfoDto? JobCategory { get; init; }
     public string Status { get; init; } = string.Empty;
     public string? PhotoUrl { get; init; }
     public DateTimeOffset? ActivatedAt { get; init; }

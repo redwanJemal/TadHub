@@ -88,4 +88,9 @@ public sealed record UpdateCandidateRequest
 
     [MaxLength(100)]
     public string? ExternalReference { get; init; }
+
+    [MaxLength(20)]
+    public string? SourceType { get; init; }
+
+    public Guid? TenantSupplierId { get; init; }
 }

@@ -52,7 +52,7 @@ export interface CandidateListDto {
   tenantSupplierId?: string;
   supplier?: { id: string; name: string };
   jobCategoryId?: string;
-  jobCategoryName?: string;
+  jobCategory?: { id: string; name: string };
   photoUrl?: string;
   createdAt: string;
 }
@@ -80,7 +80,7 @@ export interface CandidateDto {
   maritalStatus?: string;
   educationLevel?: string;
   jobCategoryId?: string;
-  jobCategoryName?: string;
+  jobCategory?: { id: string; name: string };
   experienceYears?: number;
   // Media
   photoUrl?: string;
@@ -150,6 +150,8 @@ export interface UpdateCandidateRequest {
   passportExpiry?: string;
   phone?: string;
   email?: string;
+  sourceType?: string;
+  tenantSupplierId?: string;
   // Professional Profile
   religion?: string;
   maritalStatus?: string;

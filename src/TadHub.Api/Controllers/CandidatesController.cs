@@ -511,7 +511,7 @@ public class CandidatesController : ControllerBase
 
         var result = await _jobCategoryService.GetByIdAsync(dto.JobCategoryId.Value, ct);
         if (result.IsSuccess)
-            return dto with { JobCategoryName = result.Value!.NameEn };
+            return dto with { JobCategory = new JobCategoryInfoDto(dto.JobCategoryId.Value, result.Value!.NameEn) };
 
         return dto;
     }
@@ -536,7 +536,7 @@ public class CandidatesController : ControllerBase
 
         var enriched = pagedList.Items.Select(c =>
             c.JobCategoryId.HasValue && categoryMap.TryGetValue(c.JobCategoryId.Value, out var name)
-                ? c with { JobCategoryName = name }
+                ? c with { JobCategory = new JobCategoryInfoDto(c.JobCategoryId.Value, name) }
                 : c
         ).ToList();
 

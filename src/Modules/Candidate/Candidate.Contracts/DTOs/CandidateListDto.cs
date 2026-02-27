@@ -17,7 +17,7 @@ public sealed record CandidateListDto
     public string? Gender { get; init; }
     public string? ExternalReference { get; init; }
     public Guid? JobCategoryId { get; init; }
-    public string? JobCategoryName { get; init; }
+    public JobCategoryInfoDto? JobCategory { get; init; }
     public string? PhotoUrl { get; init; }
     public Guid? CreatedBy { get; init; }
     public DateTimeOffset CreatedAt { get; init; }
