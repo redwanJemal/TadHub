@@ -10,15 +10,41 @@
     "supplier": "Supplier",
     "jobCategory": "Job Category",
     "status": "Status",
+    "location": "Location",
     "activatedAt": "Activated",
     "createdAt": "Created",
     "actions": "Actions"
   },
   "status": {
+    "Available": "Available",
+    "InTraining": "In Training",
+    "UnderMedicalTest": "Under Medical Test",
+    "NewArrival": "New Arrival",
+    "Booked": "Booked",
+    "Hired": "Hired",
+    "OnProbation": "On Probation",
     "Active": "Active",
-    "Deployed": "Deployed",
-    "OnLeave": "On Leave",
-    "Terminated": "Terminated"
+    "Renewed": "Renewed",
+    "PendingReplacement": "Pending Replacement",
+    "Transferred": "Transferred",
+    "MedicallyUnfit": "Medically Unfit",
+    "Absconded": "Absconded",
+    "Terminated": "Terminated",
+    "Pregnant": "Pregnant",
+    "Repatriated": "Repatriated",
+    "Deported": "Deported",
+    "Deceased": "Deceased"
+  },
+  "location": {
+    "Abroad": "Abroad",
+    "InCountry": "In Country"
+  },
+  "statusCategory": {
+    "Pool": "Pool",
+    "Arrival": "Arrival",
+    "Placement": "Placement",
+    "NegativeSpecial": "Negative / Special",
+    "Terminal": "Terminal"
   },
   "sourceType": {
     "Supplier": "Supplier",
@@ -26,6 +52,7 @@
   },
   "filters": {
     "status": "Status",
+    "location": "Location",
     "sourceType": "Source Type"
   },
   "actions": {
@@ -43,6 +70,18 @@
     "title": "Delete Worker",
     "description": "Are you sure you want to delete this worker? This action cannot be undone.",
     "confirm": "Delete"
+  },
+  "editDialog": {
+    "title": "Edit Worker",
+    "location": "Location",
+    "locationPlaceholder": "Select location...",
+    "procurementPaidAt": "Procurement Paid",
+    "flightDate": "Flight Date",
+    "arrivedAt": "Arrived At",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes...",
+    "submit": "Save Changes",
+    "submitting": "Saving..."
   },
   "transition": {
     "title": "Change Worker Status",
@@ -99,6 +138,11 @@
     "video": "Video",
     "passportDocument": "Passport Document",
     "viewPassportDocument": "View Document",
+    "location": "Location",
+    "procurementPaidAt": "Procurement Paid",
+    "flightDate": "Flight Date",
+    "arrivedAt": "Arrived At",
+    "travel": "Travel & Procurement",
     "createdAt": "Created At",
     "updatedAt": "Updated At"
   },

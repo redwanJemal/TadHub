@@ -77,9 +77,9 @@ public class CandidateApprovedConsumer : IConsumer<CandidateApprovedEvent>
             TenantId = message.TenantId,
             CandidateId = message.CandidateId,
             WorkerCode = workerCode,
-            Status = WorkerStatus.Active,
+            Status = WorkerStatus.Available,
+            Location = sourceType == WorkerSourceType.Supplier ? WorkerLocation.Abroad : WorkerLocation.InCountry,
             StatusChangedAt = now,
-            ActivatedAt = now,
 
             // Personal snapshot
             FullNameEn = data.FullNameEn,
@@ -143,7 +143,7 @@ public class CandidateApprovedConsumer : IConsumer<CandidateApprovedEvent>
             TenantId = message.TenantId,
             WorkerId = worker.Id,
             FromStatus = null,
-            ToStatus = WorkerStatus.Active,
+            ToStatus = WorkerStatus.Available,
             ChangedAt = now,
             ChangedBy = null, // System action
             Notes = "Auto-created from approved candidate",

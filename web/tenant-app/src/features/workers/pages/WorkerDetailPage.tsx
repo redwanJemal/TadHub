@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, RefreshCw, Trash2, FileText, ImageOff, VideoOff } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trash2, FileText, ImageOff, VideoOff, Pencil } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Badge } from '@/shared/components/ui/badge';
@@ -21,7 +21,8 @@ import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
 import { useWorker, useDeleteWorker } from '../hooks';
 import { WorkerStatusBadge } from '../components/WorkerStatusBadge';
 import { WorkerStatusTransitionDialog } from '../components/WorkerStatusTransitionDialog';
-import { ALLOWED_TRANSITIONS } from '../constants';
+import { WorkerEditDialog } from '../components/WorkerEditDialog';
+import { ALLOWED_TRANSITIONS, LOCATION_CONFIG } from '../constants';
 
 function InfoItem({ label, value }: { label: string; value?: string | number | null }) {
   return (
@@ -79,6 +80,7 @@ export function WorkerDetailPage() {
 
   const [showTransition, setShowTransition] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const getCountryDisplay = (code?: string) => {
     if (!code) return undefined;
@@ -130,8 +132,22 @@ export function WorkerDetailPage() {
               <p className="text-sm text-muted-foreground font-mono">{worker.workerCode}</p>
             </div>
             <WorkerStatusBadge status={worker.status} />
+            {(() => {
+              const locConfig = LOCATION_CONFIG[worker.location];
+              const LocIcon = locConfig?.icon;
+              return (
+                <Badge variant={locConfig?.variant ?? 'outline'} className="gap-1">
+                  {LocIcon && <LocIcon className="h-3 w-3" />}
+                  {t(`location.${worker.location}`)}
+                </Badge>
+              );
+            })()}
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setShowEdit(true)}>
+              <Pencil className="me-2 h-4 w-4" />
+              {t('actions.edit')}
+            </Button>
             <Button variant="outline" onClick={() => navigate(`/workers/${id}/cv`)}>
               <FileText className="me-2 h-4 w-4" />
               {t('actions.viewCv')}
@@ -205,6 +221,23 @@ export function WorkerDetailPage() {
                 )}
               </CardContent>
             </Card>
+
+            {(worker.procurementPaidAt || worker.flightDate || worker.arrivedAt) && (
+              <Card>
+                <CardHeader><CardTitle>{t('detail.travel')}</CardTitle></CardHeader>
+                <CardContent className="grid gap-4 sm:grid-cols-2">
+                  {worker.procurementPaidAt && (
+                    <InfoItem label={t('detail.procurementPaidAt')} value={new Date(worker.procurementPaidAt).toLocaleDateString()} />
+                  )}
+                  {worker.flightDate && (
+                    <InfoItem label={t('detail.flightDate')} value={new Date(worker.flightDate).toLocaleDateString()} />
+                  )}
+                  {worker.arrivedAt && (
+                    <InfoItem label={t('detail.arrivedAt')} value={new Date(worker.arrivedAt).toLocaleDateString()} />
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
             <Card>
               <CardHeader><CardTitle>{t('detail.media')}</CardTitle></CardHeader>
@@ -398,6 +431,13 @@ export function WorkerDetailPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Edit Dialog */}
+      <WorkerEditDialog
+        open={showEdit}
+        onOpenChange={setShowEdit}
+        worker={worker}
+      />
 
       {/* Status Transition Dialog */}
       <WorkerStatusTransitionDialog

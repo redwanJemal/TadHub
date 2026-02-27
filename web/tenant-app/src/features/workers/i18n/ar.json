@@ -10,15 +10,41 @@
     "supplier": "المورد",
     "jobCategory": "فئة العمل",
     "status": "الحالة",
+    "location": "الموقع",
     "activatedAt": "تاريخ التفعيل",
     "createdAt": "تاريخ الإنشاء",
     "actions": "الإجراءات"
   },
   "status": {
+    "Available": "متاح",
+    "InTraining": "قيد التدريب",
+    "UnderMedicalTest": "فحص طبي",
+    "NewArrival": "وصول جديد",
+    "Booked": "محجوز",
+    "Hired": "تم التوظيف",
+    "OnProbation": "تحت التجربة",
     "Active": "نشط",
-    "Deployed": "منتشر",
-    "OnLeave": "في إجازة",
-    "Terminated": "منتهي"
+    "Renewed": "تم التجديد",
+    "PendingReplacement": "بانتظار الاستبدال",
+    "Transferred": "تم النقل",
+    "MedicallyUnfit": "غير لائق طبياً",
+    "Absconded": "هارب",
+    "Terminated": "منتهي",
+    "Pregnant": "حامل",
+    "Repatriated": "تم الترحيل",
+    "Deported": "مُبعد",
+    "Deceased": "متوفى"
+  },
+  "location": {
+    "Abroad": "في الخارج",
+    "InCountry": "داخل الدولة"
+  },
+  "statusCategory": {
+    "Pool": "المتاحين",
+    "Arrival": "الوصول",
+    "Placement": "التوظيف",
+    "NegativeSpecial": "حالات خاصة",
+    "Terminal": "نهائي"
   },
   "sourceType": {
     "Supplier": "مورد",
@@ -26,6 +52,7 @@
   },
   "filters": {
     "status": "الحالة",
+    "location": "الموقع",
     "sourceType": "نوع المصدر"
   },
   "actions": {
@@ -43,6 +70,18 @@
     "title": "حذف العامل",
     "description": "هل أنت متأكد من حذف هذا العامل؟ لا يمكن التراجع عن هذا الإجراء.",
     "confirm": "حذف"
+  },
+  "editDialog": {
+    "title": "تعديل العامل",
+    "location": "الموقع",
+    "locationPlaceholder": "اختر الموقع...",
+    "procurementPaidAt": "تاريخ دفع الاستقدام",
+    "flightDate": "تاريخ الرحلة",
+    "arrivedAt": "تاريخ الوصول",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات اختيارية...",
+    "submit": "حفظ التغييرات",
+    "submitting": "جاري الحفظ..."
   },
   "transition": {
     "title": "تغيير حالة العامل",
@@ -99,6 +138,11 @@
     "video": "الفيديو",
     "passportDocument": "مستند جواز السفر",
     "viewPassportDocument": "عرض المستند",
+    "location": "الموقع",
+    "procurementPaidAt": "تاريخ دفع الاستقدام",
+    "flightDate": "تاريخ الرحلة",
+    "arrivedAt": "تاريخ الوصول",
+    "travel": "السفر والاستقدام",
     "createdAt": "تاريخ الإنشاء",
     "updatedAt": "تاريخ التحديث"
   },
