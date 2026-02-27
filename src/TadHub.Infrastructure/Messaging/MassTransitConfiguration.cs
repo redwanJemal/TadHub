@@ -3,6 +3,7 @@ using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TadHub.Infrastructure.Messaging.Filters;
+using TadHub.Infrastructure.Messaging.Observers;
 using TadHub.Infrastructure.Settings;
 
 namespace TadHub.Infrastructure.Messaging;
@@ -63,6 +64,9 @@ public static class MassTransitConfiguration
                 // Add tenant context to outgoing messages
                 cfg.UsePublishFilter(typeof(TenantContextPublishFilter<>), context);
                 cfg.UseSendFilter(typeof(TenantContextSendFilter<>), context);
+
+                // Audit observer for domain events
+                cfg.ConnectPublishObserver(new AuditPublishObserver(context));
 
                 // Configure endpoints from registered consumers
                 cfg.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter("saaskit", false));

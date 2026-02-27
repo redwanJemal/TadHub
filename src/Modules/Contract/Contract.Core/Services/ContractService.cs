@@ -11,7 +11,8 @@ using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Events;
 using TadHub.SharedKernel.Interfaces;
 using TadHub.SharedKernel.Models;
-using Worker.Core.Entities;
+using Worker.Contracts;
+using Client.Contracts;
 
 namespace Contract.Core.Services;
 
@@ -22,6 +23,8 @@ public class ContractService : IContractService
     private readonly ICurrentUser _currentUser;
     private readonly IPublishEndpoint _publisher;
     private readonly ILogger<ContractService> _logger;
+    private readonly IWorkerService _workerService;
+    private readonly IClientService _clientService;
 
     private static readonly Dictionary<string, Expression<Func<Entities.Contract, object>>> FilterableFields = new()
     {
@@ -47,13 +50,17 @@ public class ContractService : IContractService
         IClock clock,
         ICurrentUser currentUser,
         IPublishEndpoint publisher,
-        ILogger<ContractService> logger)
+        ILogger<ContractService> logger,
+        IWorkerService workerService,
+        IClientService clientService)
     {
         _db = db;
         _clock = clock;
         _currentUser = currentUser;
         _publisher = publisher;
         _logger = logger;
+        _workerService = workerService;
+        _clientService = clientService;
     }
 
     public async Task<PagedList<ContractListDto>> ListAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
@@ -111,25 +118,21 @@ public class ContractService : IContractService
             return Result<ContractDto>.ValidationError($"Invalid rate period '{request.RatePeriod}'");
 
         // Validate worker exists and is Available
-        var worker = await _db.Set<Worker.Core.Entities.Worker>()
-            .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(x => x.Id == request.WorkerId && x.TenantId == tenantId && !x.IsDeleted, ct);
+        var workerResult = await _workerService.GetByIdAsync(tenantId, request.WorkerId, ct: ct);
 
-        if (worker is null)
+        if (!workerResult.IsSuccess)
             return Result<ContractDto>.NotFound($"Worker with ID {request.WorkerId} not found");
 
-        if (worker.Status != WorkerStatus.Available)
-            return Result<ContractDto>.ValidationError($"Worker must be in 'Available' status to create a contract. Current status: '{worker.Status}'");
+        if (workerResult.Value!.Status != "Available")
+            return Result<ContractDto>.ValidationError($"Worker must be in 'Available' status to create a contract. Current status: '{workerResult.Value.Status}'");
 
         // Validate client exists and is active
-        var client = await _db.Set<Client.Core.Entities.Client>()
-            .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(x => x.Id == request.ClientId && x.TenantId == tenantId, ct);
+        var clientResult = await _clientService.GetByIdAsync(tenantId, request.ClientId, ct: ct);
 
-        if (client is null)
+        if (!clientResult.IsSuccess)
             return Result<ContractDto>.NotFound($"Client with ID {request.ClientId} not found");
 
-        if (!client.IsActive)
+        if (!clientResult.Value!.IsActive)
             return Result<ContractDto>.ValidationError("Client must be active to create a contract");
 
         // Check no existing active contract for this worker

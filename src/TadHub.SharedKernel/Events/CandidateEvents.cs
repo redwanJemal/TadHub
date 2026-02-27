@@ -70,3 +70,58 @@ public sealed record CandidateApprovedEvent : IDomainEvent
 
     public CandidateApprovedEvent() { }
 }
+
+/// <summary>
+/// Raised when a new candidate is created.
+/// </summary>
+public sealed record CandidateCreatedEvent : IDomainEvent
+{
+    public Guid EventId { get; init; } = Guid.NewGuid();
+    public DateTimeOffset OccurredAt { get; init; }
+    public Guid TenantId { get; init; }
+    public Guid CandidateId { get; init; }
+    public string FullNameEn { get; init; } = string.Empty;
+    public string? ChangedByUserId { get; init; }
+}
+
+/// <summary>
+/// Raised when a candidate is updated.
+/// </summary>
+public sealed record CandidateUpdatedEvent : IDomainEvent
+{
+    public Guid EventId { get; init; } = Guid.NewGuid();
+    public DateTimeOffset OccurredAt { get; init; }
+    public Guid TenantId { get; init; }
+    public Guid CandidateId { get; init; }
+    public string FullNameEn { get; init; } = string.Empty;
+    public string? ChangedByUserId { get; init; }
+}
+
+/// <summary>
+/// Raised when a candidate status changes (except Approved, which has its own event).
+/// </summary>
+public sealed record CandidateStatusChangedEvent : IDomainEvent
+{
+    public Guid EventId { get; init; } = Guid.NewGuid();
+    public DateTimeOffset OccurredAt { get; init; }
+    public Guid TenantId { get; init; }
+    public Guid CandidateId { get; init; }
+    public string FullNameEn { get; init; } = string.Empty;
+    public string FromStatus { get; init; } = string.Empty;
+    public string ToStatus { get; init; } = string.Empty;
+    public string? Reason { get; init; }
+    public string? ChangedByUserId { get; init; }
+}
+
+/// <summary>
+/// Raised when a candidate is deleted.
+/// </summary>
+public sealed record CandidateDeletedEvent : IDomainEvent
+{
+    public Guid EventId { get; init; } = Guid.NewGuid();
+    public DateTimeOffset OccurredAt { get; init; }
+    public Guid TenantId { get; init; }
+    public Guid CandidateId { get; init; }
+    public string FullNameEn { get; init; } = string.Empty;
+    public string? ChangedByUserId { get; init; }
+}

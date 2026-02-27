@@ -250,6 +250,15 @@ public class CandidateService : ICandidateService
 
         _logger.LogInformation("Created candidate {CandidateId} ({FullNameEn}) for tenant {TenantId}", candidate.Id, candidate.FullNameEn, tenantId);
 
+        await _publisher.Publish(new CandidateCreatedEvent
+        {
+            OccurredAt = now,
+            TenantId = tenantId,
+            CandidateId = candidate.Id,
+            FullNameEn = candidate.FullNameEn,
+            ChangedByUserId = _currentUser.UserId.ToString(),
+        }, ct);
+
         return Result<CandidateDto>.Success(MapToDto(candidate, includeStatusHistory: false));
     }
 
@@ -398,6 +407,15 @@ public class CandidateService : ICandidateService
 
         _logger.LogInformation("Updated candidate {CandidateId}", id);
 
+        await _publisher.Publish(new CandidateUpdatedEvent
+        {
+            OccurredAt = _clock.UtcNow,
+            TenantId = tenantId,
+            CandidateId = candidate.Id,
+            FullNameEn = candidate.FullNameEn,
+            ChangedByUserId = _currentUser.UserId.ToString(),
+        }, ct);
+
         return Result<CandidateDto>.Success(MapToDto(candidate, includeStatusHistory: false));
     }
 
@@ -441,6 +459,19 @@ public class CandidateService : ICandidateService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation("Transitioned candidate {CandidateId} from {FromStatus} to {ToStatus}", id, fromStatus, targetStatus);
+
+        // Publish status change event for audit trail
+        await _publisher.Publish(new CandidateStatusChangedEvent
+        {
+            OccurredAt = now,
+            TenantId = tenantId,
+            CandidateId = candidate.Id,
+            FullNameEn = candidate.FullNameEn,
+            FromStatus = fromStatus.ToString(),
+            ToStatus = targetStatus.ToString(),
+            Reason = request.Reason,
+            ChangedByUserId = _currentUser.UserId.ToString(),
+        }, ct);
 
         // Publish CandidateApprovedEvent when status transitions to Approved
         if (targetStatus == CandidateStatus.Approved)
@@ -533,6 +564,15 @@ public class CandidateService : ICandidateService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation("Soft-deleted candidate {CandidateId}", id);
+
+        await _publisher.Publish(new CandidateDeletedEvent
+        {
+            OccurredAt = _clock.UtcNow,
+            TenantId = tenantId,
+            CandidateId = candidate.Id,
+            FullNameEn = candidate.FullNameEn,
+            ChangedByUserId = _currentUser.UserId.ToString(),
+        }, ct);
 
         return Result.Success();
     }

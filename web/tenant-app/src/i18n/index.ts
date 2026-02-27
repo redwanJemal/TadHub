@@ -21,6 +21,8 @@ import clientsEn from '../features/clients/i18n/en.json';
 import clientsAr from '../features/clients/i18n/ar.json';
 import contractsEn from '../features/contracts/i18n/en.json';
 import contractsAr from '../features/contracts/i18n/ar.json';
+import auditEn from '../features/audit/i18n/en.json';
+import auditAr from '../features/audit/i18n/ar.json';
 
 const resources = {
   en: {
@@ -32,6 +34,7 @@ const resources = {
     workers: workersEn,
     clients: clientsEn,
     contracts: contractsEn,
+    audit: auditEn,
   },
   ar: {
     common: commonAr,
@@ -42,6 +45,7 @@ const resources = {
     workers: workersAr,
     clients: clientsAr,
     contracts: contractsAr,
+    audit: auditAr,
   },
 };
 
@@ -52,7 +56,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts'],
+    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit'],
     interpolation: {
       escapeValue: false,
     },

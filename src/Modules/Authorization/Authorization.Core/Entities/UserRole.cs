@@ -1,4 +1,3 @@
-using Identity.Core.Entities;
 using TadHub.SharedKernel.Entities;
 
 namespace Authorization.Core.Entities;
@@ -9,14 +8,9 @@ namespace Authorization.Core.Entities;
 public class UserRole : TenantScopedEntity
 {
     /// <summary>
-    /// The user ID.
+    /// The user ID (FK to user_profiles, maintained at DB level).
     /// </summary>
     public Guid UserId { get; set; }
-
-    /// <summary>
-    /// Navigation property for the user.
-    /// </summary>
-    public UserProfile User { get; set; } = null!;
 
     /// <summary>
     /// The role ID.

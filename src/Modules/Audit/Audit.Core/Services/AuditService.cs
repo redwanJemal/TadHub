@@ -19,7 +19,7 @@ public class AuditService : IAuditService
     public async Task<PagedList<AuditEventDto>> GetEventsAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
     {
         var filters = new Dictionary<string, Expression<Func<AuditEvent, object>>> { ["name"] = x => x.EventName, ["createdAt"] = x => x.CreatedAt };
-        var query = _db.Set<AuditEvent>().AsNoTracking().Where(x => x.TenantId == tenantId)
+        var query = _db.Set<AuditEvent>().IgnoreQueryFilters().AsNoTracking().Where(x => x.TenantId == tenantId)
             .ApplyFilters(qp.Filters, filters)
             .ApplySort(qp.GetSortFields(), new Dictionary<string, Expression<Func<AuditEvent, object>>> { ["createdAt"] = x => x.CreatedAt });
         return await query.Select(x => new AuditEventDto(x.Id, x.EventName, x.Payload, x.UserId, x.CreatedAt)).ToPagedListAsync(qp, ct);
@@ -28,7 +28,7 @@ public class AuditService : IAuditService
     public async Task<PagedList<AuditLogDto>> GetLogsAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
     {
         var filters = new Dictionary<string, Expression<Func<AuditLog, object>>> { ["action"] = x => x.Action, ["entityType"] = x => x.EntityType, ["createdAt"] = x => x.CreatedAt };
-        var query = _db.Set<AuditLog>().AsNoTracking().Where(x => x.TenantId == tenantId)
+        var query = _db.Set<AuditLog>().IgnoreQueryFilters().AsNoTracking().Where(x => x.TenantId == tenantId)
             .ApplyFilters(qp.Filters, filters)
             .ApplySort(qp.GetSortFields(), new Dictionary<string, Expression<Func<AuditLog, object>>> { ["createdAt"] = x => x.CreatedAt });
         return await query.Select(x => new AuditLogDto(x.Id, x.Action, x.EntityType, x.EntityId, x.OldValues, x.NewValues, x.UserId, x.CreatedAt)).ToPagedListAsync(qp, ct);

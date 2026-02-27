@@ -1,4 +1,3 @@
-using Identity.Core.Entities;
 using TadHub.SharedKernel.Entities;
 
 namespace Supplier.Core.Entities;
@@ -20,14 +19,9 @@ public class SupplierContact : BaseEntity
     public Supplier Supplier { get; set; } = null!;
 
     /// <summary>
-    /// Optional link to a UserProfile if the contact has a system account.
+    /// Optional link to a UserProfile (FK maintained at DB level, no CLR nav property).
     /// </summary>
     public Guid? UserId { get; set; }
-
-    /// <summary>
-    /// Navigation property to the user profile.
-    /// </summary>
-    public UserProfile? User { get; set; }
 
     /// <summary>
     /// Full name of the contact person. Required.

@@ -100,7 +100,7 @@ public static class InfrastructureServiceRegistration
                     maxRetryCount: 3,
                     maxRetryDelay: TimeSpan.FromSeconds(5),
                     errorCodesToAdd: null);
-                
+
                 npgsql.CommandTimeout(30);
                 npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
             });

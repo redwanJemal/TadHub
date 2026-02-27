@@ -82,7 +82,8 @@
     "settings": "Settings",
     "billing": "Billing",
     "integrations": "Integrations",
-    "api": "API Keys"
+    "api": "API Keys",
+    "audit": "Audit Log"
   },
   "language": "Language",
   "english": "English",

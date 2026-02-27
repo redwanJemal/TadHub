@@ -82,7 +82,8 @@
     "settings": "الإعدادات",
     "billing": "الفواتير",
     "integrations": "التكاملات",
-    "api": "مفاتيح API"
+    "api": "مفاتيح API",
+    "audit": "سجل التدقيق"
   },
   "language": "اللغة",
   "english": "English",

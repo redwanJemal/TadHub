@@ -148,6 +148,10 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "candidates.edit", Description = "Edit candidate profiles", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
             new() { Id = Guid.NewGuid(), Name = "candidates.manage_status", Description = "Transition candidate status", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
             new() { Id = Guid.NewGuid(), Name = "candidates.delete", Description = "Delete candidates", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
+
+            // Audit module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "audit.view", Description = "View audit logs", Module = "audit", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "audit.export", Description = "Export audit data", Module = "audit", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
         };
     }
 }

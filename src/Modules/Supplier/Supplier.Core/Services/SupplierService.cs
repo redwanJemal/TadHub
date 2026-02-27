@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Supplier.Contracts;
@@ -7,6 +8,7 @@ using Supplier.Core.Entities;
 using TadHub.Infrastructure.Api;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Events;
 using TadHub.SharedKernel.Interfaces;
 using TadHub.SharedKernel.Models;
 
@@ -19,6 +21,8 @@ public class SupplierService : ISupplierService
 {
     private readonly AppDbContext _db;
     private readonly IClock _clock;
+    private readonly ICurrentUser _currentUser;
+    private readonly IPublishEndpoint _publisher;
     private readonly ILogger<SupplierService> _logger;
 
     /// <summary>
@@ -70,10 +74,14 @@ public class SupplierService : ISupplierService
     public SupplierService(
         AppDbContext db,
         IClock clock,
+        ICurrentUser currentUser,
+        IPublishEndpoint publisher,
         ILogger<SupplierService> logger)
     {
         _db = db;
         _clock = clock;
+        _currentUser = currentUser;
+        _publisher = publisher;
         _logger = logger;
     }
 
@@ -392,6 +400,15 @@ public class SupplierService : ISupplierService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation("Created and linked supplier {SupplierId} to tenant {TenantId}", supplier.Id, tenantId);
+
+        await _publisher.Publish(new SupplierCreatedEvent
+        {
+            OccurredAt = _clock.UtcNow,
+            TenantId = tenantId,
+            SupplierId = supplier.Id,
+            NameEn = supplier.NameEn,
+            ChangedByUserId = _currentUser.IsAuthenticated ? _currentUser.UserId.ToString() : null,
+        }, ct);
 
         tenantSupplier.Supplier = supplier;
         return Result<TenantSupplierDto>.Success(MapTenantSupplierToDto(tenantSupplier, includeSupplier: true));

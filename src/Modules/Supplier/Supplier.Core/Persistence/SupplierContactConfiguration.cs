@@ -46,12 +46,6 @@ public class SupplierContactConfiguration : IEntityTypeConfiguration<SupplierCon
             .HasForeignKey(x => x.SupplierId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // FK to UserProfile (optional)
-        builder.HasOne(x => x.User)
-            .WithMany()
-            .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.SetNull);
-
         // Index for common queries
         builder.HasIndex(x => x.SupplierId)
             .HasDatabaseName("ix_supplier_contacts_supplier_id");

@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
+    <ProjectReference Include="..\Modules\Audit\Audit.Contracts\Audit.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

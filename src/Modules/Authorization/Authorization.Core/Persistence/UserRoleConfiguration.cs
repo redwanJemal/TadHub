@@ -28,12 +28,11 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         builder.HasIndex(x => x.RoleId)
             .HasDatabaseName("ix_user_roles_role_id");
 
-        // Relationships
-        builder.HasOne(x => x.User)
-            .WithMany()
-            .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // Index for user ID lookups (FK maintained at DB level, no CLR nav property)
+        builder.HasIndex(x => x.UserId)
+            .HasDatabaseName("ix_user_roles_user_id");
 
+        // Relationships
         builder.HasOne(x => x.Role)
             .WithMany(x => x.UserRoles)
             .HasForeignKey(x => x.RoleId)

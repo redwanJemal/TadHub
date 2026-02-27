@@ -18,7 +18,7 @@ public class AuditController : ControllerBase
     public AuditController(IAuditService auditService) => _auditService = auditService;
 
     [HttpGet("events")]
-    [HasPermission("analytics.view")]
+    [HasPermission("audit.view")]
     public async Task<IActionResult> GetEvents(Guid tenantId, [FromQuery] QueryParameters qp, CancellationToken ct)
     {
         qp.PageSize = Math.Min(qp.PageSize, 200); // Max 200 for audit
@@ -26,7 +26,7 @@ public class AuditController : ControllerBase
     }
 
     [HttpGet("logs")]
-    [HasPermission("analytics.view")]
+    [HasPermission("audit.view")]
     public async Task<IActionResult> GetLogs(Guid tenantId, [FromQuery] QueryParameters qp, CancellationToken ct)
     {
         qp.PageSize = Math.Min(qp.PageSize, 200);

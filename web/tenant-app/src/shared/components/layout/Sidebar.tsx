@@ -11,6 +11,7 @@ import {
   HardHat,
   UserRound,
   FileSignature,
+  ClipboardList,
   X,
   LogOut,
 } from "lucide-react";
@@ -23,6 +24,7 @@ const navItems = [
   { path: "/clients", icon: UserRound, labelKey: "nav.clients" },
   { path: "/workers", icon: HardHat, labelKey: "nav.workers" },
   { path: "/contracts", icon: FileSignature, labelKey: "nav.contracts" },
+  { path: "/audit", icon: ClipboardList, labelKey: "nav.audit" },
 ];
 
 interface SidebarProps {

@@ -1,10 +1,13 @@
 using System.Linq.Expressions;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Client.Contracts;
 using TadHub.Infrastructure.Api;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Events;
+using TadHub.SharedKernel.Interfaces;
 using TadHub.SharedKernel.Models;
 
 namespace Client.Core.Services;
@@ -13,6 +16,9 @@ public class ClientService : IClientService
 {
     private readonly AppDbContext _db;
     private readonly ILogger<ClientService> _logger;
+    private readonly IPublishEndpoint _publisher;
+    private readonly IClock _clock;
+    private readonly ICurrentUser _currentUser;
 
     private static readonly Dictionary<string, Expression<Func<Entities.Client, object>>> FilterableFields = new()
     {
@@ -29,10 +35,13 @@ public class ClientService : IClientService
         ["city"] = x => x.City!,
     };
 
-    public ClientService(AppDbContext db, ILogger<ClientService> logger)
+    public ClientService(AppDbContext db, ILogger<ClientService> logger, IPublishEndpoint publisher, IClock clock, ICurrentUser currentUser)
     {
         _db = db;
         _logger = logger;
+        _publisher = publisher;
+        _clock = clock;
+        _currentUser = currentUser;
     }
 
     public async Task<PagedList<ClientListDto>> ListAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
@@ -114,6 +123,15 @@ public class ClientService : IClientService
 
         _logger.LogInformation("Created client {ClientId} ({NameEn}) for tenant {TenantId}", client.Id, client.NameEn, tenantId);
 
+        await _publisher.Publish(new ClientCreatedEvent
+        {
+            OccurredAt = _clock.UtcNow,
+            TenantId = tenantId,
+            ClientId = client.Id,
+            NameEn = client.NameEn,
+            ChangedByUserId = _currentUser.IsAuthenticated ? _currentUser.UserId.ToString() : null,
+        }, ct);
+
         return Result<ClientDto>.Success(MapToDto(client));
     }
 
@@ -165,6 +183,15 @@ public class ClientService : IClientService
 
         _logger.LogInformation("Updated client {ClientId}", id);
 
+        await _publisher.Publish(new ClientUpdatedEvent
+        {
+            OccurredAt = _clock.UtcNow,
+            TenantId = tenantId,
+            ClientId = client.Id,
+            NameEn = client.NameEn,
+            ChangedByUserId = _currentUser.IsAuthenticated ? _currentUser.UserId.ToString() : null,
+        }, ct);
+
         return Result<ClientDto>.Success(MapToDto(client));
     }
 
@@ -181,6 +208,15 @@ public class ClientService : IClientService
         await _db.SaveChangesAsync(ct);
 
         _logger.LogInformation("Deactivated client {ClientId}", id);
+
+        await _publisher.Publish(new ClientDeletedEvent
+        {
+            OccurredAt = _clock.UtcNow,
+            TenantId = tenantId,
+            ClientId = client.Id,
+            NameEn = client.NameEn,
+            ChangedByUserId = _currentUser.IsAuthenticated ? _currentUser.UserId.ToString() : null,
+        }, ct);
 
         return Result<bool>.Success(true);
     }

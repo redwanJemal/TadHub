@@ -1,0 +1,48 @@
+{
+  "title": "Audit Log",
+  "description": "Track all changes and activity across your workspace",
+  "tabs": {
+    "activity": "Activity Log",
+    "changes": "Change Log"
+  },
+  "events": {
+    "eventName": "Event",
+    "userId": "User ID",
+    "time": "Time",
+    "payload": "Payload",
+    "noPayload": "No payload"
+  },
+  "logs": {
+    "action": "Action",
+    "entityType": "Entity Type",
+    "entityId": "Entity ID",
+    "userId": "User ID",
+    "time": "Time",
+    "changes": "Changes",
+    "oldValues": "Old Values",
+    "newValues": "New Values",
+    "noChanges": "No change details"
+  },
+  "actions": {
+    "create": "Created",
+    "update": "Updated",
+    "delete": "Deleted"
+  },
+  "filters": {
+    "action": "Action",
+    "entityType": "Entity Type",
+    "eventName": "Event Name",
+    "allActions": "All Actions",
+    "allTypes": "All Types"
+  },
+  "empty": {
+    "events": {
+      "title": "No activity yet",
+      "description": "Domain events will appear here as they happen."
+    },
+    "logs": {
+      "title": "No changes yet",
+      "description": "Entity changes will be recorded here automatically."
+    }
+  }
+}
