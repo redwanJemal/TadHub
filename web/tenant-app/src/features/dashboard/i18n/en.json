@@ -1,0 +1,36 @@
+{
+  "title": "Dashboard",
+  "description": "Overview of your workforce and operations.",
+  "kpi": {
+    "activeWorkers": "Active Workers",
+    "activeContracts": "Active Contracts",
+    "pendingCandidates": "Pending Candidates",
+    "totalClients": "Total Clients",
+    "complianceRate": "Compliance",
+    "expiringSoon": "Expiring Soon"
+  },
+  "activity": {
+    "title": "Recent Activity",
+    "empty": "No recent activity."
+  },
+  "compliance": {
+    "title": "Document Compliance",
+    "valid": "Valid",
+    "expiringSoon": "Expiring Soon",
+    "expired": "Expired",
+    "pending": "Pending"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "addCandidate": "Add Candidate",
+    "newContract": "New Contract",
+    "compliance": "Compliance",
+    "workers": "Workers"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  }
+}

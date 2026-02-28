@@ -1,0 +1,36 @@
+{
+  "title": "لوحة التحكم",
+  "description": "نظرة عامة على القوى العاملة والعمليات.",
+  "kpi": {
+    "activeWorkers": "العمال النشطون",
+    "activeContracts": "العقود النشطة",
+    "pendingCandidates": "المرشحون المعلقون",
+    "totalClients": "إجمالي العملاء",
+    "complianceRate": "الامتثال",
+    "expiringSoon": "ينتهي قريباً"
+  },
+  "activity": {
+    "title": "النشاط الأخير",
+    "empty": "لا يوجد نشاط حديث."
+  },
+  "compliance": {
+    "title": "امتثال المستندات",
+    "valid": "صالح",
+    "expiringSoon": "ينتهي قريباً",
+    "expired": "منتهي",
+    "pending": "معلق"
+  },
+  "quickActions": {
+    "title": "إجراءات سريعة",
+    "addCandidate": "إضافة مرشح",
+    "newContract": "عقد جديد",
+    "compliance": "الامتثال",
+    "workers": "العمال"
+  },
+  "time": {
+    "justNow": "الآن",
+    "minutesAgo": "منذ {{count}} دقيقة",
+    "hoursAgo": "منذ {{count}} ساعة",
+    "daysAgo": "منذ {{count}} يوم"
+  }
+}

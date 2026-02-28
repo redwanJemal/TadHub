@@ -43,17 +43,8 @@ const CompliancePage = lazy(() => import('@/features/documents').then(m => ({ de
 // Audit
 const AuditPage = lazy(() => import('@/features/audit').then(m => ({ default: m.AuditPage })));
 
-// Placeholder home
-function HomePage() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-      <h1 className="text-3xl font-bold mb-4">TadHub - Tenant Portal</h1>
-      <p className="text-muted-foreground">
-        Welcome to your workspace. Select an option from the sidebar to get started.
-      </p>
-    </div>
-  );
-}
+// Dashboard
+const DashboardPage = lazy(() => import('@/features/dashboard').then(m => ({ default: m.DashboardPage })));
 
 export function AppRouter() {
   return (
@@ -83,8 +74,8 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<HomePage />} />
-          <Route path="dashboard" element={<HomePage />} />
+          <Route index element={<DashboardPage />} />
+          <Route path="dashboard" element={<DashboardPage />} />
           <Route path="team" element={<TeamPage />} />
           <Route path="suppliers" element={<SuppliersPage />} />
           <Route path="candidates" element={<CandidatesPage />} />

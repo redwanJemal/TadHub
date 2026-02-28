@@ -23,4 +23,6 @@ public interface IWorkerService
     Task<Result<WorkerCvDto>> GetCvAsync(Guid tenantId, Guid id, CancellationToken ct = default);
 
     Task<Result> DeleteAsync(Guid tenantId, Guid id, CancellationToken ct = default);
+
+    Task<Dictionary<string, int>> GetCountsByStatusAsync(Guid tenantId, CancellationToken ct = default);
 }

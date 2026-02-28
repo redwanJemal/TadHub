@@ -221,6 +221,21 @@ public class ClientService : IClientService
         return Result<bool>.Success(true);
     }
 
+    public async Task<(int Total, int Active)> GetClientCountsAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        var counts = await _db.Set<Entities.Client>()
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(x => x.TenantId == tenantId)
+            .GroupBy(x => x.IsActive)
+            .Select(g => new { IsActive = g.Key, Count = g.Count() })
+            .ToListAsync(ct);
+
+        var total = counts.Sum(c => c.Count);
+        var active = counts.Where(c => c.IsActive).Sum(c => c.Count);
+        return (total, active);
+    }
+
     private static ClientDto MapToDto(Entities.Client c) => new()
     {
         Id = c.Id,

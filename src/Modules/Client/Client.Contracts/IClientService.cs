@@ -64,4 +64,6 @@ public interface IClientService
     Task<Result<ClientDto>> CreateAsync(Guid tenantId, CreateClientRequest request, CancellationToken ct = default);
     Task<Result<ClientDto>> UpdateAsync(Guid tenantId, Guid id, UpdateClientRequest request, CancellationToken ct = default);
     Task<Result<bool>> DeleteAsync(Guid tenantId, Guid id, CancellationToken ct = default);
+
+    Task<(int Total, int Active)> GetClientCountsAsync(Guid tenantId, CancellationToken ct = default);
 }

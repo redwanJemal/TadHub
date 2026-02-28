@@ -1,53 +1,37 @@
 /**
- * Types for the BFF Tenant Dashboard endpoint
+ * Types for the BFF Dashboard endpoint
  */
 
-export interface DashboardTenantInfo {
-  id: string;
-  name: string;
-  slug: string;
-  logoUrl: string | null;
-  status: string;
-  createdAt: string;
+export interface DashboardKpis {
+  activeWorkers: number;
+  totalWorkers: number;
+  activeContracts: number;
+  totalContracts: number;
+  pendingCandidates: number;
+  totalCandidates: number;
+  activeClients: number;
+  totalClients: number;
 }
 
-export interface DashboardSubscriptionInfo {
-  planName: string;
-  planSlug: string;
-  status: string;
-  currentPeriodEnd: string | null;
-  isTrialActive: boolean;
-  trialDaysRemaining: number | null;
-}
-
-export interface DashboardMemberStats {
-  total: number;
-  active: number;
-  pendingInvitations: number;
-  joinedThisMonth: number;
+export interface DashboardCompliance {
+  totalDocuments: number;
+  valid: number;
+  expiringSoon: number;
+  expired: number;
+  pending: number;
+  complianceRate: number;
 }
 
 export interface DashboardActivityItem {
   id: string;
-  action: string;
-  entityType: string;
+  eventName: string;
   entityName: string | null;
-  actorName: string | null;
-  timestamp: string;
+  createdAt: string;
 }
 
-export interface DashboardMetrics {
-  totalRoles: number;
-  totalApiKeys: number;
-  storageUsedBytes: number;
-  storageLimitBytes: number;
-}
-
-export interface TenantDashboardResponse {
-  tenant: DashboardTenantInfo;
-  subscription: DashboardSubscriptionInfo;
-  members: DashboardMemberStats;
+export interface DashboardSummary {
+  kpis: DashboardKpis;
+  compliance: DashboardCompliance;
   recentActivity: DashboardActivityItem[];
-  unreadNotifications: number;
-  metrics: DashboardMetrics;
+  generatedAt: string;
 }

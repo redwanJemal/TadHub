@@ -25,6 +25,8 @@ import auditEn from '../features/audit/i18n/en.json';
 import auditAr from '../features/audit/i18n/ar.json';
 import documentsEn from '../features/documents/i18n/en.json';
 import documentsAr from '../features/documents/i18n/ar.json';
+import dashboardEn from '../features/dashboard/i18n/en.json';
+import dashboardAr from '../features/dashboard/i18n/ar.json';
 
 const resources = {
   en: {
@@ -38,6 +40,7 @@ const resources = {
     contracts: contractsEn,
     audit: auditEn,
     documents: documentsEn,
+    dashboard: dashboardEn,
   },
   ar: {
     common: commonAr,
@@ -50,6 +53,7 @@ const resources = {
     contracts: contractsAr,
     audit: auditAr,
     documents: documentsAr,
+    dashboard: dashboardAr,
   },
 };
 
@@ -60,7 +64,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents'],
+    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard'],
     interpolation: {
       escapeValue: false,
     },

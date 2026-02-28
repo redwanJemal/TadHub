@@ -577,6 +577,16 @@ public class CandidateService : ICandidateService
         return Result.Success();
     }
 
+    public async Task<Dictionary<string, int>> GetCountsByStatusAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        return await _db.Set<Entities.Candidate>()
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(x => x.TenantId == tenantId && !x.IsDeleted)
+            .GroupBy(x => x.Status)
+            .ToDictionaryAsync(g => g.Key.ToString(), g => g.Count(), ct);
+    }
+
     #region Mapping
 
     private static CandidateDto MapToDto(Entities.Candidate c, bool includeStatusHistory)

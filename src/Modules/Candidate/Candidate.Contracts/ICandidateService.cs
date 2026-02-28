@@ -43,4 +43,9 @@ public interface ICandidateService
     /// Soft deletes a candidate.
     /// </summary>
     Task<Result> DeleteAsync(Guid tenantId, Guid id, CancellationToken ct = default);
+
+    /// <summary>
+    /// Returns candidate counts grouped by status for the given tenant.
+    /// </summary>
+    Task<Dictionary<string, int>> GetCountsByStatusAsync(Guid tenantId, CancellationToken ct = default);
 }

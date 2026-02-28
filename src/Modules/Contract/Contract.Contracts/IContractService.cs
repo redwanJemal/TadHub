@@ -19,4 +19,6 @@ public interface IContractService
     Task<Result<List<ContractStatusHistoryDto>>> GetStatusHistoryAsync(Guid tenantId, Guid id, CancellationToken ct = default);
 
     Task<Result> DeleteAsync(Guid tenantId, Guid id, CancellationToken ct = default);
+
+    Task<Dictionary<string, int>> GetCountsByStatusAsync(Guid tenantId, CancellationToken ct = default);
 }

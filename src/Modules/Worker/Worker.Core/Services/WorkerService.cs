@@ -294,6 +294,16 @@ public class WorkerService : IWorkerService
         return Result.Success();
     }
 
+    public async Task<Dictionary<string, int>> GetCountsByStatusAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        return await _db.Set<Entities.Worker>()
+            .IgnoreQueryFilters()
+            .AsNoTracking()
+            .Where(x => x.TenantId == tenantId && !x.IsDeleted)
+            .GroupBy(x => x.Status)
+            .ToDictionaryAsync(g => g.Key.ToString(), g => g.Count(), ct);
+    }
+
     #region Mapping
 
     private static WorkerDto MapToDto(Entities.Worker w, bool includeStatusHistory)
