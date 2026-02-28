@@ -26,6 +26,7 @@ using Worker.Core;
 using Client.Core;
 using Contract.Core;
 using Document.Core;
+using Financial.Core;
 using TadHub.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -168,6 +169,9 @@ builder.Services.AddContractModule();
 
 // Document module
 builder.Services.AddDocumentModule();
+
+// Financial module
+builder.Services.AddFinancialModule();
 
 var app = builder.Build();
 

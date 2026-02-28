@@ -85,6 +85,11 @@
     "billing": "Billing",
     "integrations": "Integrations",
     "api": "API Keys",
+    "finance": "Finance",
+    "invoices": "Invoices",
+    "payments": "Payments",
+    "financial_reports": "Reports",
+    "financial_settings": "Financial Settings",
     "compliance": "Compliance",
     "audit": "Audit Log"
   },

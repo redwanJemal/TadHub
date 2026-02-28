@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Financial.Contracts.Settings;
 using Notification.Contracts.Settings;
 using TadHub.Infrastructure.Auth;
 using TadHub.Api.Filters;
@@ -222,6 +223,62 @@ public class TenantsController : ControllerBase
 
         var sectionJson = JsonSerializer.Serialize(settings);
         var result = await _tenantService.UpdateSettingsSectionAsync(id, "notifications", sectionJson, ct);
+
+        if (!result.IsSuccess)
+            return NotFound(new { error = result.Error });
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Gets financial settings for a tenant.
+    /// </summary>
+    [HttpGet("{id:guid}/settings/financial")]
+    [TenantMemberRequired]
+    [ProducesResponseType(typeof(TenantFinancialSettings), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetFinancialSettings(Guid id, CancellationToken ct)
+    {
+        var isOwner = await _tenantService.IsOwnerAsync(id, _currentUser.UserId, ct);
+        if (!isOwner)
+            return Forbid();
+
+        var result = await _tenantService.GetSettingsJsonAsync(id, ct);
+        if (!result.IsSuccess)
+            return NotFound(new { error = result.Error });
+
+        var settings = new TenantFinancialSettings();
+        if (!string.IsNullOrWhiteSpace(result.Value))
+        {
+            var root = JsonNode.Parse(result.Value);
+            var financialNode = root?["financial"];
+            if (financialNode is not null)
+            {
+                settings = financialNode.Deserialize<TenantFinancialSettings>() ?? new TenantFinancialSettings();
+            }
+        }
+
+        return Ok(settings);
+    }
+
+    /// <summary>
+    /// Updates financial settings for a tenant.
+    /// </summary>
+    [HttpPut("{id:guid}/settings/financial")]
+    [TenantMemberRequired]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateFinancialSettings(
+        Guid id,
+        [FromBody] TenantFinancialSettings settings,
+        CancellationToken ct)
+    {
+        var isOwner = await _tenantService.IsOwnerAsync(id, _currentUser.UserId, ct);
+        if (!isOwner)
+            return Forbid();
+
+        var sectionJson = JsonSerializer.Serialize(settings);
+        var result = await _tenantService.UpdateSettingsSectionAsync(id, "financial", sectionJson, ct);
 
         if (!result.IsSuccess)
             return NotFound(new { error = result.Error });

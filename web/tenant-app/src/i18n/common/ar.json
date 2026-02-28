@@ -85,6 +85,11 @@
     "billing": "الفواتير",
     "integrations": "التكاملات",
     "api": "مفاتيح API",
+    "finance": "المالية",
+    "invoices": "الفواتير",
+    "payments": "المدفوعات",
+    "financial_reports": "التقارير",
+    "financial_settings": "الإعدادات المالية",
     "compliance": "الامتثال",
     "audit": "سجل التدقيق"
   },

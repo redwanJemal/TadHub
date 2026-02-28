@@ -1,0 +1,62 @@
+{
+  "title": "Finance",
+  "invoices": {
+    "title": "Invoices",
+    "create": "Create Invoice",
+    "generate": "Generate Invoice",
+    "detail": "Invoice Details",
+    "summary": "Invoice Summary",
+    "lineItems": "Line Items",
+    "paymentHistory": "Payment History",
+    "creditNote": "Create Credit Note",
+    "applyDiscount": "Apply Discount",
+    "noInvoices": "No invoices found",
+    "totalRevenue": "Total Revenue",
+    "totalPaid": "Total Paid",
+    "outstanding": "Outstanding",
+    "overdue": "Overdue"
+  },
+  "payments": {
+    "title": "Payments",
+    "record": "Record Payment",
+    "refund": "Refund Payment",
+    "noPayments": "No payments found"
+  },
+  "discountPrograms": {
+    "title": "Discount Programs",
+    "create": "Create Program",
+    "edit": "Edit Program",
+    "noPrograms": "No discount programs found"
+  },
+  "supplierPayments": {
+    "title": "Supplier Payments",
+    "create": "Create Payment",
+    "noPayments": "No supplier payments found"
+  },
+  "reports": {
+    "title": "Financial Reports",
+    "margin": "Margin Report",
+    "revenue": "Revenue Breakdown",
+    "xReport": "Cash Reconciliation"
+  },
+  "settings": {
+    "title": "Financial Settings",
+    "vat": "VAT Settings",
+    "invoice": "Invoice Settings",
+    "deposit": "Deposit & Installments",
+    "methods": "Payment Methods",
+    "terms": "Invoice Terms & Footer"
+  },
+  "status": {
+    "draft": "Draft",
+    "issued": "Issued",
+    "partiallyPaid": "Partially Paid",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "cancelled": "Cancelled",
+    "refunded": "Refunded",
+    "pending": "Pending",
+    "completed": "Completed",
+    "failed": "Failed"
+  }
+}

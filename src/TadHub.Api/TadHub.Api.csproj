@@ -42,6 +42,8 @@
     <ProjectReference Include="..\Modules\Contract\Contract.Core\Contract.Core.csproj" />
     <!-- Document module -->
     <ProjectReference Include="..\Modules\Document\Document.Core\Document.Core.csproj" />
+    <!-- Financial module -->
+    <ProjectReference Include="..\Modules\Financial\Financial.Core\Financial.Core.csproj" />
   </ItemGroup>
 
 </Project>

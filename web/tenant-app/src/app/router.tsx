@@ -49,6 +49,18 @@ const SettingsPage = lazy(() => import('@/features/settings').then(m => ({ defau
 // Notifications (full page)
 const NotificationsPage = lazy(() => import('@/features/notifications').then(m => ({ default: m.NotificationsPage })));
 
+// Finance
+const InvoicesListPage = lazy(() => import('@/features/finance').then(m => ({ default: m.InvoicesListPage })));
+const CreateInvoicePage = lazy(() => import('@/features/finance').then(m => ({ default: m.CreateInvoicePage })));
+const InvoiceDetailPage = lazy(() => import('@/features/finance').then(m => ({ default: m.InvoiceDetailPage })));
+const PaymentsListPage = lazy(() => import('@/features/finance').then(m => ({ default: m.PaymentsListPage })));
+const RecordPaymentPage = lazy(() => import('@/features/finance').then(m => ({ default: m.RecordPaymentPage })));
+const DiscountProgramsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.DiscountProgramsPage })));
+const SupplierPaymentsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.SupplierPaymentsPage })));
+const FinancialReportsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.FinancialReportsPage })));
+const CashReconciliationPage = lazy(() => import('@/features/finance').then(m => ({ default: m.CashReconciliationPage })));
+const FinancialSettingsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.FinancialSettingsPage })));
+
 // Dashboard
 const DashboardPage = lazy(() => import('@/features/dashboard').then(m => ({ default: m.DashboardPage })));
 
@@ -95,6 +107,16 @@ export function AppRouter() {
           <Route path="workers" element={<WorkersPage />} />
           <Route path="workers/:id" element={<WorkerDetailPage />} />
           <Route path="workers/:id/cv" element={<WorkerCvPage />} />
+          <Route path="finance/invoices" element={<InvoicesListPage />} />
+          <Route path="finance/invoices/new" element={<CreateInvoicePage />} />
+          <Route path="finance/invoices/:invoiceId" element={<InvoiceDetailPage />} />
+          <Route path="finance/payments" element={<PaymentsListPage />} />
+          <Route path="finance/payments/record" element={<RecordPaymentPage />} />
+          <Route path="finance/discount-programs" element={<DiscountProgramsPage />} />
+          <Route path="finance/supplier-payments" element={<SupplierPaymentsPage />} />
+          <Route path="finance/reports" element={<FinancialReportsPage />} />
+          <Route path="finance/cash-reconciliation" element={<CashReconciliationPage />} />
+          <Route path="finance/settings" element={<FinancialSettingsPage />} />
           <Route path="compliance" element={<CompliancePage />} />
           <Route path="audit" element={<AuditPage />} />
           <Route path="settings" element={<Navigate to="/settings/notifications" replace />} />

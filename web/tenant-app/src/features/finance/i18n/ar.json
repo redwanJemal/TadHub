@@ -1,0 +1,62 @@
+{
+  "title": "المالية",
+  "invoices": {
+    "title": "الفواتير",
+    "create": "إنشاء فاتورة",
+    "generate": "إنشاء فاتورة تلقائي",
+    "detail": "تفاصيل الفاتورة",
+    "summary": "ملخص الفاتورة",
+    "lineItems": "بنود الفاتورة",
+    "paymentHistory": "سجل المدفوعات",
+    "creditNote": "إنشاء إشعار دائن",
+    "applyDiscount": "تطبيق خصم",
+    "noInvoices": "لا توجد فواتير",
+    "totalRevenue": "إجمالي الإيرادات",
+    "totalPaid": "إجمالي المدفوع",
+    "outstanding": "المستحق",
+    "overdue": "متأخر"
+  },
+  "payments": {
+    "title": "المدفوعات",
+    "record": "تسجيل دفعة",
+    "refund": "استرداد دفعة",
+    "noPayments": "لا توجد مدفوعات"
+  },
+  "discountPrograms": {
+    "title": "برامج الخصم",
+    "create": "إنشاء برنامج",
+    "edit": "تعديل البرنامج",
+    "noPrograms": "لا توجد برامج خصم"
+  },
+  "supplierPayments": {
+    "title": "مدفوعات الموردين",
+    "create": "إنشاء دفعة",
+    "noPayments": "لا توجد مدفوعات موردين"
+  },
+  "reports": {
+    "title": "التقارير المالية",
+    "margin": "تقرير الهامش",
+    "revenue": "تفصيل الإيرادات",
+    "xReport": "تسوية النقدية"
+  },
+  "settings": {
+    "title": "الإعدادات المالية",
+    "vat": "إعدادات الضريبة",
+    "invoice": "إعدادات الفاتورة",
+    "deposit": "الإيداع والأقساط",
+    "methods": "طرق الدفع",
+    "terms": "شروط وتذييل الفاتورة"
+  },
+  "status": {
+    "draft": "مسودة",
+    "issued": "صادرة",
+    "partiallyPaid": "مدفوعة جزئياً",
+    "paid": "مدفوعة",
+    "overdue": "متأخرة",
+    "cancelled": "ملغاة",
+    "refunded": "مستردة",
+    "pending": "معلقة",
+    "completed": "مكتملة",
+    "failed": "فاشلة"
+  }
+}
