@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 using Analytics.Core;
 using ApiManagement.Core;
 using Audit.Core;
@@ -176,22 +177,41 @@ builder.Services.AddFinancialModule();
 var app = builder.Build();
 
 // =============================================================================
-// Database Seeding (Reference Data)
+// Database Migration & Seeding
 // =============================================================================
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var logger = services.GetRequiredService<ILogger<Program>>();
-    
+
+    try
+    {
+        // Apply pending migrations on startup
+        var db = services.GetRequiredService<TadHub.Infrastructure.Persistence.AppDbContext>();
+        var pendingMigrations = await db.Database.GetPendingMigrationsAsync();
+        if (pendingMigrations.Any())
+        {
+            logger.LogInformation("Applying {Count} pending migration(s): {Migrations}",
+                pendingMigrations.Count(), string.Join(", ", pendingMigrations));
+            await db.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully");
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while applying database migrations");
+        throw; // Fail fast if migrations can't be applied
+    }
+
     try
     {
         // Seed reference data (countries, job categories)
         var countrySeeder = services.GetRequiredService<ReferenceData.Core.Seeds.CountrySeeder>();
         var jobCategorySeeder = services.GetRequiredService<ReferenceData.Core.Seeds.JobCategorySeeder>();
-        
+
         await jobCategorySeeder.SeedAsync();
         await countrySeeder.SeedAsync();
-        
+
         logger.LogInformation("Reference data seeding completed");
     }
     catch (Exception ex)

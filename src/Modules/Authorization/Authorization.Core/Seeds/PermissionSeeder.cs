@@ -143,10 +143,35 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "suppliers.manage", Description = "Manage suppliers", Module = "suppliers", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
             new() { Id = Guid.NewGuid(), Name = "suppliers.delete", Description = "Delete suppliers", Module = "suppliers", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
 
-            // Finance module (Tenant)
-            new() { Id = Guid.NewGuid(), Name = "finance.view", Description = "View financial data", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "finance.manage", Description = "Manage financial records", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
-            new() { Id = Guid.NewGuid(), Name = "finance.approve", Description = "Approve financial transactions", Module = "finance", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            // Invoices module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "invoices.view", Description = "View invoices", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "invoices.create", Description = "Create invoices", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "invoices.edit", Description = "Edit invoices", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "invoices.manage_status", Description = "Transition invoice status", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "invoices.delete", Description = "Delete invoices", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
+
+            // Payments module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "payments.view", Description = "View payments", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 6 },
+            new() { Id = Guid.NewGuid(), Name = "payments.create", Description = "Record payments", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 7 },
+            new() { Id = Guid.NewGuid(), Name = "payments.refund", Description = "Process payment refunds", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 8 },
+            new() { Id = Guid.NewGuid(), Name = "payments.delete", Description = "Delete payments", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 9 },
+
+            // Discount Programs module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "discounts.view", Description = "View discount programs", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 10 },
+            new() { Id = Guid.NewGuid(), Name = "discounts.create", Description = "Create discount programs", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 11 },
+            new() { Id = Guid.NewGuid(), Name = "discounts.edit", Description = "Edit discount programs", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 12 },
+            new() { Id = Guid.NewGuid(), Name = "discounts.delete", Description = "Delete discount programs", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 13 },
+
+            // Supplier Payments module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "supplier_payments.view", Description = "View supplier payments", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 14 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_payments.create", Description = "Create supplier payments", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 15 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_payments.edit", Description = "Edit supplier payments", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 16 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_payments.manage_status", Description = "Transition supplier payment status", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 17 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_payments.delete", Description = "Delete supplier payments", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 18 },
+
+            // Financial Reports module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "financial_reports.view", Description = "View financial reports", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 19 },
+            new() { Id = Guid.NewGuid(), Name = "financial_reports.manage", Description = "Manage financial report settings", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 20 },
 
             // Candidates module (Tenant)
             new() { Id = Guid.NewGuid(), Name = "candidates.view", Description = "View candidates", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
