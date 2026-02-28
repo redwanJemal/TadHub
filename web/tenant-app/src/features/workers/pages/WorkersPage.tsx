@@ -22,6 +22,7 @@ import {
 } from '@/shared/components/ui/alert-dialog';
 import { Badge } from '@/shared/components/ui/badge';
 import { MoreHorizontal, Trash2, Eye, RefreshCw, FileText } from 'lucide-react';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
 import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
 import { useWorkers, useDeleteWorker } from '../hooks';
 import { WorkerStatusBadge } from '../components/WorkerStatusBadge';
@@ -32,6 +33,7 @@ import type { WorkerListDto } from '../types';
 export function WorkersPage() {
   const { t } = useTranslation('workers');
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
 
   // Table state
   const [search, setSearch] = useState('');
@@ -198,18 +200,24 @@ export function WorkersPage() {
               <FileText className="me-2 h-4 w-4" />
               {t('actions.viewCv')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTransitionTarget(row)}>
-              <RefreshCw className="me-2 h-4 w-4" />
-              {t('actions.changeStatus')}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => setDeleteTarget(row)}
-            >
-              <Trash2 className="me-2 h-4 w-4" />
-              {t('actions.delete')}
-            </DropdownMenuItem>
+            {hasPermission('workers.manage_status') && (
+              <DropdownMenuItem onClick={() => setTransitionTarget(row)}>
+                <RefreshCw className="me-2 h-4 w-4" />
+                {t('actions.changeStatus')}
+              </DropdownMenuItem>
+            )}
+            {hasPermission('workers.delete') && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setDeleteTarget(row)}
+                >
+                  <Trash2 className="me-2 h-4 w-4" />
+                  {t('actions.delete')}
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       ),

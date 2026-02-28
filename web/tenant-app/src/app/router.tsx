@@ -43,6 +43,12 @@ const CompliancePage = lazy(() => import('@/features/documents').then(m => ({ de
 // Audit
 const AuditPage = lazy(() => import('@/features/audit').then(m => ({ default: m.AuditPage })));
 
+// Settings
+const SettingsPage = lazy(() => import('@/features/settings').then(m => ({ default: m.SettingsPage })));
+
+// Notifications (full page)
+const NotificationsPage = lazy(() => import('@/features/notifications').then(m => ({ default: m.NotificationsPage })));
+
 // Dashboard
 const DashboardPage = lazy(() => import('@/features/dashboard').then(m => ({ default: m.DashboardPage })));
 
@@ -91,6 +97,9 @@ export function AppRouter() {
           <Route path="workers/:id/cv" element={<WorkerCvPage />} />
           <Route path="compliance" element={<CompliancePage />} />
           <Route path="audit" element={<AuditPage />} />
+          <Route path="settings" element={<Navigate to="/settings/notifications" replace />} />
+          <Route path="settings/:tab" element={<SettingsPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
         </Route>
 
         {/* Catch all */}

@@ -1,9 +1,11 @@
+using Authorization.Contracts;
 using Identity.Contracts;
 using Identity.Contracts.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TadHub.Infrastructure.Auth;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Interfaces;
 using Tenancy.Contracts;
 
 namespace TadHub.Api.Controllers;
@@ -18,15 +20,21 @@ public class MeController : ControllerBase
 {
     private readonly IIdentityService _identityService;
     private readonly ITenantService _tenantService;
+    private readonly IAuthorizationModuleService _authorizationService;
+    private readonly ITenantContext _tenantContext;
     private readonly CurrentUser _currentUser;
 
     public MeController(
-        IIdentityService identityService, 
+        IIdentityService identityService,
         ITenantService tenantService,
+        IAuthorizationModuleService authorizationService,
+        ITenantContext tenantContext,
         CurrentUser currentUser)
     {
         _identityService = identityService;
         _tenantService = tenantService;
+        _authorizationService = authorizationService;
+        _tenantContext = tenantContext;
         _currentUser = currentUser;
     }
 
@@ -73,6 +81,43 @@ public class MeController : ControllerBase
         var needsOnboarding = !tenants.Any();
         var needsTenantSelection = tenants.Count > 1 && user.DefaultTenantId == null;
 
+        // Fetch permissions if tenant is resolved and user has tenants
+        List<string> permissions = [];
+        List<string> roles = [];
+
+        // Determine the effective tenant for permission lookup:
+        // 1. Explicitly resolved (X-Tenant-ID header / subdomain)
+        // 2. User's default tenant
+        // 3. User's only tenant (single-tenant shortcut)
+        Guid? effectiveTenantId = null;
+        if (_tenantContext.IsResolved)
+        {
+            effectiveTenantId = _tenantContext.TenantId;
+        }
+        else if (user.DefaultTenantId.HasValue && tenants.Any(t => t.Id == user.DefaultTenantId.Value))
+        {
+            effectiveTenantId = user.DefaultTenantId.Value;
+        }
+        else if (tenants.Count == 1)
+        {
+            effectiveTenantId = tenants[0].Id;
+        }
+
+        if (effectiveTenantId.HasValue && tenants.Count > 0)
+        {
+            try
+            {
+                var userPerms = await _authorizationService.GetUserPermissionsAsync(
+                    effectiveTenantId.Value, user.Id, ct);
+                permissions = userPerms.Permissions.ToList();
+                roles = userPerms.Roles.ToList();
+            }
+            catch
+            {
+                // Authorization service not available, continue without permissions
+            }
+        }
+
         return Ok(new UserOnboardingStatusDto
         {
             Id = user.Id,
@@ -87,6 +132,8 @@ public class MeController : ControllerBase
             NeedsOnboarding = needsOnboarding,
             NeedsTenantSelection = needsTenantSelection,
             Tenants = tenants,
+            Permissions = permissions,
+            Roles = roles,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt
         });
@@ -110,6 +157,8 @@ public record UserOnboardingStatusDto
     public bool NeedsOnboarding { get; init; }
     public bool NeedsTenantSelection { get; init; }
     public List<TenantSummaryDto> Tenants { get; init; } = [];
+    public List<string> Permissions { get; init; } = [];
+    public List<string> Roles { get; init; } = [];
     public DateTimeOffset CreatedAt { get; init; }
     public DateTimeOffset UpdatedAt { get; init; }
 }

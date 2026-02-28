@@ -1,5 +1,8 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Notification.Contracts.Settings;
 using TadHub.Infrastructure.Auth;
 using TadHub.Api.Filters;
 using TadHub.Infrastructure.Tenancy;
@@ -163,6 +166,62 @@ public class TenantsController : ControllerBase
     public async Task<IActionResult> Reactivate(Guid id, CancellationToken ct)
     {
         var result = await _tenantService.ReactivateAsync(id, ct);
+
+        if (!result.IsSuccess)
+            return NotFound(new { error = result.Error });
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Gets notification settings for a tenant.
+    /// </summary>
+    [HttpGet("{id:guid}/settings/notifications")]
+    [TenantMemberRequired]
+    [ProducesResponseType(typeof(TenantNotificationSettings), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetNotificationSettings(Guid id, CancellationToken ct)
+    {
+        var isOwner = await _tenantService.IsOwnerAsync(id, _currentUser.UserId, ct);
+        if (!isOwner)
+            return Forbid();
+
+        var result = await _tenantService.GetSettingsJsonAsync(id, ct);
+        if (!result.IsSuccess)
+            return NotFound(new { error = result.Error });
+
+        var settings = new TenantNotificationSettings();
+        if (!string.IsNullOrWhiteSpace(result.Value))
+        {
+            var root = JsonNode.Parse(result.Value);
+            var notificationsNode = root?["notifications"];
+            if (notificationsNode is not null)
+            {
+                settings = notificationsNode.Deserialize<TenantNotificationSettings>() ?? new TenantNotificationSettings();
+            }
+        }
+
+        return Ok(settings);
+    }
+
+    /// <summary>
+    /// Updates notification settings for a tenant.
+    /// </summary>
+    [HttpPut("{id:guid}/settings/notifications")]
+    [TenantMemberRequired]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateNotificationSettings(
+        Guid id,
+        [FromBody] TenantNotificationSettings settings,
+        CancellationToken ct)
+    {
+        var isOwner = await _tenantService.IsOwnerAsync(id, _currentUser.UserId, ct);
+        if (!isOwner)
+            return Forbid();
+
+        var sectionJson = JsonSerializer.Serialize(settings);
+        var result = await _tenantService.UpdateSettingsSectionAsync(id, "notifications", sectionJson, ct);
 
         if (!result.IsSuccess)
             return NotFound(new { error = result.Error });

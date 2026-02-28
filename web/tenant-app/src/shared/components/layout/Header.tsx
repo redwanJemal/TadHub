@@ -9,12 +9,12 @@ import {
   PanelLeftClose,
   PanelLeft,
   Languages,
-  Bell,
   LogOut,
   Settings,
   User,
   KeyRound,
 } from "lucide-react";
+import { NotificationPanel } from "@/features/notifications";
 import { useNavigate } from "react-router-dom";
 import { keycloakUrls } from "@/lib/auth-config";
 import { TenantSelector } from "@/shared/components/tenant";
@@ -29,7 +29,6 @@ export function Header({ onMenuClick }: HeaderProps) {
   const auth = useAuth();
   const navigate = useNavigate();
   const [isDark, setIsDark] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [currentLang, setCurrentLang] = useState(() => {
     return localStorage.getItem("i18nextLng") || "en";
@@ -123,37 +122,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
       <div className="flex items-center gap-2">
         {/* Notifications */}
-        <div className="relative">
-          <button
-            className="relative rounded-lg p-2 hover:bg-muted"
-            onClick={() => setShowNotifications(!showNotifications)}
-          >
-            <Bell className="h-5 w-5" />
-            {/* Notification badge */}
-            <span className="absolute end-1 top-1 flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
-            </span>
-          </button>
-
-          {/* Notifications dropdown */}
-          {showNotifications && (
-            <>
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setShowNotifications(false)}
-              />
-              <div className="absolute end-0 top-full z-50 mt-2 w-80 rounded-lg border bg-card p-4 shadow-lg">
-                <h3 className="font-semibold text-foreground mb-3">
-                  {t("notifications")}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {t("noResults")}
-                </p>
-              </div>
-            </>
-          )}
-        </div>
+        <NotificationPanel />
 
         {/* Theme toggle */}
         <button className="rounded-lg p-2 hover:bg-muted" onClick={toggleTheme}>

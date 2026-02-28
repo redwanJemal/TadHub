@@ -9,6 +9,7 @@
     <ProjectReference Include="..\Notification.Contracts\Notification.Contracts.csproj" />
     <ProjectReference Include="..\..\..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
     <ProjectReference Include="..\..\..\TadHub.Infrastructure\TadHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Tenancy\Tenancy.Contracts\Tenancy.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

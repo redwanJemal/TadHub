@@ -3,17 +3,25 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/ui/button';
 import { UserPlus, FileText, ShieldCheck, Users } from 'lucide-react';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
 
 export function QuickActions() {
   const { t } = useTranslation('dashboard');
   const navigate = useNavigate();
+  const { hasPermission, isLoaded } = usePermissions();
 
-  const actions = [
-    { label: t('quickActions.addCandidate'), icon: UserPlus, href: '/candidates/new' },
-    { label: t('quickActions.newContract'), icon: FileText, href: '/contracts/new' },
-    { label: t('quickActions.compliance'), icon: ShieldCheck, href: '/compliance' },
-    { label: t('quickActions.workers'), icon: Users, href: '/workers' },
+  const allActions = [
+    { label: t('quickActions.addCandidate'), icon: UserPlus, href: '/candidates/new', permission: 'candidates.create' },
+    { label: t('quickActions.newContract'), icon: FileText, href: '/contracts/new', permission: 'contracts.create' },
+    { label: t('quickActions.compliance'), icon: ShieldCheck, href: '/compliance', permission: 'documents.view' },
+    { label: t('quickActions.workers'), icon: Users, href: '/workers', permission: 'workers.view' },
   ];
+
+  const actions = isLoaded
+    ? allActions.filter((a) => hasPermission(a.permission))
+    : allActions;
+
+  if (actions.length === 0) return null;
 
   return (
     <Card>

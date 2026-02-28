@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
 using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Identity.Contracts;
 using Identity.Contracts.DTOs;
 using MassTransit;
@@ -668,6 +670,44 @@ public class TenantService : ITenantService
             return Result<TenantInvitationDto>.NotFound("Invitation not found");
 
         return Result<TenantInvitationDto>.Success(MapInvitationToDto(invitation));
+    }
+
+    #endregion
+
+    #region Settings Operations
+
+    public async Task<Result<string?>> GetSettingsJsonAsync(Guid tenantId, CancellationToken ct = default)
+    {
+        var tenant = await _db.Set<Tenant>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == tenantId, ct);
+
+        if (tenant is null)
+            return Result<string?>.NotFound($"Tenant with ID {tenantId} not found");
+
+        return Result<string?>.Success(tenant.Settings);
+    }
+
+    public async Task<Result<bool>> UpdateSettingsSectionAsync(Guid tenantId, string sectionKey, string sectionJson, CancellationToken ct = default)
+    {
+        var tenant = await _db.Set<Tenant>()
+            .FirstOrDefaultAsync(x => x.Id == tenantId, ct);
+
+        if (tenant is null)
+            return Result<bool>.NotFound($"Tenant with ID {tenantId} not found");
+
+        var root = string.IsNullOrWhiteSpace(tenant.Settings)
+            ? new JsonObject()
+            : JsonNode.Parse(tenant.Settings)!.AsObject();
+
+        root[sectionKey] = JsonNode.Parse(sectionJson);
+        tenant.Settings = root.ToJsonString();
+
+        await _db.SaveChangesAsync(ct);
+
+        _logger.LogInformation("Updated settings section '{Section}' for tenant {TenantId}", sectionKey, tenantId);
+
+        return Result<bool>.Success(true);
     }
 
     #endregion

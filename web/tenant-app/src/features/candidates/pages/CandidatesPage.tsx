@@ -21,6 +21,8 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
 import { MoreHorizontal, Plus, Trash2, Eye, RefreshCw } from 'lucide-react';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
+import { PermissionGate } from '@/shared/components/PermissionGate';
 import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
 import { useCandidates, useDeleteCandidate } from '../hooks';
 import { StatusBadge } from '../components/StatusBadge';
@@ -31,6 +33,7 @@ import type { CandidateListDto } from '../types';
 export function CandidatesPage() {
   const { t } = useTranslation('candidates');
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
 
   // Table state
   const [search, setSearch] = useState('');
@@ -168,18 +171,24 @@ export function CandidatesPage() {
               <Eye className="me-2 h-4 w-4" />
               {t('actions.view')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTransitionTarget(row)}>
-              <RefreshCw className="me-2 h-4 w-4" />
-              {t('actions.changeStatus')}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => setDeleteTarget(row)}
-            >
-              <Trash2 className="me-2 h-4 w-4" />
-              {t('actions.delete')}
-            </DropdownMenuItem>
+            {hasPermission('candidates.manage_status') && (
+              <DropdownMenuItem onClick={() => setTransitionTarget(row)}>
+                <RefreshCw className="me-2 h-4 w-4" />
+                {t('actions.changeStatus')}
+              </DropdownMenuItem>
+            )}
+            {hasPermission('candidates.delete') && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setDeleteTarget(row)}
+                >
+                  <Trash2 className="me-2 h-4 w-4" />
+                  {t('actions.delete')}
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -219,16 +228,20 @@ export function CandidatesPage() {
         emptyTitle={t('empty.title')}
         emptyDescription={t('empty.description')}
         emptyAction={
-          <Button onClick={() => navigate('/candidates/new')}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('addCandidate')}
-          </Button>
+          <PermissionGate permission="candidates.create">
+            <Button onClick={() => navigate('/candidates/new')}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('addCandidate')}
+            </Button>
+          </PermissionGate>
         }
         actions={
-          <Button onClick={() => navigate('/candidates/new')}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('addCandidate')}
-          </Button>
+          <PermissionGate permission="candidates.create">
+            <Button onClick={() => navigate('/candidates/new')}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('addCandidate')}
+            </Button>
+          </PermissionGate>
         }
       />
 

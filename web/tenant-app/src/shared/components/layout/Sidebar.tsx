@@ -1,8 +1,10 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/shared/lib/cn";
 import { useSidebar } from "./DashboardLayout";
 import { useAuth } from "react-oidc-context";
+import { usePermissions } from "@/features/auth/hooks/usePermissions";
 import {
   LayoutDashboard,
   Users,
@@ -13,20 +15,49 @@ import {
   FileSignature,
   ShieldCheck,
   ClipboardList,
+  Settings,
   X,
   LogOut,
+  ChevronRight,
+  Bell,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const navItems = [
-  { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true },
-  { path: "/team", icon: Users, labelKey: "nav.team" },
-  { path: "/suppliers", icon: Truck, labelKey: "nav.suppliers" },
-  { path: "/candidates", icon: UserSearch, labelKey: "nav.candidates" },
-  { path: "/clients", icon: UserRound, labelKey: "nav.clients" },
-  { path: "/workers", icon: HardHat, labelKey: "nav.workers" },
-  { path: "/contracts", icon: FileSignature, labelKey: "nav.contracts" },
-  { path: "/compliance", icon: ShieldCheck, labelKey: "nav.compliance" },
-  { path: "/audit", icon: ClipboardList, labelKey: "nav.audit" },
+interface NavChild {
+  path: string;
+  icon: LucideIcon;
+  labelKey: string;
+}
+
+interface NavItem {
+  path: string;
+  icon: LucideIcon;
+  labelKey: string;
+  exact?: boolean;
+  permission: string;
+  children?: NavChild[];
+}
+
+const navItems: NavItem[] = [
+  { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true, permission: "dashboard.view" },
+  { path: "/team", icon: Users, labelKey: "nav.team", permission: "members.view" },
+  { path: "/suppliers", icon: Truck, labelKey: "nav.suppliers", permission: "suppliers.view" },
+  { path: "/candidates", icon: UserSearch, labelKey: "nav.candidates", permission: "candidates.view" },
+  { path: "/clients", icon: UserRound, labelKey: "nav.clients", permission: "clients.view" },
+  { path: "/workers", icon: HardHat, labelKey: "nav.workers", permission: "workers.view" },
+  { path: "/contracts", icon: FileSignature, labelKey: "nav.contracts", permission: "contracts.view" },
+  { path: "/compliance", icon: ShieldCheck, labelKey: "nav.compliance", permission: "documents.view" },
+  { path: "/audit", icon: ClipboardList, labelKey: "nav.audit", permission: "audit.view" },
+  {
+    path: "/settings",
+    icon: Settings,
+    labelKey: "nav.settings",
+    permission: "settings.manage",
+    children: [
+      { path: "/settings/general", icon: Settings, labelKey: "nav.settings_general" },
+      { path: "/settings/notifications", icon: Bell, labelKey: "nav.settings_notifications" },
+    ],
+  },
 ];
 
 interface SidebarProps {
@@ -37,6 +68,31 @@ export function Sidebar({ onClose }: SidebarProps) {
   const { t } = useTranslation();
   const { collapsed } = useSidebar();
   const auth = useAuth();
+  const { hasPermission, isLoaded } = usePermissions();
+  const location = useLocation();
+
+  // Track which parent groups are expanded
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    // Auto-expand if current path is a child
+    const initial: Record<string, boolean> = {};
+    for (const item of navItems) {
+      if (item.children) {
+        const isChildActive = item.children.some((child) => location.pathname.startsWith(child.path));
+        if (isChildActive) {
+          initial[item.path] = true;
+        }
+      }
+    }
+    return initial;
+  });
+
+  const toggleGroup = (path: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [path]: !prev[path] }));
+  };
+
+  const visibleNavItems = isLoaded
+    ? navItems.filter((item) => hasPermission(item.permission))
+    : navItems;
 
   // Get user info from OIDC profile
   const user = auth.user?.profile;
@@ -51,6 +107,9 @@ export function Sidebar({ onClose }: SidebarProps) {
   const handleLogout = () => {
     auth.signoutRedirect({ post_logout_redirect_uri: window.location.origin });
   };
+
+  const isChildActive = (children: NavChild[]) =>
+    children.some((child) => location.pathname.startsWith(child.path));
 
   return (
     <div className="flex h-full flex-col border-e bg-card">
@@ -99,21 +158,25 @@ export function Sidebar({ onClose }: SidebarProps) {
         )}
       >
         <div className="space-y-1">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
+            const hasChildren = item.children && item.children.length > 0;
+            const isExpanded = expandedGroups[item.path] ?? false;
+            const childActive = hasChildren && isChildActive(item.children!);
 
+            // Collapsed sidebar: just show icon (for all items including parents)
             if (collapsed) {
               return (
                 <NavLink
                   key={item.path}
-                  to={item.path}
+                  to={hasChildren ? item.children![0].path : item.path}
                   end={item.exact}
                   onClick={onClose}
                   title={t(item.labelKey)}
-                  className={({ isActive }) =>
+                  className={() =>
                     cn(
                       "flex items-center justify-center rounded-lg h-10 w-10 mx-auto text-sm font-medium transition-colors",
-                      isActive
+                      childActive || (!hasChildren && location.pathname === item.path)
                         ? "bg-primary text-primary-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )
@@ -124,6 +187,61 @@ export function Sidebar({ onClose }: SidebarProps) {
               );
             }
 
+            // Expanded sidebar: parent with children
+            if (hasChildren) {
+              return (
+                <div key={item.path}>
+                  {/* Parent toggle button */}
+                  <button
+                    onClick={() => toggleGroup(item.path)}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      childActive
+                        ? "text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" />
+                    <span className="flex-1 text-start">{t(item.labelKey)}</span>
+                    <ChevronRight
+                      className={cn(
+                        "h-4 w-4 shrink-0 transition-transform duration-200",
+                        isExpanded && "rotate-90"
+                      )}
+                    />
+                  </button>
+
+                  {/* Children */}
+                  {isExpanded && (
+                    <div className="mt-1 ms-4 space-y-1 border-s ps-3">
+                      {item.children!.map((child) => {
+                        const ChildIcon = child.icon;
+                        return (
+                          <NavLink
+                            key={child.path}
+                            to={child.path}
+                            onClick={onClose}
+                            className={({ isActive }) =>
+                              cn(
+                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                                isActive
+                                  ? "bg-primary text-primary-foreground font-medium"
+                                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              )
+                            }
+                          >
+                            <ChildIcon className="h-4 w-4 shrink-0" />
+                            <span>{t(child.labelKey)}</span>
+                          </NavLink>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            // Regular nav item (no children)
             return (
               <NavLink
                 key={item.path}

@@ -126,4 +126,18 @@ public interface ITenantService
     Task<Result<TenantInvitationDto>> GetInvitationByTokenAsync(string token, CancellationToken ct = default);
 
     #endregion
+
+    #region Settings Operations
+
+    /// <summary>
+    /// Gets the raw settings JSON for a tenant.
+    /// </summary>
+    Task<Result<string?>> GetSettingsJsonAsync(Guid tenantId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Updates a specific section within the tenant settings JSON.
+    /// </summary>
+    Task<Result<bool>> UpdateSettingsSectionAsync(Guid tenantId, string sectionKey, string sectionJson, CancellationToken ct = default);
+
+    #endregion
 }

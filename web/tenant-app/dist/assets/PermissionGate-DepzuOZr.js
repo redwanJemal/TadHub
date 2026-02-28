@@ -1,0 +1,2 @@
+import{p as x,j as r}from"./index-3LWobmh4.js";function j({permission:i,allOf:s,anyOf:e,children:t,fallback:n=null}){const{hasPermission:m,hasAllPermissions:o,hasAnyPermission:u,isLoaded:h}=x();return h?i&&!m(i)?r.jsx(r.Fragment,{children:n}):s&&s.length>0&&!o(s)?r.jsx(r.Fragment,{children:n}):e&&e.length>0&&!u(e)?r.jsx(r.Fragment,{children:n}):r.jsx(r.Fragment,{children:t}):null}export{j as P};
+//# sourceMappingURL=PermissionGate-DepzuOZr.js.map

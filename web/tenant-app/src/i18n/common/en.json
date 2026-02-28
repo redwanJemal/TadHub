@@ -80,6 +80,8 @@
     "roles": "Roles",
     "users": "Users",
     "settings": "Settings",
+    "settings_general": "General",
+    "settings_notifications": "Notifications",
     "billing": "Billing",
     "integrations": "Integrations",
     "api": "API Keys",

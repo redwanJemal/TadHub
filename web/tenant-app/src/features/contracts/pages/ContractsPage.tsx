@@ -21,6 +21,8 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
 import { MoreHorizontal, Trash2, Eye, RefreshCw, Plus } from 'lucide-react';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
+import { PermissionGate } from '@/shared/components/PermissionGate';
 import { useContracts, useDeleteContract } from '../hooks';
 import { ContractStatusBadge } from '../components/ContractStatusBadge';
 import { ContractTypeBadge } from '../components/ContractTypeBadge';
@@ -31,6 +33,7 @@ import type { ContractListDto } from '../types';
 export function ContractsPage() {
   const { t } = useTranslation('contracts');
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
 
   // Table state
   const [search, setSearch] = useState('');
@@ -149,18 +152,24 @@ export function ContractsPage() {
               <Eye className="me-2 h-4 w-4" />
               {t('actions.view')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTransitionTarget(row)}>
-              <RefreshCw className="me-2 h-4 w-4" />
-              {t('actions.changeStatus')}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => setDeleteTarget(row)}
-            >
-              <Trash2 className="me-2 h-4 w-4" />
-              {t('actions.delete')}
-            </DropdownMenuItem>
+            {hasPermission('contracts.manage_status') && (
+              <DropdownMenuItem onClick={() => setTransitionTarget(row)}>
+                <RefreshCw className="me-2 h-4 w-4" />
+                {t('actions.changeStatus')}
+              </DropdownMenuItem>
+            )}
+            {hasPermission('contracts.delete') && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setDeleteTarget(row)}
+                >
+                  <Trash2 className="me-2 h-4 w-4" />
+                  {t('actions.delete')}
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -174,10 +183,12 @@ export function ContractsPage() {
           <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
           <p className="text-muted-foreground">{t('description')}</p>
         </div>
-        <Button onClick={() => navigate('/contracts/new')}>
-          <Plus className="me-2 h-4 w-4" />
-          {t('addContract')}
-        </Button>
+        <PermissionGate permission="contracts.create">
+          <Button onClick={() => navigate('/contracts/new')}>
+            <Plus className="me-2 h-4 w-4" />
+            {t('addContract')}
+          </Button>
+        </PermissionGate>
       </div>
 
       <DataTableAdvanced

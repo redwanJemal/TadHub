@@ -26,6 +26,7 @@ using Worker.Core;
 using Client.Core;
 using Contract.Core;
 using Document.Core;
+using TadHub.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -246,6 +247,11 @@ if (app.Environment.IsDevelopment() && featureSettings.EnableSwagger)
 // Controllers
 // =============================================================================
 app.MapControllers();
+
+// =============================================================================
+// SSE Endpoint (real-time event streaming)
+// =============================================================================
+app.MapSseEndpoint();
 
 // =============================================================================
 // Infrastructure Endpoints (detailed health checks, Hangfire dashboard)

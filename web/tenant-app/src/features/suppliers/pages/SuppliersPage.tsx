@@ -29,6 +29,8 @@ import {
   Mail,
   Phone,
 } from 'lucide-react';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
+import { PermissionGate } from '@/shared/components/PermissionGate';
 import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
 import { useSuppliers, useUnlinkSupplier, useUpdateTenantSupplier } from '../hooks';
 import { AddSupplierSheet } from '../components/AddSupplierSheet';
@@ -42,6 +44,7 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
 
 export function SuppliersPage() {
   const { t } = useTranslation('suppliers');
+  const { hasPermission } = usePermissions();
 
   // Table state
   const [search, setSearch] = useState('');
@@ -156,26 +159,30 @@ export function SuppliersPage() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {row.status === 'Active' && (
+            {hasPermission('suppliers.manage') && row.status === 'Active' && (
               <DropdownMenuItem onClick={() => handleStatusChange(row, 'Suspended')}>
                 <Ban className="me-2 h-4 w-4" />
                 {t('actions.suspend')}
               </DropdownMenuItem>
             )}
-            {row.status === 'Suspended' && (
+            {hasPermission('suppliers.manage') && row.status === 'Suspended' && (
               <DropdownMenuItem onClick={() => handleStatusChange(row, 'Active')}>
                 <RotateCcw className="me-2 h-4 w-4" />
                 {t('actions.reactivate')}
               </DropdownMenuItem>
             )}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => setRemoveTarget(row)}
-            >
-              <Trash2 className="me-2 h-4 w-4" />
-              {t('actions.remove')}
-            </DropdownMenuItem>
+            {hasPermission('suppliers.delete') && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setRemoveTarget(row)}
+                >
+                  <Trash2 className="me-2 h-4 w-4" />
+                  {t('actions.remove')}
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -213,31 +220,37 @@ export function SuppliersPage() {
         emptyTitle={t('empty.title')}
         emptyDescription={t('empty.description')}
         emptyAction={
-          <Button onClick={() => setAddOpen(true)}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('addSupplier')}
-          </Button>
+          <PermissionGate permission="suppliers.manage">
+            <Button onClick={() => setAddOpen(true)}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('addSupplier')}
+            </Button>
+          </PermissionGate>
         }
         actions={
-          <Button onClick={() => setAddOpen(true)}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('addSupplier')}
-          </Button>
+          <PermissionGate permission="suppliers.manage">
+            <Button onClick={() => setAddOpen(true)}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('addSupplier')}
+            </Button>
+          </PermissionGate>
         }
         bulkActions={
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => {
-              // bulk remove - pick first selected for confirmation
-              const items = data?.items ?? [];
-              const first = items.find((i) => selectedIds.includes(i.id));
-              if (first) setRemoveTarget(first);
-            }}
-          >
-            <Trash2 className="me-2 h-4 w-4" />
-            {t('actions.remove')}
-          </Button>
+          <PermissionGate permission="suppliers.delete">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                // bulk remove - pick first selected for confirmation
+                const items = data?.items ?? [];
+                const first = items.find((i) => selectedIds.includes(i.id));
+                if (first) setRemoveTarget(first);
+              }}
+            >
+              <Trash2 className="me-2 h-4 w-4" />
+              {t('actions.remove')}
+            </Button>
+          </PermissionGate>
         }
       />
 

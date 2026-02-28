@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { AuthProvider as OidcAuthProvider, useAuth } from 'react-oidc-context';
 import { oidcConfig } from '../../lib/auth-config';
 import { useTenantStore } from './hooks/useTenant';
+import { usePermissionsStore } from './hooks/usePermissions';
 
 // Store for managing auth state across the app (for non-React contexts like API client)
 let accessToken: string | null = null;
@@ -58,6 +59,7 @@ function AuthSync({ children }: { children: ReactNode }) {
       tenantId = null;
       tenantResolvedFromApi = false;
       clearTenant();
+      usePermissionsStore.getState().clear();
     }
   }, [auth.isAuthenticated, auth.user, setCurrentTenant, clearTenant]);
 

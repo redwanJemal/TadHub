@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from 'react-oidc-context';
 import { apiClient } from '../../../shared/api/client';
-import { usePermissions, Permission } from '../hooks/usePermissions';
+import { usePermissions, usePermissionsStore, Permission } from '../hooks/usePermissions';
 import { useTenantStore } from '../hooks/useTenant';
 import { setTenantId } from '../AuthProvider';
 import { ForbiddenPage } from '../ForbiddenPage';
@@ -36,6 +36,8 @@ interface UserStatus {
   needsOnboarding: boolean;
   needsTenantSelection: boolean;
   tenants: Array<{ id: string; name: string; slug: string }>;
+  permissions?: string[];
+  roles?: string[];
   // Computed fields for compatibility
   status?: 'onboarding' | 'select_tenant' | 'active';
   tenant?: { id: string; name: string; slug: string };
@@ -87,18 +89,40 @@ export function ProtectedRoute({
       try {
         const status = await apiClient.get<UserStatus>('/me');
         setUserStatus(status);
-        
+
         // Set tenant from response
+        let needsRefetch = false;
         if (status.tenants && status.tenants.length > 0) {
           setAvailableTenants(status.tenants);
-          
+
           // Use the first tenant or the one marked as default
           const defaultTenant = status.tenant || status.tenants[0];
           if (defaultTenant) {
             setCurrentTenant(defaultTenant);
             setTenantId(defaultTenant.id);
             console.log('[Auth] Set tenant:', defaultTenant.id, defaultTenant.name);
+
+            // If permissions are empty, re-fetch with tenant header now set
+            if (!status.permissions || status.permissions.length === 0) {
+              needsRefetch = true;
+            }
           }
+        }
+
+        if (needsRefetch) {
+          // Re-fetch with X-Tenant-ID header now set
+          const refreshed = await apiClient.get<UserStatus>('/me');
+          setUserStatus(refreshed);
+          usePermissionsStore.getState().setPermissions(
+            refreshed.permissions ?? [],
+            refreshed.roles ?? []
+          );
+        } else {
+          // Populate permissions store from /me response
+          usePermissionsStore.getState().setPermissions(
+            status.permissions ?? [],
+            status.roles ?? []
+          );
         }
       } catch (error) {
         console.error('Failed to fetch user status:', error);

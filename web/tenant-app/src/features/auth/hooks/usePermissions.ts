@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import { useAuth } from 'react-oidc-context';
+import { create } from 'zustand';
 
 /**
  * Permission string format: "resource.action"
@@ -7,67 +6,36 @@ import { useAuth } from 'react-oidc-context';
  */
 export type Permission = string;
 
-/**
- * Role with permissions
- */
-export interface Role {
-  id: string;
-  name: string;
+interface PermissionsState {
   permissions: Permission[];
+  roles: string[];
+  isLoaded: boolean;
+  setPermissions: (permissions: Permission[], roles: string[]) => void;
+  clear: () => void;
 }
 
 /**
- * Extract permissions from OIDC token claims
+ * Zustand store for user permissions.
+ * Populated from /me endpoint response via ProtectedRoute.
  */
-function extractPermissionsFromToken(user: unknown): Permission[] {
-  if (!user || typeof user !== 'object') return [];
-  
-  const profile = (user as { profile?: Record<string, unknown> }).profile;
-  if (!profile) return [];
-
-  // Try different claim formats
-  // 1. Direct permissions claim
-  if (Array.isArray(profile.permissions)) {
-    return profile.permissions as Permission[];
-  }
-
-  // 2. Realm roles from Keycloak
-  const realmAccess = profile.realm_access as { roles?: string[] } | undefined;
-  if (realmAccess?.roles) {
-    return realmAccess.roles;
-  }
-
-  // 3. Resource access (client roles)
-  const resourceAccess = profile.resource_access as Record<string, { roles?: string[] }> | undefined;
-  if (resourceAccess) {
-    const allRoles: string[] = [];
-    for (const resource of Object.values(resourceAccess)) {
-      if (resource.roles) {
-        allRoles.push(...resource.roles);
-      }
-    }
-    return allRoles;
-  }
-
-  return [];
-}
+export const usePermissionsStore = create<PermissionsState>((set) => ({
+  permissions: [],
+  roles: [],
+  isLoaded: false,
+  setPermissions: (permissions, roles) => set({ permissions, roles, isLoaded: true }),
+  clear: () => set({ permissions: [], roles: [], isLoaded: false }),
+}));
 
 /**
  * Hook for checking user permissions
  */
 export function usePermissions() {
-  const auth = useAuth();
-
-  const permissions = useMemo(() => {
-    if (!auth.isAuthenticated || !auth.user) return [];
-    return extractPermissionsFromToken(auth.user);
-  }, [auth.isAuthenticated, auth.user]);
+  const { permissions, roles, isLoaded } = usePermissionsStore();
 
   /**
    * Check if user has a specific permission
    */
   const hasPermission = (permission: Permission): boolean => {
-    // Admin/owner has all permissions
     if (permissions.includes('*') || permissions.includes('admin')) {
       return true;
     }
@@ -97,11 +65,13 @@ export function usePermissions() {
 
   return {
     permissions,
+    roles,
+    isLoaded,
     hasPermission,
     hasAllPermissions,
     hasAnyPermission,
     can,
-    
+
     // Convenience methods for common permissions
     canViewMembers: hasPermission('members.view'),
     canInviteMembers: hasPermission('members.invite'),
@@ -110,7 +80,7 @@ export function usePermissions() {
 
     canViewRoles: hasPermission('roles.view'),
     canManageRoles: hasPermission('roles.manage'),
-    canManageSettings: hasPermission('tenant.settings.manage'),
+    canManageSettings: hasPermission('settings.manage'),
   };
 }
 

@@ -1,0 +1,48 @@
+{
+  "title": "Settings",
+  "description": "Manage your workspace settings and preferences.",
+  "tabs": {
+    "general": "General",
+    "notifications": "Notifications"
+  },
+  "general": {
+    "placeholder": "General settings are coming soon."
+  },
+  "notifications": {
+    "title": "Notification Channels",
+    "description": "Configure how your workspace sends notifications.",
+    "email": {
+      "title": "Email",
+      "description": "Send notifications via email.",
+      "enabled": "Enable email notifications",
+      "provider": "Provider",
+      "smtp": "SMTP",
+      "sendgrid": "SendGrid",
+      "smtpHost": "SMTP Host",
+      "smtpHostPlaceholder": "smtp.example.com",
+      "smtpPort": "SMTP Port",
+      "smtpUsername": "SMTP Username",
+      "smtpUsernamePlaceholder": "user@example.com",
+      "smtpPassword": "SMTP Password",
+      "useSsl": "Use SSL/TLS",
+      "sendGridApiKey": "SendGrid API Key",
+      "sendGridApiKeyPlaceholder": "SG.xxxxx",
+      "fromEmail": "From Email",
+      "fromEmailPlaceholder": "notifications@yourcompany.com",
+      "fromName": "From Name",
+      "fromNamePlaceholder": "Your Company"
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "comingSoon": "Coming Soon"
+    },
+    "telegram": {
+      "title": "Telegram",
+      "comingSoon": "Coming Soon"
+    },
+    "save": "Save Settings",
+    "saving": "Saving...",
+    "saveSuccess": "Notification settings saved successfully.",
+    "saveError": "Failed to save notification settings."
+  }
+}

@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Contracts;
+using Notification.Contracts.Channels;
+using Notification.Core.Channels;
 using Notification.Core.Services;
 
 namespace Notification.Core;
@@ -14,8 +16,19 @@ public static class NotificationServiceRegistration
     /// </summary>
     public static IServiceCollection AddNotificationModule(this IServiceCollection services)
     {
-        // Register the notification service
+        // Core notification service
         services.AddScoped<INotificationModuleService, NotificationModuleService>();
+
+        // Notification channels
+        services.AddScoped<INotificationChannel, InAppNotificationChannel>();
+        services.AddScoped<INotificationChannel, EmailNotificationChannel>();
+
+        // Dispatcher
+        services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
+
+        // Settings & recipients
+        services.AddScoped<ITenantNotificationSettingsProvider, TenantNotificationSettingsProvider>();
+        services.AddScoped<INotificationRecipientResolver, NotificationRecipientResolver>();
 
         return services;
     }

@@ -18,6 +18,8 @@ using TadHub.Infrastructure.Search;
 using TadHub.Infrastructure.Settings;
 using TadHub.Infrastructure.Sse;
 using TadHub.Infrastructure.Documents;
+using TadHub.Infrastructure.Email;
+using TadHub.Infrastructure.Email.Templates;
 using TadHub.Infrastructure.Storage;
 using TadHub.SharedKernel.Interfaces;
 
@@ -133,9 +135,17 @@ public static class InfrastructureServiceRegistration
         services.AddMessaging(configuration, consumerAssemblies);
 
         // =============================================================================
+        // Email Service
+        // =============================================================================
+
+        services.Configure<Settings.SmtpSettings>(configuration.GetSection(Settings.SmtpSettings.SectionName));
+        services.AddScoped<IEmailService, SmtpEmailService>();
+        services.AddSingleton<IEmailTemplateRenderer, SimpleEmailTemplateRenderer>();
+
+        // =============================================================================
         // SSE (Server-Sent Events)
         // =============================================================================
-        
+
         services.AddSseInfrastructure();
 
         // =============================================================================

@@ -1,0 +1,48 @@
+{
+  "title": "الإعدادات",
+  "description": "إدارة إعدادات وتفضيلات مساحة العمل الخاصة بك.",
+  "tabs": {
+    "general": "عام",
+    "notifications": "الإشعارات"
+  },
+  "general": {
+    "placeholder": "الإعدادات العامة قادمة قريباً."
+  },
+  "notifications": {
+    "title": "قنوات الإشعارات",
+    "description": "تكوين كيفية إرسال مساحة العمل للإشعارات.",
+    "email": {
+      "title": "البريد الإلكتروني",
+      "description": "إرسال الإشعارات عبر البريد الإلكتروني.",
+      "enabled": "تفعيل إشعارات البريد الإلكتروني",
+      "provider": "المزود",
+      "smtp": "SMTP",
+      "sendgrid": "SendGrid",
+      "smtpHost": "خادم SMTP",
+      "smtpHostPlaceholder": "smtp.example.com",
+      "smtpPort": "منفذ SMTP",
+      "smtpUsername": "اسم مستخدم SMTP",
+      "smtpUsernamePlaceholder": "user@example.com",
+      "smtpPassword": "كلمة مرور SMTP",
+      "useSsl": "استخدام SSL/TLS",
+      "sendGridApiKey": "مفتاح API لـ SendGrid",
+      "sendGridApiKeyPlaceholder": "SG.xxxxx",
+      "fromEmail": "البريد الإلكتروني للمرسل",
+      "fromEmailPlaceholder": "notifications@yourcompany.com",
+      "fromName": "اسم المرسل",
+      "fromNamePlaceholder": "اسم شركتك"
+    },
+    "whatsapp": {
+      "title": "واتساب",
+      "comingSoon": "قريباً"
+    },
+    "telegram": {
+      "title": "تيليجرام",
+      "comingSoon": "قريباً"
+    },
+    "save": "حفظ الإعدادات",
+    "saving": "جاري الحفظ...",
+    "saveSuccess": "تم حفظ إعدادات الإشعارات بنجاح.",
+    "saveError": "فشل في حفظ إعدادات الإشعارات."
+  }
+}

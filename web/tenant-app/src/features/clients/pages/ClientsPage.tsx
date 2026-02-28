@@ -30,6 +30,8 @@ import {
   ToggleLeft,
   ToggleRight,
 } from 'lucide-react';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
+import { PermissionGate } from '@/shared/components/PermissionGate';
 import { useClients, useUpdateClient, useDeleteClient } from '../hooks';
 import { AddClientSheet } from '../components/AddClientSheet';
 import { EditClientSheet } from '../components/EditClientSheet';
@@ -37,6 +39,7 @@ import type { ClientListDto } from '../types';
 
 export function ClientsPage() {
   const { t } = useTranslation('clients');
+  const { hasPermission } = usePermissions();
 
   // Table state
   const [search, setSearch] = useState('');
@@ -147,31 +150,39 @@ export function ClientsPage() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setEditTarget(row)}>
-              <Pencil className="me-2 h-4 w-4" />
-              {t('actions.edit')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleToggleActive(row)}>
-              {row.isActive ? (
-                <>
-                  <ToggleLeft className="me-2 h-4 w-4" />
-                  {t('actions.deactivate')}
-                </>
-              ) : (
-                <>
-                  <ToggleRight className="me-2 h-4 w-4" />
-                  {t('actions.activate')}
-                </>
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => setDeleteTarget(row)}
-            >
-              <Trash2 className="me-2 h-4 w-4" />
-              {t('actions.delete')}
-            </DropdownMenuItem>
+            {hasPermission('clients.edit') && (
+              <DropdownMenuItem onClick={() => setEditTarget(row)}>
+                <Pencil className="me-2 h-4 w-4" />
+                {t('actions.edit')}
+              </DropdownMenuItem>
+            )}
+            {hasPermission('clients.edit') && (
+              <DropdownMenuItem onClick={() => handleToggleActive(row)}>
+                {row.isActive ? (
+                  <>
+                    <ToggleLeft className="me-2 h-4 w-4" />
+                    {t('actions.deactivate')}
+                  </>
+                ) : (
+                  <>
+                    <ToggleRight className="me-2 h-4 w-4" />
+                    {t('actions.activate')}
+                  </>
+                )}
+              </DropdownMenuItem>
+            )}
+            {hasPermission('clients.delete') && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => setDeleteTarget(row)}
+                >
+                  <Trash2 className="me-2 h-4 w-4" />
+                  {t('actions.delete')}
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       ),
@@ -209,30 +220,36 @@ export function ClientsPage() {
         emptyTitle={t('empty.title')}
         emptyDescription={t('empty.description')}
         emptyAction={
-          <Button onClick={() => setAddOpen(true)}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('addClient')}
-          </Button>
+          <PermissionGate permission="clients.create">
+            <Button onClick={() => setAddOpen(true)}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('addClient')}
+            </Button>
+          </PermissionGate>
         }
         actions={
-          <Button onClick={() => setAddOpen(true)}>
-            <Plus className="me-2 h-4 w-4" />
-            {t('addClient')}
-          </Button>
+          <PermissionGate permission="clients.create">
+            <Button onClick={() => setAddOpen(true)}>
+              <Plus className="me-2 h-4 w-4" />
+              {t('addClient')}
+            </Button>
+          </PermissionGate>
         }
         bulkActions={
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => {
-              const items = data?.items ?? [];
-              const first = items.find((i) => selectedIds.includes(i.id));
-              if (first) setDeleteTarget(first);
-            }}
-          >
-            <Trash2 className="me-2 h-4 w-4" />
-            {t('actions.delete')}
-          </Button>
+          <PermissionGate permission="clients.delete">
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                const items = data?.items ?? [];
+                const first = items.find((i) => selectedIds.includes(i.id));
+                if (first) setDeleteTarget(first);
+              }}
+            >
+              <Trash2 className="me-2 h-4 w-4" />
+              {t('actions.delete')}
+            </Button>
+          </PermissionGate>
         }
       />
 

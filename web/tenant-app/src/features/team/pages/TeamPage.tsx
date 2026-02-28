@@ -23,6 +23,8 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
 import { MoreHorizontal, UserPlus, Shield, Trash2, Users } from 'lucide-react';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
+import { PermissionGate } from '@/shared/components/PermissionGate';
 import { useTeamMembers, useRemoveMember } from '../hooks';
 import { InviteMemberDialog } from '../components/InviteMemberDialog';
 import { ChangeMemberRoleDialog } from '../components/ChangeMemberRoleDialog';
@@ -31,6 +33,7 @@ import type { TenantMember } from '../types';
 
 export function TeamPage() {
   const { t } = useTranslation('team');
+  const { hasPermission } = usePermissions();
 
   // Table state
   const [search, setSearch] = useState('');
@@ -130,11 +133,13 @@ export function TeamPage() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setRoleDialogMember(row)}>
-              <Shield className="me-2 h-4 w-4" />
-              {t('members.changeRole')}
-            </DropdownMenuItem>
-            {!row.isOwner && (
+            {hasPermission('members.manage') && (
+              <DropdownMenuItem onClick={() => setRoleDialogMember(row)}>
+                <Shield className="me-2 h-4 w-4" />
+                {t('members.changeRole')}
+              </DropdownMenuItem>
+            )}
+            {!row.isOwner && hasPermission('members.remove') && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -196,26 +201,32 @@ export function TeamPage() {
             emptyTitle={t('empty.members.title')}
             emptyDescription={t('empty.members.description')}
             emptyAction={
-              <Button onClick={() => setInviteOpen(true)}>
-                <UserPlus className="me-2 h-4 w-4" />
-                {t('invite.title')}
-              </Button>
+              <PermissionGate permission="members.invite">
+                <Button onClick={() => setInviteOpen(true)}>
+                  <UserPlus className="me-2 h-4 w-4" />
+                  {t('invite.title')}
+                </Button>
+              </PermissionGate>
             }
             actions={
-              <Button onClick={() => setInviteOpen(true)}>
-                <UserPlus className="me-2 h-4 w-4" />
-                {t('invite.title')}
-              </Button>
+              <PermissionGate permission="members.invite">
+                <Button onClick={() => setInviteOpen(true)}>
+                  <UserPlus className="me-2 h-4 w-4" />
+                  {t('invite.title')}
+                </Button>
+              </PermissionGate>
             }
             bulkActions={
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => setBulkRemoveOpen(true)}
-              >
-                <Trash2 className="me-2 h-4 w-4" />
-                {t('members.removeSelected')}
-              </Button>
+              <PermissionGate permission="members.remove">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setBulkRemoveOpen(true)}
+                >
+                  <Trash2 className="me-2 h-4 w-4" />
+                  {t('members.removeSelected')}
+                </Button>
+              </PermissionGate>
             }
           />
         </TabsContent>

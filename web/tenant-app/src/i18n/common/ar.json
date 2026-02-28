@@ -80,6 +80,8 @@
     "roles": "الأدوار",
     "users": "المستخدمين",
     "settings": "الإعدادات",
+    "settings_general": "عام",
+    "settings_notifications": "الإشعارات",
     "billing": "الفواتير",
     "integrations": "التكاملات",
     "api": "مفاتيح API",

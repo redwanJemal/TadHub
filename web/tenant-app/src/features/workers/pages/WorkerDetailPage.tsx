@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, RefreshCw, Trash2, FileText, ImageOff, VideoOff, Pencil } from 'lucide-react';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
 import { WorkerDocumentsTab } from '@/features/documents';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -75,6 +76,7 @@ export function WorkerDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  const { hasPermission } = usePermissions();
   const { data: worker, isLoading } = useWorker(id!);
   const { data: countries } = useCountryRefs();
   const deleteMutation = useDeleteWorker();
@@ -145,24 +147,28 @@ export function WorkerDetailPage() {
             })()}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => setShowEdit(true)}>
-              <Pencil className="me-2 h-4 w-4" />
-              {t('actions.edit')}
-            </Button>
+            {hasPermission('workers.edit') && (
+              <Button variant="outline" onClick={() => setShowEdit(true)}>
+                <Pencil className="me-2 h-4 w-4" />
+                {t('actions.edit')}
+              </Button>
+            )}
             <Button variant="outline" onClick={() => navigate(`/workers/${id}/cv`)}>
               <FileText className="me-2 h-4 w-4" />
               {t('actions.viewCv')}
             </Button>
-            {hasTransitions && (
+            {hasTransitions && hasPermission('workers.manage_status') && (
               <Button variant="outline" onClick={() => setShowTransition(true)}>
                 <RefreshCw className="me-2 h-4 w-4" />
                 {t('actions.changeStatus')}
               </Button>
             )}
-            <Button variant="destructive" onClick={() => setShowDelete(true)}>
-              <Trash2 className="me-2 h-4 w-4" />
-              {t('actions.delete')}
-            </Button>
+            {hasPermission('workers.delete') && (
+              <Button variant="destructive" onClick={() => setShowDelete(true)}>
+                <Trash2 className="me-2 h-4 w-4" />
+                {t('actions.delete')}
+              </Button>
+            )}
           </div>
         </div>
       </div>
