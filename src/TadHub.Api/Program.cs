@@ -25,6 +25,7 @@ using Candidate.Core;
 using Worker.Core;
 using Client.Core;
 using Contract.Core;
+using Document.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -164,6 +165,9 @@ builder.Services.AddClientModule();
 // Contract module
 builder.Services.AddContractModule();
 
+// Document module
+builder.Services.AddDocumentModule();
+
 var app = builder.Build();
 
 // =============================================================================
@@ -247,6 +251,14 @@ app.MapControllers();
 // Infrastructure Endpoints (detailed health checks, Hangfire dashboard)
 // =============================================================================
 app.MapInfrastructureEndpoints(builder.Configuration);
+
+// =============================================================================
+// Recurring Background Jobs
+// =============================================================================
+Hangfire.RecurringJob.AddOrUpdate<Document.Core.Jobs.DocumentExpiryJob>(
+    "document-expiry-check",
+    job => job.ExecuteAsync(CancellationToken.None),
+    Hangfire.Cron.Daily(2)); // Run daily at 2 AM UTC
 
 // =============================================================================
 // Run

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, RefreshCw, Trash2 } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trash2, Download } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
 import { useContract, useDeleteContract } from '../hooks';
+import { downloadContractPdf } from '../api';
 import { ContractStatusBadge } from '../components/ContractStatusBadge';
 import { ContractTypeBadge } from '../components/ContractTypeBadge';
 import { ContractStatusTransitionDialog } from '../components/ContractStatusTransitionDialog';
@@ -81,6 +82,27 @@ export function ContractDetailPage() {
 
   const [showTransition, setShowTransition] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    if (!id) return;
+    setDownloading(true);
+    try {
+      const blob = await downloadContractPdf(id);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Contract-${contract?.contractCode ?? id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      // silently fail
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const handleDelete = async () => {
     if (!id) return;
@@ -125,6 +147,10 @@ export function ContractDetailPage() {
             <ContractTypeBadge type={contract.type} />
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleDownloadPdf} disabled={downloading}>
+              <Download className="me-2 h-4 w-4" />
+              {downloading ? t('actions.downloading') : t('actions.downloadPdf')}
+            </Button>
             {hasTransitions && (
               <Button variant="outline" onClick={() => setShowTransition(true)}>
                 <RefreshCw className="me-2 h-4 w-4" />

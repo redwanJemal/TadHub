@@ -1,12 +1,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuestPDF.Fluent;
 using Contract.Contracts;
 using Contract.Contracts.DTOs;
 using Worker.Contracts;
 using Worker.Contracts.DTOs;
 using Client.Contracts;
+using Tenancy.Contracts;
+using TadHub.Api.Documents;
 using TadHub.Api.Filters;
 using TadHub.Infrastructure.Auth;
+using TadHub.Infrastructure.Storage;
 using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Models;
 
@@ -21,15 +25,21 @@ public class ContractsController : ControllerBase
     private readonly IContractService _contractService;
     private readonly IWorkerService _workerService;
     private readonly IClientService _clientService;
+    private readonly ITenantService _tenantService;
+    private readonly IFileStorageService _fileStorageService;
 
     public ContractsController(
         IContractService contractService,
         IWorkerService workerService,
-        IClientService clientService)
+        IClientService clientService,
+        ITenantService tenantService,
+        IFileStorageService fileStorageService)
     {
         _contractService = contractService;
         _workerService = workerService;
         _clientService = clientService;
+        _tenantService = tenantService;
+        _fileStorageService = fileStorageService;
     }
 
     [HttpGet]
@@ -141,6 +151,43 @@ public class ContractsController : ControllerBase
             return MapResultError(result);
 
         return Ok(result.Value);
+    }
+
+    [HttpGet("{id:guid}/pdf")]
+    [HasPermission("contracts.view")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DownloadPdf(
+        Guid tenantId,
+        Guid id,
+        CancellationToken ct)
+    {
+        var result = await _contractService.GetByIdAsync(tenantId, id, ct: ct);
+        if (!result.IsSuccess)
+            return MapResultError(result);
+
+        var dto = await EnrichWithParties(tenantId, result.Value!, ct);
+
+        // Get tenant info for branding
+        var tenantResult = await _tenantService.GetByIdAsync(tenantId, ct);
+        var tenantName = tenantResult.IsSuccess ? tenantResult.Value!.Name : "TadHub";
+        var tenantNameAr = tenantResult.IsSuccess ? tenantResult.Value!.NameAr : null;
+
+        // Download tenant logo from MinIO
+        var logoKey = tenantResult.IsSuccess ? tenantResult.Value!.LogoUrl : null;
+        byte[]? tenantLogo = null;
+        if (!string.IsNullOrEmpty(logoKey))
+        {
+            try { tenantLogo = await _fileStorageService.DownloadAsync(logoKey, ct); }
+            catch { /* leave null */ }
+        }
+
+        var pdfData = new ContractPdfData(dto, tenantName, tenantNameAr, tenantLogo);
+        var document = new ContractDocument(pdfData);
+        var pdfBytes = document.GeneratePdf();
+
+        var fileName = $"Contract-{dto.ContractCode}.pdf";
+        return File(pdfBytes, "application/pdf", fileName);
     }
 
     [HttpDelete("{id:guid}")]

@@ -2618,6 +2618,109 @@ namespace SaasKit.Migrations
                     b.ToTable("contract_status_history", (string)null);
                 });
 
+            modelBuilder.Entity("Document.Core.Entities.WorkerDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("deleted_by");
+
+                    b.Property<string>("DocumentNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("document_number");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("document_type");
+
+                    b.Property<DateOnly?>("ExpiresAt")
+                        .HasColumnType("date")
+                        .HasColumnName("expires_at");
+
+                    b.Property<string>("FileUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("file_url");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateOnly?>("IssuedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("issued_at");
+
+                    b.Property<string>("IssuingAuthority")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("issuing_authority");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<Guid>("WorkerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("worker_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_worker_documents");
+
+                    b.HasIndex("TenantId", "ExpiresAt")
+                        .HasDatabaseName("ix_worker_documents_tenant_id_expires_at");
+
+                    b.HasIndex("TenantId", "Status")
+                        .HasDatabaseName("ix_worker_documents_tenant_id_status");
+
+                    b.HasIndex("TenantId", "WorkerId")
+                        .HasDatabaseName("ix_worker_documents_tenant_id_worker_id");
+
+                    b.HasIndex("TenantId", "WorkerId", "DocumentType", "DocumentNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ix_worker_documents_tenant_worker_type_number")
+                        .HasFilter("is_deleted = false");
+
+                    b.ToTable("worker_documents", (string)null);
+                });
+
             modelBuilder.Entity("FeatureFlags.Core.Entities.FeatureFlag", b =>
                 {
                     b.Property<Guid>("Id")

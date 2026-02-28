@@ -46,7 +46,7 @@ async function main() {
   // Login via Keycloak if redirected
   if (page.url().includes('auth.endlessmaker.com')) {
     console.log('  logging in via Keycloak...');
-    await loginKeycloak(page, 'owner@testalpha.com', 'Test1234');
+    await loginKeycloak(page, process.env.TENANT_USER_EMAIL || 'red@gmail.com', process.env.TENANT_USER_PASSWORD || 'Test1234');
     await page.waitForURL(url => url.toString().includes('tadbeer.endlessmaker.com'), { timeout: 30_000 });
     console.log(`  after login, URL: ${page.url()}`);
   }
@@ -506,10 +506,165 @@ async function main() {
     }
   }
 
+  // ========== CONTRACTS ==========
+  console.log('\n  --- Contracts ---');
+
+  // 50. Contracts list page
+  await page.goto(`${TENANT_URL}/contracts`);
+  try {
+    await page.getByText('Contracts').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Contracts heading did not appear, continuing...');
+  }
+  try {
+    await page.locator('table tbody tr').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  contracts table data did not appear, continuing...');
+  }
+  await page.waitForTimeout(3000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/50-contracts-list.png`, fullPage: false });
+  console.log('  done: contracts list');
+
+  // 51. Contracts list - row actions dropdown
+  const contractActionBtn = page.locator('table tbody tr').first().getByRole('button');
+  if (await contractActionBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await contractActionBtn.click();
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/51-contract-actions-dropdown.png`, fullPage: false });
+    console.log('  done: contract actions dropdown');
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+  }
+
+  // 52. Create contract page
+  await page.goto(`${TENANT_URL}/contracts/new`);
+  try {
+    await page.getByText('Create Contract').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Create Contract heading did not appear, continuing...');
+  }
+  await page.waitForTimeout(2000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/52-create-contract.png`, fullPage: true });
+  console.log('  done: create contract page');
+
+  // --- Navigate to first contract detail (to show download PDF button) ---
+  let contractDetailUrl: string | null = null;
+
+  await page.goto(`${TENANT_URL}/contracts`);
+  try {
+    await page.getByText('Contracts').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Contracts heading did not appear, continuing...');
+  }
+  await page.waitForTimeout(3000);
+
+  const firstContractRow = page.locator('table tbody tr').first();
+  if (await firstContractRow.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const contractRowActionBtn = firstContractRow.getByRole('button');
+    if (await contractRowActionBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await contractRowActionBtn.click();
+      await page.waitForTimeout(500);
+      const viewContractBtn = page.getByText('View', { exact: true });
+      if (await viewContractBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await viewContractBtn.click();
+        await page.waitForTimeout(3000);
+        contractDetailUrl = page.url();
+
+        // 53. Contract detail - Overview with Download PDF button visible
+        await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/53-contract-detail-with-download.png`, fullPage: false });
+        console.log('  done: contract detail (with Download PDF button)');
+
+        // 54. Contract detail - full page
+        await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/54-contract-detail-full.png`, fullPage: true });
+        console.log('  done: contract detail (full page)');
+
+        // 55. Contract detail - Status History tab
+        const contractHistoryTab = page.getByRole('tab', { name: /status history/i });
+        if (await contractHistoryTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await contractHistoryTab.click();
+          await page.waitForTimeout(2000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/55-contract-status-history.png`, fullPage: true });
+          console.log('  done: contract status history');
+        }
+
+        // 56. Contract status transition dialog
+        const contractOverviewTab = page.getByRole('tab', { name: /overview/i });
+        if (await contractOverviewTab.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await contractOverviewTab.click();
+          await page.waitForTimeout(1000);
+        }
+        const changeContractStatusBtn = page.getByRole('button', { name: /change status/i });
+        if (await changeContractStatusBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await changeContractStatusBtn.click();
+          await page.waitForTimeout(1000);
+          await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/56-contract-status-dialog.png`, fullPage: false });
+          console.log('  done: contract status transition dialog');
+          const cancelContractStatusBtn = page.getByRole('button', { name: /cancel/i });
+          if (await cancelContractStatusBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+            await cancelContractStatusBtn.click();
+            await page.waitForTimeout(500);
+          }
+        }
+      }
+    }
+  }
+
+  // ========== COMPLIANCE / DOCUMENTS ==========
+  console.log('\n  --- Compliance & Documents ---');
+
+  // 60. Compliance page (tenant-wide document overview)
+  await page.goto(`${TENANT_URL}/compliance`);
+  try {
+    await page.getByText('Compliance').first().waitFor({ timeout: 15_000 });
+  } catch {
+    console.warn('  Compliance heading did not appear, continuing...');
+  }
+  await page.waitForTimeout(3000);
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/60-compliance-page.png`, fullPage: false });
+  console.log('  done: compliance page');
+
+  // 61. Compliance page - full page
+  await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/61-compliance-page-full.png`, fullPage: true });
+  console.log('  done: compliance page (full)');
+
+  // 62. Worker Documents tab (navigate to a worker detail, then Documents tab)
+  if (workerDetailUrl) {
+    await page.goto(workerDetailUrl);
+    await page.waitForTimeout(3000);
+
+    const workerDocumentsTab = page.getByRole('tab', { name: /documents/i });
+    if (await workerDocumentsTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await workerDocumentsTab.click();
+      await page.waitForTimeout(2000);
+      await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/62-worker-documents-tab.png`, fullPage: false });
+      console.log('  done: worker documents tab');
+
+      // 63. Worker documents tab - full page
+      await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/63-worker-documents-tab-full.png`, fullPage: true });
+      console.log('  done: worker documents tab (full)');
+
+      // 64. Add document dialog
+      const addDocBtn = page.getByRole('button', { name: /add document/i });
+      if (await addDocBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await addDocBtn.click();
+        await page.waitForTimeout(1000);
+        await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/64-add-document-dialog.png`, fullPage: false });
+        console.log('  done: add document dialog');
+
+        // Close dialog
+        const cancelDocBtn = page.getByRole('button', { name: /cancel/i });
+        if (await cancelDocBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await cancelDocBtn.click();
+          await page.waitForTimeout(500);
+        }
+      }
+    }
+  }
+
   // ========== SIDEBAR ==========
   console.log('\n  --- Sidebar ---');
 
-  // 40. Sidebar showing all navigation items including Clients
+  // 40. Sidebar showing all navigation items including Compliance
   await page.goto(`${TENANT_URL}/`);
   await page.waitForTimeout(3000);
   await page.screenshot({ path: `${SCREENSHOTS_DIR}/tenant/40-sidebar-full.png`, fullPage: false });

@@ -1,0 +1,114 @@
+{
+  "title": "المستندات",
+  "description": "إدارة مستندات العمال وتتبع الامتثال.",
+  "searchPlaceholder": "بحث برقم المستند...",
+  "addDocument": "إضافة مستند",
+  "columns": {
+    "documentType": "النوع",
+    "documentNumber": "الرقم",
+    "issuedAt": "تاريخ الإصدار",
+    "expiresAt": "تاريخ الانتهاء",
+    "status": "الحالة",
+    "daysLeft": "الأيام المتبقية",
+    "file": "ملف",
+    "worker": "العامل",
+    "actions": "الإجراءات"
+  },
+  "documentType": {
+    "Passport": "جواز السفر",
+    "Visa": "التأشيرة",
+    "WorkPermit": "تصريح العمل",
+    "MedicalCertificate": "الشهادة الطبية",
+    "InsurancePolicy": "بوليصة التأمين",
+    "EmiratesId": "الهوية الإماراتية",
+    "LabourCard": "بطاقة العمل",
+    "Other": "أخرى"
+  },
+  "status": {
+    "Pending": "قيد الانتظار",
+    "Valid": "ساري",
+    "Expired": "منتهي",
+    "Revoked": "ملغي"
+  },
+  "effectiveStatus": {
+    "Pending": "قيد الانتظار",
+    "Valid": "ساري",
+    "ExpiringSoon": "قارب على الانتهاء",
+    "Expired": "منتهي",
+    "Revoked": "ملغي"
+  },
+  "filters": {
+    "documentType": "نوع المستند",
+    "status": "الحالة"
+  },
+  "actions": {
+    "edit": "تعديل",
+    "delete": "حذف",
+    "uploadFile": "رفع ملف",
+    "downloadFile": "تحميل الملف",
+    "viewWorker": "عرض العامل"
+  },
+  "empty": {
+    "title": "لا توجد مستندات بعد",
+    "description": "أضف أول مستند لهذا العامل."
+  },
+  "deleteDialog": {
+    "title": "حذف المستند",
+    "description": "هل أنت متأكد من حذف هذا المستند؟ لا يمكن التراجع عن هذا الإجراء.",
+    "confirm": "حذف"
+  },
+  "create": {
+    "title": "إضافة مستند",
+    "description": "إضافة مستند جديد لهذا العامل.",
+    "documentType": "نوع المستند",
+    "documentTypePlaceholder": "اختر نوع المستند...",
+    "documentNumber": "رقم المستند",
+    "documentNumberPlaceholder": "أدخل رقم المستند...",
+    "issuedAt": "تاريخ الإصدار",
+    "expiresAt": "تاريخ الانتهاء",
+    "status": "الحالة",
+    "statusPlaceholder": "اختر الحالة...",
+    "issuingAuthority": "جهة الإصدار",
+    "issuingAuthorityPlaceholder": "أدخل جهة الإصدار...",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات اختيارية...",
+    "submit": "إضافة المستند",
+    "submitting": "جاري الإضافة..."
+  },
+  "edit": {
+    "title": "تعديل المستند",
+    "documentNumber": "رقم المستند",
+    "issuedAt": "تاريخ الإصدار",
+    "expiresAt": "تاريخ الانتهاء",
+    "status": "الحالة",
+    "issuingAuthority": "جهة الإصدار",
+    "notes": "ملاحظات",
+    "submit": "حفظ التغييرات",
+    "submitting": "جاري الحفظ..."
+  },
+  "toast": {
+    "createSuccess": "تم إنشاء المستند بنجاح",
+    "createError": "فشل في إنشاء المستند",
+    "updateSuccess": "تم تحديث المستند بنجاح",
+    "updateError": "فشل في تحديث المستند",
+    "deleteSuccess": "تم حذف المستند بنجاح",
+    "deleteError": "فشل في حذف المستند",
+    "uploadSuccess": "تم رفع الملف بنجاح",
+    "uploadError": "فشل في رفع الملف",
+    "downloadError": "فشل في تحميل الملف",
+    "noFile": "لا يوجد ملف مرفق بهذا المستند"
+  },
+  "compliance": {
+    "title": "امتثال المستندات",
+    "description": "تتبع حالة المستندات وتواريخ الانتهاء لجميع العمال.",
+    "searchPlaceholder": "بحث باسم العامل أو رقم المستند...",
+    "totalDocuments": "إجمالي المستندات",
+    "valid": "ساري",
+    "expiringSoon": "قارب على الانتهاء",
+    "expired": "منتهي",
+    "empty": {
+      "title": "لا توجد مستندات",
+      "description": "لا توجد مستندات تطابق الفلاتر الحالية."
+    }
+  }
+}

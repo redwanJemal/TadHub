@@ -43,7 +43,9 @@
     "view": "View",
     "edit": "Edit",
     "changeStatus": "Change Status",
-    "delete": "Delete"
+    "delete": "Delete",
+    "downloadPdf": "Download PDF",
+    "downloading": "Downloading..."
   },
   "empty": {
     "title": "No contracts yet",

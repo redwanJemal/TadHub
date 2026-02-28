@@ -1,0 +1,114 @@
+{
+  "title": "Documents",
+  "description": "Manage worker documents and track compliance.",
+  "searchPlaceholder": "Search by document number...",
+  "addDocument": "Add Document",
+  "columns": {
+    "documentType": "Type",
+    "documentNumber": "Number",
+    "issuedAt": "Issued",
+    "expiresAt": "Expires",
+    "status": "Status",
+    "daysLeft": "Days Left",
+    "file": "File",
+    "worker": "Worker",
+    "actions": "Actions"
+  },
+  "documentType": {
+    "Passport": "Passport",
+    "Visa": "Visa",
+    "WorkPermit": "Work Permit",
+    "MedicalCertificate": "Medical Certificate",
+    "InsurancePolicy": "Insurance Policy",
+    "EmiratesId": "Emirates ID",
+    "LabourCard": "Labour Card",
+    "Other": "Other"
+  },
+  "status": {
+    "Pending": "Pending",
+    "Valid": "Valid",
+    "Expired": "Expired",
+    "Revoked": "Revoked"
+  },
+  "effectiveStatus": {
+    "Pending": "Pending",
+    "Valid": "Valid",
+    "ExpiringSoon": "Expiring Soon",
+    "Expired": "Expired",
+    "Revoked": "Revoked"
+  },
+  "filters": {
+    "documentType": "Document Type",
+    "status": "Status"
+  },
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "uploadFile": "Upload File",
+    "downloadFile": "Download File",
+    "viewWorker": "View Worker"
+  },
+  "empty": {
+    "title": "No documents yet",
+    "description": "Add the first document for this worker."
+  },
+  "deleteDialog": {
+    "title": "Delete Document",
+    "description": "Are you sure you want to delete this document? This action cannot be undone.",
+    "confirm": "Delete"
+  },
+  "create": {
+    "title": "Add Document",
+    "description": "Add a new document for this worker.",
+    "documentType": "Document Type",
+    "documentTypePlaceholder": "Select document type...",
+    "documentNumber": "Document Number",
+    "documentNumberPlaceholder": "Enter document number...",
+    "issuedAt": "Issued Date",
+    "expiresAt": "Expiry Date",
+    "status": "Status",
+    "statusPlaceholder": "Select status...",
+    "issuingAuthority": "Issuing Authority",
+    "issuingAuthorityPlaceholder": "Enter issuing authority...",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes...",
+    "submit": "Add Document",
+    "submitting": "Adding..."
+  },
+  "edit": {
+    "title": "Edit Document",
+    "documentNumber": "Document Number",
+    "issuedAt": "Issued Date",
+    "expiresAt": "Expiry Date",
+    "status": "Status",
+    "issuingAuthority": "Issuing Authority",
+    "notes": "Notes",
+    "submit": "Save Changes",
+    "submitting": "Saving..."
+  },
+  "toast": {
+    "createSuccess": "Document created successfully",
+    "createError": "Failed to create document",
+    "updateSuccess": "Document updated successfully",
+    "updateError": "Failed to update document",
+    "deleteSuccess": "Document deleted successfully",
+    "deleteError": "Failed to delete document",
+    "uploadSuccess": "File uploaded successfully",
+    "uploadError": "Failed to upload file",
+    "downloadError": "Failed to download file",
+    "noFile": "No file attached to this document"
+  },
+  "compliance": {
+    "title": "Document Compliance",
+    "description": "Track document status and expiry across all workers.",
+    "searchPlaceholder": "Search by worker name or document number...",
+    "totalDocuments": "Total Documents",
+    "valid": "Valid",
+    "expiringSoon": "Expiring Soon",
+    "expired": "Expired",
+    "empty": {
+      "title": "No documents found",
+      "description": "No documents match the current filters."
+    }
+  }
+}

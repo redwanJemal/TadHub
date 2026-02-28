@@ -37,6 +37,9 @@ const ContractsPage = lazy(() => import('@/features/contracts').then(m => ({ def
 const CreateContractPage = lazy(() => import('@/features/contracts').then(m => ({ default: m.CreateContractPage })));
 const ContractDetailPage = lazy(() => import('@/features/contracts').then(m => ({ default: m.ContractDetailPage })));
 
+// Documents / Compliance
+const CompliancePage = lazy(() => import('@/features/documents').then(m => ({ default: m.CompliancePage })));
+
 // Audit
 const AuditPage = lazy(() => import('@/features/audit').then(m => ({ default: m.AuditPage })));
 
@@ -95,6 +98,7 @@ export function AppRouter() {
           <Route path="workers" element={<WorkersPage />} />
           <Route path="workers/:id" element={<WorkerDetailPage />} />
           <Route path="workers/:id/cv" element={<WorkerCvPage />} />
+          <Route path="compliance" element={<CompliancePage />} />
           <Route path="audit" element={<AuditPage />} />
         </Route>
 

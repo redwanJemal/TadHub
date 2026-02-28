@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, RefreshCw, Trash2, FileText, ImageOff, VideoOff, Pencil } from 'lucide-react';
+import { WorkerDocumentsTab } from '@/features/documents';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Badge } from '@/shared/components/ui/badge';
@@ -347,47 +348,7 @@ export function WorkerDetailPage() {
 
         {/* Documents Tab */}
         <TabsContent value="documents" className="space-y-6">
-          <Card>
-            <CardHeader><CardTitle>{t('detail.media')}</CardTitle></CardHeader>
-            <CardContent>
-              <div className="grid gap-6 sm:grid-cols-3">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">{t('detail.photo')}</p>
-                  {worker.photoUrl ? (
-                    <img src={worker.photoUrl} alt={worker.fullNameEn} className="h-48 w-48 rounded-lg object-cover border" />
-                  ) : (
-                    <div className="h-48 w-48 rounded-lg border border-dashed flex items-center justify-center bg-muted/30">
-                      <ImageOff className="h-8 w-8 text-muted-foreground/50" />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">{t('detail.video')}</p>
-                  {worker.videoUrl ? (
-                    <video src={worker.videoUrl} controls className="h-48 max-w-full rounded-lg border" />
-                  ) : (
-                    <div className="h-48 w-48 rounded-lg border border-dashed flex items-center justify-center bg-muted/30">
-                      <VideoOff className="h-8 w-8 text-muted-foreground/50" />
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">{t('detail.passportDocument')}</p>
-                  {worker.passportDocumentUrl ? (
-                    <a href={worker.passportDocumentUrl} target="_blank" rel="noopener noreferrer"
-                      className="h-48 w-48 rounded-lg border flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-colors">
-                      <FileText className="h-12 w-12 text-primary" />
-                      <span className="text-sm text-primary font-medium">{t('detail.viewPassportDocument')}</span>
-                    </a>
-                  ) : (
-                    <div className="h-48 w-48 rounded-lg border border-dashed flex items-center justify-center bg-muted/30">
-                      <FileText className="h-8 w-8 text-muted-foreground/50" />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <WorkerDocumentsTab workerId={worker.id} />
         </TabsContent>
 
         {/* Status History Tab */}

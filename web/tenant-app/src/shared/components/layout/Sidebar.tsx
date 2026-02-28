@@ -11,6 +11,7 @@ import {
   HardHat,
   UserRound,
   FileSignature,
+  ShieldCheck,
   ClipboardList,
   X,
   LogOut,
@@ -24,6 +25,7 @@ const navItems = [
   { path: "/clients", icon: UserRound, labelKey: "nav.clients" },
   { path: "/workers", icon: HardHat, labelKey: "nav.workers" },
   { path: "/contracts", icon: FileSignature, labelKey: "nav.contracts" },
+  { path: "/compliance", icon: ShieldCheck, labelKey: "nav.compliance" },
   { path: "/audit", icon: ClipboardList, labelKey: "nav.audit" },
 ];
 

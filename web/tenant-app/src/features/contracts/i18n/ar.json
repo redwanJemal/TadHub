@@ -43,7 +43,9 @@
     "view": "عرض",
     "edit": "تعديل",
     "changeStatus": "تغيير الحالة",
-    "delete": "حذف"
+    "delete": "حذف",
+    "downloadPdf": "تحميل PDF",
+    "downloading": "جاري التحميل..."
   },
   "empty": {
     "title": "لا توجد عقود بعد",
