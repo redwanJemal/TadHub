@@ -36,3 +36,25 @@ public record UnreadCountDto
 {
     public int Count { get; init; }
 }
+
+/// <summary>
+/// Admin request to send notifications to tenant members.
+/// </summary>
+public record AdminSendNotificationRequest
+{
+    public Guid TenantId { get; init; }
+    public List<Guid>? UserIds { get; init; }
+    public string Title { get; init; } = string.Empty;
+    public string Body { get; init; } = string.Empty;
+    public string Type { get; init; } = "info";
+    public string? Link { get; init; }
+}
+
+/// <summary>
+/// Response after sending admin notifications.
+/// </summary>
+public record AdminSendNotificationResponse
+{
+    public int RecipientCount { get; init; }
+    public int TenantCount { get; init; }
+}

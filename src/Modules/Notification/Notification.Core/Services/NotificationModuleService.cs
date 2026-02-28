@@ -26,7 +26,8 @@ public class NotificationModuleService : INotificationModuleService
     {
         ["isRead"] = x => x.IsRead,
         ["type"] = x => x.Type,
-        ["userId"] = x => x.UserId
+        ["userId"] = x => x.UserId,
+        ["tenantId"] = x => x.TenantId
     };
 
     public NotificationModuleService(
@@ -195,6 +196,20 @@ public class NotificationModuleService : INotificationModuleService
             notificationId, tenantId);
 
         return Result<bool>.Success(true);
+    }
+
+    public async Task<PagedList<NotificationDto>> GetAllNotificationsAsync(
+        QueryParameters qp,
+        CancellationToken ct = default)
+    {
+        var query = _db.Set<Entities.Notification>()
+            .AsNoTracking()
+            .ApplyFilters(qp.Filters, NotificationFilters)
+            .ApplySort(qp.GetSortFields(), GetSortExpressions());
+
+        return await query
+            .Select(x => MapToDto(x))
+            .ToPagedListAsync(qp, ct);
     }
 
     private static NotificationDto MapToDto(Entities.Notification n) => new()

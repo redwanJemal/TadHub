@@ -9,6 +9,7 @@ import {
   Building2,
   Users,
   Shield,
+  Bell,
   FileText,
   X,
   LogOut,
@@ -28,6 +29,7 @@ const navItems = [
   { path: "/tenants", icon: Building2, labelKey: "nav.tenants" },
   { path: "/platform-team", icon: Shield, labelKey: "nav.platformTeam" },
   { path: "/users", icon: Users, labelKey: "nav.allUsers" },
+  { path: "/notifications", icon: Bell, labelKey: "nav.notifications" },
   { path: "/audit-logs", icon: FileText, labelKey: "nav.auditLogs" },
 ];
 

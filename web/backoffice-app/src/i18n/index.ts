@@ -7,6 +7,8 @@ import authEn from "@/features/auth/i18n/en.json";
 import authAr from "@/features/auth/i18n/ar.json";
 import tenantsEn from "@/features/tenants/i18n/en.json";
 import tenantsAr from "@/features/tenants/i18n/ar.json";
+import notificationsEn from "@/features/notifications/i18n/en.json";
+import notificationsAr from "@/features/notifications/i18n/ar.json";
 
 // Shared/common translations
 import commonEn from "./common/en.json";
@@ -17,11 +19,13 @@ const resources = {
     common: commonEn,
     auth: authEn,
     tenants: tenantsEn,
+    notifications: notificationsEn,
   },
   ar: {
     common: commonAr,
     auth: authAr,
     tenants: tenantsAr,
+    notifications: notificationsAr,
   },
 };
 
@@ -40,7 +44,7 @@ i18n
     resources,
     fallbackLng: "en",
     defaultNS: "common",
-    ns: ["common", "auth", "tenants"],
+    ns: ["common", "auth", "tenants", "notifications"],
     interpolation: {
       escapeValue: false,
     },

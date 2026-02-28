@@ -22,6 +22,10 @@ const PlatformTeamPage = lazy(() => import("@/features/platform-team/pages/Platf
 // Audit pages
 const AuditLogsPage = lazy(() => import("@/features/audit/pages/AuditLogsPage").then(m => ({ default: m.AuditLogsPage })));
 
+// Notification pages
+const NotificationsPage = lazy(() => import("@/features/notifications/pages/NotificationsPage").then(m => ({ default: m.NotificationsPage })));
+const SendNotificationPage = lazy(() => import("@/features/notifications/pages/SendNotificationPage").then(m => ({ default: m.SendNotificationPage })));
+
 // Dashboard home
 function DashboardHome() {
   return (
@@ -115,6 +119,10 @@ export function AppRoutes() {
             {/* Users (All User Profiles - for searching) */}
             <Route path="/users" element={<UsersListPage />} />
             
+            {/* Notifications */}
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/notifications/send" element={<SendNotificationPage />} />
+
             {/* Audit Logs */}
             <Route path="/audit-logs" element={<AuditLogsPage />} />
           </Route>

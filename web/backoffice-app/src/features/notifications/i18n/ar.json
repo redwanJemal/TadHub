@@ -1,0 +1,57 @@
+{
+  "title": "الإشعارات",
+  "sendNotification": "إرسال إشعار",
+  "notificationHistory": "سجل الإشعارات",
+  "fields": {
+    "tenant": "المستأجر",
+    "title": "العنوان",
+    "body": "المحتوى",
+    "type": "النوع",
+    "link": "الرابط",
+    "recipients": "المستلمون",
+    "createdAt": "تاريخ الإنشاء",
+    "status": "الحالة"
+  },
+  "types": {
+    "info": "معلومات",
+    "warning": "تحذير",
+    "success": "نجاح",
+    "error": "خطأ"
+  },
+  "send": {
+    "title": "إرسال إشعار",
+    "description": "إرسال إشعار لأعضاء المستأجر",
+    "selectTenant": "اختر مستأجر",
+    "recipientMode": "المستلمون",
+    "allMembers": "جميع الأعضاء",
+    "specificUsers": "مستخدمون محددون",
+    "selectMembers": "اختر الأعضاء",
+    "notificationTitle": "العنوان",
+    "titlePlaceholder": "عنوان الإشعار",
+    "notificationBody": "المحتوى",
+    "bodyPlaceholder": "اكتب رسالة الإشعار...",
+    "notificationType": "النوع",
+    "linkOptional": "الرابط (اختياري)",
+    "linkPlaceholder": "https://example.com/resource",
+    "preview": "معاينة",
+    "sendButton": "إرسال الإشعار",
+    "sending": "جاري الإرسال...",
+    "sentSuccess": "تم إرسال الإشعار إلى {{count}} مستلم",
+    "searchMembers": "البحث عن أعضاء..."
+  },
+  "history": {
+    "title": "سجل الإشعارات",
+    "description": "عرض جميع الإشعارات المرسلة عبر المستأجرين",
+    "filterByType": "تصفية حسب النوع",
+    "filterByTenant": "تصفية حسب المستأجر",
+    "allTypes": "جميع الأنواع",
+    "allTenants": "جميع المستأجرين",
+    "noNotifications": "لا توجد إشعارات",
+    "noNotificationsDescription": "أرسل إشعارك الأول للبدء.",
+    "read": "مقروء",
+    "unread": "غير مقروء"
+  },
+  "pagination": {
+    "showing": "عرض {{from}} إلى {{to}} من {{total}} إشعار"
+  }
+}

@@ -66,4 +66,12 @@ public interface INotificationModuleService
         Guid tenantId,
         Guid notificationId,
         CancellationToken ct = default);
+
+    /// <summary>
+    /// Gets all notifications across tenants with optional filtering.
+    /// Supports filter[tenantId], filter[type], filter[userId], sort=-createdAt
+    /// </summary>
+    Task<PagedList<NotificationDto>> GetAllNotificationsAsync(
+        QueryParameters qp,
+        CancellationToken ct = default);
 }

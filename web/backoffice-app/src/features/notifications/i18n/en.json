@@ -1,0 +1,57 @@
+{
+  "title": "Notifications",
+  "sendNotification": "Send Notification",
+  "notificationHistory": "Notification History",
+  "fields": {
+    "tenant": "Tenant",
+    "title": "Title",
+    "body": "Body",
+    "type": "Type",
+    "link": "Link",
+    "recipients": "Recipients",
+    "createdAt": "Created",
+    "status": "Status"
+  },
+  "types": {
+    "info": "Info",
+    "warning": "Warning",
+    "success": "Success",
+    "error": "Error"
+  },
+  "send": {
+    "title": "Send Notification",
+    "description": "Send a notification to tenant members",
+    "selectTenant": "Select a tenant",
+    "recipientMode": "Recipients",
+    "allMembers": "All Members",
+    "specificUsers": "Specific Users",
+    "selectMembers": "Select members",
+    "notificationTitle": "Title",
+    "titlePlaceholder": "Notification title",
+    "notificationBody": "Body",
+    "bodyPlaceholder": "Write the notification message...",
+    "notificationType": "Type",
+    "linkOptional": "Link (optional)",
+    "linkPlaceholder": "https://example.com/resource",
+    "preview": "Preview",
+    "sendButton": "Send Notification",
+    "sending": "Sending...",
+    "sentSuccess": "Notification sent to {{count}} recipients",
+    "searchMembers": "Search members..."
+  },
+  "history": {
+    "title": "Notification History",
+    "description": "View all notifications sent across tenants",
+    "filterByType": "Filter by type",
+    "filterByTenant": "Filter by tenant",
+    "allTypes": "All Types",
+    "allTenants": "All Tenants",
+    "noNotifications": "No notifications found",
+    "noNotificationsDescription": "Send your first notification to get started.",
+    "read": "Read",
+    "unread": "Unread"
+  },
+  "pagination": {
+    "showing": "Showing {{from}} to {{to}} of {{total}} notifications"
+  }
+}
