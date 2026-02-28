@@ -49,6 +49,7 @@ public class NotificationModuleService : INotificationModuleService
         CancellationToken ct = default)
     {
         var query = _db.Set<Entities.Notification>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .Where(x => x.TenantId == tenantId && x.UserId == userId)
             .ApplyFilters(qp.Filters, NotificationFilters)
@@ -65,6 +66,7 @@ public class NotificationModuleService : INotificationModuleService
         CancellationToken ct = default)
     {
         var notification = await _db.Set<Entities.Notification>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == notificationId && x.TenantId == tenantId, ct);
 
@@ -131,6 +133,7 @@ public class NotificationModuleService : INotificationModuleService
         CancellationToken ct = default)
     {
         var notification = await _db.Set<Entities.Notification>()
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.Id == notificationId && x.TenantId == tenantId, ct);
 
         if (notification is null)
@@ -157,6 +160,7 @@ public class NotificationModuleService : INotificationModuleService
         var now = _clock.UtcNow;
 
         var count = await _db.Set<Entities.Notification>()
+            .IgnoreQueryFilters()
             .Where(x => x.TenantId == tenantId && x.UserId == userId && !x.IsRead)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(x => x.IsRead, true)
@@ -175,6 +179,7 @@ public class NotificationModuleService : INotificationModuleService
         CancellationToken ct = default)
     {
         return await _db.Set<Entities.Notification>()
+            .IgnoreQueryFilters()
             .CountAsync(x => x.TenantId == tenantId && x.UserId == userId && !x.IsRead, ct);
     }
 
@@ -184,6 +189,7 @@ public class NotificationModuleService : INotificationModuleService
         CancellationToken ct = default)
     {
         var notification = await _db.Set<Entities.Notification>()
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.Id == notificationId && x.TenantId == tenantId, ct);
 
         if (notification is null)
@@ -203,6 +209,7 @@ public class NotificationModuleService : INotificationModuleService
         CancellationToken ct = default)
     {
         var query = _db.Set<Entities.Notification>()
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .ApplyFilters(qp.Filters, NotificationFilters)
             .ApplySort(qp.GetSortFields(), GetSortExpressions());
