@@ -12,6 +12,30 @@ export type InvoiceType = 'Standard' | 'CreditNote' | 'ProformaDeposit';
 
 export type MilestoneType = 'AdvanceDeposit' | 'ActivationBalance' | 'Installment' | 'FullPayment';
 
+// Nested ref types for enriched responses
+export interface InvoiceClientRef {
+  id: string;
+  nameEn: string;
+  nameAr?: string;
+}
+
+export interface InvoiceWorkerRef {
+  id: string;
+  fullNameEn: string;
+  fullNameAr?: string;
+  workerCode: string;
+}
+
+export interface InvoiceContractRef {
+  id: string;
+  contractCode: string;
+}
+
+export interface InvoiceRef {
+  id: string;
+  invoiceNumber: string;
+}
+
 export interface InvoiceLineItemDto {
   id: string;
   lineNumber: number;
@@ -32,6 +56,9 @@ export interface InvoiceListDto {
   contractId: string;
   clientId: string;
   workerId?: string;
+  client?: InvoiceClientRef;
+  worker?: InvoiceWorkerRef;
+  contract?: InvoiceContractRef;
   issueDate: string;
   dueDate: string;
   totalAmount: number;
@@ -143,6 +170,8 @@ export interface PaymentListDto {
   status: PaymentStatus;
   invoiceId: string;
   clientId: string;
+  invoice?: InvoiceRef;
+  client?: InvoiceClientRef;
   amount: number;
   currency: string;
   method: PaymentMethod;
@@ -303,6 +332,9 @@ export interface MarginLineDto {
   contractId?: string;
   workerId?: string;
   clientId?: string;
+  contract?: InvoiceContractRef;
+  worker?: InvoiceWorkerRef;
+  client?: InvoiceClientRef;
   revenue: number;
   cost: number;
   margin: number;
@@ -345,6 +377,16 @@ export interface RevenueBreakdownDto {
   byPaymentMethod: Record<string, number>;
 }
 
+// Invoice Template Settings
+export interface InvoiceTemplateSettings {
+  primaryColor: string;
+  accentColor: string;
+  showLogo: boolean;
+  showArabicText: boolean;
+  companyAddress?: string;
+  companyAddressAr?: string;
+}
+
 // Financial Settings
 export interface TenantFinancialSettings {
   vatRate: number;
@@ -364,4 +406,5 @@ export interface TenantFinancialSettings {
   invoiceTerms?: string;
   invoiceTermsAr?: string;
   autoGenerateInvoiceOnConfirm: boolean;
+  invoiceTemplate?: InvoiceTemplateSettings;
 }

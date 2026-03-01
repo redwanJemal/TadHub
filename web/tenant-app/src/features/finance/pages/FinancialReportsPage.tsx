@@ -117,9 +117,9 @@ function MarginSection() {
               <TableBody>
                 {margin.lines.map((line, idx) => (
                   <TableRow key={idx}>
-                    <TableCell className="font-mono text-xs">{line.contractId ?? '—'}</TableCell>
-                    <TableCell className="font-mono text-xs">{line.workerId ?? '—'}</TableCell>
-                    <TableCell className="font-mono text-xs">{line.clientId ?? '—'}</TableCell>
+                    <TableCell className="text-sm">{line.contract?.contractCode ?? line.contractId ?? '—'}</TableCell>
+                    <TableCell className="text-sm">{line.worker?.fullNameEn ?? line.workerId ?? '—'}</TableCell>
+                    <TableCell className="text-sm">{line.client?.nameEn ?? line.clientId ?? '—'}</TableCell>
                     <TableCell className="text-right tabular-nums">
                       {line.revenue.toLocaleString()} AED
                     </TableCell>

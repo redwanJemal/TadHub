@@ -1,5 +1,5 @@
-import { apiClient } from '@/shared/api/client';
-import { getTenantId } from '@/features/auth/AuthProvider';
+import { apiClient, API_BASE } from '@/shared/api/client';
+import { getTenantId, getAccessToken } from '@/features/auth/AuthProvider';
 import type { QueryParams } from '@/shared/api/types/common';
 import type {
   InvoiceDto,
@@ -76,6 +76,26 @@ export function deleteInvoice(id: string) {
 
 export function getInvoiceSummary() {
   return apiClient.get<InvoiceSummaryDto>(tenantPath('/invoices/summary'));
+}
+
+export async function downloadInvoicePdf(id: string): Promise<Blob> {
+  const token = getAccessToken();
+  const tenantId = getTenantId();
+  const url = `${API_BASE}/tenants/${tenantId}/invoices/${id}/pdf`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(tenantId ? { 'X-Tenant-ID': tenantId } : {}),
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to download PDF: ${response.status}`);
+  }
+
+  return response.blob();
 }
 
 // Payments

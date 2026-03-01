@@ -13,6 +13,9 @@ public sealed record InvoiceDto
     public Guid ContractId { get; init; }
     public Guid ClientId { get; init; }
     public Guid? WorkerId { get; init; }
+    public InvoiceClientRef? Client { get; init; }
+    public InvoiceWorkerRef? Worker { get; init; }
+    public InvoiceContractRef? Contract { get; init; }
     public DateOnly IssueDate { get; init; }
     public DateOnly DueDate { get; init; }
     public decimal Subtotal { get; init; }
@@ -51,6 +54,9 @@ public sealed record InvoiceListDto
     public Guid ContractId { get; init; }
     public Guid ClientId { get; init; }
     public Guid? WorkerId { get; init; }
+    public InvoiceClientRef? Client { get; init; }
+    public InvoiceWorkerRef? Worker { get; init; }
+    public InvoiceContractRef? Contract { get; init; }
     public DateOnly IssueDate { get; init; }
     public DateOnly DueDate { get; init; }
     public decimal TotalAmount { get; init; }
@@ -146,4 +152,32 @@ public sealed record ApplyDiscountRequest
 {
     [Required] public Guid DiscountProgramId { get; init; }
     [MaxLength(100)] public string? CardNumber { get; init; }
+}
+
+// Nested ref DTOs for BFF enrichment
+public sealed record InvoiceClientRef
+{
+    public Guid Id { get; init; }
+    public string NameEn { get; init; } = string.Empty;
+    public string? NameAr { get; init; }
+}
+
+public sealed record InvoiceWorkerRef
+{
+    public Guid Id { get; init; }
+    public string FullNameEn { get; init; } = string.Empty;
+    public string? FullNameAr { get; init; }
+    public string WorkerCode { get; init; } = string.Empty;
+}
+
+public sealed record InvoiceContractRef
+{
+    public Guid Id { get; init; }
+    public string ContractCode { get; init; } = string.Empty;
+}
+
+public sealed record InvoiceRef
+{
+    public Guid Id { get; init; }
+    public string InvoiceNumber { get; init; } = string.Empty;
 }

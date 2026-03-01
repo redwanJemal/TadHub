@@ -182,7 +182,7 @@ export function InvoicesListPage() {
       key: 'clientId',
       header: 'Client',
       cell: (row) => (
-        <span className="font-mono text-xs text-muted-foreground">{row.clientId}</span>
+        <span className="text-sm">{row.client?.nameEn ?? row.clientId}</span>
       ),
     },
     {

@@ -8,6 +8,7 @@ import {
   FileText,
   Tag,
   Plus,
+  Download,
 } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -57,6 +58,7 @@ import {
   useApplyDiscount,
   useDiscountPrograms,
 } from '../hooks';
+import { downloadInvoicePdf } from '../api';
 import { InvoiceStatusBadge } from '../components/InvoiceStatusBadge';
 import { PaymentStatusBadge } from '../components/PaymentStatusBadge';
 import { PaymentMethodBadge } from '../components/PaymentMethodBadge';
@@ -142,6 +144,7 @@ export function InvoiceDetailPage() {
   const [discountCardNumber, setDiscountCardNumber] = useState('');
 
   const [showDelete, setShowDelete] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const availableTransitions = invoice ? (ALLOWED_TRANSITIONS[invoice.status] ?? []) : [];
 
@@ -184,6 +187,26 @@ export function InvoiceDetailPage() {
     setDiscountCardNumber('');
   };
 
+  const handleDownloadPdf = async () => {
+    if (!invoiceId) return;
+    setDownloading(true);
+    try {
+      const blob = await downloadInvoicePdf(invoiceId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Invoice-${invoice?.invoiceNumber ?? invoiceId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      // silently fail
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!invoiceId) return;
     await deleteMutation.mutateAsync(invoiceId);
@@ -222,6 +245,10 @@ export function InvoiceDetailPage() {
             <InvoiceStatusBadge status={invoice.status} />
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" onClick={handleDownloadPdf} disabled={downloading}>
+              <Download className="me-2 h-4 w-4" />
+              {downloading ? 'Downloading...' : 'Download PDF'}
+            </Button>
             {availableTransitions.length > 0 && hasPermission('finance.invoices.manage_status') && (
               <Button variant="outline" onClick={() => setShowTransition(true)}>
                 <RefreshCw className="me-2 h-4 w-4" />

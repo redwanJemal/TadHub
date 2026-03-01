@@ -10,6 +10,8 @@ public sealed record PaymentDto
     public string Status { get; init; } = string.Empty;
     public Guid InvoiceId { get; init; }
     public Guid ClientId { get; init; }
+    public InvoiceRef? Invoice { get; init; }
+    public InvoiceClientRef? Client { get; init; }
     public decimal Amount { get; init; }
     public string Currency { get; init; } = "AED";
     public string Method { get; init; } = string.Empty;
@@ -36,6 +38,8 @@ public sealed record PaymentListDto
     public string Status { get; init; } = string.Empty;
     public Guid InvoiceId { get; init; }
     public Guid ClientId { get; init; }
+    public InvoiceRef? Invoice { get; init; }
+    public InvoiceClientRef? Client { get; init; }
     public decimal Amount { get; init; }
     public string Currency { get; init; } = "AED";
     public string Method { get; init; } = string.Empty;

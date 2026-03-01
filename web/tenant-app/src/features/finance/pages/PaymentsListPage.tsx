@@ -114,11 +114,18 @@ export function PaymentsListPage() {
       header: 'Invoice',
       cell: (row) => (
         <button
-          className="font-mono text-xs text-blue-600 dark:text-blue-400 hover:underline"
+          className="font-mono text-sm text-blue-600 dark:text-blue-400 hover:underline"
           onClick={() => navigate(`/finance/invoices/${row.invoiceId}`)}
         >
-          {row.invoiceId}
+          {row.invoice?.invoiceNumber ?? row.invoiceId}
         </button>
+      ),
+    },
+    {
+      key: 'clientId',
+      header: 'Client',
+      cell: (row) => (
+        <span className="text-sm">{row.client?.nameEn ?? row.clientId}</span>
       ),
     },
     {

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Financial.Contracts;
 using Financial.Contracts.DTOs;
+using Client.Contracts;
 using TadHub.Api.Filters;
 using TadHub.Infrastructure.Auth;
 using TadHub.SharedKernel.Api;
@@ -16,10 +17,17 @@ namespace TadHub.Api.Controllers;
 public class PaymentsController : ControllerBase
 {
     private readonly IPaymentService _paymentService;
+    private readonly IInvoiceService _invoiceService;
+    private readonly IClientService _clientService;
 
-    public PaymentsController(IPaymentService paymentService)
+    public PaymentsController(
+        IPaymentService paymentService,
+        IInvoiceService invoiceService,
+        IClientService clientService)
     {
         _paymentService = paymentService;
+        _invoiceService = invoiceService;
+        _clientService = clientService;
     }
 
     [HttpGet]
@@ -31,6 +39,7 @@ public class PaymentsController : ControllerBase
         CancellationToken ct)
     {
         var result = await _paymentService.ListAsync(tenantId, qp, ct);
+        result = await EnrichList(tenantId, result, ct);
         return Ok(result);
     }
 
@@ -48,7 +57,8 @@ public class PaymentsController : ControllerBase
         if (!result.IsSuccess)
             return MapResultError(result);
 
-        return Ok(result.Value);
+        var dto = await EnrichSingle(tenantId, result.Value!, ct);
+        return Ok(dto);
     }
 
     [HttpPost]
@@ -123,6 +133,56 @@ public class PaymentsController : ControllerBase
 
         return NoContent();
     }
+
+    #region BFF Enrichment
+
+    private async Task<PagedList<PaymentListDto>> EnrichList(
+        Guid tenantId, PagedList<PaymentListDto> pagedList, CancellationToken ct)
+    {
+        var clientIds = pagedList.Items.Select(p => p.ClientId).Distinct().ToList();
+        var invoiceIds = pagedList.Items.Select(p => p.InvoiceId).Distinct().ToList();
+
+        var clientMap = new Dictionary<Guid, InvoiceClientRef>();
+        if (clientIds.Count > 0)
+        {
+            var clients = await _clientService.ListAsync(tenantId, new QueryParameters { PageSize = clientIds.Count }, ct);
+            foreach (var c in clients.Items.Where(c => clientIds.Contains(c.Id)))
+                clientMap[c.Id] = new InvoiceClientRef { Id = c.Id, NameEn = c.NameEn, NameAr = c.NameAr };
+        }
+
+        var invoiceMap = new Dictionary<Guid, InvoiceRef>();
+        if (invoiceIds.Count > 0)
+        {
+            var invoices = await _invoiceService.ListAsync(tenantId, new QueryParameters { PageSize = invoiceIds.Count }, ct);
+            foreach (var inv in invoices.Items.Where(i => invoiceIds.Contains(i.Id)))
+                invoiceMap[inv.Id] = new InvoiceRef { Id = inv.Id, InvoiceNumber = inv.InvoiceNumber };
+        }
+
+        var enriched = pagedList.Items.Select(p => p with
+        {
+            Client = clientMap.GetValueOrDefault(p.ClientId),
+            Invoice = invoiceMap.GetValueOrDefault(p.InvoiceId),
+        }).ToList();
+
+        return new PagedList<PaymentListDto>(enriched, pagedList.TotalCount, pagedList.Page, pagedList.PageSize);
+    }
+
+    private async Task<PaymentDto> EnrichSingle(Guid tenantId, PaymentDto dto, CancellationToken ct)
+    {
+        InvoiceClientRef? clientRef = null;
+        var clientResult = await _clientService.GetByIdAsync(tenantId, dto.ClientId, ct);
+        if (clientResult.IsSuccess)
+            clientRef = new InvoiceClientRef { Id = clientResult.Value!.Id, NameEn = clientResult.Value.NameEn, NameAr = clientResult.Value.NameAr };
+
+        InvoiceRef? invoiceRef = null;
+        var invoiceResult = await _invoiceService.GetByIdAsync(tenantId, dto.InvoiceId, ct: ct);
+        if (invoiceResult.IsSuccess)
+            invoiceRef = new InvoiceRef { Id = invoiceResult.Value!.Id, InvoiceNumber = invoiceResult.Value.InvoiceNumber };
+
+        return dto with { Client = clientRef, Invoice = invoiceRef };
+    }
+
+    #endregion
 
     #region Error Helpers
 

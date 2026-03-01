@@ -60,4 +60,8 @@ public sealed class TenantFinancialSettings
     // Auto-generation
     [JsonPropertyName("autoGenerateInvoiceOnConfirm")]
     public bool AutoGenerateInvoiceOnConfirm { get; set; } = true;
+
+    // Invoice PDF template
+    [JsonPropertyName("invoiceTemplate")]
+    public InvoiceTemplateSettings InvoiceTemplate { get; set; } = new();
 }

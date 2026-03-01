@@ -14,6 +14,9 @@ public sealed record MarginLineDto
     public Guid? ContractId { get; init; }
     public Guid? WorkerId { get; init; }
     public Guid? ClientId { get; init; }
+    public InvoiceContractRef? Contract { get; init; }
+    public InvoiceWorkerRef? Worker { get; init; }
+    public InvoiceClientRef? Client { get; init; }
     public decimal Revenue { get; init; }
     public decimal Cost { get; init; }
     public decimal Margin { get; init; }

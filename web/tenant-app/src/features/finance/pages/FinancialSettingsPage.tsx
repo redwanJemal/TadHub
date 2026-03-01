@@ -79,6 +79,14 @@ export function FinancialSettingsPage() {
   const [invoiceTermsAr, setInvoiceTermsAr] = useState('');
   const [autoGenerateInvoiceOnConfirm, setAutoGenerateInvoiceOnConfirm] = useState(false);
 
+  // Invoice Template
+  const [templatePrimaryColor, setTemplatePrimaryColor] = useState('#1a365d');
+  const [templateAccentColor, setTemplateAccentColor] = useState('#2b6cb0');
+  const [templateShowLogo, setTemplateShowLogo] = useState(true);
+  const [templateShowArabic, setTemplateShowArabic] = useState(true);
+  const [templateCompanyAddress, setTemplateCompanyAddress] = useState('');
+  const [templateCompanyAddressAr, setTemplateCompanyAddressAr] = useState('');
+
   const [isDirty, setIsDirty] = useState(false);
 
   // Populate form when settings load
@@ -101,6 +109,16 @@ export function FinancialSettingsPage() {
     setInvoiceTerms(settings.invoiceTerms ?? '');
     setInvoiceTermsAr(settings.invoiceTermsAr ?? '');
     setAutoGenerateInvoiceOnConfirm(settings.autoGenerateInvoiceOnConfirm);
+    // Invoice Template
+    const tpl = settings.invoiceTemplate;
+    if (tpl) {
+      setTemplatePrimaryColor(tpl.primaryColor ?? '#1a365d');
+      setTemplateAccentColor(tpl.accentColor ?? '#2b6cb0');
+      setTemplateShowLogo(tpl.showLogo ?? true);
+      setTemplateShowArabic(tpl.showArabicText ?? true);
+      setTemplateCompanyAddress(tpl.companyAddress ?? '');
+      setTemplateCompanyAddressAr(tpl.companyAddressAr ?? '');
+    }
     setIsDirty(false);
   }, [settings]);
 
@@ -130,6 +148,14 @@ export function FinancialSettingsPage() {
       invoiceTerms: invoiceTerms || undefined,
       invoiceTermsAr: invoiceTermsAr || undefined,
       autoGenerateInvoiceOnConfirm,
+      invoiceTemplate: {
+        primaryColor: templatePrimaryColor,
+        accentColor: templateAccentColor,
+        showLogo: templateShowLogo,
+        showArabicText: templateShowArabic,
+        companyAddress: templateCompanyAddress || undefined,
+        companyAddressAr: templateCompanyAddressAr || undefined,
+      },
     };
     await updateMutation.mutateAsync(payload);
     setIsDirty(false);
@@ -331,6 +357,96 @@ export function FinancialSettingsPage() {
             <p className="text-xs text-muted-foreground mt-3">
               {paymentMethods.length} method{paymentMethods.length !== 1 ? 's' : ''} enabled
             </p>
+          </CardContent>
+        </Card>
+
+        {/* Invoice PDF Template */}
+        <Card className="md:col-span-2">
+          <CardHeader><CardTitle>Invoice PDF Template</CardTitle></CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Primary Color</Label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={templatePrimaryColor}
+                    onChange={(e) => { setTemplatePrimaryColor(e.target.value); setIsDirty(true); }}
+                    disabled={!canEdit}
+                    className="h-9 w-12 rounded border border-input cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                  <Input
+                    value={templatePrimaryColor}
+                    onChange={(e) => { setTemplatePrimaryColor(e.target.value); setIsDirty(true); }}
+                    disabled={!canEdit}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Accent Color</Label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={templateAccentColor}
+                    onChange={(e) => { setTemplateAccentColor(e.target.value); setIsDirty(true); }}
+                    disabled={!canEdit}
+                    className="h-9 w-12 rounded border border-input cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                  <Input
+                    value={templateAccentColor}
+                    onChange={(e) => { setTemplateAccentColor(e.target.value); setIsDirty(true); }}
+                    disabled={!canEdit}
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="templateShowLogo"
+                  checked={templateShowLogo}
+                  onChange={(e) => { setTemplateShowLogo(e.target.checked); setIsDirty(true); }}
+                  disabled={!canEdit}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="templateShowLogo">Show company logo on invoice</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="templateShowArabic"
+                  checked={templateShowArabic}
+                  onChange={(e) => { setTemplateShowArabic(e.target.checked); setIsDirty(true); }}
+                  disabled={!canEdit}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="templateShowArabic">Show Arabic text on invoice</Label>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Company Address (EN)</Label>
+                <textarea
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  placeholder="Company address for invoice header..."
+                  value={templateCompanyAddress}
+                  onChange={(e) => { setTemplateCompanyAddress(e.target.value); setIsDirty(true); }}
+                  disabled={!canEdit}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Company Address (AR)</Label>
+                <textarea
+                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  placeholder="عنوان الشركة للفاتورة..."
+                  dir="rtl"
+                  value={templateCompanyAddressAr}
+                  onChange={(e) => { setTemplateCompanyAddressAr(e.target.value); setIsDirty(true); }}
+                  disabled={!canEdit}
+                />
+              </div>
+            </div>
           </CardContent>
         </Card>
 
