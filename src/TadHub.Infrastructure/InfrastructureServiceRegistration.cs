@@ -105,6 +105,7 @@ public static class InfrastructureServiceRegistration
 
                 npgsql.CommandTimeout(30);
                 npgsql.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+                npgsql.MigrationsHistoryTable("__ef_migrations_history");
             });
 
             // Add interceptors
