@@ -50,10 +50,16 @@ export function CreateInvoicePage() {
 
   const createMutation = useCreateInvoice();
 
+  // Pre-filled display names from contract navigation
+  const contractCode = searchParams.get('contractCode');
+  const clientName = searchParams.get('clientName');
+  const workerName = searchParams.get('workerName');
+  const isFromContract = !!searchParams.get('contractId');
+
   // Form state
   const [contractId, setContractId] = useState(searchParams.get('contractId') ?? '');
   const [clientId, setClientId] = useState(searchParams.get('clientId') ?? '');
-  const [workerId, setWorkerId] = useState('');
+  const [workerId, setWorkerId] = useState(searchParams.get('workerId') ?? '');
   const [type, setType] = useState<string>('Standard');
   const [milestoneType, setMilestoneType] = useState('');
   const [issueDate, setIssueDate] = useState(() => new Date().toISOString().slice(0, 10));
@@ -141,7 +147,11 @@ export function CreateInvoicePage() {
           Back to Invoices
         </Link>
         <h1 className="text-2xl font-bold tracking-tight">New Invoice</h1>
-        <p className="text-muted-foreground">Create a new invoice for a contract</p>
+        <p className="text-muted-foreground">
+          {isFromContract
+            ? `Invoice for contract ${contractCode}${clientName ? ` — ${clientName}` : ''}`
+            : 'Create a new invoice for a contract'}
+        </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -149,30 +159,57 @@ export function CreateInvoicePage() {
         <Card>
           <CardHeader><CardTitle>Contract & Client</CardTitle></CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Contract ID *</Label>
-              <Input
-                placeholder="Enter contract ID"
-                value={contractId}
-                onChange={(e) => setContractId(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Client ID *</Label>
-              <Input
-                placeholder="Enter client ID"
-                value={clientId}
-                onChange={(e) => setClientId(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Worker ID</Label>
-              <Input
-                placeholder="Optional worker ID"
-                value={workerId}
-                onChange={(e) => setWorkerId(e.target.value)}
-              />
-            </div>
+            {isFromContract ? (
+              <>
+                <div className="space-y-2">
+                  <Label>Contract</Label>
+                  <div className="rounded-md border border-input bg-muted/50 px-3 py-2 text-sm">
+                    <span className="font-mono font-medium">{contractCode}</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Client</Label>
+                  <div className="rounded-md border border-input bg-muted/50 px-3 py-2 text-sm">
+                    {clientName || clientId}
+                  </div>
+                </div>
+                {workerId && (
+                  <div className="space-y-2">
+                    <Label>Worker</Label>
+                    <div className="rounded-md border border-input bg-muted/50 px-3 py-2 text-sm">
+                      {workerName || workerId}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <Label>Contract ID *</Label>
+                  <Input
+                    placeholder="Enter contract ID"
+                    value={contractId}
+                    onChange={(e) => setContractId(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Client ID *</Label>
+                  <Input
+                    placeholder="Enter client ID"
+                    value={clientId}
+                    onChange={(e) => setClientId(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Worker ID</Label>
+                  <Input
+                    placeholder="Optional worker ID"
+                    value={workerId}
+                    onChange={(e) => setWorkerId(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 

@@ -455,6 +455,18 @@ async function main() {
           await snap(page, '46-contract-status-dialog');
           await dismiss(page, 'cancel');
         }
+
+        // Create Invoice from contract detail
+        const createInvoiceBtn = page.getByRole('button', { name: /create invoice/i });
+        if (await createInvoiceBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+          await createInvoiceBtn.click();
+          await page.waitForTimeout(3000);
+          await snap(page, '47-create-invoice-from-contract');
+          await snap(page, '48-create-invoice-from-contract-full', true);
+          // Navigate back for the rest of the flow
+          await page.goBack();
+          await page.waitForTimeout(2000);
+        }
       }
     }
   }

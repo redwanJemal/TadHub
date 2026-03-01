@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
-import { MoreHorizontal, Trash2, Eye, RefreshCw, Plus } from 'lucide-react';
+import { MoreHorizontal, Trash2, Eye, RefreshCw, Plus, FileText } from 'lucide-react';
 import { usePermissions } from '@/features/auth/hooks/usePermissions';
 import { PermissionGate } from '@/shared/components/PermissionGate';
 import { useContracts, useDeleteContract } from '../hooks';
@@ -151,6 +151,22 @@ export function ContractsPage() {
             <DropdownMenuItem onClick={() => navigate(`/contracts/${row.id}`)}>
               <Eye className="me-2 h-4 w-4" />
               {t('actions.view')}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                const params = new URLSearchParams({
+                  contractId: row.id,
+                  clientId: row.clientId,
+                  ...(row.workerId ? { workerId: row.workerId } : {}),
+                  contractCode: row.contractCode,
+                  ...(row.client?.nameEn ? { clientName: row.client.nameEn } : {}),
+                  ...(row.worker?.fullNameEn ? { workerName: row.worker.fullNameEn } : {}),
+                });
+                navigate(`/finance/invoices/new?${params.toString()}`);
+              }}
+            >
+              <FileText className="me-2 h-4 w-4" />
+              Create Invoice
             </DropdownMenuItem>
             {hasPermission('contracts.manage_status') && (
               <DropdownMenuItem onClick={() => setTransitionTarget(row)}>

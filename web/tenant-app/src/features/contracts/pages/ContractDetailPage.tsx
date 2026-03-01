@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, RefreshCw, Trash2, Download } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trash2, Download, FileText } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
@@ -147,6 +147,23 @@ export function ContractDetailPage() {
             <ContractTypeBadge type={contract.type} />
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                const params = new URLSearchParams({
+                  contractId: contract.id,
+                  clientId: contract.clientId,
+                  ...(contract.workerId ? { workerId: contract.workerId } : {}),
+                  contractCode: contract.contractCode,
+                  ...(contract.client?.nameEn ? { clientName: contract.client.nameEn } : {}),
+                  ...(contract.worker?.fullNameEn ? { workerName: contract.worker.fullNameEn } : {}),
+                });
+                navigate(`/finance/invoices/new?${params.toString()}`);
+              }}
+            >
+              <FileText className="me-2 h-4 w-4" />
+              Create Invoice
+            </Button>
             <Button variant="outline" onClick={handleDownloadPdf} disabled={downloading}>
               <Download className="me-2 h-4 w-4" />
               {downloading ? t('actions.downloading') : t('actions.downloadPdf')}
