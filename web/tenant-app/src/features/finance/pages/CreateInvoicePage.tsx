@@ -197,12 +197,12 @@ export function CreateInvoicePage() {
             </div>
             <div className="space-y-2">
               <Label>Milestone Type</Label>
-              <Select value={milestoneType} onValueChange={setMilestoneType}>
+              <Select value={milestoneType || 'none'} onValueChange={(v) => setMilestoneType(v === 'none' ? '' : v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select milestone (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {MILESTONE_TYPES.map((mt) => (
                     <SelectItem key={mt} value={mt}>{mt}</SelectItem>
                   ))}
