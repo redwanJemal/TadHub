@@ -24,6 +24,10 @@
     "Supplier": "Supplier",
     "Local": "Local"
   },
+  "locationType": {
+    "InsideCountry": "Inside Country",
+    "OutsideCountry": "Outside Country"
+  },
   "empty": {
     "title": "No candidates yet",
     "description": "Add your first candidate to start tracking the pipeline."
@@ -60,6 +64,10 @@
     "passportNumber": "Passport Number",
     "passportNumberPlaceholder": "e.g., AB1234567",
     "passportExpiry": "Passport Expiry",
+    "placeOfBirth": "Place of Birth",
+    "placeOfBirthPlaceholder": "e.g., Manila, Philippines",
+    "locationType": "Location",
+    "locationTypePlaceholder": "Select location type",
     "phone": "Phone",
     "phonePlaceholder": "e.g., +966 50 123 4567",
     "email": "Email",
@@ -123,11 +131,13 @@
     "dateOfBirth": "Date of Birth",
     "gender": "Gender",
     "passportNumber": "Passport Number",
+    "placeOfBirth": "Place of Birth",
     "passportExpiry": "Passport Expiry",
     "phone": "Phone",
     "email": "Email",
     "sourceType": "Source Type",
     "supplier": "Supplier",
+    "locationType": "Location",
     "religion": "Religion",
     "maritalStatus": "Marital Status",
     "educationLevel": "Education Level",
@@ -189,7 +199,8 @@
   },
   "filters": {
     "status": "Status",
-    "sourceType": "Source Type"
+    "sourceType": "Source Type",
+    "locationType": "Location"
   },
   "professional": {
     "religion": {

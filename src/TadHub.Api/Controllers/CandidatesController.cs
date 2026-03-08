@@ -66,6 +66,7 @@ public class CandidatesController : ControllerBase
     /// - filter[religion]=Islam
     /// - filter[maritalStatus]=Single
     /// - filter[educationLevel]=Bachelor
+    /// - filter[locationType]=InsideCountry,OutsideCountry
     ///
     /// Sort:
     /// - sort=-createdAt (default, newest first)

@@ -27,11 +27,19 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Entities.Candidat
             .IsRequired()
             .HasMaxLength(10);
 
+        builder.Property(x => x.PlaceOfBirth)
+            .HasMaxLength(255);
+
         builder.Property(x => x.Gender)
             .HasMaxLength(20);
 
         builder.Property(x => x.PassportNumber)
             .HasMaxLength(50);
+
+        // Classification
+        builder.Property(x => x.LocationType)
+            .HasMaxLength(30)
+            .HasConversion<string>();
 
         builder.Property(x => x.Phone)
             .HasMaxLength(50);
@@ -149,6 +157,9 @@ public class CandidateConfiguration : IEntityTypeConfiguration<Entities.Candidat
 
         builder.HasIndex(x => x.JobCategoryId)
             .HasDatabaseName("ix_candidates_job_category_id");
+
+        builder.HasIndex(x => x.LocationType)
+            .HasDatabaseName("ix_candidates_location_type");
 
         // Note: Soft delete and tenant query filters are applied globally by AppDbContext.
         // Do NOT add HasQueryFilter here — it would override the global composite filter.

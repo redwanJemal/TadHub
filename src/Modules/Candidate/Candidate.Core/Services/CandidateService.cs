@@ -42,6 +42,7 @@ public class CandidateService : ICandidateService
         ["religion"] = x => x.Religion!,
         ["maritalStatus"] = x => x.MaritalStatus!,
         ["educationLevel"] = x => x.EducationLevel!,
+        ["locationType"] = x => x.LocationType!,
     };
 
     private static readonly Dictionary<string, Expression<Func<Entities.Candidate, object>>> SortableFields = new()
@@ -172,10 +173,12 @@ public class CandidateService : ICandidateService
             FullNameAr = request.FullNameAr,
             Nationality = request.Nationality,
             DateOfBirth = request.DateOfBirth,
+            PlaceOfBirth = request.PlaceOfBirth,
             Gender = request.Gender,
             PassportNumber = request.PassportNumber,
             Phone = request.Phone,
             Email = request.Email,
+            LocationType = !string.IsNullOrWhiteSpace(request.LocationType) && Enum.TryParse<CandidateLocationType>(request.LocationType, ignoreCase: true, out var lt) ? lt : null,
             SourceType = sourceType,
             TenantSupplierId = request.TenantSupplierId,
             Status = CandidateStatus.Received,
@@ -296,8 +299,15 @@ public class CandidateService : ICandidateService
             candidate.Nationality = request.Nationality;
         if (request.DateOfBirth.HasValue)
             candidate.DateOfBirth = request.DateOfBirth;
+        if (request.PlaceOfBirth is not null)
+            candidate.PlaceOfBirth = request.PlaceOfBirth;
         if (request.Gender is not null)
             candidate.Gender = request.Gender;
+        if (request.LocationType is not null)
+        {
+            if (Enum.TryParse<CandidateLocationType>(request.LocationType, ignoreCase: true, out var lt))
+                candidate.LocationType = lt;
+        }
         if (request.PassportNumber is not null)
             candidate.PassportNumber = request.PassportNumber;
         if (request.Phone is not null)
@@ -489,6 +499,7 @@ public class CandidateService : ICandidateService
                 FullNameAr = full.FullNameAr,
                 Nationality = full.Nationality,
                 DateOfBirth = full.DateOfBirth,
+                PlaceOfBirth = full.PlaceOfBirth,
                 Gender = full.Gender,
                 PassportNumber = full.PassportNumber,
                 PassportExpiry = full.PassportExpiry,
@@ -503,6 +514,7 @@ public class CandidateService : ICandidateService
                 PhotoUrl = full.PhotoUrl,
                 VideoUrl = full.VideoUrl,
                 PassportDocumentUrl = full.PassportDocumentUrl,
+                LocationType = full.LocationType?.ToString(),
                 SourceType = full.SourceType.ToString(),
                 TenantSupplierId = full.TenantSupplierId,
                 Skills = full.Skills.Select(s => new CandidateSnapshotSkill
@@ -599,10 +611,12 @@ public class CandidateService : ICandidateService
             FullNameAr = c.FullNameAr,
             Nationality = c.Nationality,
             DateOfBirth = c.DateOfBirth,
+            PlaceOfBirth = c.PlaceOfBirth,
             Gender = c.Gender,
             PassportNumber = c.PassportNumber,
             Phone = c.Phone,
             Email = c.Email,
+            LocationType = c.LocationType?.ToString(),
             SourceType = c.SourceType.ToString(),
             TenantSupplierId = c.TenantSupplierId,
             Status = c.Status.ToString(),
@@ -660,6 +674,7 @@ public class CandidateService : ICandidateService
             TenantSupplierId = c.TenantSupplierId,
             Status = c.Status.ToString(),
             Gender = c.Gender,
+            LocationType = c.LocationType?.ToString(),
             ExternalReference = c.ExternalReference,
             JobCategoryId = c.JobCategoryId,
             PhotoUrl = c.PhotoUrl,

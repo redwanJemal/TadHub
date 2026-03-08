@@ -6,7 +6,7 @@ import {
   XCircle,
   Ban,
 } from 'lucide-react';
-import type { CandidateStatus, CandidateSourceType, SkillProficiency, LanguageProficiency } from './types';
+import type { CandidateStatus, CandidateSourceType, CandidateLocationType, SkillProficiency, LanguageProficiency } from './types';
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'success' | 'warning' | 'outline';
 
@@ -32,6 +32,8 @@ export const ALL_STATUSES: CandidateStatus[] = [
 ];
 
 export const ALL_SOURCE_TYPES: CandidateSourceType[] = ['Supplier', 'Local'];
+
+export const ALL_LOCATION_TYPES: CandidateLocationType[] = ['InsideCountry', 'OutsideCountry'];
 
 /** Allowed manual status transitions (review phase only) */
 export const ALLOWED_TRANSITIONS: Partial<Record<CandidateStatus, CandidateStatus[]>> = {

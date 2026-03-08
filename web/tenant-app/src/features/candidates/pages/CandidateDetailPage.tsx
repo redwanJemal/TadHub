@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, RefreshCw, Trash2, Pencil, ImageOff, FileText, VideoOff } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trash2, Pencil, ImageOff, FileText, VideoOff, GitBranch } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Badge } from '@/shared/components/ui/badge';
@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
 import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
+import { usePermissions } from '@/features/auth/hooks/usePermissions';
 import { useCandidate, useDeleteCandidate } from '../hooks';
 import { StatusBadge } from '../components/StatusBadge';
 import { StatusTransitionDialog } from '../components/StatusTransitionDialog';
@@ -103,6 +104,7 @@ export function CandidateDetailPage() {
   const { data: candidate, isLoading } = useCandidate(id!);
   const { data: countries } = useCountryRefs();
   const deleteMutation = useDeleteCandidate();
+  const { hasPermission } = usePermissions();
 
   const [showTransition, setShowTransition] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
@@ -165,6 +167,12 @@ export function CandidateDetailPage() {
                 {t('actions.edit')}
               </Button>
             )}
+            {candidate.status === 'Approved' && hasPermission('placements.create') && (
+              <Button variant="outline" onClick={() => navigate(`/placements/new?candidateId=${id}&candidateName=${encodeURIComponent(candidate.fullNameEn)}`)}>
+                <GitBranch className="me-2 h-4 w-4" />
+                Book for Client
+              </Button>
+            )}
             {hasTransitions && (
               <Button variant="outline" onClick={() => setShowTransition(true)}>
                 <RefreshCw className="me-2 h-4 w-4" />
@@ -211,6 +219,7 @@ export function CandidateDetailPage() {
                 <InfoItem label={t('detail.fullNameAr')} value={candidate.fullNameAr} />
                 <InfoItem label={t('detail.nationality')} value={getCountryDisplay(candidate.nationality)} />
                 <InfoItem label={t('detail.dateOfBirth')} value={candidate.dateOfBirth} />
+                <InfoItem label={t('detail.placeOfBirth')} value={candidate.placeOfBirth} />
                 <InfoItem label={t('detail.gender')} value={candidate.gender} />
                 <InfoItem label={t('detail.passportNumber')} value={candidate.passportNumber} />
                 <InfoItem label={t('detail.passportExpiry')} value={candidate.passportExpiry} />
@@ -236,6 +245,7 @@ export function CandidateDetailPage() {
               <CardContent className="grid gap-4 sm:grid-cols-2">
                 <InfoItem label={t('detail.sourceType')} value={t(`sourceType.${candidate.sourceType}`)} />
                 <InfoItem label={t('detail.supplier')} value={candidate.supplier?.name} />
+                <InfoItem label={t('detail.locationType')} value={candidate.locationType ? t(`locationType.${candidate.locationType}`) : undefined} />
                 <InfoItem label={t('detail.externalReference')} value={candidate.externalReference} />
               </CardContent>
             </Card>

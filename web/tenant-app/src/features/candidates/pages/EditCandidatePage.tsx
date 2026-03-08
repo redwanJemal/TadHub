@@ -20,6 +20,7 @@ import { useSuppliers } from '@/features/suppliers/hooks';
 import { useCandidate, useUpdateCandidate, useUploadPhoto, useUploadVideo, useUploadPassport } from '../hooks';
 import {
   ALL_SOURCE_TYPES,
+  ALL_LOCATION_TYPES,
   RELIGION_OPTIONS,
   MARITAL_STATUS_OPTIONS,
   EDUCATION_LEVEL_OPTIONS,
@@ -45,11 +46,13 @@ export function EditCandidatePage() {
     fullNameAr: '',
     nationality: '',
     dateOfBirth: '',
+    placeOfBirth: '',
     gender: '',
     passportNumber: '',
     passportExpiry: '',
     phone: '',
     email: '',
+    locationType: '',
     sourceType: '',
     tenantSupplierId: '',
     religion: '',
@@ -76,11 +79,13 @@ export function EditCandidatePage() {
         fullNameAr: candidate.fullNameAr || '',
         nationality: candidate.nationality || '',
         dateOfBirth: candidate.dateOfBirth || '',
+        placeOfBirth: candidate.placeOfBirth || '',
         gender: candidate.gender || '',
         passportNumber: candidate.passportNumber || '',
         passportExpiry: candidate.passportExpiry || '',
         phone: candidate.phone || '',
         email: candidate.email || '',
+        locationType: candidate.locationType || '',
         sourceType: candidate.sourceType || '',
         tenantSupplierId: candidate.tenantSupplierId || '',
         religion: candidate.religion || '',
@@ -127,11 +132,13 @@ export function EditCandidatePage() {
           fullNameAr: form.fullNameAr.trim() || undefined,
           nationality: form.nationality || undefined,
           dateOfBirth: form.dateOfBirth || undefined,
+          placeOfBirth: form.placeOfBirth.trim() || undefined,
           gender: form.gender || undefined,
           passportNumber: form.passportNumber.trim() || undefined,
           passportExpiry: form.passportExpiry || undefined,
           phone: form.phone.trim() || undefined,
           email: form.email.trim() || undefined,
+          locationType: form.locationType || undefined,
           sourceType: form.sourceType || undefined,
           tenantSupplierId: isSupplierSource && form.tenantSupplierId ? form.tenantSupplierId : undefined,
           religion: form.religion || undefined,
@@ -238,6 +245,15 @@ export function EditCandidatePage() {
               />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="placeOfBirth">{t('create.placeOfBirth')}</Label>
+              <Input
+                id="placeOfBirth"
+                value={form.placeOfBirth}
+                onChange={(e) => update('placeOfBirth', e.target.value)}
+                placeholder={t('create.placeOfBirthPlaceholder')}
+              />
+            </div>
+            <div className="space-y-2">
               <Label>{t('create.gender')}</Label>
               <Select value={form.gender} onValueChange={(v) => update('gender', v)}>
                 <SelectTrigger>
@@ -339,6 +355,21 @@ export function EditCandidatePage() {
                 </Select>
               </div>
             )}
+            <div className="space-y-2">
+              <Label>{t('create.locationType')}</Label>
+              <Select value={form.locationType} onValueChange={(v) => update('locationType', v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('create.locationTypePlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {ALL_LOCATION_TYPES.map((lt) => (
+                    <SelectItem key={lt} value={lt}>
+                      {t(`locationType.${lt}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </CardContent>
         </Card>
 

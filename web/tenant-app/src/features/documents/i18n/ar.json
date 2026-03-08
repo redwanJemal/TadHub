@@ -22,6 +22,10 @@
     "InsurancePolicy": "بوليصة التأمين",
     "EmiratesId": "الهوية الإماراتية",
     "LabourCard": "بطاقة العمل",
+    "CertificateOfCompetency": "شهادة الكفاءة",
+    "AttestedMedicalCertificate": "شهادة طبية مصدقة",
+    "PassportCopy": "نسخة جواز السفر",
+    "PersonalPhoto": "صورة شخصية",
     "Other": "أخرى"
   },
   "status": {

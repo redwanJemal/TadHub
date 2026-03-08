@@ -33,10 +33,22 @@ public sealed record CreateCandidateRequest
     public DateOnly? DateOfBirth { get; init; }
 
     /// <summary>
+    /// Place of birth.
+    /// </summary>
+    [MaxLength(255)]
+    public string? PlaceOfBirth { get; init; }
+
+    /// <summary>
     /// Gender (Male, Female).
     /// </summary>
     [MaxLength(20)]
     public string? Gender { get; init; }
+
+    /// <summary>
+    /// Location classification: InsideCountry or OutsideCountry.
+    /// </summary>
+    [MaxLength(30)]
+    public string? LocationType { get; init; }
 
     /// <summary>
     /// Passport number.

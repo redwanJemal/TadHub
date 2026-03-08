@@ -6,6 +6,7 @@ export type CandidateStatus =
   | 'Cancelled';
 
 export type CandidateSourceType = 'Supplier' | 'Local';
+export type CandidateLocationType = 'InsideCountry' | 'OutsideCountry';
 
 export type SkillProficiency = 'Basic' | 'Intermediate' | 'Advanced' | 'Expert';
 export type LanguageProficiency = 'Basic' | 'Conversational' | 'Fluent' | 'Native';
@@ -49,6 +50,7 @@ export interface CandidateListDto {
   nationality?: string;
   sourceType: CandidateSourceType;
   status: CandidateStatus;
+  locationType?: CandidateLocationType;
   tenantSupplierId?: string;
   supplier?: { id: string; name: string };
   jobCategoryId?: string;
@@ -64,11 +66,13 @@ export interface CandidateDto {
   fullNameAr?: string;
   nationality?: string;
   dateOfBirth?: string;
+  placeOfBirth?: string;
   gender?: string;
   passportNumber?: string;
   passportExpiry?: string;
   phone?: string;
   email?: string;
+  locationType?: CandidateLocationType;
   sourceType: CandidateSourceType;
   tenantSupplierId?: string;
   supplier?: { id: string; name: string };
@@ -116,11 +120,13 @@ export interface CreateCandidateRequest {
   fullNameAr?: string;
   nationality?: string;
   dateOfBirth?: string;
+  placeOfBirth?: string;
   gender?: string;
   passportNumber?: string;
   passportExpiry?: string;
   phone?: string;
   email?: string;
+  locationType?: string;
   sourceType: string;
   tenantSupplierId?: string;
   // Professional Profile
@@ -145,11 +151,13 @@ export interface UpdateCandidateRequest {
   fullNameAr?: string;
   nationality?: string;
   dateOfBirth?: string;
+  placeOfBirth?: string;
   gender?: string;
   passportNumber?: string;
   passportExpiry?: string;
   phone?: string;
   email?: string;
+  locationType?: string;
   sourceType?: string;
   tenantSupplierId?: string;
   // Professional Profile

@@ -6,6 +6,10 @@ export type DocumentType =
   | 'InsurancePolicy'
   | 'EmiratesId'
   | 'LabourCard'
+  | 'CertificateOfCompetency'
+  | 'AttestedMedicalCertificate'
+  | 'PassportCopy'
+  | 'PersonalPhoto'
   | 'Other';
 
 export type DocumentStatus = 'Pending' | 'Valid' | 'Expired' | 'Revoked';

@@ -28,6 +28,7 @@ public sealed record CandidateSnapshotDto
     public string? FullNameAr { get; init; }
     public string Nationality { get; init; } = string.Empty;
     public DateOnly? DateOfBirth { get; init; }
+    public string? PlaceOfBirth { get; init; }
     public string? Gender { get; init; }
     public string? PassportNumber { get; init; }
     public DateOnly? PassportExpiry { get; init; }
@@ -46,6 +47,9 @@ public sealed record CandidateSnapshotDto
     public string? PhotoUrl { get; init; }
     public string? VideoUrl { get; init; }
     public string? PassportDocumentUrl { get; init; }
+
+    // Classification
+    public string? LocationType { get; init; }
 
     // Source
     public string SourceType { get; init; } = string.Empty;

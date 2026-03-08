@@ -13,10 +13,14 @@ public sealed record CandidateDto
     public string? FullNameAr { get; init; }
     public string Nationality { get; init; } = string.Empty;
     public DateOnly? DateOfBirth { get; init; }
+    public string? PlaceOfBirth { get; init; }
     public string? Gender { get; init; }
     public string? PassportNumber { get; init; }
     public string? Phone { get; init; }
     public string? Email { get; init; }
+
+    // Classification
+    public string? LocationType { get; init; }
 
     // Sourcing
     public string SourceType { get; init; } = string.Empty;

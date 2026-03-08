@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   BookOpen, Plane, Briefcase, Stethoscope, Shield,
-  CreditCard, FileText, File,
+  CreditCard, FileText, File, Award, Image, Copy,
   Clock, CheckCircle, AlertTriangle, XCircle, Ban,
 } from 'lucide-react';
 import type { DocumentType, DocumentStatus, EffectiveStatus } from './types';
@@ -40,13 +40,19 @@ export const TYPE_CONFIG: Record<DocumentType, TypeConfig> = {
   MedicalCertificate: { variant: 'default',   icon: Stethoscope },
   InsurancePolicy:    { variant: 'default',   icon: Shield },
   EmiratesId:         { variant: 'default',   icon: CreditCard },
-  LabourCard:         { variant: 'default',   icon: FileText },
-  Other:              { variant: 'outline',   icon: File },
+  LabourCard:                 { variant: 'default',   icon: FileText },
+  CertificateOfCompetency:    { variant: 'default',   icon: Award },
+  AttestedMedicalCertificate: { variant: 'default',   icon: Stethoscope },
+  PassportCopy:               { variant: 'default',   icon: Copy },
+  PersonalPhoto:              { variant: 'default',   icon: Image },
+  Other:                      { variant: 'outline',   icon: File },
 };
 
 export const ALL_DOCUMENT_TYPES: DocumentType[] = [
   'Passport', 'Visa', 'WorkPermit', 'MedicalCertificate',
-  'InsurancePolicy', 'EmiratesId', 'LabourCard', 'Other',
+  'InsurancePolicy', 'EmiratesId', 'LabourCard',
+  'CertificateOfCompetency', 'AttestedMedicalCertificate',
+  'PassportCopy', 'PersonalPhoto', 'Other',
 ];
 
 export const ALL_STATUSES: DocumentStatus[] = [
@@ -65,6 +71,10 @@ export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   InsurancePolicy: 'Insurance Policy',
   EmiratesId: 'Emirates ID',
   LabourCard: 'Labour Card',
+  CertificateOfCompetency: 'Certificate of Competency',
+  AttestedMedicalCertificate: 'Attested Medical Certificate',
+  PassportCopy: 'Passport Copy',
+  PersonalPhoto: 'Personal Photo',
   Other: 'Other',
 };
 

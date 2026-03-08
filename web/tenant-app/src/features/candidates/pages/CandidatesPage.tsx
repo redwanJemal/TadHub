@@ -20,14 +20,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
-import { MoreHorizontal, Plus, Trash2, Eye, RefreshCw } from 'lucide-react';
+import { MoreHorizontal, Plus, Trash2, Eye, RefreshCw, GitBranch } from 'lucide-react';
 import { usePermissions } from '@/features/auth/hooks/usePermissions';
 import { PermissionGate } from '@/shared/components/PermissionGate';
 import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
 import { useCandidates, useDeleteCandidate } from '../hooks';
 import { StatusBadge } from '../components/StatusBadge';
 import { StatusTransitionDialog } from '../components/StatusTransitionDialog';
-import { ALL_STATUSES, ALL_SOURCE_TYPES } from '../constants';
+import { ALL_STATUSES, ALL_SOURCE_TYPES, ALL_LOCATION_TYPES } from '../constants';
 import type { CandidateListDto } from '../types';
 
 export function CandidatesPage() {
@@ -42,6 +42,7 @@ export function CandidatesPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
   const [sourceTypeFilter, setSourceTypeFilter] = useState<string | undefined>();
+  const [locationTypeFilter, setLocationTypeFilter] = useState<string | undefined>();
 
   // Dialog state
   const [deleteTarget, setDeleteTarget] = useState<CandidateListDto | null>(null);
@@ -55,7 +56,8 @@ export function CandidatesPage() {
     sort: '-createdAt',
     'filter[status]': statusFilter,
     'filter[sourceType]': sourceTypeFilter,
-  }), [page, pageSize, search, statusFilter, sourceTypeFilter]);
+    'filter[locationType]': locationTypeFilter,
+  }), [page, pageSize, search, statusFilter, sourceTypeFilter, locationTypeFilter]);
 
   const { data, isLoading, refetch } = useCandidates(queryParams);
   const { data: countries } = useCountryRefs();
@@ -86,11 +88,18 @@ export function CandidatesPage() {
       options: ALL_SOURCE_TYPES.map((s) => ({ label: t(`sourceType.${s}`), value: s })),
       value: sourceTypeFilter,
     },
+    {
+      key: 'locationType',
+      label: t('filters.locationType'),
+      options: ALL_LOCATION_TYPES.map((lt) => ({ label: t(`locationType.${lt}`), value: lt })),
+      value: locationTypeFilter,
+    },
   ];
 
   const handleFilterChange = (key: string, value: string | undefined) => {
     if (key === 'status') setStatusFilter(value);
     if (key === 'sourceType') setSourceTypeFilter(value);
+    if (key === 'locationType') setLocationTypeFilter(value);
     setPage(1);
   };
 
@@ -175,6 +184,12 @@ export function CandidatesPage() {
               <DropdownMenuItem onClick={() => setTransitionTarget(row)}>
                 <RefreshCw className="me-2 h-4 w-4" />
                 {t('actions.changeStatus')}
+              </DropdownMenuItem>
+            )}
+            {row.status === 'Approved' && hasPermission('placements.create') && (
+              <DropdownMenuItem onClick={() => navigate(`/placements/new?candidateId=${row.id}&candidateName=${encodeURIComponent(row.fullNameEn)}`)}>
+                <GitBranch className="me-2 h-4 w-4" />
+                Book for Client
               </DropdownMenuItem>
             )}
             {hasPermission('candidates.delete') && (

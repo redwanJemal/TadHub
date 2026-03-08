@@ -18,8 +18,14 @@ public sealed record UpdateCandidateRequest
 
     public DateOnly? DateOfBirth { get; init; }
 
+    [MaxLength(255)]
+    public string? PlaceOfBirth { get; init; }
+
     [MaxLength(20)]
     public string? Gender { get; init; }
+
+    [MaxLength(30)]
+    public string? LocationType { get; init; }
 
     [MaxLength(50)]
     public string? PassportNumber { get; init; }

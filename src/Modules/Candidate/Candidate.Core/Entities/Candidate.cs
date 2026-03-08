@@ -13,10 +13,14 @@ public class Candidate : SoftDeletableEntity, IAuditable
     public string? FullNameAr { get; set; }
     public string Nationality { get; set; } = string.Empty;
     public DateOnly? DateOfBirth { get; set; }
+    public string? PlaceOfBirth { get; set; }
     public string? Gender { get; set; }
     public string? PassportNumber { get; set; }
     public string? Phone { get; set; }
     public string? Email { get; set; }
+
+    // Classification
+    public CandidateLocationType? LocationType { get; set; }
 
     // Sourcing
     public CandidateSourceType SourceType { get; set; }

@@ -15,6 +15,7 @@ public sealed record CandidateListDto
     public CandidateSupplierDto? Supplier { get; init; }
     public string Status { get; init; } = string.Empty;
     public string? Gender { get; init; }
+    public string? LocationType { get; init; }
     public string? ExternalReference { get; init; }
     public Guid? JobCategoryId { get; init; }
     public JobCategoryInfoDto? JobCategory { get; init; }

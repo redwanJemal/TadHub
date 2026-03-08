@@ -9,5 +9,9 @@ public enum DocumentType
     InsurancePolicy = 5,
     EmiratesId = 6,
     LabourCard = 7,
+    CertificateOfCompetency = 8,
+    AttestedMedicalCertificate = 9,
+    PassportCopy = 10,
+    PersonalPhoto = 11,
     Other = 99,
 }

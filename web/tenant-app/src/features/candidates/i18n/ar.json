@@ -24,6 +24,10 @@
     "Supplier": "مورد",
     "Local": "محلي"
   },
+  "locationType": {
+    "InsideCountry": "داخل الدولة",
+    "OutsideCountry": "خارج الدولة"
+  },
   "empty": {
     "title": "لا يوجد مرشحون بعد",
     "description": "أضف أول مرشح لبدء تتبع خط الأنابيب."
@@ -60,6 +64,10 @@
     "passportNumber": "رقم الجواز",
     "passportNumberPlaceholder": "مثال: AB1234567",
     "passportExpiry": "تاريخ انتهاء الجواز",
+    "placeOfBirth": "مكان الميلاد",
+    "placeOfBirthPlaceholder": "مثال: مانيلا، الفلبين",
+    "locationType": "الموقع",
+    "locationTypePlaceholder": "اختر نوع الموقع",
     "phone": "الهاتف",
     "phonePlaceholder": "مثال: 966501234567+",
     "email": "البريد الإلكتروني",
@@ -123,11 +131,13 @@
     "dateOfBirth": "تاريخ الميلاد",
     "gender": "الجنس",
     "passportNumber": "رقم الجواز",
+    "placeOfBirth": "مكان الميلاد",
     "passportExpiry": "تاريخ انتهاء الجواز",
     "phone": "الهاتف",
     "email": "البريد الإلكتروني",
     "sourceType": "نوع المصدر",
     "supplier": "المورد",
+    "locationType": "الموقع",
     "religion": "الديانة",
     "maritalStatus": "الحالة الاجتماعية",
     "educationLevel": "المستوى التعليمي",
@@ -189,7 +199,8 @@
   },
   "filters": {
     "status": "الحالة",
-    "sourceType": "نوع المصدر"
+    "sourceType": "نوع المصدر",
+    "locationType": "الموقع"
   },
   "professional": {
     "religion": {

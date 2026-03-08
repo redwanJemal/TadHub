@@ -19,6 +19,7 @@ import { useSuppliers } from '@/features/suppliers/hooks';
 import { useCreateCandidate, useUploadFile } from '../hooks';
 import {
   ALL_SOURCE_TYPES,
+  ALL_LOCATION_TYPES,
   RELIGION_OPTIONS,
   MARITAL_STATUS_OPTIONS,
   EDUCATION_LEVEL_OPTIONS,
@@ -33,11 +34,13 @@ const initialForm = {
   fullNameAr: '',
   nationality: '',
   dateOfBirth: '',
+  placeOfBirth: '',
   gender: '',
   passportNumber: '',
   passportExpiry: '',
   phone: '',
   email: '',
+  locationType: '',
   sourceType: '',
   tenantSupplierId: '',
   // Professional Profile
@@ -85,11 +88,13 @@ export function CreateCandidatePage() {
         fullNameAr: form.fullNameAr.trim() || undefined,
         nationality: form.nationality || undefined,
         dateOfBirth: form.dateOfBirth || undefined,
+        placeOfBirth: form.placeOfBirth.trim() || undefined,
         gender: form.gender || undefined,
         passportNumber: form.passportNumber.trim() || undefined,
         passportExpiry: form.passportExpiry || undefined,
         phone: form.phone.trim() || undefined,
         email: form.email.trim() || undefined,
+        locationType: form.locationType || undefined,
         sourceType: form.sourceType,
         tenantSupplierId: isSupplierSource && form.tenantSupplierId ? form.tenantSupplierId : undefined,
         religion: form.religion || undefined,
@@ -174,6 +179,15 @@ export function CreateCandidatePage() {
                 type="date"
                 value={form.dateOfBirth}
                 onChange={(e) => update('dateOfBirth', e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="placeOfBirth">{t('create.placeOfBirth')}</Label>
+              <Input
+                id="placeOfBirth"
+                value={form.placeOfBirth}
+                onChange={(e) => update('placeOfBirth', e.target.value)}
+                placeholder={t('create.placeOfBirthPlaceholder')}
               />
             </div>
             <div className="space-y-2">
@@ -280,6 +294,21 @@ export function CreateCandidatePage() {
                 </Select>
               </div>
             )}
+            <div className="space-y-2">
+              <Label>{t('create.locationType')}</Label>
+              <Select value={form.locationType} onValueChange={(v) => update('locationType', v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('create.locationTypePlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {ALL_LOCATION_TYPES.map((lt) => (
+                    <SelectItem key={lt} value={lt}>
+                      {t(`locationType.${lt}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </CardContent>
         </Card>
 
@@ -396,7 +425,7 @@ export function CreateCandidatePage() {
           </CardHeader>
           <CardContent className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>{t('create.photo')}</Label>
+              <Label>{t('create.photo')} <span className="text-destructive">*</span></Label>
               <FileUpload
                 accept="image/jpeg,image/png,image/webp"
                 maxSizeMB={5}
@@ -409,7 +438,7 @@ export function CreateCandidatePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>{t('create.passport')}</Label>
+              <Label>{t('create.passport')} <span className="text-destructive">*</span></Label>
               <FileUpload
                 accept="application/pdf,image/jpeg,image/png"
                 maxSizeMB={10}

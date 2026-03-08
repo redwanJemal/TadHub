@@ -1,0 +1,292 @@
+{
+  "version": 1,
+  "last_updated": "2026-03-08T20:55:00.000000+00:00",
+  "current_task": null,
+  "current_subtask": null,
+  "tasks": {
+    "01-candidate-registration-gaps": {
+      "title": "Candidate/Maid Registration \u2014 Fill Gaps",
+      "status": "completed",
+      "subtasks": {
+        "backend": "completed",
+        "frontend": "completed",
+        "migration": "completed",
+        "screenshots": "pending"
+      },
+      "started_at": "2026-03-08T20:15:47Z",
+      "completed_at": "2026-03-08T20:55:00Z",
+      "notes": "Added PlaceOfBirth, LocationType (InsideCountry/OutsideCountry) to Candidate entity. Added CertificateOfCompetency, AttestedMedicalCertificate, PassportCopy, PersonalPhoto to DocumentType enum. Frontend forms updated with new fields, photo/passport marked as required. Location filter added to candidates list. i18n keys added for en/ar. Migration: AddCandidateRegistrationGaps."
+    },
+    "02-trial-period-workflow": {
+      "title": "Trial Period Workflow",
+      "status": "pending",
+      "subtasks": {
+        "entities": "pending",
+        "service": "pending",
+        "api": "pending",
+        "permissions": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "03-returnee-process": {
+      "title": "Returnee Process",
+      "status": "pending",
+      "subtasks": {
+        "entities": "pending",
+        "refund-calc": "pending",
+        "service": "pending",
+        "api": "pending",
+        "permissions": "pending",
+        "financial-integration": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "04-runaway-maid-process": {
+      "title": "Runaway Maid Process",
+      "status": "pending",
+      "subtasks": {
+        "entities": "pending",
+        "service": "pending",
+        "api": "pending",
+        "permissions": "pending",
+        "supplier-recovery": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "05-visa-processing-module": {
+      "title": "Visa Processing Module",
+      "status": "pending",
+      "subtasks": {
+        "entities": "pending",
+        "service": "pending",
+        "api": "pending",
+        "permissions": "pending",
+        "placement-integration": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "06-arrival-management": {
+      "title": "Arrival Management",
+      "status": "pending",
+      "subtasks": {
+        "entities": "pending",
+        "service": "pending",
+        "api": "pending",
+        "permissions": "pending",
+        "non-arrival-job": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "07-accommodation-module": {
+      "title": "Accommodation Management Module",
+      "status": "pending",
+      "subtasks": {
+        "entities": "pending",
+        "service": "pending",
+        "api": "pending",
+        "permissions": "pending",
+        "integration": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "08-driver-role": {
+      "title": "Driver Role",
+      "status": "pending",
+      "subtasks": {
+        "backend": "pending",
+        "frontend": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "09-supplier-portal": {
+      "title": "Supplier Portal",
+      "status": "pending",
+      "subtasks": {
+        "user-accounts": "pending",
+        "data-isolation": "pending",
+        "frontend-app": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "10-accommodation-staff-role": {
+      "title": "Accommodation Staff Role",
+      "status": "pending",
+      "subtasks": {
+        "backend": "pending",
+        "frontend": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "11-finance-enhancements": {
+      "title": "Finance Enhancements",
+      "status": "pending",
+      "subtasks": {
+        "refund-engine": "pending",
+        "commission-calc": "pending",
+        "guarantee-recovery": "pending",
+        "cost-tracking": "pending",
+        "settings": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "12-reporting-module": {
+      "title": "Reporting Module Expansion",
+      "status": "pending",
+      "subtasks": {
+        "workforce-reports": "pending",
+        "operational-reports": "pending",
+        "finance-reports": "pending",
+        "frontend": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "13-maid-status-lifecycle": {
+      "title": "Maid Status Lifecycle Alignment",
+      "status": "pending",
+      "subtasks": {
+        "enum-updates": "pending",
+        "transition-rules": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "14-notifications-expansion": {
+      "title": "Notifications Expansion",
+      "status": "pending",
+      "subtasks": {
+        "event-consumers": "pending",
+        "templates": "pending",
+        "preferences": "pending",
+        "frontend": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "15-placement-outside-country-flow": {
+      "title": "Placement \u2014 Outside Country Flow",
+      "status": "pending",
+      "subtasks": {
+        "status-alignment": "pending",
+        "step-enforcement": "pending",
+        "integrations": "pending",
+        "frontend": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "16-placement-inside-country-flow": {
+      "title": "Placement \u2014 Inside Country Flow",
+      "status": "pending",
+      "subtasks": {
+        "flow-detection": "pending",
+        "trial-integration": "pending",
+        "frontend": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "17-contract-enhancements": {
+      "title": "Contract Enhancements",
+      "status": "pending",
+      "subtasks": {
+        "guarantee-period": "pending",
+        "contract-types": "pending",
+        "auto-creation": "pending",
+        "termination": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "18-country-payment-packages": {
+      "title": "Country Payment Packages",
+      "status": "pending",
+      "subtasks": {
+        "entities": "pending",
+        "service": "pending",
+        "api": "pending",
+        "permissions": "pending",
+        "auto-fill": "pending",
+        "frontend": "pending",
+        "migration": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    },
+    "19-sidebar-reorganization": {
+      "title": "Sidebar Navigation Reorganization",
+      "status": "pending",
+      "subtasks": {
+        "section-headers": "pending",
+        "nav-items": "pending",
+        "i18n": "pending",
+        "screenshots": "pending"
+      },
+      "started_at": null,
+      "completed_at": null,
+      "notes": ""
+    }
+  }
+}

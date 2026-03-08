@@ -22,6 +22,10 @@
     "InsurancePolicy": "Insurance Policy",
     "EmiratesId": "Emirates ID",
     "LabourCard": "Labour Card",
+    "CertificateOfCompetency": "Certificate of Competency",
+    "AttestedMedicalCertificate": "Attested Medical Certificate",
+    "PassportCopy": "Passport Copy",
+    "PersonalPhoto": "Personal Photo",
     "Other": "Other"
   },
   "status": {
