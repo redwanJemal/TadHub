@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Contracts: Public interfaces and DTOs only. ZERO NuGet dependencies. -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
+  </ItemGroup>
+
+</Project>

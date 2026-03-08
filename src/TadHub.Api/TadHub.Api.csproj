@@ -44,6 +44,10 @@
     <ProjectReference Include="..\Modules\Document\Document.Core\Document.Core.csproj" />
     <!-- Financial module -->
     <ProjectReference Include="..\Modules\Financial\Financial.Core\Financial.Core.csproj" />
+    <!-- Placement module -->
+    <ProjectReference Include="..\Modules\Placement\Placement.Core\Placement.Core.csproj" />
+    <!-- Trial module -->
+    <ProjectReference Include="..\Modules\Trial\Trial.Core\Trial.Core.csproj" />
   </ItemGroup>
 
 </Project>

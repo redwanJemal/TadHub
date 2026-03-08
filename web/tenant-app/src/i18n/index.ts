@@ -31,6 +31,10 @@ import notificationsEn from '../features/notifications/i18n/en.json';
 import notificationsAr from '../features/notifications/i18n/ar.json';
 import settingsEn from '../features/settings/i18n/en.json';
 import settingsAr from '../features/settings/i18n/ar.json';
+import placementsEn from '../features/placements/i18n/en.json';
+import placementsAr from '../features/placements/i18n/ar.json';
+import trialsEn from '../features/trials/i18n/en.json';
+import trialsAr from '../features/trials/i18n/ar.json';
 
 const resources = {
   en: {
@@ -47,6 +51,8 @@ const resources = {
     dashboard: dashboardEn,
     notifications: notificationsEn,
     settings: settingsEn,
+    placements: placementsEn,
+    trials: trialsEn,
   },
   ar: {
     common: commonAr,
@@ -62,6 +68,8 @@ const resources = {
     dashboard: dashboardAr,
     notifications: notificationsAr,
     settings: settingsAr,
+    placements: placementsAr,
+    trials: trialsAr,
   },
 };
 
@@ -72,7 +80,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard', 'notifications', 'settings'],
+    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard', 'notifications', 'settings', 'placements', 'trials'],
     interpolation: {
       escapeValue: false,
     },

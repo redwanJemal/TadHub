@@ -37,6 +37,16 @@ const ContractsPage = lazy(() => import('@/features/contracts').then(m => ({ def
 const CreateContractPage = lazy(() => import('@/features/contracts').then(m => ({ default: m.CreateContractPage })));
 const ContractDetailPage = lazy(() => import('@/features/contracts').then(m => ({ default: m.ContractDetailPage })));
 
+// Placements
+const PlacementBoardPage = lazy(() => import('@/features/placements').then(m => ({ default: m.PlacementBoardPage })));
+const PlacementDetailPage = lazy(() => import('@/features/placements').then(m => ({ default: m.PlacementDetailPage })));
+const CreatePlacementPage = lazy(() => import('@/features/placements').then(m => ({ default: m.CreatePlacementPage })));
+
+// Trials
+const TrialsListPage = lazy(() => import('@/features/trials').then(m => ({ default: m.TrialsListPage })));
+const TrialDetailPage = lazy(() => import('@/features/trials').then(m => ({ default: m.TrialDetailPage })));
+const CreateTrialPage = lazy(() => import('@/features/trials').then(m => ({ default: m.CreateTrialPage })));
+
 // Documents / Compliance
 const CompliancePage = lazy(() => import('@/features/documents').then(m => ({ default: m.CompliancePage })));
 
@@ -107,6 +117,12 @@ export function AppRouter() {
           <Route path="workers" element={<WorkersPage />} />
           <Route path="workers/:id" element={<WorkerDetailPage />} />
           <Route path="workers/:id/cv" element={<WorkerCvPage />} />
+          <Route path="placements" element={<PlacementBoardPage />} />
+          <Route path="placements/new" element={<CreatePlacementPage />} />
+          <Route path="placements/:id" element={<PlacementDetailPage />} />
+          <Route path="trials" element={<TrialsListPage />} />
+          <Route path="trials/new" element={<CreateTrialPage />} />
+          <Route path="trials/:id" element={<TrialDetailPage />} />
           <Route path="finance/invoices" element={<InvoicesListPage />} />
           <Route path="finance/invoices/new" element={<CreateInvoicePage />} />
           <Route path="finance/invoices/:invoiceId" element={<InvoiceDetailPage />} />

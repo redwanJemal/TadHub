@@ -186,6 +186,18 @@ public class PermissionSeeder : IHostedService
 
             // Dashboard module (Tenant)
             new() { Id = Guid.NewGuid(), Name = "dashboard.view", Description = "View dashboard", Module = "dashboard", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+
+            // Placements module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "placements.view", Description = "View placements", Module = "placements", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "placements.create", Description = "Create placements", Module = "placements", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "placements.manage", Description = "Manage placement pipeline", Module = "placements", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "placements.delete", Description = "Delete placements", Module = "placements", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+
+            // Trials module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "trials.view", Description = "View trials", Module = "trials", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "trials.create", Description = "Create trials", Module = "trials", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "trials.manage", Description = "Manage trial outcomes", Module = "trials", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "trials.delete", Description = "Delete trials", Module = "trials", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
         };
     }
 }
