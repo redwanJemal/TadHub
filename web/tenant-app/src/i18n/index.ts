@@ -35,6 +35,8 @@ import placementsEn from '../features/placements/i18n/en.json';
 import placementsAr from '../features/placements/i18n/ar.json';
 import trialsEn from '../features/trials/i18n/en.json';
 import trialsAr from '../features/trials/i18n/ar.json';
+import returneesEn from '../features/returnees/i18n/en.json';
+import returneesAr from '../features/returnees/i18n/ar.json';
 
 const resources = {
   en: {
@@ -53,6 +55,7 @@ const resources = {
     settings: settingsEn,
     placements: placementsEn,
     trials: trialsEn,
+    returnees: returneesEn,
   },
   ar: {
     common: commonAr,
@@ -70,6 +73,7 @@ const resources = {
     settings: settingsAr,
     placements: placementsAr,
     trials: trialsAr,
+    returnees: returneesAr,
   },
 };
 
@@ -80,7 +84,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard', 'notifications', 'settings', 'placements', 'trials'],
+    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard', 'notifications', 'settings', 'placements', 'trials', 'returnees'],
     interpolation: {
       escapeValue: false,
     },

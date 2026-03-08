@@ -47,6 +47,11 @@ const TrialsListPage = lazy(() => import('@/features/trials').then(m => ({ defau
 const TrialDetailPage = lazy(() => import('@/features/trials').then(m => ({ default: m.TrialDetailPage })));
 const CreateTrialPage = lazy(() => import('@/features/trials').then(m => ({ default: m.CreateTrialPage })));
 
+// Returnees
+const ReturneeCasesListPage = lazy(() => import('@/features/returnees').then(m => ({ default: m.ReturneeCasesListPage })));
+const ReturneeCaseDetailPage = lazy(() => import('@/features/returnees').then(m => ({ default: m.ReturneeCaseDetailPage })));
+const CreateReturneeCasePage = lazy(() => import('@/features/returnees').then(m => ({ default: m.CreateReturneeCasePage })));
+
 // Documents / Compliance
 const CompliancePage = lazy(() => import('@/features/documents').then(m => ({ default: m.CompliancePage })));
 
@@ -123,6 +128,9 @@ export function AppRouter() {
           <Route path="trials" element={<TrialsListPage />} />
           <Route path="trials/new" element={<CreateTrialPage />} />
           <Route path="trials/:id" element={<TrialDetailPage />} />
+          <Route path="returnees" element={<ReturneeCasesListPage />} />
+          <Route path="returnees/new" element={<CreateReturneeCasePage />} />
+          <Route path="returnees/:id" element={<ReturneeCaseDetailPage />} />
           <Route path="finance/invoices" element={<InvoicesListPage />} />
           <Route path="finance/invoices/new" element={<CreateInvoicePage />} />
           <Route path="finance/invoices/:invoiceId" element={<InvoiceDetailPage />} />

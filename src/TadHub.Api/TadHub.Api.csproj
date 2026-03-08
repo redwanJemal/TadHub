@@ -48,6 +48,8 @@
     <ProjectReference Include="..\Modules\Placement\Placement.Core\Placement.Core.csproj" />
     <!-- Trial module -->
     <ProjectReference Include="..\Modules\Trial\Trial.Core\Trial.Core.csproj" />
+    <!-- Returnee module -->
+    <ProjectReference Include="..\Modules\Returnee\Returnee.Core\Returnee.Core.csproj" />
   </ItemGroup>
 
 </Project>

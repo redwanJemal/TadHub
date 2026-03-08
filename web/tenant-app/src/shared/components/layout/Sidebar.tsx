@@ -26,6 +26,7 @@ import {
   LogOut,
   ChevronRight,
   Bell,
+  RotateCcw,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -54,6 +55,7 @@ const navItems: NavItem[] = [
   { path: "/placements", icon: GitBranch, labelKey: "nav.placements", permission: "placements.view" },
   { path: "/trials", icon: ClipboardCheck, labelKey: "nav.trials", permission: "trials.view" },
   { path: "/contracts", icon: FileSignature, labelKey: "nav.contracts", permission: "contracts.view" },
+  { path: "/returnees", icon: RotateCcw, labelKey: "nav.returnees", permission: "returnees.view" },
   {
     path: "/finance",
     icon: DollarSign,
