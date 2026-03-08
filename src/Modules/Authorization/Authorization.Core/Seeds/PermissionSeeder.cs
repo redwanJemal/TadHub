@@ -205,6 +205,13 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "returnees.manage", Description = "Manage returnee cases", Module = "returnees", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
             new() { Id = Guid.NewGuid(), Name = "returnees.settle", Description = "Settle returnee cases", Module = "returnees", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
             new() { Id = Guid.NewGuid(), Name = "returnees.delete", Description = "Delete returnee cases", Module = "returnees", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
+
+            // Runaways module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "runaways.view", Description = "View runaway cases", Module = "runaways", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "runaways.report", Description = "Report runaway cases", Module = "runaways", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "runaways.manage", Description = "Manage runaway cases", Module = "runaways", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "runaways.settle", Description = "Settle runaway cases", Module = "runaways", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "runaways.delete", Description = "Delete runaway cases", Module = "runaways", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
         };
     }
 }

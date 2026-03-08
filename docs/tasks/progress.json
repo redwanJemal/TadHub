@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-08T21:56:55.365875+00:00",
-  "current_task": "03-returnee-process",
+  "last_updated": "2026-03-09T00:45:00.000000+00:00",
+  "current_task": "04-runaway-maid-process",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -53,20 +53,20 @@
     },
     "04-runaway-maid-process": {
       "title": "Runaway Maid Process",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "entities": "pending",
-        "service": "pending",
-        "api": "pending",
-        "permissions": "pending",
-        "supplier-recovery": "pending",
-        "frontend": "pending",
-        "migration": "pending",
+        "entities": "completed",
+        "service": "completed",
+        "api": "completed",
+        "permissions": "completed",
+        "supplier-recovery": "completed",
+        "frontend": "completed",
+        "migration": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-08T23:13:14Z",
+      "completed_at": "2026-03-09T00:45:00Z",
+      "notes": "New Runaway module (Runaway.Contracts + Runaway.Core). RunawayCase entity with status workflow (Reported/UnderInvestigation/Confirmed/Settled/Closed). On report: worker set to Absconded, contract Terminated via raw SQL. Guarantee period detection from contract's guarantee_end_date. RunawayExpense entity for cost tracking (CommissionRefund/VisaCost/MedicalCost/TransportationCost/Other) with PaidBy party. Supplier liability tracking when within guarantee. Events: RunawayCaseReportedEvent, RunawayCaseConfirmedEvent. Permissions: runaways.view/report/manage/settle/delete. API: CRUD + confirm/settle/close + add expense + status history. BFF enrichment for worker/client names. Frontend: list page with DataTableAdvanced + status filter, report page, detail page with supplier liability banner, expenses table, status history timeline, action dialogs, skeleton loading. Sidebar nav, i18n en/ar. Migration: AddRunawayModule."
     },
     "05-visa-processing-module": {
       "title": "Visa Processing Module",

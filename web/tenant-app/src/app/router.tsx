@@ -52,6 +52,11 @@ const ReturneeCasesListPage = lazy(() => import('@/features/returnees').then(m =
 const ReturneeCaseDetailPage = lazy(() => import('@/features/returnees').then(m => ({ default: m.ReturneeCaseDetailPage })));
 const CreateReturneeCasePage = lazy(() => import('@/features/returnees').then(m => ({ default: m.CreateReturneeCasePage })));
 
+// Runaways
+const RunawayCasesListPage = lazy(() => import('@/features/runaways').then(m => ({ default: m.RunawayCasesListPage })));
+const RunawayCaseDetailPage = lazy(() => import('@/features/runaways').then(m => ({ default: m.RunawayCaseDetailPage })));
+const ReportRunawayCasePage = lazy(() => import('@/features/runaways').then(m => ({ default: m.ReportRunawayCasePage })));
+
 // Documents / Compliance
 const CompliancePage = lazy(() => import('@/features/documents').then(m => ({ default: m.CompliancePage })));
 
@@ -131,6 +136,9 @@ export function AppRouter() {
           <Route path="returnees" element={<ReturneeCasesListPage />} />
           <Route path="returnees/new" element={<CreateReturneeCasePage />} />
           <Route path="returnees/:id" element={<ReturneeCaseDetailPage />} />
+          <Route path="runaways" element={<RunawayCasesListPage />} />
+          <Route path="runaways/new" element={<ReportRunawayCasePage />} />
+          <Route path="runaways/:id" element={<RunawayCaseDetailPage />} />
           <Route path="finance/invoices" element={<InvoicesListPage />} />
           <Route path="finance/invoices/new" element={<CreateInvoicePage />} />
           <Route path="finance/invoices/:invoiceId" element={<InvoiceDetailPage />} />

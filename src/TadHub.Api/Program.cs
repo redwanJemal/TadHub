@@ -31,6 +31,7 @@ using Financial.Core;
 using Placement.Core;
 using Trial.Core;
 using Returnee.Core;
+using Runaway.Core;
 using TadHub.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -185,6 +186,9 @@ builder.Services.AddTrialModule();
 
 // Returnee module
 builder.Services.AddReturneeModule();
+
+// Runaway module
+builder.Services.AddRunawayModule();
 
 var app = builder.Build();
 

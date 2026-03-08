@@ -50,6 +50,8 @@
     <ProjectReference Include="..\Modules\Trial\Trial.Core\Trial.Core.csproj" />
     <!-- Returnee module -->
     <ProjectReference Include="..\Modules\Returnee\Returnee.Core\Returnee.Core.csproj" />
+    <!-- Runaway module -->
+    <ProjectReference Include="..\Modules\Runaway\Runaway.Core\Runaway.Core.csproj" />
   </ItemGroup>
 
 </Project>
