@@ -52,6 +52,8 @@
     <ProjectReference Include="..\Modules\Returnee\Returnee.Core\Returnee.Core.csproj" />
     <!-- Runaway module -->
     <ProjectReference Include="..\Modules\Runaway\Runaway.Core\Runaway.Core.csproj" />
+    <!-- Visa module -->
+    <ProjectReference Include="..\Modules\Visa\Visa.Core\Visa.Core.csproj" />
   </ItemGroup>
 
 </Project>

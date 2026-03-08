@@ -32,6 +32,7 @@ using Placement.Core;
 using Trial.Core;
 using Returnee.Core;
 using Runaway.Core;
+using Visa.Core;
 using TadHub.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -189,6 +190,9 @@ builder.Services.AddReturneeModule();
 
 // Runaway module
 builder.Services.AddRunawayModule();
+
+// Visa module
+builder.Services.AddVisaModule();
 
 var app = builder.Build();
 

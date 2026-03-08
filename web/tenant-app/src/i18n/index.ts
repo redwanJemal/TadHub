@@ -39,6 +39,8 @@ import returneesEn from '../features/returnees/i18n/en.json';
 import returneesAr from '../features/returnees/i18n/ar.json';
 import runawaysEn from '../features/runaways/i18n/en.json';
 import runawaysAr from '../features/runaways/i18n/ar.json';
+import visasEn from '../features/visas/i18n/en.json';
+import visasAr from '../features/visas/i18n/ar.json';
 
 const resources = {
   en: {
@@ -59,6 +61,7 @@ const resources = {
     trials: trialsEn,
     returnees: returneesEn,
     runaways: runawaysEn,
+    visas: visasEn,
   },
   ar: {
     common: commonAr,
@@ -78,6 +81,7 @@ const resources = {
     trials: trialsAr,
     returnees: returneesAr,
     runaways: runawaysAr,
+    visas: visasAr,
   },
 };
 
@@ -88,7 +92,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard', 'notifications', 'settings', 'placements', 'trials', 'returnees', 'runaways'],
+    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard', 'notifications', 'settings', 'placements', 'trials', 'returnees', 'runaways', 'visas'],
     interpolation: {
       escapeValue: false,
     },

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T00:45:00.000000+00:00",
-  "current_task": "04-runaway-maid-process",
+  "last_updated": "2026-03-09T01:30:00.000000+00:00",
+  "current_task": "05-visa-processing-module",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -70,20 +70,20 @@
     },
     "05-visa-processing-module": {
       "title": "Visa Processing Module",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "entities": "pending",
-        "service": "pending",
-        "api": "pending",
-        "permissions": "pending",
-        "placement-integration": "pending",
-        "frontend": "pending",
-        "migration": "pending",
+        "entities": "completed",
+        "service": "completed",
+        "api": "completed",
+        "permissions": "completed",
+        "placement-integration": "completed",
+        "frontend": "completed",
+        "migration": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-08T23:31:01Z",
+      "completed_at": "2026-03-09T01:30:00Z",
+      "notes": "New Visa module (Visa.Contracts + Visa.Core). VisaApplication entity with VisaType (EmploymentVisa/ResidenceVisa/EmiratesId), status workflow (NotStarted/DocumentsCollecting/Applied/UnderProcess/Approved/Rejected/Issued/Expired/Cancelled). VisaApplicationStatusHistory for audit trail. VisaApplicationDocument entity with VisaDocumentType (AttestedMedicalCertificate/PassportCopy/Photo/LocalMedical/MedicalCertificate/Other). Document requirements vary by visa type and worker location (inside/outside country). Sequencing enforced: Employment Visa must be approved before Residence Visa. Duplicate active visa prevention. Auto-generated application codes (VSA-000001). Events: VisaApplicationCreatedEvent, VisaStatusChangedEvent, VisaIssuedEvent. BFF enrichment for worker/client names. Permissions: visas.view/create/manage/delete. Frontend: list page with DataTableAdvanced + status/type filters, create page with document requirements preview, detail page with status timeline + document checklist + transition dialog, skeleton loading. Sidebar nav (Stamp icon), i18n en/ar. Migration: AddVisaModule."
     },
     "06-arrival-management": {
       "title": "Arrival Management",

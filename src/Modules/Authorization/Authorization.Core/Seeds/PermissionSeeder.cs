@@ -212,6 +212,12 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "runaways.manage", Description = "Manage runaway cases", Module = "runaways", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
             new() { Id = Guid.NewGuid(), Name = "runaways.settle", Description = "Settle runaway cases", Module = "runaways", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
             new() { Id = Guid.NewGuid(), Name = "runaways.delete", Description = "Delete runaway cases", Module = "runaways", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
+
+            // Visas module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "visas.view", Description = "View visa applications", Module = "visas", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "visas.create", Description = "Create visa applications", Module = "visas", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "visas.manage", Description = "Manage visa applications", Module = "visas", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "visas.delete", Description = "Delete visa applications", Module = "visas", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
         };
     }
 }

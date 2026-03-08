@@ -28,6 +28,7 @@ import {
   Bell,
   RotateCcw,
   AlertTriangle,
+  Stamp,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -58,6 +59,7 @@ const navItems: NavItem[] = [
   { path: "/contracts", icon: FileSignature, labelKey: "nav.contracts", permission: "contracts.view" },
   { path: "/returnees", icon: RotateCcw, labelKey: "nav.returnees", permission: "returnees.view" },
   { path: "/runaways", icon: AlertTriangle, labelKey: "nav.runaways", permission: "runaways.view" },
+  { path: "/visa-applications", icon: Stamp, labelKey: "nav.visas", permission: "visas.view" },
   {
     path: "/finance",
     icon: DollarSign,

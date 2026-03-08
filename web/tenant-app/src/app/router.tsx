@@ -57,6 +57,11 @@ const RunawayCasesListPage = lazy(() => import('@/features/runaways').then(m => 
 const RunawayCaseDetailPage = lazy(() => import('@/features/runaways').then(m => ({ default: m.RunawayCaseDetailPage })));
 const ReportRunawayCasePage = lazy(() => import('@/features/runaways').then(m => ({ default: m.ReportRunawayCasePage })));
 
+// Visas
+const VisaApplicationsListPage = lazy(() => import('@/features/visas').then(m => ({ default: m.VisaApplicationsListPage })));
+const VisaApplicationDetailPage = lazy(() => import('@/features/visas').then(m => ({ default: m.VisaApplicationDetailPage })));
+const CreateVisaApplicationPage = lazy(() => import('@/features/visas').then(m => ({ default: m.CreateVisaApplicationPage })));
+
 // Documents / Compliance
 const CompliancePage = lazy(() => import('@/features/documents').then(m => ({ default: m.CompliancePage })));
 
@@ -139,6 +144,9 @@ export function AppRouter() {
           <Route path="runaways" element={<RunawayCasesListPage />} />
           <Route path="runaways/new" element={<ReportRunawayCasePage />} />
           <Route path="runaways/:id" element={<RunawayCaseDetailPage />} />
+          <Route path="visa-applications" element={<VisaApplicationsListPage />} />
+          <Route path="visa-applications/new" element={<CreateVisaApplicationPage />} />
+          <Route path="visa-applications/:id" element={<VisaApplicationDetailPage />} />
           <Route path="finance/invoices" element={<InvoicesListPage />} />
           <Route path="finance/invoices/new" element={<CreateInvoicePage />} />
           <Route path="finance/invoices/:invoiceId" element={<InvoiceDetailPage />} />
