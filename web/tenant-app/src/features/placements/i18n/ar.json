@@ -1,0 +1,40 @@
+{
+  "title": "التنسيبات",
+  "pipeline": "لوحة التدفق",
+  "book_candidate": "حجز مرشح",
+  "create_placement": "إنشاء تنسيب",
+  "advance_stage": "تقدم المرحلة",
+  "advance_step": "تقدم الخطوة",
+  "change_status": "تغيير الحالة",
+  "add_cost": "إضافة تكلفة",
+  "deployment_checklist": "قائمة مراجعة النشر",
+  "outside_country_flow": "تدفق خارج الدولة",
+  "linked_records": "السجلات المرتبطة",
+  "pipeline_dates": "تواريخ التدفق",
+  "step_of": "الخطوة {{current}} من {{total}}",
+  "statuses": {
+    "Booked": "محجوز",
+    "ContractCreated": "تم إنشاء العقد",
+    "EmploymentVisaProcessing": "تأشيرة العمل",
+    "TicketArranged": "تم ترتيب التذكرة",
+    "InTransit": "في الطريق",
+    "Arrived": "وصل",
+    "Deployed": "تم النشر",
+    "FullPaymentReceived": "تم استلام الدفع الكامل",
+    "ResidenceVisaProcessing": "تأشيرة الإقامة",
+    "EmiratesIdProcessing": "الهوية الإماراتية",
+    "Completed": "مكتمل",
+    "Cancelled": "ملغي"
+  },
+  "steps": {
+    "1": { "label": "الحجز", "description": "تم حجز المرشح مع دفعة مقدمة" },
+    "2": { "label": "إنشاء العقد", "description": "تم إنشاء عقد عمل لمدة سنتين" },
+    "3": { "label": "تأشيرة العمل", "description": "تم تقديم طلب تأشيرة العمل ومعالجته" },
+    "4": { "label": "معالجة التذكرة", "description": "تم إصدار تذكرة الطيران وتحديد تاريخ السفر" },
+    "5": { "label": "الوصول", "description": "وصلت العاملة وتمت معالجتها عبر إدارة الوصول" },
+    "6": { "label": "النشر", "description": "تم نشر العاملة في منزل العميل" },
+    "7": { "label": "الدفع الكامل", "description": "تم دفع الرصيد المتبقي من قبل العميل" },
+    "8": { "label": "تأشيرة الإقامة", "description": "تم تقديم طلب تأشيرة الإقامة" },
+    "9": { "label": "الهوية الإماراتية", "description": "تم تقديم طلب الهوية الإماراتية" }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T02:25:54.952226+00:00",
-  "current_task": "14-notifications-expansion",
+  "last_updated": "2026-03-09T02:57:44.333903+00:00",
+  "current_task": "15-placement-outside-country-flow",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -217,17 +217,17 @@
     },
     "15-placement-outside-country-flow": {
       "title": "Placement \u2014 Outside Country Flow",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "status-alignment": "pending",
-        "step-enforcement": "pending",
-        "integrations": "pending",
-        "frontend": "pending",
+        "status-alignment": "completed",
+        "step-enforcement": "completed",
+        "integrations": "completed",
+        "frontend": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T02:57:44Z",
+      "completed_at": "2026-03-09T03:10:00Z",
+      "notes": "Aligned placement to 9-step outside-country flow: Booked \u2192 ContractCreated \u2192 EmploymentVisaProcessing \u2192 TicketArranged \u2192 Arrived \u2192 Deployed \u2192 FullPaymentReceived \u2192 ResidenceVisaProcessing \u2192 EmiratesIdProcessing \u2192 Completed. Added 6 new PlacementStatus enum values. Updated PlacementStatusMachine with step enforcement and prerequisite validation. New API endpoints: POST advance-step (validates prereqs and auto-advances), GET checklist (returns 9-step progress). New entity fields: ContractCreatedAt, EmploymentVisaStartedAt, DeployedAt, FullPaymentReceivedAt, ResidenceVisaStartedAt, EmiratesIdStartedAt, visa/arrival cross-module refs. Frontend: visual progress bar with step indicators, deployment checklist sidebar with step status (Pending/InProgress/Completed), linked entity navigation, advance-step button. Board updated to 9-step pipeline columns. Migration: AddOutsideCountryPlacementFlow."
     },
     "16-placement-inside-country-flow": {
       "title": "Placement \u2014 Inside Country Flow",

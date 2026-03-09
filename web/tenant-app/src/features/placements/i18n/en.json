@@ -1,0 +1,40 @@
+{
+  "title": "Placements",
+  "pipeline": "Pipeline Board",
+  "book_candidate": "Book Candidate",
+  "create_placement": "Create Placement",
+  "advance_stage": "Advance Stage",
+  "advance_step": "Advance Step",
+  "change_status": "Change Status",
+  "add_cost": "Add Cost Item",
+  "deployment_checklist": "Deployment Checklist",
+  "outside_country_flow": "Outside Country Flow",
+  "linked_records": "Linked Records",
+  "pipeline_dates": "Pipeline Dates",
+  "step_of": "Step {{current}} of {{total}}",
+  "statuses": {
+    "Booked": "Booked",
+    "ContractCreated": "Contract Created",
+    "EmploymentVisaProcessing": "Employment Visa",
+    "TicketArranged": "Ticket Arranged",
+    "InTransit": "In Transit",
+    "Arrived": "Arrived",
+    "Deployed": "Deployed",
+    "FullPaymentReceived": "Full Payment Received",
+    "ResidenceVisaProcessing": "Residence Visa",
+    "EmiratesIdProcessing": "Emirates ID",
+    "Completed": "Completed",
+    "Cancelled": "Cancelled"
+  },
+  "steps": {
+    "1": { "label": "Booking", "description": "Candidate booked with partial/advance payment" },
+    "2": { "label": "Contract Creation", "description": "2-year employment contract created" },
+    "3": { "label": "Employment Visa", "description": "Employment visa application submitted and processed" },
+    "4": { "label": "Ticket Processing", "description": "Flight ticket issued and travel date set" },
+    "5": { "label": "Arrival", "description": "Maid arrived and processed through arrival management" },
+    "6": { "label": "Deployment", "description": "Maid deployed to customer household" },
+    "7": { "label": "Full Payment", "description": "Remaining balance paid by customer" },
+    "8": { "label": "Residence Visa", "description": "Residence visa application submitted" },
+    "9": { "label": "Emirates ID", "description": "Emirates ID application submitted" }
+  }
+}
