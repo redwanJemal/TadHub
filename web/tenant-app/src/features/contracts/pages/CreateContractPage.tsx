@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
@@ -16,21 +16,30 @@ import {
 import { useWorkers } from '@/features/workers/hooks';
 import { useClients } from '@/features/clients/hooks';
 import { useCreateContract } from '../hooks';
-import { ALL_TYPES, ALL_RATE_PERIODS } from '../constants';
+import { ALL_TYPES, ALL_RATE_PERIODS, ALL_GUARANTEE_PERIODS } from '../constants';
 
 export function CreateContractPage() {
   const { t } = useTranslation('contracts');
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const createMutation = useCreateContract();
 
+  // Pre-populate from query params (replacement contract flow)
+  const originalContractId = searchParams.get('originalContractId') || undefined;
+  const preWorkerId = searchParams.get('workerId') || '';
+  const preClientId = searchParams.get('clientId') || '';
+  const preWorkerName = searchParams.get('workerName') || '';
+  const preClientName = searchParams.get('clientName') || '';
+
   // Form state
-  const [workerId, setWorkerId] = useState('');
-  const [clientId, setClientId] = useState('');
+  const [workerId, setWorkerId] = useState(preWorkerId);
+  const [clientId, setClientId] = useState(preClientId);
   const [type, setType] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [probationEndDate, setProbationEndDate] = useState('');
   const [guaranteeEndDate, setGuaranteeEndDate] = useState('');
+  const [guaranteePeriod, setGuaranteePeriod] = useState('');
   const [rate, setRate] = useState('');
   const [ratePeriod, setRatePeriod] = useState('Monthly');
   const [currency, setCurrency] = useState('AED');
@@ -38,7 +47,7 @@ export function CreateContractPage() {
   const [notes, setNotes] = useState('');
 
   // Worker search
-  const [workerSearch, setWorkerSearch] = useState('');
+  const [workerSearch, setWorkerSearch] = useState(preWorkerName);
   const { data: workersData } = useWorkers({
     pageSize: 50,
     search: workerSearch || undefined,
@@ -46,7 +55,7 @@ export function CreateContractPage() {
   });
 
   // Client search
-  const [clientSearch, setClientSearch] = useState('');
+  const [clientSearch, setClientSearch] = useState(preClientName);
   const { data: clientsData } = useClients({
     pageSize: 50,
     search: clientSearch || undefined,
@@ -65,10 +74,12 @@ export function CreateContractPage() {
       endDate: endDate || undefined,
       probationEndDate: probationEndDate || undefined,
       guaranteeEndDate: guaranteeEndDate || undefined,
+      guaranteePeriod: guaranteePeriod || undefined,
       rate: parseFloat(rate),
       ratePeriod,
       currency,
       totalValue: totalValue ? parseFloat(totalValue) : undefined,
+      originalContractId,
       notes: notes.trim() || undefined,
     });
     navigate('/contracts');
@@ -84,7 +95,9 @@ export function CreateContractPage() {
           <ArrowLeft className="h-4 w-4" />
           {t('create.backToList')}
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight">{t('create.title')}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {originalContractId ? t('create.replacementTitle') : t('create.title')}
+        </h1>
         <p className="text-muted-foreground">{t('create.description')}</p>
       </div>
 
@@ -202,10 +215,26 @@ export function CreateContractPage() {
                 <Input type="date" value={probationEndDate} onChange={(e) => setProbationEndDate(e.target.value)} />
               </div>
               <div className="space-y-2">
+                <Label>{t('create.guaranteePeriod')}</Label>
+                <Select value={guaranteePeriod} onValueChange={setGuaranteePeriod}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('create.guaranteePeriodPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ALL_GUARANTEE_PERIODS.map((gp) => (
+                      <SelectItem key={gp} value={gp}>{t(`guaranteePeriod.${gp}`)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {!guaranteePeriod && (
+              <div className="space-y-2">
                 <Label>{t('create.guaranteeEndDate')}</Label>
                 <Input type="date" value={guaranteeEndDate} onChange={(e) => setGuaranteeEndDate(e.target.value)} />
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 

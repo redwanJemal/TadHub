@@ -25,3 +25,21 @@ public enum TerminatedByParty
     Center = 1,
     Worker = 2,
 }
+
+public enum GuaranteePeriod
+{
+    SixMonths = 0,
+    OneYear = 1,
+    TwoYears = 2,
+}
+
+public enum TerminationReason
+{
+    ReturnToOffice = 0,
+    ReturnToCountry = 1,
+    Runaway = 2,
+    MutualAgreement = 3,
+    ContractExpiry = 4,
+    ClientRequest = 5,
+    WorkerRequest = 6,
+}

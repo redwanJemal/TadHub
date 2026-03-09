@@ -47,8 +47,16 @@ public class ContractConfiguration : IEntityTypeConfiguration<Entities.Contract>
         builder.Property(x => x.TerminationReason)
             .HasMaxLength(500);
 
+        builder.Property(x => x.TerminationReasonType)
+            .HasMaxLength(30)
+            .HasConversion<string?>();
+
         builder.Property(x => x.TerminatedBy)
             .HasMaxLength(20)
+            .HasConversion<string?>();
+
+        builder.Property(x => x.GuaranteePeriodType)
+            .HasMaxLength(30)
             .HasConversion<string?>();
 
         builder.Property(x => x.Notes)

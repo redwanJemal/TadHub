@@ -28,12 +28,28 @@
   "type": {
     "Traditional": "Traditional",
     "Temporary": "Temporary",
-    "Flexible": "Flexible"
+    "Flexible": "Flexible",
+    "TrialContract": "Trial Contract",
+    "TwoYearEmployment": "2-Year Employment"
   },
   "ratePeriod": {
     "Monthly": "Monthly",
     "Daily": "Daily",
     "Hourly": "Hourly"
+  },
+  "guaranteePeriod": {
+    "SixMonths": "6 Months",
+    "OneYear": "1 Year",
+    "TwoYears": "2 Years"
+  },
+  "terminationReason": {
+    "ReturnToOffice": "Return to Office",
+    "ReturnToCountry": "Return to Country",
+    "Runaway": "Runaway",
+    "MutualAgreement": "Mutual Agreement",
+    "ContractExpiry": "Contract Expiry",
+    "ClientRequest": "Client Request",
+    "WorkerRequest": "Worker Request"
   },
   "filters": {
     "status": "Status",
@@ -45,7 +61,8 @@
     "changeStatus": "Change Status",
     "delete": "Delete",
     "downloadPdf": "Download PDF",
-    "downloading": "Downloading..."
+    "downloading": "Downloading...",
+    "createReplacement": "Create Replacement"
   },
   "empty": {
     "title": "No contracts yet",
@@ -65,6 +82,8 @@
     "reason": "Reason",
     "reasonPlaceholder": "Enter reason for status change...",
     "reasonRequired": "A reason is required for this status transition",
+    "terminationReason": "Termination Reason",
+    "terminationReasonPlaceholder": "Select termination reason...",
     "notes": "Notes",
     "notesPlaceholder": "Optional notes...",
     "submit": "Change Status",
@@ -72,6 +91,7 @@
   },
   "create": {
     "title": "Create Contract",
+    "replacementTitle": "Create Replacement Contract",
     "description": "Create a new placement contract between a worker and a client.",
     "backToList": "Back to Contracts",
     "worker": "Worker",
@@ -84,6 +104,8 @@
     "endDate": "End Date",
     "probationEndDate": "Probation End Date",
     "guaranteeEndDate": "Guarantee End Date",
+    "guaranteePeriod": "Guarantee Period",
+    "guaranteePeriodPlaceholder": "Select guarantee period...",
     "rate": "Rate",
     "ratePeriod": "Rate Period",
     "ratePeriodPlaceholder": "Select period...",
@@ -113,16 +135,27 @@
     "endDate": "End Date",
     "probationEndDate": "Probation End Date",
     "guaranteeEndDate": "Guarantee End Date",
+    "guaranteePeriod": "Guarantee Period",
+    "guaranteeActive": "Guarantee Active",
+    "guaranteeExpired": "Guarantee Expired",
     "probationPassed": "Probation Passed",
     "rate": "Rate",
     "ratePeriod": "Rate Period",
     "currency": "Currency",
     "totalValue": "Total Value",
     "terminatedAt": "Terminated At",
-    "terminationReason": "Termination Reason",
+    "terminationReason": "Reason Details",
+    "terminationReasonType": "Termination Reason",
     "terminatedBy": "Terminated By",
+    "linkedContracts": "Linked Contracts",
     "replacementContractId": "Replacement Contract",
     "originalContractId": "Original Contract",
+    "viewOriginalContract": "View Original Contract",
+    "viewReplacementContract": "View Replacement Contract",
+    "linkedReturneeCase": "Linked Returnee Case",
+    "viewReturneeCase": "View Returnee Case",
+    "linkedRunawayCase": "Linked Runaway Case",
+    "viewRunawayCase": "View Runaway Case",
     "notes": "Notes",
     "createdAt": "Created At",
     "updatedAt": "Updated At"

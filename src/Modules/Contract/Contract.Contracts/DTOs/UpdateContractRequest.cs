@@ -8,6 +8,8 @@ public sealed record UpdateContractRequest
     public DateOnly? EndDate { get; init; }
     public DateOnly? ProbationEndDate { get; init; }
     public DateOnly? GuaranteeEndDate { get; init; }
+    [MaxLength(30)]
+    public string? GuaranteePeriod { get; init; }
     public bool? ProbationPassed { get; init; }
 
     [Range(0, double.MaxValue)]

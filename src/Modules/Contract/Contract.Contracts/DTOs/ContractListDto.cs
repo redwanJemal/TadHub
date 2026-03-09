@@ -12,6 +12,7 @@ public sealed record ContractListDto
     public ContractClientDto? Client { get; init; }
     public DateOnly StartDate { get; init; }
     public DateOnly? EndDate { get; init; }
+    public string? GuaranteePeriod { get; init; }
     public decimal Rate { get; init; }
     public string RatePeriod { get; init; } = string.Empty;
     public string Currency { get; init; } = "AED";

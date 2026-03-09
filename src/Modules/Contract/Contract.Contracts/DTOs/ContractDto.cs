@@ -24,6 +24,7 @@ public sealed record ContractDto
     public DateOnly? ProbationEndDate { get; init; }
     public DateOnly? GuaranteeEndDate { get; init; }
     public bool ProbationPassed { get; init; }
+    public string? GuaranteePeriod { get; init; }
 
     // Financial
     public decimal Rate { get; init; }
@@ -34,11 +35,16 @@ public sealed record ContractDto
     // Termination
     public DateTimeOffset? TerminatedAt { get; init; }
     public string? TerminationReason { get; init; }
+    public string? TerminationReasonType { get; init; }
     public string? TerminatedBy { get; init; }
 
     // Replacement linkage
     public Guid? ReplacementContractId { get; init; }
     public Guid? OriginalContractId { get; init; }
+
+    // Linked cases
+    public Guid? ReturneeCaseId { get; init; }
+    public Guid? RunawayCaseId { get; init; }
 
     public string? Notes { get; init; }
 

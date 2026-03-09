@@ -23,6 +23,9 @@ public class Contract : SoftDeletableEntity, IAuditable
     public DateOnly? GuaranteeEndDate { get; set; }
     public bool ProbationPassed { get; set; }
 
+    // Guarantee
+    public GuaranteePeriod? GuaranteePeriodType { get; set; }
+
     // Financial
     public decimal Rate { get; set; }
     public RatePeriod RatePeriod { get; set; } = RatePeriod.Monthly;
@@ -32,7 +35,12 @@ public class Contract : SoftDeletableEntity, IAuditable
     // Termination
     public DateTimeOffset? TerminatedAt { get; set; }
     public string? TerminationReason { get; set; }
+    public TerminationReason? TerminationReasonType { get; set; }
     public TerminatedByParty? TerminatedBy { get; set; }
+
+    // Linked cases
+    public Guid? ReturneeCaseId { get; set; }
+    public Guid? RunawayCaseId { get; set; }
 
     // Replacement linkage
     public Guid? ReplacementContractId { get; set; }

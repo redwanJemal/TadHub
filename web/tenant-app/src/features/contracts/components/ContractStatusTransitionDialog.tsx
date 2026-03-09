@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/select';
-import { ALLOWED_TRANSITIONS, REASON_REQUIRED_STATUSES } from '../constants';
+import { ALLOWED_TRANSITIONS, REASON_REQUIRED_STATUSES, ALL_TERMINATION_REASONS } from '../constants';
 import { ContractStatusBadge } from './ContractStatusBadge';
 import { useTransitionContractStatus } from '../hooks';
 import type { ContractStatus } from '../types';
@@ -38,10 +38,12 @@ export function ContractStatusTransitionDialog({
   const { t } = useTranslation('contracts');
   const [targetStatus, setTargetStatus] = useState('');
   const [reason, setReason] = useState('');
+  const [terminationReason, setTerminationReason] = useState('');
   const [notes, setNotes] = useState('');
   const transition = useTransitionContractStatus();
 
   const needsReason = REASON_REQUIRED_STATUSES.includes(targetStatus as ContractStatus);
+  const isTerminating = targetStatus === 'Terminated';
   const canSubmit = targetStatus && (!needsReason || reason.trim());
 
   const availableStatuses = ALLOWED_TRANSITIONS[currentStatus] ?? [];
@@ -53,11 +55,13 @@ export function ContractStatusTransitionDialog({
       data: {
         status: targetStatus,
         reason: reason.trim() || undefined,
+        terminationReason: isTerminating && terminationReason ? terminationReason : undefined,
         notes: notes.trim() || undefined,
       },
     });
     setTargetStatus('');
     setReason('');
+    setTerminationReason('');
     setNotes('');
     onOpenChange(false);
   };
@@ -66,6 +70,7 @@ export function ContractStatusTransitionDialog({
     if (!value) {
       setTargetStatus('');
       setReason('');
+      setTerminationReason('');
       setNotes('');
     }
     onOpenChange(value);
@@ -100,6 +105,24 @@ export function ContractStatusTransitionDialog({
               </SelectContent>
             </Select>
           </div>
+
+          {isTerminating && (
+            <div className="space-y-2">
+              <Label>{t('transition.terminationReason')}</Label>
+              <Select value={terminationReason} onValueChange={setTerminationReason}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('transition.terminationReasonPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {ALL_TERMINATION_REASONS.map((reason) => (
+                    <SelectItem key={reason} value={reason}>
+                      {t(`terminationReason.${reason}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label>

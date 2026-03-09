@@ -23,6 +23,9 @@ public sealed record CreateContractRequest
 
     public DateOnly? GuaranteeEndDate { get; init; }
 
+    [MaxLength(30)]
+    public string? GuaranteePeriod { get; init; }
+
     [Required]
     [Range(0, double.MaxValue)]
     public decimal Rate { get; init; }

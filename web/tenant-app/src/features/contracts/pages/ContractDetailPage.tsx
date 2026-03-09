@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, RefreshCw, Trash2, Download, FileText } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trash2, Download, FileText, Copy } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Skeleton } from '@/shared/components/ui/skeleton';
@@ -72,6 +72,19 @@ function DetailSkeleton() {
   );
 }
 
+function GuaranteeStatusIndicator({ guaranteeEndDate }: { guaranteeEndDate: string }) {
+  const { t } = useTranslation('contracts');
+  const endDate = new Date(guaranteeEndDate);
+  const now = new Date();
+  const isActive = endDate > now;
+
+  return (
+    <Badge variant={isActive ? 'success' : 'secondary'}>
+      {isActive ? t('detail.guaranteeActive') : t('detail.guaranteeExpired')}
+    </Badge>
+  );
+}
+
 export function ContractDetailPage() {
   const { t } = useTranslation('contracts');
   const { id } = useParams<{ id: string }>();
@@ -110,6 +123,16 @@ export function ContractDetailPage() {
     navigate('/contracts');
   };
 
+  const handleCreateReplacement = () => {
+    if (!contract) return;
+    const params = new URLSearchParams({
+      originalContractId: contract.id,
+      clientId: contract.clientId,
+      ...(contract.client?.nameEn ? { clientName: contract.client.nameEn } : {}),
+    });
+    navigate(`/contracts/new?${params.toString()}`);
+  };
+
   if (isLoading) return <DetailSkeleton />;
 
   if (!contract) {
@@ -121,6 +144,7 @@ export function ContractDetailPage() {
   }
 
   const hasTransitions = (ALLOWED_TRANSITIONS[contract.status]?.length ?? 0) > 0;
+  const isTerminated = contract.status === 'Terminated';
 
   return (
     <div className="space-y-6">
@@ -145,6 +169,9 @@ export function ContractDetailPage() {
             </div>
             <ContractStatusBadge status={contract.status} />
             <ContractTypeBadge type={contract.type} />
+            {contract.guaranteeEndDate && (
+              <GuaranteeStatusIndicator guaranteeEndDate={contract.guaranteeEndDate} />
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -168,6 +195,12 @@ export function ContractDetailPage() {
               <Download className="me-2 h-4 w-4" />
               {downloading ? t('actions.downloading') : t('actions.downloadPdf')}
             </Button>
+            {isTerminated && (
+              <Button variant="outline" onClick={handleCreateReplacement}>
+                <Copy className="me-2 h-4 w-4" />
+                {t('actions.createReplacement')}
+              </Button>
+            )}
             {hasTransitions && (
               <Button variant="outline" onClick={() => setShowTransition(true)}>
                 <RefreshCw className="me-2 h-4 w-4" />
@@ -215,8 +248,16 @@ export function ContractDetailPage() {
                 <InfoItem label={t('detail.startDate')} value={contract.startDate ? new Date(contract.startDate).toLocaleDateString() : undefined} />
                 <InfoItem label={t('detail.endDate')} value={contract.endDate ? new Date(contract.endDate).toLocaleDateString() : undefined} />
                 <InfoItem label={t('detail.probationEndDate')} value={contract.probationEndDate ? new Date(contract.probationEndDate).toLocaleDateString() : undefined} />
-                <InfoItem label={t('detail.guaranteeEndDate')} value={contract.guaranteeEndDate ? new Date(contract.guaranteeEndDate).toLocaleDateString() : undefined} />
                 <InfoItem label={t('detail.probationPassed')} value={contract.probationPassed} />
+                <InfoItem label={t('detail.guaranteePeriod')} value={contract.guaranteePeriod ? t(`guaranteePeriod.${contract.guaranteePeriod}`) : undefined} />
+                <div className="flex items-center gap-2">
+                  <InfoItem label={t('detail.guaranteeEndDate')} value={contract.guaranteeEndDate ? new Date(contract.guaranteeEndDate).toLocaleDateString() : undefined} />
+                  {contract.guaranteeEndDate && (
+                    <div className="mt-4">
+                      <GuaranteeStatusIndicator guaranteeEndDate={contract.guaranteeEndDate} />
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
@@ -234,8 +275,49 @@ export function ContractDetailPage() {
                 <CardHeader><CardTitle>{t('detail.termination')}</CardTitle></CardHeader>
                 <CardContent className="grid gap-4 sm:grid-cols-2">
                   <InfoItem label={t('detail.terminatedAt')} value={new Date(contract.terminatedAt).toLocaleString()} />
+                  <InfoItem label={t('detail.terminationReasonType')} value={contract.terminationReasonType ? t(`terminationReason.${contract.terminationReasonType}`) : undefined} />
                   <InfoItem label={t('detail.terminationReason')} value={contract.terminationReason} />
                   <InfoItem label={t('detail.terminatedBy')} value={contract.terminatedBy} />
+                  {contract.returneeCaseId && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t('detail.linkedReturneeCase')}</p>
+                      <Link to={`/returnees/${contract.returneeCaseId}`} className="text-sm text-primary hover:underline font-medium">
+                        {t('detail.viewReturneeCase')}
+                      </Link>
+                    </div>
+                  )}
+                  {contract.runawayCaseId && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t('detail.linkedRunawayCase')}</p>
+                      <Link to={`/runaways/${contract.runawayCaseId}`} className="text-sm text-primary hover:underline font-medium">
+                        {t('detail.viewRunawayCase')}
+                      </Link>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {(contract.originalContractId || contract.replacementContractId) && (
+              <Card>
+                <CardHeader><CardTitle>{t('detail.linkedContracts')}</CardTitle></CardHeader>
+                <CardContent className="grid gap-4 sm:grid-cols-2">
+                  {contract.originalContractId && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t('detail.originalContractId')}</p>
+                      <Link to={`/contracts/${contract.originalContractId}`} className="text-sm text-primary hover:underline font-medium">
+                        {t('detail.viewOriginalContract')}
+                      </Link>
+                    </div>
+                  )}
+                  {contract.replacementContractId && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t('detail.replacementContractId')}</p>
+                      <Link to={`/contracts/${contract.replacementContractId}`} className="text-sm text-primary hover:underline font-medium">
+                        {t('detail.viewReplacementContract')}
+                      </Link>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

@@ -162,6 +162,29 @@ public class ContractService : IContractService
 
         var contractCode = $"CTR-{nextNumber:D6}";
 
+        // Parse guarantee period if provided
+        GuaranteePeriod? guaranteePeriod = null;
+        if (!string.IsNullOrWhiteSpace(request.GuaranteePeriod))
+        {
+            if (!Enum.TryParse<GuaranteePeriod>(request.GuaranteePeriod, ignoreCase: true, out var gp))
+                return Result<ContractDto>.ValidationError($"Invalid guarantee period '{request.GuaranteePeriod}'");
+            guaranteePeriod = gp;
+        }
+
+        // Auto-calculate guarantee end date from start date + guarantee period
+        var guaranteeEndDate = request.GuaranteeEndDate;
+        if (guaranteePeriod.HasValue && guaranteeEndDate is null)
+        {
+            guaranteeEndDate = CalculateGuaranteeEndDate(request.StartDate, guaranteePeriod.Value);
+        }
+
+        // Auto-calculate end date for TwoYearEmployment if not provided
+        var endDate = request.EndDate;
+        if (contractType == ContractType.TwoYearEmployment && endDate is null)
+        {
+            endDate = request.StartDate.AddYears(2);
+        }
+
         var now = _clock.UtcNow;
         var contract = new Entities.Contract
         {
@@ -174,9 +197,10 @@ public class ContractService : IContractService
             WorkerId = request.WorkerId,
             ClientId = request.ClientId,
             StartDate = request.StartDate,
-            EndDate = request.EndDate,
+            EndDate = endDate,
             ProbationEndDate = request.ProbationEndDate,
-            GuaranteeEndDate = request.GuaranteeEndDate,
+            GuaranteeEndDate = guaranteeEndDate,
+            GuaranteePeriodType = guaranteePeriod,
             Rate = request.Rate,
             RatePeriod = ratePeriod,
             Currency = request.Currency,
@@ -220,6 +244,11 @@ public class ContractService : IContractService
         if (request.EndDate.HasValue) contract.EndDate = request.EndDate.Value;
         if (request.ProbationEndDate.HasValue) contract.ProbationEndDate = request.ProbationEndDate.Value;
         if (request.GuaranteeEndDate.HasValue) contract.GuaranteeEndDate = request.GuaranteeEndDate.Value;
+        if (request.GuaranteePeriod is not null && Enum.TryParse<GuaranteePeriod>(request.GuaranteePeriod, ignoreCase: true, out var gpUpdate))
+        {
+            contract.GuaranteePeriodType = gpUpdate;
+            contract.GuaranteeEndDate = CalculateGuaranteeEndDate(contract.StartDate, gpUpdate);
+        }
         if (request.ProbationPassed.HasValue) contract.ProbationPassed = request.ProbationPassed.Value;
         if (request.Rate.HasValue) contract.Rate = request.Rate.Value;
         if (request.RatePeriod is not null && Enum.TryParse<RatePeriod>(request.RatePeriod, ignoreCase: true, out var rp))
@@ -263,6 +292,12 @@ public class ContractService : IContractService
         {
             contract.TerminatedAt = now;
             contract.TerminationReason = request.Reason;
+
+            if (!string.IsNullOrWhiteSpace(request.TerminationReason)
+                && Enum.TryParse<Entities.TerminationReason>(request.TerminationReason, ignoreCase: true, out var termReason))
+            {
+                contract.TerminationReasonType = termReason;
+            }
         }
 
         var history = new ContractStatusHistory
@@ -290,9 +325,11 @@ public class ContractService : IContractService
             TenantId = tenantId,
             ContractId = contract.Id,
             WorkerId = contract.WorkerId,
+            ClientId = contract.ClientId,
             FromStatus = fromStatus.ToString(),
             ToStatus = targetStatus.ToString(),
             Reason = request.Reason,
+            TerminationReason = request.TerminationReason,
             ChangedByUserId = _currentUser.UserId.ToString(),
         }, ct);
 
@@ -366,15 +403,19 @@ public class ContractService : IContractService
             ProbationEndDate = c.ProbationEndDate,
             GuaranteeEndDate = c.GuaranteeEndDate,
             ProbationPassed = c.ProbationPassed,
+            GuaranteePeriod = c.GuaranteePeriodType?.ToString(),
             Rate = c.Rate,
             RatePeriod = c.RatePeriod.ToString(),
             Currency = c.Currency,
             TotalValue = c.TotalValue,
             TerminatedAt = c.TerminatedAt,
             TerminationReason = c.TerminationReason,
+            TerminationReasonType = c.TerminationReasonType?.ToString(),
             TerminatedBy = c.TerminatedBy?.ToString(),
             ReplacementContractId = c.ReplacementContractId,
             OriginalContractId = c.OriginalContractId,
+            ReturneeCaseId = c.ReturneeCaseId,
+            RunawayCaseId = c.RunawayCaseId,
             Notes = c.Notes,
             CreatedBy = c.CreatedBy,
             UpdatedBy = c.UpdatedBy,
@@ -398,6 +439,7 @@ public class ContractService : IContractService
             ClientId = c.ClientId,
             StartDate = c.StartDate,
             EndDate = c.EndDate,
+            GuaranteePeriod = c.GuaranteePeriodType?.ToString(),
             Rate = c.Rate,
             RatePeriod = c.RatePeriod.ToString(),
             Currency = c.Currency,
@@ -419,6 +461,18 @@ public class ContractService : IContractService
             Notes = h.Notes,
         };
     }
+
+    #endregion
+
+    #region Helpers
+
+    private static DateOnly CalculateGuaranteeEndDate(DateOnly startDate, GuaranteePeriod period) => period switch
+    {
+        GuaranteePeriod.SixMonths => startDate.AddMonths(6),
+        GuaranteePeriod.OneYear => startDate.AddYears(1),
+        GuaranteePeriod.TwoYears => startDate.AddYears(2),
+        _ => startDate.AddYears(1),
+    };
 
     #endregion
 }

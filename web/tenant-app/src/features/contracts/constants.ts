@@ -1,9 +1,9 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   FileEdit, CheckCircle, Shield, Briefcase, CheckCheck,
-  XCircle, Ban, Lock, Clock, Zap,
+  XCircle, Ban, Lock, Clock, Zap, FileCheck, CalendarClock,
 } from 'lucide-react';
-import type { ContractStatus, ContractType } from './types';
+import type { ContractStatus, ContractType, GuaranteePeriodType, TerminationReasonType } from './types';
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'success' | 'warning' | 'outline';
 
@@ -27,7 +27,9 @@ export const ALL_STATUSES: ContractStatus[] = [
   'Draft', 'Confirmed', 'OnProbation', 'Active', 'Completed', 'Terminated', 'Cancelled', 'Closed',
 ];
 
-export const ALL_TYPES: ContractType[] = ['Traditional', 'Temporary', 'Flexible'];
+export const ALL_TYPES: ContractType[] = [
+  'Traditional', 'Temporary', 'Flexible', 'TrialContract', 'TwoYearEmployment',
+];
 
 interface TypeConfig {
   variant: BadgeVariant;
@@ -35,9 +37,11 @@ interface TypeConfig {
 }
 
 export const TYPE_CONFIG: Record<ContractType, TypeConfig> = {
-  Traditional: { variant: 'default',   icon: FileEdit },
-  Temporary:   { variant: 'warning',   icon: Clock },
-  Flexible:    { variant: 'outline',   icon: Zap },
+  Traditional:       { variant: 'default',   icon: FileEdit },
+  Temporary:         { variant: 'warning',   icon: Clock },
+  Flexible:          { variant: 'outline',   icon: Zap },
+  TrialContract:     { variant: 'secondary', icon: FileCheck },
+  TwoYearEmployment: { variant: 'success',   icon: CalendarClock },
 };
 
 export const ALLOWED_TRANSITIONS: Partial<Record<ContractStatus, ContractStatus[]>> = {
@@ -54,3 +58,12 @@ export const REASON_REQUIRED_STATUSES: ContractStatus[] = [
 ];
 
 export const ALL_RATE_PERIODS = ['Monthly', 'Daily', 'Hourly'] as const;
+
+export const ALL_GUARANTEE_PERIODS: GuaranteePeriodType[] = [
+  'SixMonths', 'OneYear', 'TwoYears',
+];
+
+export const ALL_TERMINATION_REASONS: TerminationReasonType[] = [
+  'ReturnToOffice', 'ReturnToCountry', 'Runaway', 'MutualAgreement',
+  'ContractExpiry', 'ClientRequest', 'WorkerRequest',
+];

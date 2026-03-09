@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T03:16:43.237636+00:00",
+  "last_updated": "2026-03-09T03:36:01.290172+00:00",
   "current_task": "17-contract-enhancements",
   "current_subtask": null,
   "tasks": {
@@ -240,23 +240,23 @@
       },
       "started_at": "2026-03-09T03:16:43Z",
       "completed_at": "2026-03-09T04:00:00Z",
-      "notes": "Added InsideCountry 8-step pipeline: Booked → InTrial → TrialSuccessful → ContractCreated → StatusChanged → EmploymentVisaProcessing → ResidenceVisaProcessing → EmiratesIdProcessing. Auto flow detection from worker location (raw SQL). Returnee detection from prior completed placements. 3 new PlacementStatus enum values (InTrial, TrialSuccessful, StatusChanged). PlacementFlowType enum (OutsideCountry/InsideCountry). TrialCompletedConsumer for trial outcome handling (succeed → TrialSuccessful, fail → Cancelled). Dual-pipeline state machine, checklist, and step validation. Frontend: flow-aware board with All/Outside/Inside toggle, PlacementCard IC badge, detail page with flow-specific pipeline dates and trial link, step descriptions for both flows. i18n en/ar. Migration: AddInsideCountryPlacementFlow."
+      "notes": "Added InsideCountry 8-step pipeline: Booked \u2192 InTrial \u2192 TrialSuccessful \u2192 ContractCreated \u2192 StatusChanged \u2192 EmploymentVisaProcessing \u2192 ResidenceVisaProcessing \u2192 EmiratesIdProcessing. Auto flow detection from worker location (raw SQL). Returnee detection from prior completed placements. 3 new PlacementStatus enum values (InTrial, TrialSuccessful, StatusChanged). PlacementFlowType enum (OutsideCountry/InsideCountry). TrialCompletedConsumer for trial outcome handling (succeed \u2192 TrialSuccessful, fail \u2192 Cancelled). Dual-pipeline state machine, checklist, and step validation. Frontend: flow-aware board with All/Outside/Inside toggle, PlacementCard IC badge, detail page with flow-specific pipeline dates and trial link, step descriptions for both flows. i18n en/ar. Migration: AddInsideCountryPlacementFlow."
     },
     "17-contract-enhancements": {
       "title": "Contract Enhancements",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "guarantee-period": "pending",
-        "contract-types": "pending",
-        "auto-creation": "pending",
-        "termination": "pending",
-        "frontend": "pending",
-        "migration": "pending",
+        "guarantee-period": "completed",
+        "contract-types": "completed",
+        "auto-creation": "completed",
+        "termination": "completed",
+        "frontend": "completed",
+        "migration": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T03:36:01Z",
+      "completed_at": "2026-03-09T05:30:00Z",
+      "notes": "Added GuaranteePeriod enum (SixMonths/OneYear/TwoYears) with auto-calculation of GuaranteeEndDate. Added TrialContract and TwoYearEmployment contract types. Added TerminationReason enum (ReturnToOffice/ReturnToCountry/Runaway/MutualAgreement/ContractExpiry/ClientRequest/WorkerRequest). Added TrialCompletedConsumer for auto-creating 2-year contracts on trial success. Added ReturneeCaseId/RunawayCaseId linkage fields. Frontend: guarantee period selector on create form, guarantee status indicator (active/expired) on detail, termination reason dropdown in transition dialog, replacement contract creation flow, linked case navigation. Migration: AddContractEnhancements."
     },
     "18-country-payment-packages": {
       "title": "Country Payment Packages",

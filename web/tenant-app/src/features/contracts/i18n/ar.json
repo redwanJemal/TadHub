@@ -28,12 +28,28 @@
   "type": {
     "Traditional": "تقليدي",
     "Temporary": "مؤقت",
-    "Flexible": "مرن"
+    "Flexible": "مرن",
+    "TrialContract": "عقد تجريبي",
+    "TwoYearEmployment": "عقد سنتين"
   },
   "ratePeriod": {
     "Monthly": "شهري",
     "Daily": "يومي",
     "Hourly": "بالساعة"
+  },
+  "guaranteePeriod": {
+    "SixMonths": "٦ أشهر",
+    "OneYear": "سنة واحدة",
+    "TwoYears": "سنتان"
+  },
+  "terminationReason": {
+    "ReturnToOffice": "عودة إلى المكتب",
+    "ReturnToCountry": "عودة إلى البلد",
+    "Runaway": "هروب",
+    "MutualAgreement": "اتفاق متبادل",
+    "ContractExpiry": "انتهاء العقد",
+    "ClientRequest": "طلب العميل",
+    "WorkerRequest": "طلب العامل"
   },
   "filters": {
     "status": "الحالة",
@@ -45,7 +61,8 @@
     "changeStatus": "تغيير الحالة",
     "delete": "حذف",
     "downloadPdf": "تحميل PDF",
-    "downloading": "جاري التحميل..."
+    "downloading": "جاري التحميل...",
+    "createReplacement": "إنشاء عقد بديل"
   },
   "empty": {
     "title": "لا توجد عقود بعد",
@@ -65,6 +82,8 @@
     "reason": "السبب",
     "reasonPlaceholder": "أدخل سبب تغيير الحالة...",
     "reasonRequired": "السبب مطلوب لهذا التحويل",
+    "terminationReason": "سبب الإنهاء",
+    "terminationReasonPlaceholder": "اختر سبب الإنهاء...",
     "notes": "ملاحظات",
     "notesPlaceholder": "ملاحظات اختيارية...",
     "submit": "تغيير الحالة",
@@ -72,6 +91,7 @@
   },
   "create": {
     "title": "إنشاء عقد",
+    "replacementTitle": "إنشاء عقد بديل",
     "description": "إنشاء عقد توظيف جديد بين عامل وعميل.",
     "backToList": "العودة إلى العقود",
     "worker": "العامل",
@@ -84,6 +104,8 @@
     "endDate": "تاريخ الانتهاء",
     "probationEndDate": "نهاية فترة التجربة",
     "guaranteeEndDate": "نهاية فترة الضمان",
+    "guaranteePeriod": "فترة الضمان",
+    "guaranteePeriodPlaceholder": "اختر فترة الضمان...",
     "rate": "السعر",
     "ratePeriod": "فترة السعر",
     "ratePeriodPlaceholder": "اختر الفترة...",
@@ -113,16 +135,27 @@
     "endDate": "تاريخ الانتهاء",
     "probationEndDate": "نهاية فترة التجربة",
     "guaranteeEndDate": "نهاية فترة الضمان",
+    "guaranteePeriod": "فترة الضمان",
+    "guaranteeActive": "الضمان ساري",
+    "guaranteeExpired": "الضمان منتهي",
     "probationPassed": "اجتاز التجربة",
     "rate": "السعر",
     "ratePeriod": "فترة السعر",
     "currency": "العملة",
     "totalValue": "القيمة الإجمالية",
     "terminatedAt": "تاريخ الإنهاء",
-    "terminationReason": "سبب الإنهاء",
+    "terminationReason": "تفاصيل السبب",
+    "terminationReasonType": "سبب الإنهاء",
     "terminatedBy": "تم الإنهاء بواسطة",
+    "linkedContracts": "العقود المرتبطة",
     "replacementContractId": "عقد الاستبدال",
     "originalContractId": "العقد الأصلي",
+    "viewOriginalContract": "عرض العقد الأصلي",
+    "viewReplacementContract": "عرض عقد الاستبدال",
+    "linkedReturneeCase": "حالة إرجاع مرتبطة",
+    "viewReturneeCase": "عرض حالة الإرجاع",
+    "linkedRunawayCase": "حالة هروب مرتبطة",
+    "viewRunawayCase": "عرض حالة الهروب",
     "notes": "ملاحظات",
     "createdAt": "تاريخ الإنشاء",
     "updatedAt": "تاريخ التحديث"

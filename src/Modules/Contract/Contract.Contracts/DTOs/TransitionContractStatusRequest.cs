@@ -11,6 +11,9 @@ public sealed record TransitionContractStatusRequest
     [MaxLength(500)]
     public string? Reason { get; init; }
 
+    [MaxLength(30)]
+    public string? TerminationReason { get; init; }
+
     [MaxLength(2000)]
     public string? Notes { get; init; }
 }

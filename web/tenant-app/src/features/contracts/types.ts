@@ -8,9 +8,20 @@ export type ContractStatus =
   | 'Cancelled'
   | 'Closed';
 
-export type ContractType = 'Traditional' | 'Temporary' | 'Flexible';
+export type ContractType = 'Traditional' | 'Temporary' | 'Flexible' | 'TrialContract' | 'TwoYearEmployment';
 
 export type RatePeriod = 'Monthly' | 'Daily' | 'Hourly';
+
+export type GuaranteePeriodType = 'SixMonths' | 'OneYear' | 'TwoYears';
+
+export type TerminationReasonType =
+  | 'ReturnToOffice'
+  | 'ReturnToCountry'
+  | 'Runaway'
+  | 'MutualAgreement'
+  | 'ContractExpiry'
+  | 'ClientRequest'
+  | 'WorkerRequest';
 
 export interface ContractWorkerDto {
   id: string;
@@ -36,6 +47,7 @@ export interface ContractListDto {
   client?: ContractClientDto;
   startDate: string;
   endDate?: string;
+  guaranteePeriod?: GuaranteePeriodType;
   rate: number;
   ratePeriod: RatePeriod;
   currency: string;
@@ -61,6 +73,7 @@ export interface ContractDto {
   probationEndDate?: string;
   guaranteeEndDate?: string;
   probationPassed: boolean;
+  guaranteePeriod?: GuaranteePeriodType;
   // Financial
   rate: number;
   ratePeriod: RatePeriod;
@@ -69,10 +82,14 @@ export interface ContractDto {
   // Termination
   terminatedAt?: string;
   terminationReason?: string;
+  terminationReasonType?: TerminationReasonType;
   terminatedBy?: string;
   // Replacement
   replacementContractId?: string;
   originalContractId?: string;
+  // Linked cases
+  returneeCaseId?: string;
+  runawayCaseId?: string;
   notes?: string;
   // Audit
   createdBy?: string;
@@ -102,6 +119,7 @@ export interface CreateContractRequest {
   endDate?: string;
   probationEndDate?: string;
   guaranteeEndDate?: string;
+  guaranteePeriod?: string;
   rate: number;
   ratePeriod: string;
   currency?: string;
@@ -126,5 +144,6 @@ export interface UpdateContractRequest {
 export interface TransitionContractStatusRequest {
   status: string;
   reason?: string;
+  terminationReason?: string;
   notes?: string;
 }
