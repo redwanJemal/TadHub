@@ -126,8 +126,8 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:5000
       ConnectionStrings__DefaultConnection: Host=tadhub-postgres;Database=${POSTGRES_DB:-tadhub};Username=${POSTGRES_USER:-tadhub};Password=${POSTGRES_PASSWORD}
-      ConnectionStrings__Redis: redis:6379,password=${REDIS_PASSWORD}
-      RabbitMQ__Host: rabbitmq
+      ConnectionStrings__Redis: tadhub-redis:6379,password=${REDIS_PASSWORD}
+      RabbitMQ__Host: tadhub-rabbitmq
       RabbitMQ__Username: ${RABBITMQ_USER:-tadhub}
       RabbitMQ__Password: ${RABBITMQ_PASSWORD}
       Keycloak__Authority: https://auth.endlessmaker.com/realms/tadhub
