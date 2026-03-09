@@ -229,6 +229,13 @@ public class PermissionSeeder : IHostedService
             // Accommodations module (Tenant)
             new() { Id = Guid.NewGuid(), Name = "accommodations.view", Description = "View accommodation stays", Module = "accommodations", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
             new() { Id = Guid.NewGuid(), Name = "accommodations.manage", Description = "Manage accommodation check-ins/check-outs", Module = "accommodations", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+
+            // Supplier Portal module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "supplier_portal.view", Description = "Access supplier portal dashboard and data", Module = "supplier_portal", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_portal.create_candidate", Description = "Register new candidates via supplier portal", Module = "supplier_portal", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_portal.upload_documents", Description = "Upload documents for candidates and workers", Module = "supplier_portal", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_portal.upload_pre_travel_photo", Description = "Upload pre-travel photos for arrivals", Module = "supplier_portal", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_portal.manage", Description = "Manage supplier portal users and settings", Module = "supplier_portal", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
         };
     }
 }

@@ -32,6 +32,7 @@ import {
   Plane,
   Building2,
   Car,
+  Store,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -76,6 +77,19 @@ const navItems: NavItem[] = [
       { path: "/finance/payments", icon: CreditCard, labelKey: "nav.payments" },
       { path: "/finance/reports", icon: BarChart3, labelKey: "nav.financial_reports" },
       { path: "/finance/settings", icon: Settings, labelKey: "nav.financial_settings" },
+    ],
+  },
+  {
+    path: "/supplier-portal",
+    icon: Store,
+    labelKey: "nav.supplier_portal",
+    permission: "supplier_portal.view",
+    children: [
+      { path: "/supplier-portal", icon: LayoutDashboard, labelKey: "nav.supplier_portal_dashboard" },
+      { path: "/supplier-portal/candidates", icon: UserSearch, labelKey: "nav.supplier_portal_candidates" },
+      { path: "/supplier-portal/workers", icon: HardHat, labelKey: "nav.supplier_portal_workers" },
+      { path: "/supplier-portal/commissions", icon: DollarSign, labelKey: "nav.supplier_portal_commissions" },
+      { path: "/supplier-portal/arrivals", icon: Plane, labelKey: "nav.supplier_portal_arrivals" },
     ],
   },
   { path: "/compliance", icon: ShieldCheck, labelKey: "nav.compliance", permission: "documents.view" },

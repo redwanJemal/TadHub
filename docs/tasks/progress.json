@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T00:36:12.675838+00:00",
-  "current_task": "08-driver-role",
+  "last_updated": "2026-03-09T06:00:00.000000+00:00",
+  "current_task": "10-accommodation-staff-role",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -133,16 +133,16 @@
     },
     "09-supplier-portal": {
       "title": "Supplier Portal",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "user-accounts": "pending",
-        "data-isolation": "pending",
-        "frontend-app": "pending",
+        "user-accounts": "completed",
+        "data-isolation": "completed",
+        "frontend-app": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T00:49:15Z",
+      "completed_at": "2026-03-09T06:00:00Z",
+      "notes": "New SupplierPortal module (SupplierPortal.Contracts + SupplierPortal.Core). SupplierUser entity linking platform users to suppliers. Cross-module data isolation via raw SQL: candidates/workers filtered by tenant_supplier_id, commissions by global supplier_id, arrivals via worker join. Dashboard with candidate/worker/commission stats. BFF controller resolves current user to supplier. Permissions: supplier_portal.view/create_candidate/upload_documents/upload_pre_travel_photo/manage. Frontend: dashboard with KPI cards, candidates/workers/commissions/arrivals list pages with DataTableAdvanced. Sidebar nav group with 5 children (Store icon). i18n en/ar. Migration: AddSupplierPortalModule."
     },
     "10-accommodation-staff-role": {
       "title": "Accommodation Staff Role",

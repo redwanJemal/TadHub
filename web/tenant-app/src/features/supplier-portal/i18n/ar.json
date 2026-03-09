@@ -1,0 +1,66 @@
+{
+  "dashboard": {
+    "title": "لوحة تحكم المورد",
+    "welcome": "مرحباً بك في بوابة المورد",
+    "candidates": "المرشحات",
+    "totalCandidates": "إجمالي المرشحات",
+    "pendingCandidates": "قيد الانتظار",
+    "approvedCandidates": "مقبولات",
+    "rejectedCandidates": "مرفوضات",
+    "workers": "العاملات",
+    "totalWorkers": "إجمالي العاملات",
+    "activeWorkers": "نشطات",
+    "deployedWorkers": "منشورات",
+    "commissions": "ملخص العمولات",
+    "totalCommissions": "إجمالي العمولات",
+    "pendingCommissions": "معلقة",
+    "paidCommissions": "مدفوعة"
+  },
+  "candidates": {
+    "title": "مرشحاتي",
+    "name": "الاسم",
+    "nationality": "الجنسية",
+    "passport": "جواز السفر",
+    "status": "الحالة",
+    "registeredAt": "تاريخ التسجيل",
+    "register": "تسجيل خادمة جديدة",
+    "searchPlaceholder": "البحث في المرشحات...",
+    "emptyTitle": "لا توجد مرشحات",
+    "emptyDescription": "لم تقم بتسجيل أي مرشحات بعد."
+  },
+  "workers": {
+    "title": "عاملاتي",
+    "code": "الرمز",
+    "name": "الاسم",
+    "nationality": "الجنسية",
+    "status": "الحالة",
+    "createdAt": "تاريخ الإنشاء",
+    "searchPlaceholder": "البحث في العاملات...",
+    "emptyTitle": "لا توجد عاملات",
+    "emptyDescription": "لم يتم نشر أي عاملات من مرشحاتك بعد."
+  },
+  "commissions": {
+    "title": "مدفوعات العمولات",
+    "reference": "المرجع",
+    "worker": "العاملة",
+    "amount": "المبلغ",
+    "status": "الحالة",
+    "paymentDate": "تاريخ الدفع",
+    "createdAt": "تاريخ الإنشاء",
+    "searchPlaceholder": "البحث في المدفوعات...",
+    "emptyTitle": "لا توجد مدفوعات",
+    "emptyDescription": "لم يتم تسجيل أي مدفوعات عمولات بعد."
+  },
+  "arrivals": {
+    "title": "وصولاتي",
+    "worker": "العاملة",
+    "flight": "رقم الرحلة",
+    "arrivalDate": "تاريخ الوصول",
+    "airport": "المطار",
+    "status": "الحالة",
+    "preTravelPhoto": "صورة ما قبل السفر",
+    "searchPlaceholder": "البحث في الوصول...",
+    "emptyTitle": "لا توجد وصولات",
+    "emptyDescription": "لا توجد وصولات مجدولة لعاملاتك."
+  }
+}

@@ -97,6 +97,13 @@ const FinancialReportsPage = lazy(() => import('@/features/finance').then(m => (
 const CashReconciliationPage = lazy(() => import('@/features/finance').then(m => ({ default: m.CashReconciliationPage })));
 const FinancialSettingsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.FinancialSettingsPage })));
 
+// Supplier Portal
+const SupplierDashboardPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierDashboardPage })));
+const SupplierCandidatesPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierCandidatesPage })));
+const SupplierWorkersPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierWorkersPage })));
+const SupplierCommissionsPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierCommissionsPage })));
+const SupplierArrivalsPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierArrivalsPage })));
+
 // Dashboard
 const DashboardPage = lazy(() => import('@/features/dashboard').then(m => ({ default: m.DashboardPage })));
 
@@ -175,6 +182,11 @@ export function AppRouter() {
           <Route path="finance/reports" element={<FinancialReportsPage />} />
           <Route path="finance/cash-reconciliation" element={<CashReconciliationPage />} />
           <Route path="finance/settings" element={<FinancialSettingsPage />} />
+          <Route path="supplier-portal" element={<SupplierDashboardPage />} />
+          <Route path="supplier-portal/candidates" element={<SupplierCandidatesPage />} />
+          <Route path="supplier-portal/workers" element={<SupplierWorkersPage />} />
+          <Route path="supplier-portal/commissions" element={<SupplierCommissionsPage />} />
+          <Route path="supplier-portal/arrivals" element={<SupplierArrivalsPage />} />
           <Route path="compliance" element={<CompliancePage />} />
           <Route path="audit" element={<AuditPage />} />
           <Route path="settings" element={<Navigate to="/settings/notifications" replace />} />

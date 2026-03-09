@@ -1,0 +1,66 @@
+{
+  "dashboard": {
+    "title": "Supplier Dashboard",
+    "welcome": "Welcome to your supplier portal",
+    "candidates": "Candidates",
+    "totalCandidates": "Total Candidates",
+    "pendingCandidates": "Pending",
+    "approvedCandidates": "Approved",
+    "rejectedCandidates": "Rejected",
+    "workers": "Workers",
+    "totalWorkers": "Total Workers",
+    "activeWorkers": "Active",
+    "deployedWorkers": "Deployed",
+    "commissions": "Commission Summary",
+    "totalCommissions": "Total Commissions",
+    "pendingCommissions": "Pending",
+    "paidCommissions": "Paid"
+  },
+  "candidates": {
+    "title": "My Candidates",
+    "name": "Name",
+    "nationality": "Nationality",
+    "passport": "Passport",
+    "status": "Status",
+    "registeredAt": "Registered",
+    "register": "Register New Maid",
+    "searchPlaceholder": "Search candidates...",
+    "emptyTitle": "No candidates",
+    "emptyDescription": "You haven't registered any candidates yet."
+  },
+  "workers": {
+    "title": "My Workers",
+    "code": "Code",
+    "name": "Name",
+    "nationality": "Nationality",
+    "status": "Status",
+    "createdAt": "Created",
+    "searchPlaceholder": "Search workers...",
+    "emptyTitle": "No workers",
+    "emptyDescription": "No workers from your candidates have been deployed yet."
+  },
+  "commissions": {
+    "title": "Commission Payments",
+    "reference": "Reference",
+    "worker": "Worker",
+    "amount": "Amount",
+    "status": "Status",
+    "paymentDate": "Payment Date",
+    "createdAt": "Created",
+    "searchPlaceholder": "Search payments...",
+    "emptyTitle": "No payments",
+    "emptyDescription": "No commission payments have been recorded yet."
+  },
+  "arrivals": {
+    "title": "My Arrivals",
+    "worker": "Worker",
+    "flight": "Flight",
+    "arrivalDate": "Arrival Date",
+    "airport": "Airport",
+    "status": "Status",
+    "preTravelPhoto": "Pre-Travel Photo",
+    "searchPlaceholder": "Search arrivals...",
+    "emptyTitle": "No arrivals",
+    "emptyDescription": "No arrivals scheduled for your workers."
+  }
+}

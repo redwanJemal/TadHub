@@ -35,6 +35,7 @@ using Runaway.Core;
 using Visa.Core;
 using Arrival.Core;
 using Accommodation.Core;
+using SupplierPortal.Core;
 using TadHub.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -201,6 +202,9 @@ builder.Services.AddArrivalModule();
 
 // Accommodation module
 builder.Services.AddAccommodationModule();
+
+// SupplierPortal module
+builder.Services.AddSupplierPortalModule();
 
 var app = builder.Build();
 

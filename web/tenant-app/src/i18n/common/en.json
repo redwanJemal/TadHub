@@ -99,7 +99,13 @@
     "arrivals": "Arrivals",
     "driver": "My Pickups",
     "accommodations": "Accommodation",
-    "audit": "Audit Log"
+    "audit": "Audit Log",
+    "supplier_portal": "Supplier Portal",
+    "supplier_portal_dashboard": "Dashboard",
+    "supplier_portal_candidates": "My Candidates",
+    "supplier_portal_workers": "My Workers",
+    "supplier_portal_commissions": "Commissions",
+    "supplier_portal_arrivals": "My Arrivals"
   },
   "language": "Language",
   "english": "English",

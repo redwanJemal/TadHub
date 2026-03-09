@@ -99,7 +99,13 @@
     "arrivals": "الوصول",
     "driver": "استلاماتي",
     "accommodations": "السكن",
-    "audit": "سجل التدقيق"
+    "audit": "سجل التدقيق",
+    "supplier_portal": "بوابة المورد",
+    "supplier_portal_dashboard": "لوحة التحكم",
+    "supplier_portal_candidates": "مرشحاتي",
+    "supplier_portal_workers": "عاملاتي",
+    "supplier_portal_commissions": "العمولات",
+    "supplier_portal_arrivals": "وصولاتي"
   },
   "language": "اللغة",
   "english": "English",
