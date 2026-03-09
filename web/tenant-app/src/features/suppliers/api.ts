@@ -48,3 +48,32 @@ export function createAndLinkSupplier(data: CreateSupplierRequest) {
 export function listSuppliers(params?: QueryParams) {
   return apiClient.getPaged<Supplier>('/suppliers', params);
 }
+
+// Sub-resource endpoints for supplier detail page
+export function listSupplierCandidates(supplierId: string, params?: QueryParams) {
+  return apiClient.getPaged<import('@/features/candidates/types').CandidateListDto>(
+    tenantPath(`/suppliers/${supplierId}/candidates`),
+    params,
+  );
+}
+
+export function listSupplierWorkers(supplierId: string, params?: QueryParams) {
+  return apiClient.getPaged<import('@/features/workers/types').WorkerListDto>(
+    tenantPath(`/suppliers/${supplierId}/workers`),
+    params,
+  );
+}
+
+export function listSupplierArrivals(supplierId: string, params?: QueryParams) {
+  return apiClient.getPaged<import('@/features/arrivals/types').ArrivalListDto>(
+    tenantPath(`/suppliers/${supplierId}/arrivals`),
+    params,
+  );
+}
+
+export function listSupplierCommissions(supplierId: string, params?: QueryParams) {
+  return apiClient.getPaged<import('@/features/finance/types').SupplierPaymentListDto>(
+    tenantPath(`/suppliers/${supplierId}/commissions`),
+    params,
+  );
+}

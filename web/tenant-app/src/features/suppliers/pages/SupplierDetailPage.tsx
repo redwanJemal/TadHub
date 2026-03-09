@@ -18,11 +18,13 @@ import { Skeleton } from '@/shared/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { DataTableAdvanced, type Column } from '@/shared/components/data-table/DataTableAdvanced';
 import { useCountryRefs, getFlagEmoji } from '@/features/reference-data';
-import { useSupplier } from '../hooks';
-import { useCandidates } from '@/features/candidates/hooks';
-import { useWorkers } from '@/features/workers/hooks';
-import { useArrivals } from '@/features/arrivals/hooks';
-import { useSupplierPayments } from '@/features/finance/hooks';
+import {
+  useSupplier,
+  useSupplierCandidates,
+  useSupplierWorkers,
+  useSupplierArrivals,
+  useSupplierCommissions,
+} from '../hooks';
 import type { CandidateListDto } from '@/features/candidates/types';
 import type { SupplierPaymentListDto } from '@/features/finance/types';
 
@@ -39,7 +41,6 @@ export function SupplierDetailPage() {
   const { data: countries } = useCountryRefs();
 
   const supplier = tenantSupplier?.supplier;
-  const supplierId = tenantSupplier?.supplierId;
 
   const getCountryName = (code?: string) => {
     if (!code) return '—';
@@ -113,11 +114,11 @@ export function SupplierDetailPage() {
         </TabsContent>
 
         <TabsContent value="arrivals">
-          <ArrivalsTab supplierId={supplierId!} />
+          <ArrivalsTab tenantSupplierId={id!} />
         </TabsContent>
 
         <TabsContent value="commissions">
-          <CommissionsTab supplierId={supplierId!} />
+          <CommissionsTab tenantSupplierId={id!} />
         </TabsContent>
       </Tabs>
     </div>
@@ -226,11 +227,10 @@ function CandidatesTab({ tenantSupplierId }: { tenantSupplierId: string }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  const { data, isLoading } = useCandidates({
+  const { data, isLoading } = useSupplierCandidates(tenantSupplierId, {
     page,
     pageSize,
     search: search || undefined,
-    'filter[tenantSupplierId]': tenantSupplierId,
   });
 
   const columns: Column<CandidateListDto>[] = [
@@ -288,11 +288,10 @@ function WorkersTab({ tenantSupplierId }: { tenantSupplierId: string }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  const { data, isLoading } = useWorkers({
+  const { data, isLoading } = useSupplierWorkers(tenantSupplierId, {
     page,
     pageSize,
     search: search || undefined,
-    'filter[tenantSupplierId]': tenantSupplierId,
   });
 
   const columns: Column<{ id: string; fullNameEn: string; workerCode: string; status: string; nationality?: string; createdAt: string }>[] = [
@@ -349,17 +348,16 @@ function WorkersTab({ tenantSupplierId }: { tenantSupplierId: string }) {
   );
 }
 
-function ArrivalsTab({ supplierId }: { supplierId: string }) {
+function ArrivalsTab({ tenantSupplierId }: { tenantSupplierId: string }) {
   const { t } = useTranslation('suppliers');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  const { data, isLoading } = useArrivals({
+  const { data, isLoading } = useSupplierArrivals(tenantSupplierId, {
     page,
     pageSize,
     search: search || undefined,
-    'filter[supplierId]': supplierId,
   });
 
   const columns: Column<{ id: string; workerNameEn?: string; flightNumber?: string; scheduledArrivalDate?: string; status?: string; airportCode?: string; createdAt: string }>[] = [
@@ -411,17 +409,16 @@ function ArrivalsTab({ supplierId }: { supplierId: string }) {
   );
 }
 
-function CommissionsTab({ supplierId }: { supplierId: string }) {
+function CommissionsTab({ tenantSupplierId }: { tenantSupplierId: string }) {
   const { t } = useTranslation('suppliers');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
-  const { data, isLoading } = useSupplierPayments({
+  const { data, isLoading } = useSupplierCommissions(tenantSupplierId, {
     page,
     pageSize,
     search: search || undefined,
-    'filter[supplierId]': supplierId,
   });
 
   const columns: Column<SupplierPaymentListDto>[] = [

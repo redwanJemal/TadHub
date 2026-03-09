@@ -257,6 +257,8 @@ public class RoleTemplateSeeder : IHostedService
             },
 
             // Sales: suppliers, candidates, workers, clients, placements, trials, contracts
+            // Note: Sales can create/edit but NOT transition statuses (manage_status) —
+            // status transitions (e.g. candidate approval) require Admin authority
             new()
             {
                 Name = "Sales",
@@ -264,18 +266,19 @@ public class RoleTemplateSeeder : IHostedService
                 IsSystem = false,
                 DisplayOrder = 4,
                 PermissionFilter = p =>
-                    p.Module == "suppliers" ||
-                    p.Module == "candidates" ||
-                    p.Module == "workers" ||
-                    p.Module == "clients" ||
-                    p.Module == "placements" ||
-                    p.Module == "trials" ||
-                    p.Module == "contracts" ||
-                    p.Module == "content" ||
-                    p.Module == "notifications" ||
-                    p.Name == "dashboard.view" ||
-                    p.Name == "reports.view" ||
-                    p.Name == "reports.export"
+                    (p.Module == "suppliers" ||
+                     p.Module == "candidates" ||
+                     p.Module == "workers" ||
+                     p.Module == "clients" ||
+                     p.Module == "placements" ||
+                     p.Module == "trials" ||
+                     p.Module == "contracts" ||
+                     p.Module == "content" ||
+                     p.Module == "notifications" ||
+                     p.Name == "dashboard.view" ||
+                     p.Name == "reports.view" ||
+                     p.Name == "reports.export")
+                    && !p.Name.EndsWith(".manage_status")
             },
 
             // Operations: arrivals, accommodations, visas, compliance, workers, returnees, runaways

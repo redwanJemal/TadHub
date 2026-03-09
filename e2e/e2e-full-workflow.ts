@@ -11,7 +11,7 @@
  *   1. Sales: Create Supplier (UI)
  *   2. Sales: Create Client (UI)
  *   3. Sales: Create Candidate (UI)
- *   4. Sales: Approve Candidate (UI status transitions)
+ *   4. Admin: Approve Candidate (UI status transitions — requires manage_status)
  *   5. Sales: Create Placement (UI)
  *   6. Sales: Create Contract (UI)
  *   7. Sales: Create Trial (UI)
@@ -401,8 +401,8 @@ async function step_createCandidate() {
 }
 
 async function step_approveCandidate() {
-  log('Sales: Approve Candidate (Received → UnderReview → Approved)');
-  const page = await getPage('sales');
+  log('Admin: Approve Candidate (Received → UnderReview → Approved)');
+  const page = await getPage('admin');
 
   await spaNavigate(page, '/candidates');
   await page.waitForTimeout(2000);
@@ -1199,7 +1199,7 @@ async function main() {
     { name: 'Create Supplier (Sales)',           fn: step_createSupplier },
     { name: 'Create Client (Sales)',             fn: step_createClient },
     { name: 'Create Candidate (Sales)',          fn: step_createCandidate },
-    { name: 'Approve Candidate (Sales)',         fn: step_approveCandidate },
+    { name: 'Approve Candidate (Admin)',          fn: step_approveCandidate },
     { name: 'Create Placement (Sales)',          fn: step_createPlacement },
     { name: 'Create Contract (Sales)',           fn: step_createContract },
     { name: 'Create Trial (Sales)',              fn: step_createTrial },

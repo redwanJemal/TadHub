@@ -1,3 +1,6 @@
+using Arrival.Contracts;
+using Candidate.Contracts;
+using Financial.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Supplier.Contracts;
@@ -6,6 +9,7 @@ using TadHub.Api.Filters;
 using TadHub.Infrastructure.Auth;
 using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Models;
+using Worker.Contracts;
 
 namespace TadHub.Api.Controllers;
 
@@ -202,10 +206,23 @@ public class SuppliersController : ControllerBase
 public class TenantSuppliersController : ControllerBase
 {
     private readonly ISupplierService _supplierService;
+    private readonly ICandidateService _candidateService;
+    private readonly IWorkerService _workerService;
+    private readonly IArrivalService _arrivalService;
+    private readonly ISupplierPaymentService _supplierPaymentService;
 
-    public TenantSuppliersController(ISupplierService supplierService)
+    public TenantSuppliersController(
+        ISupplierService supplierService,
+        ICandidateService candidateService,
+        IWorkerService workerService,
+        IArrivalService arrivalService,
+        ISupplierPaymentService supplierPaymentService)
     {
         _supplierService = supplierService;
+        _candidateService = candidateService;
+        _workerService = workerService;
+        _arrivalService = arrivalService;
+        _supplierPaymentService = supplierPaymentService;
     }
 
     /// <summary>
@@ -369,6 +386,120 @@ public class TenantSuppliersController : ControllerBase
             return NotFound(new { error = result.Error });
 
         return NoContent();
+    }
+
+    // ─── Sub-resource endpoints ──────────────────────────────────
+
+    /// <summary>
+    /// Lists candidates sourced by this supplier.
+    /// </summary>
+    [HttpGet("{id:guid}/candidates")]
+    [HasPermission("suppliers.view")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ListCandidates(
+        Guid tenantId,
+        Guid id,
+        [FromQuery] QueryParameters qp,
+        CancellationToken ct)
+    {
+        var supplier = await _supplierService.GetTenantSupplierByIdAsync(tenantId, id, ct: ct);
+        if (!supplier.IsSuccess) return NotFound(new { error = "Supplier not found" });
+
+        qp.Filters.Add(new FilterField
+        {
+            Name = "tenantSupplierId",
+            Operator = FilterOperator.Eq,
+            Values = [id.ToString()]
+        });
+        qp.Include = "supplier";
+
+        var result = await _candidateService.ListAsync(tenantId, qp, ct);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Lists workers from this supplier.
+    /// </summary>
+    [HttpGet("{id:guid}/workers")]
+    [HasPermission("suppliers.view")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ListWorkers(
+        Guid tenantId,
+        Guid id,
+        [FromQuery] QueryParameters qp,
+        CancellationToken ct)
+    {
+        var supplier = await _supplierService.GetTenantSupplierByIdAsync(tenantId, id, ct: ct);
+        if (!supplier.IsSuccess) return NotFound(new { error = "Supplier not found" });
+
+        qp.Filters.Add(new FilterField
+        {
+            Name = "tenantSupplierId",
+            Operator = FilterOperator.Eq,
+            Values = [id.ToString()]
+        });
+
+        var result = await _workerService.ListAsync(tenantId, qp, ct);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Lists arrivals for workers from this supplier.
+    /// Filters by Arrival.SupplierId (which stores the TenantSupplier ID).
+    /// </summary>
+    [HttpGet("{id:guid}/arrivals")]
+    [HasPermission("suppliers.view")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ListArrivals(
+        Guid tenantId,
+        Guid id,
+        [FromQuery] QueryParameters qp,
+        CancellationToken ct)
+    {
+        var supplier = await _supplierService.GetTenantSupplierByIdAsync(tenantId, id, ct: ct);
+        if (!supplier.IsSuccess) return NotFound(new { error = "Supplier not found" });
+
+        // Arrival.SupplierId stores the TenantSupplier ID (set from candidate's TenantSupplierId)
+        qp.Filters.Add(new FilterField
+        {
+            Name = "supplierId",
+            Operator = FilterOperator.Eq,
+            Values = [id.ToString()]
+        });
+
+        var result = await _arrivalService.ListAsync(tenantId, qp, ct);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Lists commission payments to this supplier.
+    /// </summary>
+    [HttpGet("{id:guid}/commissions")]
+    [HasPermission("suppliers.view")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ListCommissions(
+        Guid tenantId,
+        Guid id,
+        [FromQuery] QueryParameters qp,
+        CancellationToken ct)
+    {
+        var supplier = await _supplierService.GetTenantSupplierByIdAsync(tenantId, id, ct: ct);
+        if (!supplier.IsSuccess) return NotFound(new { error = "Supplier not found" });
+
+        // SupplierPayment.SupplierId stores the global Supplier ID
+        qp.Filters.Add(new FilterField
+        {
+            Name = "supplierId",
+            Operator = FilterOperator.Eq,
+            Values = [supplier.Value!.SupplierId.ToString()]
+        });
+
+        var result = await _supplierPaymentService.ListAsync(tenantId, qp, ct);
+        return Ok(result);
     }
 }
 

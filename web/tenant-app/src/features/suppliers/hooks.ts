@@ -64,3 +64,36 @@ export function useUnlinkSupplier() {
     },
   });
 }
+
+// Sub-resource hooks for supplier detail page
+export function useSupplierCandidates(supplierId: string, params?: QueryParams) {
+  return useQuery({
+    queryKey: [SUPPLIERS_KEY, supplierId, 'candidates', params],
+    queryFn: () => api.listSupplierCandidates(supplierId, params),
+    enabled: !!supplierId,
+  });
+}
+
+export function useSupplierWorkers(supplierId: string, params?: QueryParams) {
+  return useQuery({
+    queryKey: [SUPPLIERS_KEY, supplierId, 'workers', params],
+    queryFn: () => api.listSupplierWorkers(supplierId, params),
+    enabled: !!supplierId,
+  });
+}
+
+export function useSupplierArrivals(supplierId: string, params?: QueryParams) {
+  return useQuery({
+    queryKey: [SUPPLIERS_KEY, supplierId, 'arrivals', params],
+    queryFn: () => api.listSupplierArrivals(supplierId, params),
+    enabled: !!supplierId,
+  });
+}
+
+export function useSupplierCommissions(supplierId: string, params?: QueryParams) {
+  return useQuery({
+    queryKey: [SUPPLIERS_KEY, supplierId, 'commissions', params],
+    queryFn: () => api.listSupplierCommissions(supplierId, params),
+    enabled: !!supplierId,
+  });
+}

@@ -68,7 +68,7 @@ public class PlacementStatusChangedConsumer : IConsumer<PlacementStatusChangedEv
         // Get supplier ID from candidate via raw SQL
         Guid? supplierId = null;
         var candidates = await _db.Database.SqlQueryRaw<CandidateSupplierInfo>(
-            @"SELECT supplier_id AS ""SupplierId""
+            @"SELECT tenant_supplier_id AS ""SupplierId""
               FROM candidates
               WHERE id = {0} AND tenant_id = {1} AND is_deleted = false",
             message.CandidateId, message.TenantId)
