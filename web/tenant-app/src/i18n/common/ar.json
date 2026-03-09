@@ -109,7 +109,13 @@
     "supplier_portal_workers": "عاملاتي",
     "supplier_portal_commissions": "العمولات",
     "supplier_portal_arrivals": "وصولاتي",
-    "country_packages": "حزم الدفع"
+    "country_packages": "حزم الدفع",
+    "section_recruitment": "التوظيف",
+    "section_sales": "المخزون والمبيعات",
+    "section_operations": "العمليات",
+    "section_finance": "المالية",
+    "section_cases": "الحالات",
+    "section_admin": "الإدارة"
   },
   "language": "اللغة",
   "english": "English",

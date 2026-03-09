@@ -109,7 +109,13 @@
     "supplier_portal_workers": "My Workers",
     "supplier_portal_commissions": "Commissions",
     "supplier_portal_arrivals": "My Arrivals",
-    "country_packages": "Payment Packages"
+    "country_packages": "Payment Packages",
+    "section_recruitment": "Recruitment",
+    "section_sales": "Inventory & Sales",
+    "section_operations": "Operations",
+    "section_finance": "Finance",
+    "section_cases": "Cases",
+    "section_admin": "Administration"
   },
   "language": "Language",
   "english": "English",

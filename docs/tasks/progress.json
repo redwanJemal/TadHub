@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T03:52:58.736614+00:00",
-  "current_task": "18-country-payment-packages",
+  "last_updated": "2026-03-09T04:13:09.955803+00:00",
+  "current_task": "19-sidebar-reorganization",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -277,16 +277,16 @@
     },
     "19-sidebar-reorganization": {
       "title": "Sidebar Navigation Reorganization",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "section-headers": "pending",
-        "nav-items": "pending",
-        "i18n": "pending",
+        "section-headers": "completed",
+        "nav-items": "completed",
+        "i18n": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T04:13:09Z",
+      "completed_at": "2026-03-09T04:25:00Z",
+      "notes": "Reorganized sidebar into 7 sections: Dashboard (standalone), Recruitment (Suppliers, Candidates), Inventory & Sales (Workers, Clients, Placements, Trials, Contracts), Operations (Arrivals, Driver, Accommodation, Visa Processing, Compliance), Finance (collapsible group with Invoices, Payments, Supplier Debits, Reports, Settings), Cases (Returnees, Runaways), Administration (Team, Country Packages, Reports, Audit, Settings). Section headers are uppercase, small text, muted color — hidden in collapsed mode (replaced by thin dividers). Empty sections auto-hidden when user lacks permissions. Supplier Portal kept as standalone collapsible group. i18n keys added for all 6 section headers in en/ar."
     }
   }
 }

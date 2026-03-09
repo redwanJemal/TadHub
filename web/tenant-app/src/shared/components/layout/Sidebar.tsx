@@ -54,64 +54,123 @@ interface NavItem {
   children?: NavChild[];
 }
 
-const navItems: NavItem[] = [
-  { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true, permission: "dashboard.view" },
-  { path: "/team", icon: Users, labelKey: "nav.team", permission: "members.view" },
-  { path: "/suppliers", icon: Truck, labelKey: "nav.suppliers", permission: "suppliers.view" },
-  { path: "/candidates", icon: UserSearch, labelKey: "nav.candidates", permission: "candidates.view" },
-  { path: "/clients", icon: UserRound, labelKey: "nav.clients", permission: "clients.view" },
-  { path: "/workers", icon: HardHat, labelKey: "nav.workers", permission: "workers.view" },
-  { path: "/placements", icon: GitBranch, labelKey: "nav.placements", permission: "placements.view" },
-  { path: "/trials", icon: ClipboardCheck, labelKey: "nav.trials", permission: "trials.view" },
-  { path: "/contracts", icon: FileSignature, labelKey: "nav.contracts", permission: "contracts.view" },
-  { path: "/returnees", icon: RotateCcw, labelKey: "nav.returnees", permission: "returnees.view" },
-  { path: "/runaways", icon: AlertTriangle, labelKey: "nav.runaways", permission: "runaways.view" },
-  { path: "/visa-applications", icon: Stamp, labelKey: "nav.visas", permission: "visas.view" },
-  { path: "/arrivals", icon: Plane, labelKey: "nav.arrivals", permission: "arrivals.view" },
-  { path: "/driver", icon: Car, labelKey: "nav.driver", permission: "arrivals.driver_actions" },
-  { path: "/accommodations", icon: Building2, labelKey: "nav.accommodations", permission: "accommodations.view" },
-  { path: "/reports", icon: FileBarChart, labelKey: "nav.reports", permission: "reports.view" },
+interface NavSection {
+  id: string;
+  labelKey: string | null; // null for standalone items (Dashboard)
+  items: NavItem[];
+}
+
+const navSections: NavSection[] = [
   {
-    path: "/finance",
-    icon: DollarSign,
-    labelKey: "nav.finance",
-    permission: "invoices.view",
-    children: [
-      { path: "/finance/invoices", icon: Receipt, labelKey: "nav.invoices" },
-      { path: "/finance/payments", icon: CreditCard, labelKey: "nav.payments" },
-      { path: "/finance/supplier-debits", icon: FileWarning, labelKey: "nav.supplier_debits" },
-      { path: "/finance/reports", icon: BarChart3, labelKey: "nav.financial_reports" },
-      { path: "/finance/settings", icon: Settings, labelKey: "nav.financial_settings" },
+    id: "dashboard",
+    labelKey: null,
+    items: [
+      { path: "/", icon: LayoutDashboard, labelKey: "nav.home", exact: true, permission: "dashboard.view" },
     ],
   },
   {
-    path: "/supplier-portal",
-    icon: Store,
-    labelKey: "nav.supplier_portal",
-    permission: "supplier_portal.view",
-    children: [
-      { path: "/supplier-portal", icon: LayoutDashboard, labelKey: "nav.supplier_portal_dashboard" },
-      { path: "/supplier-portal/candidates", icon: UserSearch, labelKey: "nav.supplier_portal_candidates" },
-      { path: "/supplier-portal/workers", icon: HardHat, labelKey: "nav.supplier_portal_workers" },
-      { path: "/supplier-portal/commissions", icon: DollarSign, labelKey: "nav.supplier_portal_commissions" },
-      { path: "/supplier-portal/arrivals", icon: Plane, labelKey: "nav.supplier_portal_arrivals" },
+    id: "recruitment",
+    labelKey: "nav.section_recruitment",
+    items: [
+      { path: "/suppliers", icon: Truck, labelKey: "nav.suppliers", permission: "suppliers.view" },
+      { path: "/candidates", icon: UserSearch, labelKey: "nav.candidates", permission: "candidates.view" },
     ],
   },
-  { path: "/country-packages", icon: Package, labelKey: "nav.country_packages", permission: "packages.view" },
-  { path: "/compliance", icon: ShieldCheck, labelKey: "nav.compliance", permission: "documents.view" },
-  { path: "/audit", icon: ClipboardList, labelKey: "nav.audit", permission: "audit.view" },
   {
-    path: "/settings",
-    icon: Settings,
-    labelKey: "nav.settings",
-    permission: "settings.manage",
-    children: [
-      { path: "/settings/general", icon: Settings, labelKey: "nav.settings_general" },
-      { path: "/settings/notifications", icon: Bell, labelKey: "nav.settings_notifications" },
-      { path: "/notification-preferences", icon: Bell, labelKey: "nav.notification_preferences" },
+    id: "sales",
+    labelKey: "nav.section_sales",
+    items: [
+      { path: "/workers", icon: HardHat, labelKey: "nav.workers", permission: "workers.view" },
+      { path: "/clients", icon: UserRound, labelKey: "nav.clients", permission: "clients.view" },
+      { path: "/placements", icon: GitBranch, labelKey: "nav.placements", permission: "placements.view" },
+      { path: "/trials", icon: ClipboardCheck, labelKey: "nav.trials", permission: "trials.view" },
+      { path: "/contracts", icon: FileSignature, labelKey: "nav.contracts", permission: "contracts.view" },
+    ],
+  },
+  {
+    id: "operations",
+    labelKey: "nav.section_operations",
+    items: [
+      { path: "/arrivals", icon: Plane, labelKey: "nav.arrivals", permission: "arrivals.view" },
+      { path: "/driver", icon: Car, labelKey: "nav.driver", permission: "arrivals.driver_actions" },
+      { path: "/accommodations", icon: Building2, labelKey: "nav.accommodations", permission: "accommodations.view" },
+      { path: "/visa-applications", icon: Stamp, labelKey: "nav.visas", permission: "visas.view" },
+      { path: "/compliance", icon: ShieldCheck, labelKey: "nav.compliance", permission: "documents.view" },
+    ],
+  },
+  {
+    id: "finance",
+    labelKey: "nav.section_finance",
+    items: [
+      {
+        path: "/finance",
+        icon: DollarSign,
+        labelKey: "nav.finance",
+        permission: "invoices.view",
+        children: [
+          { path: "/finance/invoices", icon: Receipt, labelKey: "nav.invoices" },
+          { path: "/finance/payments", icon: CreditCard, labelKey: "nav.payments" },
+          { path: "/finance/supplier-debits", icon: FileWarning, labelKey: "nav.supplier_debits" },
+          { path: "/finance/reports", icon: BarChart3, labelKey: "nav.financial_reports" },
+          { path: "/finance/settings", icon: Settings, labelKey: "nav.financial_settings" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "cases",
+    labelKey: "nav.section_cases",
+    items: [
+      { path: "/returnees", icon: RotateCcw, labelKey: "nav.returnees", permission: "returnees.view" },
+      { path: "/runaways", icon: AlertTriangle, labelKey: "nav.runaways", permission: "runaways.view" },
+    ],
+  },
+  {
+    id: "supplier_portal",
+    labelKey: null,
+    items: [
+      {
+        path: "/supplier-portal",
+        icon: Store,
+        labelKey: "nav.supplier_portal",
+        permission: "supplier_portal.view",
+        children: [
+          { path: "/supplier-portal", icon: LayoutDashboard, labelKey: "nav.supplier_portal_dashboard" },
+          { path: "/supplier-portal/candidates", icon: UserSearch, labelKey: "nav.supplier_portal_candidates" },
+          { path: "/supplier-portal/workers", icon: HardHat, labelKey: "nav.supplier_portal_workers" },
+          { path: "/supplier-portal/commissions", icon: DollarSign, labelKey: "nav.supplier_portal_commissions" },
+          { path: "/supplier-portal/arrivals", icon: Plane, labelKey: "nav.supplier_portal_arrivals" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "admin",
+    labelKey: "nav.section_admin",
+    items: [
+      { path: "/team", icon: Users, labelKey: "nav.team", permission: "members.view" },
+      { path: "/country-packages", icon: Package, labelKey: "nav.country_packages", permission: "packages.view" },
+      { path: "/reports", icon: FileBarChart, labelKey: "nav.reports", permission: "reports.view" },
+      { path: "/audit", icon: ClipboardList, labelKey: "nav.audit", permission: "audit.view" },
+      {
+        path: "/settings",
+        icon: Settings,
+        labelKey: "nav.settings",
+        permission: "settings.manage",
+        children: [
+          { path: "/settings/general", icon: Settings, labelKey: "nav.settings_general" },
+          { path: "/settings/notifications", icon: Bell, labelKey: "nav.settings_notifications" },
+          { path: "/notification-preferences", icon: Bell, labelKey: "nav.notification_preferences" },
+        ],
+      },
     ],
   },
 ];
+
+// Flatten all items for expandedGroups initialization
+function getAllItems(): NavItem[] {
+  return navSections.flatMap((s) => s.items);
+}
 
 interface SidebarProps {
   onClose?: () => void;
@@ -126,9 +185,8 @@ export function Sidebar({ onClose }: SidebarProps) {
 
   // Track which parent groups are expanded
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
-    // Auto-expand if current path is a child
     const initial: Record<string, boolean> = {};
-    for (const item of navItems) {
+    for (const item of getAllItems()) {
       if (item.children) {
         const isChildActive = item.children.some((child) => location.pathname.startsWith(child.path));
         if (isChildActive) {
@@ -143,9 +201,8 @@ export function Sidebar({ onClose }: SidebarProps) {
     setExpandedGroups((prev) => ({ ...prev, [path]: !prev[path] }));
   };
 
-  const visibleNavItems = isLoaded
-    ? navItems.filter((item) => hasPermission(item.permission))
-    : navItems;
+  const isChildActive = (children: NavChild[]) =>
+    children.some((child) => location.pathname.startsWith(child.path));
 
   // Get user info from OIDC profile
   const user = auth.user?.profile;
@@ -161,8 +218,108 @@ export function Sidebar({ onClose }: SidebarProps) {
     auth.signoutRedirect({ post_logout_redirect_uri: window.location.origin });
   };
 
-  const isChildActive = (children: NavChild[]) =>
-    children.some((child) => location.pathname.startsWith(child.path));
+  function renderNavItem(item: NavItem) {
+    const Icon = item.icon;
+    const hasChildren = item.children && item.children.length > 0;
+    const isExpanded = expandedGroups[item.path] ?? false;
+    const childActive = hasChildren && isChildActive(item.children!);
+
+    // Collapsed sidebar: just show icon
+    if (collapsed) {
+      return (
+        <NavLink
+          key={item.path}
+          to={hasChildren ? item.children![0].path : item.path}
+          end={item.exact}
+          onClick={onClose}
+          title={t(item.labelKey)}
+          className={() =>
+            cn(
+              "flex items-center justify-center rounded-lg h-10 w-10 mx-auto text-sm font-medium transition-colors",
+              childActive || (!hasChildren && location.pathname === item.path)
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            )
+          }
+        >
+          <Icon className="h-5 w-5 shrink-0" />
+        </NavLink>
+      );
+    }
+
+    // Expanded sidebar: parent with children
+    if (hasChildren) {
+      return (
+        <div key={item.path}>
+          <button
+            onClick={() => toggleGroup(item.path)}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+              childActive
+                ? "text-primary"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            )}
+          >
+            <Icon className="h-5 w-5 shrink-0" />
+            <span className="flex-1 text-start">{t(item.labelKey)}</span>
+            <ChevronRight
+              className={cn(
+                "h-4 w-4 shrink-0 transition-transform duration-200",
+                isExpanded && "rotate-90"
+              )}
+            />
+          </button>
+
+          {isExpanded && (
+            <div className="mt-1 ms-4 space-y-1 border-s ps-3">
+              {item.children!.map((child) => {
+                const ChildIcon = child.icon;
+                return (
+                  <NavLink
+                    key={child.path}
+                    to={child.path}
+                    onClick={onClose}
+                    className={({ isActive }) =>
+                      cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                        isActive
+                          ? "bg-primary text-primary-foreground font-medium"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      )
+                    }
+                  >
+                    <ChildIcon className="h-4 w-4 shrink-0" />
+                    <span>{t(child.labelKey)}</span>
+                  </NavLink>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Regular nav item
+    return (
+      <NavLink
+        key={item.path}
+        to={item.path}
+        end={item.exact}
+        onClick={onClose}
+        className={({ isActive }) =>
+          cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+            isActive
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          )
+        }
+      >
+        <Icon className="h-5 w-5 shrink-0" />
+        <span>{t(item.labelKey)}</span>
+      </NavLink>
+    );
+  }
 
   return (
     <div className="flex h-full flex-col border-e bg-card">
@@ -211,108 +368,38 @@ export function Sidebar({ onClose }: SidebarProps) {
         )}
       >
         <div className="space-y-1">
-          {visibleNavItems.map((item) => {
-            const Icon = item.icon;
-            const hasChildren = item.children && item.children.length > 0;
-            const isExpanded = expandedGroups[item.path] ?? false;
-            const childActive = hasChildren && isChildActive(item.children!);
+          {navSections.map((section) => {
+            // Filter items by permission
+            const visibleItems = isLoaded
+              ? section.items.filter((item) => hasPermission(item.permission))
+              : section.items;
 
-            // Collapsed sidebar: just show icon (for all items including parents)
-            if (collapsed) {
-              return (
-                <NavLink
-                  key={item.path}
-                  to={hasChildren ? item.children![0].path : item.path}
-                  end={item.exact}
-                  onClick={onClose}
-                  title={t(item.labelKey)}
-                  className={() =>
-                    cn(
-                      "flex items-center justify-center rounded-lg h-10 w-10 mx-auto text-sm font-medium transition-colors",
-                      childActive || (!hasChildren && location.pathname === item.path)
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )
-                  }
-                >
-                  <Icon className="h-5 w-5 shrink-0" />
-                </NavLink>
-              );
-            }
+            // Hide empty sections
+            if (visibleItems.length === 0) return null;
 
-            // Expanded sidebar: parent with children
-            if (hasChildren) {
-              return (
-                <div key={item.path}>
-                  {/* Parent toggle button */}
-                  <button
-                    onClick={() => toggleGroup(item.path)}
-                    className={cn(
-                      "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                      childActive
-                        ? "text-primary"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <Icon className="h-5 w-5 shrink-0" />
-                    <span className="flex-1 text-start">{t(item.labelKey)}</span>
-                    <ChevronRight
-                      className={cn(
-                        "h-4 w-4 shrink-0 transition-transform duration-200",
-                        isExpanded && "rotate-90"
-                      )}
-                    />
-                  </button>
+            const hasSectionHeader = section.labelKey !== null;
 
-                  {/* Children */}
-                  {isExpanded && (
-                    <div className="mt-1 ms-4 space-y-1 border-s ps-3">
-                      {item.children!.map((child) => {
-                        const ChildIcon = child.icon;
-                        return (
-                          <NavLink
-                            key={child.path}
-                            to={child.path}
-                            onClick={onClose}
-                            className={({ isActive }) =>
-                              cn(
-                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
-                                isActive
-                                  ? "bg-primary text-primary-foreground font-medium"
-                                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                              )
-                            }
-                          >
-                            <ChildIcon className="h-4 w-4 shrink-0" />
-                            <span>{t(child.labelKey)}</span>
-                          </NavLink>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            // Regular nav item (no children)
             return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.exact}
-                onClick={onClose}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )
-                }
-              >
-                <Icon className="h-5 w-5 shrink-0" />
-                <span>{t(item.labelKey)}</span>
-              </NavLink>
+              <div key={section.id}>
+                {/* Section header — hidden in collapsed mode */}
+                {hasSectionHeader && !collapsed && (
+                  <div className="px-3 pb-1 pt-4 first:pt-0">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                      {t(section.labelKey!)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Collapsed mode: add a thin divider instead of header */}
+                {hasSectionHeader && collapsed && (
+                  <div className="my-2 border-t border-border/40" />
+                )}
+
+                {/* Items */}
+                <div className="space-y-1">
+                  {visibleItems.map((item) => renderNavItem(item))}
+                </div>
+              </div>
             );
           })}
         </div>
