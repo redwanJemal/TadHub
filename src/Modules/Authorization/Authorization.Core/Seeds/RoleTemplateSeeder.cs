@@ -120,9 +120,10 @@ public class RoleTemplateSeeder : IHostedService
             var expectedPermissions = ResolvePermissions(allPermissions, def.PermissionFilter);
             var expectedPermIds = expectedPermissions.Select(p => p.Id).ToHashSet();
 
-            // 1. Sync template: add any missing permissions
+            // 1. Sync template: add missing and remove extra permissions
             var templatePermIds = template.Permissions.Select(p => p.PermissionId).ToHashSet();
             var newTemplatePerms = expectedPermissions.Where(p => !templatePermIds.Contains(p.Id)).ToList();
+            var extraTemplatePerms = template.Permissions.Where(p => !expectedPermIds.Contains(p.PermissionId)).ToList();
 
             foreach (var perm in newTemplatePerms)
             {
@@ -132,6 +133,13 @@ public class RoleTemplateSeeder : IHostedService
                     TemplateId = template.Id,
                     PermissionId = perm.Id
                 });
+            }
+
+            if (extraTemplatePerms.Count > 0)
+            {
+                db.Set<RoleTemplatePermission>().RemoveRange(extraTemplatePerms);
+                _logger.LogInformation("Removed {Count} permissions from template '{Template}'",
+                    extraTemplatePerms.Count, template.Name);
             }
 
             if (newTemplatePerms.Count > 0)
@@ -152,6 +160,7 @@ public class RoleTemplateSeeder : IHostedService
             {
                 var rolePermIds = role.Permissions.Select(rp => rp.PermissionId).ToHashSet();
                 var missingPerms = expectedPermissions.Where(p => !rolePermIds.Contains(p.Id)).ToList();
+                var extraPerms = role.Permissions.Where(rp => !expectedPermIds.Contains(rp.PermissionId)).ToList();
 
                 foreach (var perm in missingPerms)
                 {
@@ -163,6 +172,14 @@ public class RoleTemplateSeeder : IHostedService
                     });
                 }
 
+                if (extraPerms.Count > 0)
+                {
+                    db.Set<RolePermission>().RemoveRange(extraPerms);
+                    _logger.LogInformation("Removed {Count} extra permissions from role '{Role}' (tenant {Tenant})",
+                        extraPerms.Count, role.Name, role.TenantId);
+                    changed = true;
+                }
+
                 if (missingPerms.Count > 0)
                 {
                     _logger.LogInformation("Synced {Count} permissions into role '{Role}' (tenant {Tenant})",
@@ -171,7 +188,7 @@ public class RoleTemplateSeeder : IHostedService
                 }
             }
 
-            if (newTemplatePerms.Count > 0) changed = true;
+            if (newTemplatePerms.Count > 0 || extraTemplatePerms.Count > 0) changed = true;
         }
 
         if (changed)
@@ -218,54 +235,90 @@ public class RoleTemplateSeeder : IHostedService
                 PermissionFilter = p => !p.Name.EndsWith(".delete") && p.Name != "tenancy.delete"
             },
 
-            // Accountant: billing, view, and financial permissions
+            // Accountant: finance, clients, contracts, workers (view), dashboard
             new()
             {
                 Name = "Accountant",
-                Description = "Financial and billing access.",
+                Description = "Financial and billing access with read-only view of clients, contracts, and workers.",
                 IsSystem = false,
                 DisplayOrder = 3,
                 PermissionFilter = p =>
+                    p.Module == "financial" ||
                     p.Module == "billing" ||
-                    p.Name.EndsWith(".view") ||
-                    p.Module == "analytics"
+                    p.Module == "analytics" ||
+                    p.Name == "dashboard.view" ||
+                    p.Name == "clients.view" ||
+                    p.Name == "contracts.view" ||
+                    p.Name == "workers.view" ||
+                    p.Name == "workers.passport.view" ||
+                    p.Name == "reports.view" ||
+                    p.Name == "reports.export" ||
+                    p.Name == "notifications.view"
             },
 
-            // Sales: customer-facing, content, and portal permissions
+            // Sales: suppliers, candidates, workers, clients, placements, trials, contracts
             new()
             {
                 Name = "Sales",
-                Description = "Sales and customer-facing access.",
+                Description = "Sales access for recruitment, placements, and client management.",
                 IsSystem = false,
                 DisplayOrder = 4,
                 PermissionFilter = p =>
-                    p.Name.EndsWith(".view") ||
+                    p.Module == "suppliers" ||
+                    p.Module == "candidates" ||
+                    p.Module == "workers" ||
+                    p.Module == "clients" ||
+                    p.Module == "placements" ||
+                    p.Module == "trials" ||
+                    p.Module == "contracts" ||
                     p.Module == "content" ||
-                    p.Module == "portal" ||
-                    p.Module == "notifications"
+                    p.Module == "notifications" ||
+                    p.Name == "dashboard.view" ||
+                    p.Name == "reports.view" ||
+                    p.Name == "reports.export"
             },
 
-            // Operations: manage most resources, no billing or role management
+            // Operations: arrivals, accommodations, visas, compliance, workers, returnees, runaways
             new()
             {
                 Name = "Operations",
-                Description = "Operational access for day-to-day management.",
+                Description = "Operational access for arrivals, accommodations, visas, and case management.",
                 IsSystem = false,
                 DisplayOrder = 5,
                 PermissionFilter = p =>
-                    p.Module != "billing" &&
-                    p.Module != "roles" &&
-                    !p.Name.EndsWith(".delete")
+                    p.Module == "arrivals" ||
+                    p.Module == "accommodations" ||
+                    p.Module == "visas" ||
+                    p.Module == "documents" ||
+                    p.Module == "returnees" ||
+                    p.Module == "runaways" ||
+                    p.Module == "workers" ||
+                    p.Module == "notifications" ||
+                    p.Name == "dashboard.view" ||
+                    p.Name == "clients.view" ||
+                    p.Name == "contracts.view" ||
+                    p.Name == "placements.view" ||
+                    p.Name == "suppliers.view" ||
+                    p.Name == "reports.view" ||
+                    p.Name == "reports.export"
             },
 
-            // Viewer: read-only access
+            // Viewer: dashboard + read-only access to core operational data
             new()
             {
                 Name = "Viewer",
-                Description = "Read-only access to all features.",
+                Description = "Read-only access to dashboard and basic operational data.",
                 IsSystem = false,
                 DisplayOrder = 6,
-                PermissionFilter = p => p.Name.EndsWith(".view")
+                PermissionFilter = p =>
+                    p.Name == "dashboard.view" ||
+                    p.Name == "workers.view" ||
+                    p.Name == "clients.view" ||
+                    p.Name == "contracts.view" ||
+                    p.Name == "placements.view" ||
+                    p.Name == "arrivals.view" ||
+                    p.Name == "reports.view" ||
+                    p.Name == "notifications.view"
             },
 
             // Driver: limited access to assigned pickups only

@@ -77,7 +77,7 @@ public class ReportService : IReportService
             INNER JOIN contracts c ON c.worker_id = w.id
               AND c.tenant_id = w.tenant_id AND c.deleted_at IS NULL
               AND c.status IN ('Active', 'OnProbation')
-            LEFT JOIN clients cl ON c.client_id = cl.id AND cl.deleted_at IS NULL
+            LEFT JOIN clients cl ON c.client_id = cl.id
             WHERE w.tenant_id = {0} AND w.deleted_at IS NULL
             """);
 
@@ -111,7 +111,7 @@ public class ReportService : IReportService
                    rc.settled_at AS "SettledAt", rc.created_at AS "CreatedAt"
             FROM returnee_cases rc
             LEFT JOIN workers w ON rc.worker_id = w.id AND w.deleted_at IS NULL
-            LEFT JOIN clients cl ON rc.client_id = cl.id AND cl.deleted_at IS NULL
+            LEFT JOIN clients cl ON rc.client_id = cl.id
             WHERE rc.tenant_id = {0} AND rc.deleted_at IS NULL
             """);
 
@@ -147,7 +147,7 @@ public class ReportService : IReportService
                    rc.settled_at AS "SettledAt", rc.created_at AS "CreatedAt"
             FROM runaway_cases rc
             LEFT JOIN workers w ON rc.worker_id = w.id AND w.deleted_at IS NULL
-            LEFT JOIN clients cl ON rc.client_id = cl.id AND cl.deleted_at IS NULL
+            LEFT JOIN clients cl ON rc.client_id = cl.id
             WHERE rc.tenant_id = {0} AND rc.deleted_at IS NULL
             """);
 
@@ -298,7 +298,7 @@ public class ReportService : IReportService
                    i.invoice_number AS "InvoiceNumber",
                    p.created_at AS "CreatedAt"
             FROM payments p
-            LEFT JOIN clients cl ON p.client_id = cl.id AND cl.deleted_at IS NULL
+            LEFT JOIN clients cl ON p.client_id = cl.id
             LEFT JOIN invoices i ON p.invoice_id = i.id AND i.deleted_at IS NULL
             WHERE p.tenant_id = {0} AND p.deleted_at IS NULL
               AND p.status = 'Refunded'
