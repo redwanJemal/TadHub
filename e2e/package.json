@@ -7,7 +7,12 @@
     "test:tenant": "playwright test --project=tenant",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "screenshots": "npx tsx screenshots-01-core.ts && npx tsx screenshots-02-operations.ts && npx tsx screenshots-03-finance.ts && npx tsx screenshots-04-admin.ts",
+    "screenshots:core": "npx tsx screenshots-01-core.ts",
+    "screenshots:operations": "npx tsx screenshots-02-operations.ts",
+    "screenshots:finance": "npx tsx screenshots-03-finance.ts",
+    "screenshots:admin": "npx tsx screenshots-04-admin.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0",

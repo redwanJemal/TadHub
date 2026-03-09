@@ -101,11 +101,8 @@ export function AccommodationListPage() {
     {
       key: 'status',
       label: t('status', 'Status'),
-      options: [
-        { label: t('allStatuses', 'All Statuses'), value: '' },
-        ...ALL_STATUSES.map((s) => ({ label: s === 'CheckedIn' ? 'Checked In' : 'Checked Out', value: s })),
-      ],
-      value: statusFilter ?? '',
+      options: ALL_STATUSES.map((s) => ({ label: s === 'CheckedIn' ? 'Checked In' : 'Checked Out', value: s })),
+      value: statusFilter ?? 'all',
     },
   ] : [];
 

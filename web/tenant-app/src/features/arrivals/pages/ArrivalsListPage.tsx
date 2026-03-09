@@ -96,11 +96,8 @@ export function ArrivalsListPage() {
     {
       key: 'status',
       label: t('status', 'Status'),
-      options: [
-        { label: t('allStatuses', 'All Statuses'), value: '' },
-        ...ALL_STATUSES.map((s) => ({ label: s, value: s })),
-      ],
-      value: statusFilter ?? '',
+      options: ALL_STATUSES.map((s) => ({ label: s, value: s })),
+      value: statusFilter ?? 'all',
     },
   ];
 
