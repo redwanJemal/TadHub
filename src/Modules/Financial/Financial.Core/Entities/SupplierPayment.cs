@@ -6,11 +6,13 @@ public class SupplierPayment : SoftDeletableEntity, IAuditable
 {
     public string PaymentNumber { get; set; } = string.Empty;
     public SupplierPaymentStatus Status { get; set; } = SupplierPaymentStatus.Pending;
+    public SupplierPaymentType PaymentType { get; set; } = SupplierPaymentType.Regular;
 
     // References (no FK)
     public Guid SupplierId { get; set; }
     public Guid? WorkerId { get; set; }
     public Guid? ContractId { get; set; }
+    public Guid? PlacementId { get; set; }
 
     // Amount
     public decimal Amount { get; set; }

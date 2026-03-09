@@ -93,6 +93,7 @@ const PaymentsListPage = lazy(() => import('@/features/finance').then(m => ({ de
 const RecordPaymentPage = lazy(() => import('@/features/finance').then(m => ({ default: m.RecordPaymentPage })));
 const DiscountProgramsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.DiscountProgramsPage })));
 const SupplierPaymentsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.SupplierPaymentsPage })));
+const SupplierDebitsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.SupplierDebitsPage })));
 const FinancialReportsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.FinancialReportsPage })));
 const CashReconciliationPage = lazy(() => import('@/features/finance').then(m => ({ default: m.CashReconciliationPage })));
 const FinancialSettingsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.FinancialSettingsPage })));
@@ -179,6 +180,7 @@ export function AppRouter() {
           <Route path="finance/payments/record" element={<RecordPaymentPage />} />
           <Route path="finance/discount-programs" element={<DiscountProgramsPage />} />
           <Route path="finance/supplier-payments" element={<SupplierPaymentsPage />} />
+          <Route path="finance/supplier-debits" element={<SupplierDebitsPage />} />
           <Route path="finance/reports" element={<FinancialReportsPage />} />
           <Route path="finance/cash-reconciliation" element={<CashReconciliationPage />} />
           <Route path="finance/settings" element={<FinancialSettingsPage />} />

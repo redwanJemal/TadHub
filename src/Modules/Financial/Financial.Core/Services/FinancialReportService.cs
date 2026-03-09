@@ -56,8 +56,15 @@ public class FinancialReportService : IFinancialReportService
                         x.Status == SupplierPaymentStatus.Paid)
             .ToListAsync(ct);
 
+        // Placement costs (Paid status only) — via raw SQL to avoid cross-module entity dependency
+        var placementCosts = await _db.Database
+            .SqlQueryRaw<decimal>(
+                "SELECT COALESCE(SUM(amount), 0)::numeric AS \"Value\" FROM placement_cost_items WHERE tenant_id = {0} AND status = 'Paid'",
+                tenantId)
+            .FirstOrDefaultAsync(ct);
+
         var totalRevenue = invoices.Sum(x => x.PaidAmount);
-        var totalCost = supplierPayments.Sum(x => x.Amount);
+        var totalCost = supplierPayments.Sum(x => x.Amount) + placementCosts;
         var grossMargin = totalRevenue - totalCost;
         var marginPercentage = totalRevenue > 0 ? Math.Round(grossMargin / totalRevenue * 100, 2) : 0;
 

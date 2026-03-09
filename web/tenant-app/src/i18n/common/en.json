@@ -88,6 +88,7 @@
     "finance": "Finance",
     "invoices": "Invoices",
     "payments": "Payments",
+    "supplier_debits": "Supplier Debits",
     "financial_reports": "Reports",
     "financial_settings": "Financial Settings",
     "compliance": "Compliance",

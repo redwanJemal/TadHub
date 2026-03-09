@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T01:10:53.045779+00:00",
-  "current_task": "10-accommodation-staff-role",
+  "last_updated": "2026-03-09T01:27:00.000000+00:00",
+  "current_task": null,
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -154,24 +154,24 @@
       },
       "started_at": "2026-03-09T01:10:52Z",
       "completed_at": "2026-03-09T07:15:00Z",
-      "notes": "Added 'Accommodation Staff' role template (DisplayOrder 8) in RoleTemplateSeeder with permissions: dashboard.view, accommodations.view, accommodations.manage, arrivals.view. Role is non-system, assignable by admin. Sidebar already filters nav items by permission — accommodation staff users only see Dashboard, Arrivals, and Accommodations. All accommodation pages (list with occupants/daily/history views, detail, check-in, check-out) already exist from Task 07. No new frontend pages needed — permission-based sidebar filtering provides the minimal navigation automatically."
+      "notes": "Added 'Accommodation Staff' role template (DisplayOrder 8) in RoleTemplateSeeder with permissions: dashboard.view, accommodations.view, accommodations.manage, arrivals.view. Role is non-system, assignable by admin. Sidebar already filters nav items by permission \u2014 accommodation staff users only see Dashboard, Arrivals, and Accommodations. All accommodation pages (list with occupants/daily/history views, detail, check-in, check-out) already exist from Task 07. No new frontend pages needed \u2014 permission-based sidebar filtering provides the minimal navigation automatically."
     },
     "11-finance-enhancements": {
       "title": "Finance Enhancements",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "refund-engine": "pending",
-        "commission-calc": "pending",
-        "guarantee-recovery": "pending",
-        "cost-tracking": "pending",
-        "settings": "pending",
-        "frontend": "pending",
-        "migration": "pending",
+        "refund-engine": "completed",
+        "commission-calc": "completed",
+        "guarantee-recovery": "completed",
+        "cost-tracking": "completed",
+        "settings": "completed",
+        "frontend": "completed",
+        "migration": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T01:15:43Z",
+      "completed_at": "2026-03-09T08:00:00Z",
+      "notes": "Refund calculation engine with amortization formula (ValuePerMonth = TotalPaid/ContractMonths, RefundAmount = TotalPaid - MonthsWorked*ValuePerMonth), supports ProRata and RoundDown partial month methods. Supplier commission auto-calculation on deployment via PlacementDeployedCommissionConsumer (Fixed/Percentage/Custom). Guarantee period cost recovery: ReturneeCaseApprovedConsumer auto-generates credit notes and supplier debits (CommissionRefund/TicketCost/VisaCost/TransportCost/MedicalCost) when within guarantee. SupplierDebit entity with status workflow (Outstanding/PartiallyPaid/Settled/Waived/Cancelled). SupplierPayment extended with PaymentType (Regular/Commission/DebitSettlement) and PlacementId. TenantFinancialSettings expanded with CommissionSettings, RefundSettings, GuaranteeSettings, AccommodationDailyRate. API: FinanceCalculationsController (refund preview, commission calculate), SupplierDebitsController (CRUD + status transition). Permissions: supplier_debits.view/create/edit/manage_status/delete. Frontend: SupplierDebitsPage with DataTableAdvanced, status filter, create/transition dialogs, summary cards. FinancialSettingsPage expanded with 4 new sections (commission, refund, guarantee, accommodation). i18n en/ar. Migration: AddFinanceEnhancements."
     },
     "12-reporting-module": {
       "title": "Reporting Module Expansion",

@@ -6,6 +6,7 @@ export { PaymentsListPage } from './pages/PaymentsListPage';
 export { RecordPaymentPage } from './pages/RecordPaymentPage';
 export { DiscountProgramsPage } from './pages/DiscountProgramsPage';
 export { SupplierPaymentsPage } from './pages/SupplierPaymentsPage';
+export { SupplierDebitsPage } from './pages/SupplierDebitsPage';
 export { FinancialReportsPage } from './pages/FinancialReportsPage';
 export { CashReconciliationPage } from './pages/CashReconciliationPage';
 export { FinancialSettingsPage } from './pages/FinancialSettingsPage';
@@ -14,6 +15,7 @@ export { FinancialSettingsPage } from './pages/FinancialSettingsPage';
 export { InvoiceStatusBadge } from './components/InvoiceStatusBadge';
 export { PaymentStatusBadge } from './components/PaymentStatusBadge';
 export { PaymentMethodBadge } from './components/PaymentMethodBadge';
+export { SupplierDebitStatusBadge } from './components/SupplierDebitStatusBadge';
 
 // Types
 export type {

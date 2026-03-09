@@ -33,6 +33,43 @@
     "create": "إنشاء دفعة",
     "noPayments": "لا توجد مدفوعات موردين"
   },
+  "supplierDebits": {
+    "title": "مديونيات الموردين",
+    "create": "إنشاء مديونية",
+    "noDebits": "لا توجد مديونيات موردين",
+    "outstanding": "مستحقة",
+    "totalDebits": "إجمالي المديونيات",
+    "outstandingAmount": "المبلغ المستحق",
+    "debitType": "نوع المديونية",
+    "commissionRefund": "استرداد عمولة",
+    "ticketCost": "تكلفة التذكرة",
+    "visaCost": "تكلفة التأشيرة",
+    "transportationCost": "تكلفة النقل",
+    "medicalCost": "تكلفة الفحص الطبي",
+    "accommodationCost": "تكلفة السكن",
+    "other": "أخرى"
+  },
+  "refundCalculation": {
+    "title": "حساب الاسترداد",
+    "totalPaid": "إجمالي المدفوع",
+    "contractMonths": "مدة العقد (أشهر)",
+    "monthsWorked": "أشهر العمل",
+    "valuePerMonth": "القيمة الشهرية",
+    "refundAmount": "مبلغ الاسترداد",
+    "partialMonthMethod": "طريقة الشهر الجزئي",
+    "proRata": "نسبي",
+    "roundDown": "تقريب لأسفل"
+  },
+  "commission": {
+    "title": "حساب العمولة",
+    "calculationType": "نوع الحساب",
+    "fixed": "مبلغ ثابت",
+    "percentage": "نسبة مئوية",
+    "custom": "مخصص",
+    "amount": "مبلغ العمولة",
+    "contractValue": "قيمة العقد",
+    "autoCalculate": "حساب تلقائي عند التوظيف"
+  },
   "reports": {
     "title": "التقارير المالية",
     "margin": "تقرير الهامش",
@@ -45,7 +82,27 @@
     "invoice": "إعدادات الفاتورة",
     "deposit": "الإيداع والأقساط",
     "methods": "طرق الدفع",
-    "terms": "شروط وتذييل الفاتورة"
+    "terms": "شروط وتذييل الفاتورة",
+    "commission": "عمولة المورد",
+    "refund": "حساب الاسترداد",
+    "guarantee": "فترة الضمان",
+    "accommodation": "السكن",
+    "commissionCalcType": "نوع الحساب",
+    "fixedAmount": "مبلغ ثابت",
+    "percentageOfContract": "نسبة من قيمة العقد",
+    "customPerSupplier": "مخصص لكل مورد",
+    "autoCalcOnDeployment": "حساب تلقائي عند التوظيف",
+    "defaultContractMonths": "مدة العقد الافتراضية (أشهر)",
+    "partialMonthCalc": "حساب الشهر الجزئي",
+    "proRata": "نسبي (متناسب)",
+    "roundDown": "تقريب لأسفل (أشهر كاملة فقط)",
+    "autoGenCreditNote": "إنشاء إشعار دائن تلقائياً عند الموافقة على الإرجاع",
+    "guaranteePeriod": "فترة الضمان (أشهر)",
+    "autoGenDebits": "إنشاء مديونيات المورد تلقائياً لحالات الضمان",
+    "includeVisaCost": "شمل تكلفة التأشيرة",
+    "includeTransportCost": "شمل تكلفة النقل",
+    "includeMedicalCost": "شمل تكلفة الفحص الطبي",
+    "dailyRate": "سعر السكن اليومي (درهم)"
   },
   "status": {
     "draft": "مسودة",
@@ -57,6 +114,9 @@
     "refunded": "مستردة",
     "pending": "معلقة",
     "completed": "مكتملة",
-    "failed": "فاشلة"
+    "failed": "فاشلة",
+    "outstanding": "مستحقة",
+    "settled": "مسوّاة",
+    "waived": "متنازل عنها"
   }
 }

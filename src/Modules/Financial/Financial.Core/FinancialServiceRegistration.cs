@@ -14,6 +14,8 @@ public static class FinancialServiceRegistration
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<ISupplierPaymentService, SupplierPaymentService>();
+        services.AddScoped<ISupplierDebitService, SupplierDebitService>();
+        services.AddScoped<IRefundCalculationService, RefundCalculationService>();
         services.AddScoped<IFinancialReportService, FinancialReportService>();
         services.AddScoped<IPaymentGateway, ManualPaymentGateway>();
         services.AddValidatorsFromAssembly(typeof(FinancialServiceRegistration).Assembly);

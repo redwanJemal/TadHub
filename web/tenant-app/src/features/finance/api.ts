@@ -30,6 +30,13 @@ import type {
   CashReconciliationDto,
   CashReconciliationListDto,
   TenantFinancialSettings,
+  SupplierDebitDto,
+  SupplierDebitListDto,
+  CreateSupplierDebitRequest,
+  UpdateSupplierDebitRequest,
+  TransitionSupplierDebitStatusRequest,
+  RefundCalculationDto,
+  CommissionCalculationDto,
 } from './types';
 
 function tenantPath(path: string) {
@@ -192,6 +199,40 @@ export function closeXReport(id: string) {
 
 export function listXReports(params?: QueryParams) {
   return apiClient.getPaged<CashReconciliationListDto>(tenantPath('/financial-reports/x-reports'), params);
+}
+
+// Supplier Debits
+export function listSupplierDebits(params?: QueryParams) {
+  return apiClient.getPaged<SupplierDebitListDto>(tenantPath('/supplier-debits'), params);
+}
+
+export function getSupplierDebit(id: string) {
+  return apiClient.get<SupplierDebitDto>(tenantPath(`/supplier-debits/${id}`));
+}
+
+export function createSupplierDebit(data: CreateSupplierDebitRequest) {
+  return apiClient.post<SupplierDebitDto>(tenantPath('/supplier-debits'), data);
+}
+
+export function updateSupplierDebit(id: string, data: UpdateSupplierDebitRequest) {
+  return apiClient.patch<SupplierDebitDto>(tenantPath(`/supplier-debits/${id}`), data);
+}
+
+export function transitionSupplierDebitStatus(id: string, data: TransitionSupplierDebitStatusRequest) {
+  return apiClient.post<SupplierDebitDto>(tenantPath(`/supplier-debits/${id}/status`), data);
+}
+
+export function deleteSupplierDebit(id: string) {
+  return apiClient.delete<void>(tenantPath(`/supplier-debits/${id}`));
+}
+
+// Finance Calculations
+export function calculateRefund(contractId: string, returnDate: string) {
+  return apiClient.get<RefundCalculationDto>(tenantPath(`/finance/refund-calculation?contractId=${contractId}&returnDate=${returnDate}`));
+}
+
+export function calculateCommission(placementId: string) {
+  return apiClient.post<CommissionCalculationDto>(tenantPath(`/finance/commission/calculate?placementId=${placementId}`), {});
 }
 
 // Financial Settings (tenant)

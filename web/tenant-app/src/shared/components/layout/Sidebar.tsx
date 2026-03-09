@@ -33,6 +33,7 @@ import {
   Building2,
   Car,
   Store,
+  FileWarning,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -75,6 +76,7 @@ const navItems: NavItem[] = [
     children: [
       { path: "/finance/invoices", icon: Receipt, labelKey: "nav.invoices" },
       { path: "/finance/payments", icon: CreditCard, labelKey: "nav.payments" },
+      { path: "/finance/supplier-debits", icon: FileWarning, labelKey: "nav.supplier_debits" },
       { path: "/finance/reports", icon: BarChart3, labelKey: "nav.financial_reports" },
       { path: "/finance/settings", icon: Settings, labelKey: "nav.financial_settings" },
     ],

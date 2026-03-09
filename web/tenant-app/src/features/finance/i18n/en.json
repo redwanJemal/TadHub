@@ -33,6 +33,43 @@
     "create": "Create Payment",
     "noPayments": "No supplier payments found"
   },
+  "supplierDebits": {
+    "title": "Supplier Debits",
+    "create": "Create Debit",
+    "noDebits": "No supplier debits found",
+    "outstanding": "Outstanding",
+    "totalDebits": "Total Debits",
+    "outstandingAmount": "Outstanding Amount",
+    "debitType": "Debit Type",
+    "commissionRefund": "Commission Refund",
+    "ticketCost": "Ticket Cost",
+    "visaCost": "Visa Cost",
+    "transportationCost": "Transportation Cost",
+    "medicalCost": "Medical Cost",
+    "accommodationCost": "Accommodation Cost",
+    "other": "Other"
+  },
+  "refundCalculation": {
+    "title": "Refund Calculation",
+    "totalPaid": "Total Paid",
+    "contractMonths": "Contract Duration (months)",
+    "monthsWorked": "Months Worked",
+    "valuePerMonth": "Value Per Month",
+    "refundAmount": "Refund Amount",
+    "partialMonthMethod": "Partial Month Method",
+    "proRata": "Pro-rata",
+    "roundDown": "Round Down"
+  },
+  "commission": {
+    "title": "Commission Calculation",
+    "calculationType": "Calculation Type",
+    "fixed": "Fixed Amount",
+    "percentage": "Percentage",
+    "custom": "Custom",
+    "amount": "Commission Amount",
+    "contractValue": "Contract Value",
+    "autoCalculate": "Auto-calculate on deployment"
+  },
   "reports": {
     "title": "Financial Reports",
     "margin": "Margin Report",
@@ -45,7 +82,27 @@
     "invoice": "Invoice Settings",
     "deposit": "Deposit & Installments",
     "methods": "Payment Methods",
-    "terms": "Invoice Terms & Footer"
+    "terms": "Invoice Terms & Footer",
+    "commission": "Supplier Commission",
+    "refund": "Refund Calculation",
+    "guarantee": "Guarantee Period",
+    "accommodation": "Accommodation",
+    "commissionCalcType": "Calculation Type",
+    "fixedAmount": "Fixed Amount",
+    "percentageOfContract": "Percentage of Contract Value",
+    "customPerSupplier": "Custom per Supplier",
+    "autoCalcOnDeployment": "Auto-calculate on deployment",
+    "defaultContractMonths": "Default Contract Duration (months)",
+    "partialMonthCalc": "Partial Month Calculation",
+    "proRata": "Pro-rata (proportional)",
+    "roundDown": "Round down (full months only)",
+    "autoGenCreditNote": "Auto-generate credit note on returnee approval",
+    "guaranteePeriod": "Guarantee Period (months)",
+    "autoGenDebits": "Auto-generate supplier debits for guarantee cases",
+    "includeVisaCost": "Include visa cost",
+    "includeTransportCost": "Include transportation cost",
+    "includeMedicalCost": "Include medical cost",
+    "dailyRate": "Daily Accommodation Rate (AED)"
   },
   "status": {
     "draft": "Draft",
@@ -57,6 +114,9 @@
     "refunded": "Refunded",
     "pending": "Pending",
     "completed": "Completed",
-    "failed": "Failed"
+    "failed": "Failed",
+    "outstanding": "Outstanding",
+    "settled": "Settled",
+    "waived": "Waived"
   }
 }

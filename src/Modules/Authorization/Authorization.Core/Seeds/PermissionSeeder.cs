@@ -173,6 +173,13 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "financial_reports.view", Description = "View financial reports", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 19 },
             new() { Id = Guid.NewGuid(), Name = "financial_reports.manage", Description = "Manage financial report settings", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 20 },
 
+            // Supplier Debits module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "supplier_debits.view", Description = "View supplier debits", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 21 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_debits.create", Description = "Create supplier debits", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 22 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_debits.edit", Description = "Edit supplier debits", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 23 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_debits.manage_status", Description = "Transition supplier debit status", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 24 },
+            new() { Id = Guid.NewGuid(), Name = "supplier_debits.delete", Description = "Delete supplier debits", Module = "financial", Scope = PermissionScope.Tenant, DisplayOrder = 25 },
+
             // Candidates module (Tenant)
             new() { Id = Guid.NewGuid(), Name = "candidates.view", Description = "View candidates", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
             new() { Id = Guid.NewGuid(), Name = "candidates.create", Description = "Create candidates", Module = "candidates", Scope = PermissionScope.Tenant, DisplayOrder = 2 },

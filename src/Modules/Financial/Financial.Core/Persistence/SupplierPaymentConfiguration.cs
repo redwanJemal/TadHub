@@ -21,6 +21,11 @@ public class SupplierPaymentConfiguration : IEntityTypeConfiguration<SupplierPay
             .HasMaxLength(30)
             .HasConversion<string>();
 
+        builder.Property(x => x.PaymentType)
+            .IsRequired()
+            .HasMaxLength(30)
+            .HasConversion<string>();
+
         builder.Property(x => x.Method)
             .IsRequired()
             .HasMaxLength(30)
@@ -54,5 +59,8 @@ public class SupplierPaymentConfiguration : IEntityTypeConfiguration<SupplierPay
 
         builder.HasIndex(x => new { x.TenantId, x.PaymentDate })
             .HasDatabaseName("ix_supplier_payments_tenant_id_payment_date");
+
+        builder.HasIndex(x => new { x.TenantId, x.PlacementId })
+            .HasDatabaseName("ix_supplier_payments_tenant_id_placement_id");
     }
 }

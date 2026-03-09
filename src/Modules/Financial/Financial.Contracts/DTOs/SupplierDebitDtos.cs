@@ -2,23 +2,23 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Financial.Contracts.DTOs;
 
-public sealed record SupplierPaymentDto
+public sealed record SupplierDebitDto
 {
     public Guid Id { get; init; }
     public Guid TenantId { get; init; }
-    public string PaymentNumber { get; init; } = string.Empty;
+    public string DebitNumber { get; init; } = string.Empty;
     public string Status { get; init; } = string.Empty;
-    public string PaymentType { get; init; } = "Regular";
     public Guid SupplierId { get; init; }
     public Guid? WorkerId { get; init; }
     public Guid? ContractId { get; init; }
-    public Guid? PlacementId { get; init; }
+    public string? CaseType { get; init; }
+    public Guid? CaseId { get; init; }
+    public string DebitType { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
     public decimal Amount { get; init; }
     public string Currency { get; init; } = "AED";
-    public string Method { get; init; } = string.Empty;
-    public string? ReferenceNumber { get; init; }
-    public DateOnly PaymentDate { get; init; }
-    public DateTimeOffset? PaidAt { get; init; }
+    public Guid? SettlementPaymentId { get; init; }
+    public DateTimeOffset? SettledAt { get; init; }
     public string? Notes { get; init; }
     public Guid? CreatedBy { get; init; }
     public Guid? UpdatedBy { get; init; }
@@ -26,48 +26,46 @@ public sealed record SupplierPaymentDto
     public DateTimeOffset UpdatedAt { get; init; }
 }
 
-public sealed record SupplierPaymentListDto
+public sealed record SupplierDebitListDto
 {
     public Guid Id { get; init; }
-    public string PaymentNumber { get; init; } = string.Empty;
+    public string DebitNumber { get; init; } = string.Empty;
     public string Status { get; init; } = string.Empty;
-    public string PaymentType { get; init; } = "Regular";
     public Guid SupplierId { get; init; }
     public Guid? WorkerId { get; init; }
     public Guid? ContractId { get; init; }
-    public Guid? PlacementId { get; init; }
+    public string? CaseType { get; init; }
+    public string DebitType { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
     public decimal Amount { get; init; }
     public string Currency { get; init; } = "AED";
-    public string Method { get; init; } = string.Empty;
-    public DateOnly PaymentDate { get; init; }
     public DateTimeOffset CreatedAt { get; init; }
 }
 
-public sealed record CreateSupplierPaymentRequest
+public sealed record CreateSupplierDebitRequest
 {
     [Required] public Guid SupplierId { get; init; }
     public Guid? WorkerId { get; init; }
     public Guid? ContractId { get; init; }
-    public Guid? PlacementId { get; init; }
+    public string? CaseType { get; init; }
+    public Guid? CaseId { get; init; }
+    [Required] public string DebitType { get; init; } = string.Empty;
+    [Required] [MaxLength(500)] public string Description { get; init; } = string.Empty;
     [Required] [Range(0.01, double.MaxValue)] public decimal Amount { get; init; }
     public string Currency { get; init; } = "AED";
-    [Required] public string Method { get; init; } = "BankTransfer";
-    [MaxLength(100)] public string? ReferenceNumber { get; init; }
-    [Required] public DateOnly PaymentDate { get; init; }
     [MaxLength(2000)] public string? Notes { get; init; }
 }
 
-public sealed record UpdateSupplierPaymentRequest
+public sealed record UpdateSupplierDebitRequest
 {
+    [MaxLength(500)] public string? Description { get; init; }
     [Range(0.01, double.MaxValue)] public decimal? Amount { get; init; }
-    public string? Method { get; init; }
-    [MaxLength(100)] public string? ReferenceNumber { get; init; }
-    public DateOnly? PaymentDate { get; init; }
     [MaxLength(2000)] public string? Notes { get; init; }
 }
 
-public sealed record TransitionSupplierPaymentStatusRequest
+public sealed record TransitionSupplierDebitStatusRequest
 {
     [Required] public string Status { get; init; } = string.Empty;
     public string? Reason { get; init; }
+    public Guid? SettlementPaymentId { get; init; }
 }

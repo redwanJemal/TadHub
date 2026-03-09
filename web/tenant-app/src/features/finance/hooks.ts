@@ -16,6 +16,9 @@ import type {
   CreateSupplierPaymentRequest,
   UpdateSupplierPaymentRequest,
   TransitionSupplierPaymentStatusRequest,
+  CreateSupplierDebitRequest,
+  UpdateSupplierDebitRequest,
+  TransitionSupplierDebitStatusRequest,
   TenantFinancialSettings,
 } from './types';
 
@@ -24,6 +27,7 @@ const INVOICES_KEY = 'invoices';
 const PAYMENTS_KEY = 'payments';
 const DISCOUNT_PROGRAMS_KEY = 'discount-programs';
 const SUPPLIER_PAYMENTS_KEY = 'supplier-payments';
+const SUPPLIER_DEBITS_KEY = 'supplier-debits';
 const FINANCIAL_REPORTS_KEY = 'financial-reports';
 const FINANCIAL_SETTINGS_KEY = 'financial-settings';
 
@@ -284,6 +288,83 @@ export function useDeleteSupplierPayment() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => api.deleteSupplierPayment(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [SUPPLIER_PAYMENTS_KEY] });
+    },
+  });
+}
+
+// Supplier Debit hooks
+export function useSupplierDebits(params?: QueryParams) {
+  return useQuery({
+    queryKey: [SUPPLIER_DEBITS_KEY, params],
+    queryFn: () => api.listSupplierDebits(params),
+  });
+}
+
+export function useSupplierDebit(id: string) {
+  return useQuery({
+    queryKey: [SUPPLIER_DEBITS_KEY, id],
+    queryFn: () => api.getSupplierDebit(id),
+    enabled: !!id,
+  });
+}
+
+export function useCreateSupplierDebit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateSupplierDebitRequest) => api.createSupplierDebit(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [SUPPLIER_DEBITS_KEY] });
+    },
+  });
+}
+
+export function useUpdateSupplierDebit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateSupplierDebitRequest }) =>
+      api.updateSupplierDebit(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [SUPPLIER_DEBITS_KEY] });
+    },
+  });
+}
+
+export function useTransitionSupplierDebitStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: TransitionSupplierDebitStatusRequest }) =>
+      api.transitionSupplierDebitStatus(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [SUPPLIER_DEBITS_KEY] });
+    },
+  });
+}
+
+export function useDeleteSupplierDebit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.deleteSupplierDebit(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [SUPPLIER_DEBITS_KEY] });
+    },
+  });
+}
+
+// Finance Calculation hooks
+export function useRefundCalculation(contractId: string, returnDate: string) {
+  return useQuery({
+    queryKey: ['refund-calculation', contractId, returnDate],
+    queryFn: () => api.calculateRefund(contractId, returnDate),
+    enabled: !!contractId && !!returnDate,
+  });
+}
+
+export function useCalculateCommission() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (placementId: string) => api.calculateCommission(placementId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [SUPPLIER_PAYMENTS_KEY] });
     },
