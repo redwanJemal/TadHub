@@ -276,6 +276,20 @@ public class RoleTemplateSeeder : IHostedService
                 IsSystem = false,
                 DisplayOrder = 7,
                 PermissionFilter = p => p.Name == "arrivals.driver_actions"
+            },
+
+            // Accommodation Staff: limited to accommodation management and viewing arrivals
+            new()
+            {
+                Name = "Accommodation Staff",
+                Description = "Accommodation staff with access to check-in/check-out, occupant lists, and incoming arrivals.",
+                IsSystem = false,
+                DisplayOrder = 8,
+                PermissionFilter = p =>
+                    p.Name == "dashboard.view" ||
+                    p.Name == "accommodations.view" ||
+                    p.Name == "accommodations.manage" ||
+                    p.Name == "arrivals.view"
             }
         };
     }

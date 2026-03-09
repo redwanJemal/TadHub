@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T06:00:00.000000+00:00",
+  "last_updated": "2026-03-09T01:10:53.045779+00:00",
   "current_task": "10-accommodation-staff-role",
   "current_subtask": null,
   "tasks": {
@@ -146,15 +146,15 @@
     },
     "10-accommodation-staff-role": {
       "title": "Accommodation Staff Role",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "backend": "pending",
-        "frontend": "pending",
+        "backend": "completed",
+        "frontend": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T01:10:52Z",
+      "completed_at": "2026-03-09T07:15:00Z",
+      "notes": "Added 'Accommodation Staff' role template (DisplayOrder 8) in RoleTemplateSeeder with permissions: dashboard.view, accommodations.view, accommodations.manage, arrivals.view. Role is non-system, assignable by admin. Sidebar already filters nav items by permission — accommodation staff users only see Dashboard, Arrivals, and Accommodations. All accommodation pages (list with occupants/daily/history views, detail, check-in, check-out) already exist from Task 07. No new frontend pages needed — permission-based sidebar filtering provides the minimal navigation automatically."
     },
     "11-finance-enhancements": {
       "title": "Finance Enhancements",
