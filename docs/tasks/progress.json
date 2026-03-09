@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T09:00:00.000000+00:00",
+  "last_updated": "2026-03-09T02:14:39.211948+00:00",
   "current_task": "13-maid-status-lifecycle",
   "current_subtask": null,
   "tasks": {
@@ -189,17 +189,17 @@
     },
     "13-maid-status-lifecycle": {
       "title": "Maid Status Lifecycle Alignment",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "enum-updates": "pending",
-        "transition-rules": "pending",
-        "frontend": "pending",
-        "migration": "pending",
+        "enum-updates": "completed",
+        "transition-rules": "completed",
+        "frontend": "completed",
+        "migration": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T02:14:39Z",
+      "completed_at": "2026-03-09T10:30:00Z",
+      "notes": "Added 4 new WorkerStatus values: VisaProcessing, Traveling, InAccommodation, Returnee. Updated status machine with full lifecycle transitions. WorkerLifecycleTimeline visual component added to detail page. Display names aligned to spec (Arrived, Deployed, Runaway, Returned to Country). No schema migration needed (enums stored as strings). 122 unit tests pass."
     },
     "14-notifications-expansion": {
       "title": "Notifications Expansion",

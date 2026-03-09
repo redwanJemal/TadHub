@@ -3,6 +3,9 @@ export type WorkerStatus =
   | 'InTraining'
   | 'UnderMedicalTest'
   | 'NewArrival'
+  | 'VisaProcessing'
+  | 'Traveling'
+  | 'InAccommodation'
   | 'Booked'
   | 'Hired'
   | 'OnProbation'
@@ -14,6 +17,7 @@ export type WorkerStatus =
   | 'Absconded'
   | 'Terminated'
   | 'Pregnant'
+  | 'Returnee'
   | 'Repatriated'
   | 'Deported'
   | 'Deceased';

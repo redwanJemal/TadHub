@@ -19,19 +19,23 @@
     "Available": "Available",
     "InTraining": "In Training",
     "UnderMedicalTest": "Under Medical Test",
-    "NewArrival": "New Arrival",
+    "NewArrival": "Arrived",
+    "VisaProcessing": "Visa Processing",
+    "Traveling": "Traveling",
+    "InAccommodation": "In Accommodation",
     "Booked": "Booked",
     "Hired": "Hired",
     "OnProbation": "On Probation",
-    "Active": "Active",
+    "Active": "Deployed",
     "Renewed": "Renewed",
     "PendingReplacement": "Pending Replacement",
     "Transferred": "Transferred",
     "MedicallyUnfit": "Medically Unfit",
-    "Absconded": "Absconded",
+    "Absconded": "Runaway",
     "Terminated": "Terminated",
     "Pregnant": "Pregnant",
-    "Repatriated": "Repatriated",
+    "Returnee": "Returnee",
+    "Repatriated": "Returned to Country",
     "Deported": "Deported",
     "Deceased": "Deceased"
   },
@@ -202,6 +206,18 @@
       "Conversational": "Conversational",
       "Fluent": "Fluent",
       "Native": "Native"
+    }
+  },
+  "lifecycle": {
+    "title": "Lifecycle Progress",
+    "stages": {
+      "Available": "Inventory",
+      "Booked": "Booked",
+      "VisaProcessing": "Visa",
+      "Traveling": "Traveling",
+      "NewArrival": "Arrived",
+      "InAccommodation": "Accommodation",
+      "Active": "Deployed"
     }
   }
 }

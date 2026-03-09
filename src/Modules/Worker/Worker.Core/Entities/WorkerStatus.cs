@@ -7,8 +7,11 @@ public enum WorkerStatus
     InTraining = 1,
     UnderMedicalTest = 2,
 
-    // Arrival
+    // Arrival / Transit
     NewArrival = 3,
+    VisaProcessing = 18,
+    Traveling = 19,
+    InAccommodation = 20,
 
     // Placement
     Booked = 4,
@@ -24,6 +27,7 @@ public enum WorkerStatus
     Absconded = 12,
     Terminated = 13,
     Pregnant = 14,
+    Returnee = 21,
 
     // Terminal
     Repatriated = 15,

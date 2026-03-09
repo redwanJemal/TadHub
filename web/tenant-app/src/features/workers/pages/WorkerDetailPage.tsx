@@ -25,6 +25,7 @@ import { WorkerStatusBadge } from '../components/WorkerStatusBadge';
 import { WorkerStatusTransitionDialog } from '../components/WorkerStatusTransitionDialog';
 import { WorkerEditDialog } from '../components/WorkerEditDialog';
 import { ALLOWED_TRANSITIONS, LOCATION_CONFIG } from '../constants';
+import { WorkerLifecycleTimeline } from '../components/WorkerLifecycleTimeline';
 
 function InfoItem({ label, value }: { label: string; value?: string | number | null }) {
   return (
@@ -172,6 +173,19 @@ export function WorkerDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Lifecycle Progress */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">{t('lifecycle.title')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <WorkerLifecycleTimeline
+            currentStatus={worker.status}
+            statusHistory={worker.statusHistory}
+          />
+        </CardContent>
+      </Card>
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">

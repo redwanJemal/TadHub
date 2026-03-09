@@ -3,7 +3,7 @@ import {
   CheckCircle, Briefcase, XCircle, GraduationCap, Stethoscope,
   Plane, BookOpen, UserCheck, Shield, RefreshCw, ArrowRightLeft,
   HeartPulse, AlertTriangle, Baby, Home, Ban, Skull, Clock,
-  Globe, MapPin,
+  Globe, MapPin, Stamp, Navigation, Building2, RotateCcw,
 } from 'lucide-react';
 import type { WorkerStatus, WorkerLocation, WorkerSourceType, WorkerStatusCategory } from './types';
 
@@ -20,8 +20,11 @@ export const STATUS_CONFIG: Record<WorkerStatus, StatusConfig> = {
   Available:        { variant: 'success',     icon: CheckCircle,    category: 'Pool' },
   InTraining:       { variant: 'default',     icon: GraduationCap,  category: 'Pool' },
   UnderMedicalTest: { variant: 'default',     icon: Stethoscope,    category: 'Pool' },
-  // Arrival
+  // Arrival / Transit
   NewArrival:       { variant: 'default',     icon: Plane,          category: 'Arrival' },
+  VisaProcessing:   { variant: 'warning',     icon: Stamp,          category: 'Arrival' },
+  Traveling:        { variant: 'default',     icon: Navigation,     category: 'Arrival' },
+  InAccommodation:  { variant: 'default',     icon: Building2,      category: 'Arrival' },
   // Placement
   Booked:           { variant: 'default',     icon: BookOpen,       category: 'Placement' },
   Hired:            { variant: 'default',     icon: UserCheck,      category: 'Placement' },
@@ -35,6 +38,7 @@ export const STATUS_CONFIG: Record<WorkerStatus, StatusConfig> = {
   Absconded:        { variant: 'destructive', icon: AlertTriangle,  category: 'NegativeSpecial' },
   Terminated:       { variant: 'destructive', icon: XCircle,        category: 'NegativeSpecial' },
   Pregnant:         { variant: 'warning',     icon: Baby,           category: 'NegativeSpecial' },
+  Returnee:         { variant: 'warning',     icon: RotateCcw,      category: 'NegativeSpecial' },
   // Terminal
   Repatriated:      { variant: 'secondary',   icon: Home,           category: 'Terminal' },
   Deported:         { variant: 'destructive', icon: Ban,            category: 'Terminal' },
@@ -43,9 +47,9 @@ export const STATUS_CONFIG: Record<WorkerStatus, StatusConfig> = {
 
 export const ALL_STATUSES: WorkerStatus[] = [
   'Available', 'InTraining', 'UnderMedicalTest',
-  'NewArrival',
+  'NewArrival', 'VisaProcessing', 'Traveling', 'InAccommodation',
   'Booked', 'Hired', 'OnProbation', 'Active', 'Renewed',
-  'PendingReplacement', 'Transferred', 'MedicallyUnfit', 'Absconded', 'Terminated', 'Pregnant',
+  'PendingReplacement', 'Transferred', 'MedicallyUnfit', 'Absconded', 'Terminated', 'Pregnant', 'Returnee',
   'Repatriated', 'Deported', 'Deceased',
 ];
 
@@ -58,35 +62,50 @@ export const ALLOWED_TRANSITIONS: Partial<Record<WorkerStatus, WorkerStatus[]>> 
   Available:          ['Booked', 'UnderMedicalTest', 'InTraining', 'Absconded', 'Repatriated', 'Deceased'],
   InTraining:         ['Available', 'UnderMedicalTest', 'Absconded', 'Repatriated', 'Deceased'],
   UnderMedicalTest:   ['Available', 'MedicallyUnfit', 'Deceased'],
-  NewArrival:         ['Available', 'InTraining', 'UnderMedicalTest', 'MedicallyUnfit', 'Absconded', 'Repatriated', 'Deceased'],
-  Booked:             ['Hired', 'NewArrival', 'Available', 'Deceased'],
+  NewArrival:         ['Available', 'InAccommodation', 'InTraining', 'UnderMedicalTest', 'MedicallyUnfit', 'Absconded', 'Repatriated', 'Deceased'],
+  Booked:             ['VisaProcessing', 'Hired', 'NewArrival', 'Available', 'Deceased'],
+  VisaProcessing:     ['Traveling', 'Available', 'Deceased'],
+  Traveling:          ['NewArrival', 'Available', 'Deceased'],
+  InAccommodation:    ['Active', 'Available', 'Absconded', 'Repatriated', 'Deceased'],
   Hired:              ['OnProbation', 'Available', 'Deceased'],
   OnProbation:        ['Active', 'PendingReplacement', 'Terminated', 'Absconded', 'Pregnant', 'Deceased'],
-  Active:             ['Renewed', 'PendingReplacement', 'Terminated', 'Absconded', 'Pregnant', 'Transferred', 'Deceased'],
-  Renewed:            ['Active', 'PendingReplacement', 'Terminated', 'Absconded', 'Pregnant', 'Transferred', 'Deceased'],
+  Active:             ['Renewed', 'Returnee', 'PendingReplacement', 'Terminated', 'Absconded', 'Pregnant', 'Transferred', 'Deceased'],
+  Renewed:            ['Active', 'Returnee', 'PendingReplacement', 'Terminated', 'Absconded', 'Pregnant', 'Transferred', 'Deceased'],
   PendingReplacement: ['Available', 'Terminated', 'Repatriated', 'Deceased'],
   Transferred:        ['Repatriated'],
   MedicallyUnfit:     ['Repatriated', 'Available', 'Deceased'],
   Absconded:          ['Terminated', 'Repatriated', 'Deported', 'Available', 'Deceased'],
   Terminated:         ['Available', 'Repatriated', 'Transferred'],
   Pregnant:           ['Active', 'Terminated', 'Repatriated', 'Deceased'],
+  Returnee:           ['Available', 'Repatriated', 'Deceased'],
   // Terminal states have no transitions
 };
 
 /** Statuses that require a reason */
 export const REASON_REQUIRED_STATUSES: WorkerStatus[] = [
   'Terminated', 'Absconded', 'MedicallyUnfit', 'PendingReplacement',
-  'Transferred', 'Repatriated', 'Deported', 'Pregnant', 'Deceased',
+  'Transferred', 'Repatriated', 'Deported', 'Pregnant', 'Deceased', 'Returnee',
 ];
 
 /** Status category groupings */
 export const STATUS_CATEGORIES: Record<WorkerStatusCategory, WorkerStatus[]> = {
   Pool:            ['Available', 'InTraining', 'UnderMedicalTest'],
-  Arrival:         ['NewArrival'],
+  Arrival:         ['NewArrival', 'VisaProcessing', 'Traveling', 'InAccommodation'],
   Placement:       ['Booked', 'Hired', 'OnProbation', 'Active', 'Renewed'],
-  NegativeSpecial: ['PendingReplacement', 'Transferred', 'MedicallyUnfit', 'Absconded', 'Terminated', 'Pregnant'],
+  NegativeSpecial: ['PendingReplacement', 'Transferred', 'MedicallyUnfit', 'Absconded', 'Terminated', 'Pregnant', 'Returnee'],
   Terminal:        ['Repatriated', 'Deported', 'Deceased'],
 };
+
+/** Ordered lifecycle stages for the visual progress indicator */
+export const LIFECYCLE_STAGES: WorkerStatus[] = [
+  'Available',
+  'Booked',
+  'VisaProcessing',
+  'Traveling',
+  'NewArrival',
+  'InAccommodation',
+  'Active',
+];
 
 interface LocationConfig {
   variant: BadgeVariant;

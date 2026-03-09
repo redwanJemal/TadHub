@@ -214,6 +214,11 @@ public class WorkerService : IWorkerService
             worker.Location = WorkerLocation.InCountry;
         }
 
+        if (targetStatus == WorkerStatus.InAccommodation)
+        {
+            worker.Location = WorkerLocation.InCountry;
+        }
+
         if (targetStatus == WorkerStatus.Terminated)
         {
             worker.TerminatedAt = now;
