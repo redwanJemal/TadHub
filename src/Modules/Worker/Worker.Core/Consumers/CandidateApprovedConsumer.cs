@@ -49,6 +49,26 @@ public class CandidateApprovedConsumer : IConsumer<CandidateApprovedEvent>
             return;
         }
 
+        // Skip if candidate has an active placement — worker will be created on arrival instead
+        var hasPlacement = await _db.Database.ExecuteSqlRawAsync(
+            "SELECT 1 FROM placements WHERE tenant_id = {0} AND candidate_id = {1} AND is_deleted = false AND status NOT IN ('Completed', 'Cancelled') LIMIT 1",
+            [message.TenantId, message.CandidateId], ct);
+
+        // ExecuteSqlRawAsync returns -1 for SELECT, so use a different approach
+        var placementCount = await _db.Database
+            .SqlQueryRaw<int>(
+                "SELECT COUNT(*)::int AS \"Value\" FROM placements WHERE tenant_id = {0} AND candidate_id = {1} AND is_deleted = false AND status NOT IN ('Completed', 'Cancelled')",
+                message.TenantId, message.CandidateId)
+            .FirstOrDefaultAsync(ct);
+
+        if (placementCount > 0)
+        {
+            _logger.LogInformation(
+                "Candidate {CandidateId} has an active placement in tenant {TenantId}, skipping auto-worker creation (will be created on arrival)",
+                message.CandidateId, message.TenantId);
+            return;
+        }
+
         // Generate worker code: WRK-000001
         var maxCode = await _db.Set<Entities.Worker>()
             .IgnoreQueryFilters()

@@ -2,9 +2,9 @@ import { WebStorageStateStore } from 'oidc-client-ts';
 import type { UserManagerSettings } from 'oidc-client-ts';
 
 // TadHub Backoffice Keycloak Configuration
-const KEYCLOAK_URL = import.meta.env.VITE_AUTH_URL || 'https://auth.endlessmaker.com';
-const KEYCLOAK_REALM = import.meta.env.VITE_AUTH_REALM || 'tadhub';
-const KEYCLOAK_CLIENT_ID = import.meta.env.VITE_AUTH_CLIENT_ID || 'backoffice-app';
+const KEYCLOAK_URL = import.meta.env.VITE_KEYCLOAK_URL || 'https://auth.endlessmaker.com';
+const KEYCLOAK_REALM = import.meta.env.VITE_KEYCLOAK_REALM || 'tadhub';
+const KEYCLOAK_CLIENT_ID = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'backoffice-app';
 
 export const oidcConfig: UserManagerSettings = {
   authority: `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}`,

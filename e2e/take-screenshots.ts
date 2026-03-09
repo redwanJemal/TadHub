@@ -690,6 +690,64 @@ async function main() {
 
   await snap(page, '89-financial-settings-full', true);
 
+  // ========== PLACEMENTS / PIPELINE (93-99) ==========
+  console.log('\n=== Placements ===');
+
+  // Board page (Kanban)
+  await page.goto(`${TENANT_URL}/placements`);
+  await waitForPage(page, 'Placement Pipeline', false);
+  await page.waitForTimeout(3000);
+  await snap(page, '93-placements-board');
+  await snap(page, '93-placements-board-full', true);
+
+  // Create placement page
+  const bookCandidateBtn = page.getByRole('button', { name: /book candidate/i });
+  if (await bookCandidateBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await bookCandidateBtn.click();
+    await page.waitForTimeout(2000);
+    await snap(page, '94-create-placement');
+    await snap(page, '94-create-placement-full', true);
+    // Go back to board
+    await page.goBack();
+    await page.waitForTimeout(2000);
+  }
+
+  // Placement detail — click first card on the board
+  const firstCard = page.locator('[class*="rounded-lg border"]').filter({ hasText: /PLC-/ }).first();
+  if (await firstCard.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await firstCard.click();
+    await page.waitForTimeout(3000);
+    await snap(page, '95-placement-detail');
+    await snap(page, '96-placement-detail-full', true);
+
+    // Advance Stage dialog
+    const advanceBtn = page.getByRole('button', { name: /advance stage/i });
+    if (await advanceBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await advanceBtn.click();
+      await page.waitForTimeout(1000);
+      await snap(page, '97-placement-transition-dialog');
+      await dismiss(page, 'cancel');
+    }
+
+    // Add Cost dialog
+    const addCostBtn = page.getByRole('button', { name: /add cost/i });
+    if (await addCostBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await addCostBtn.click();
+      await page.waitForTimeout(1000);
+      await snap(page, '98-placement-add-cost-dialog');
+      await dismiss(page, 'cancel');
+    }
+
+    // Delete confirmation
+    const deleteBtn = page.getByRole('button', { name: /delete/i });
+    if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await deleteBtn.click();
+      await page.waitForTimeout(1000);
+      await snap(page, '99-placement-delete-dialog');
+      await dismiss(page, 'cancel');
+    }
+  }
+
   // ========== SIDEBAR & NAVIGATION (90-92) ==========
   console.log('\n=== Sidebar & Navigation ===');
 

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Placement.Contracts\Placement.Contracts.csproj" />
+    <ProjectReference Include="..\..\Candidate\Candidate.Contracts\Candidate.Contracts.csproj" />
+    <ProjectReference Include="..\..\Worker\Worker.Contracts\Worker.Contracts.csproj" />
+    <ProjectReference Include="..\..\Client\Client.Contracts\Client.Contracts.csproj" />
+    <ProjectReference Include="..\..\Contract\Contract.Contracts\Contract.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\TadHub.SharedKernel\TadHub.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\..\TadHub.Infrastructure\TadHub.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -161,9 +161,9 @@ services:
       dockerfile: ../../docker/Dockerfile.web
       args:
         VITE_API_URL: https://api.endlessmaker.com/api/v1
-        VITE_AUTH_URL: https://auth.endlessmaker.com
-        VITE_AUTH_REALM: tadhub
-        VITE_AUTH_CLIENT_ID: tenant-app
+        VITE_KEYCLOAK_URL: https://auth.endlessmaker.com
+        VITE_KEYCLOAK_REALM: tadhub
+        VITE_KEYCLOAK_CLIENT_ID: tenant-app
         VITE_STORAGE_URL: https://storage.endlessmaker.com
     container_name: tadhub-tenant-app
     restart: always
