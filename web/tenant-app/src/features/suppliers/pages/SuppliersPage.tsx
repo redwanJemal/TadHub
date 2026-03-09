@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { DataTableAdvanced, type Column } from '@/shared/components/data-table/DataTableAdvanced';
 import { Badge } from '@/shared/components/ui/badge';
@@ -91,7 +92,9 @@ export function SuppliersPage() {
       header: t('columns.name'),
       cell: (row) => (
         <div className="min-w-0">
-          <p className="font-medium truncate">{row.supplier?.nameEn ?? '—'}</p>
+          <Link to={`/suppliers/${row.id}`} className="font-medium truncate hover:underline">
+            {row.supplier?.nameEn ?? '—'}
+          </Link>
           {row.supplier?.nameAr && (
             <p className="text-xs text-muted-foreground truncate" dir="rtl">
               {row.supplier.nameAr}

@@ -32,7 +32,6 @@ import {
   Plane,
   Building2,
   Car,
-  Store,
   FileWarning,
   FileBarChart,
   Package,
@@ -123,25 +122,6 @@ const navSections: NavSection[] = [
     items: [
       { path: "/returnees", icon: RotateCcw, labelKey: "nav.returnees", permission: "returnees.view" },
       { path: "/runaways", icon: AlertTriangle, labelKey: "nav.runaways", permission: "runaways.view" },
-    ],
-  },
-  {
-    id: "supplier_portal",
-    labelKey: null,
-    items: [
-      {
-        path: "/supplier-portal",
-        icon: Store,
-        labelKey: "nav.supplier_portal",
-        permission: "supplier_portal.view",
-        children: [
-          { path: "/supplier-portal", icon: LayoutDashboard, labelKey: "nav.supplier_portal_dashboard" },
-          { path: "/supplier-portal/candidates", icon: UserSearch, labelKey: "nav.supplier_portal_candidates" },
-          { path: "/supplier-portal/workers", icon: HardHat, labelKey: "nav.supplier_portal_workers" },
-          { path: "/supplier-portal/commissions", icon: DollarSign, labelKey: "nav.supplier_portal_commissions" },
-          { path: "/supplier-portal/arrivals", icon: Plane, labelKey: "nav.supplier_portal_arrivals" },
-        ],
-      },
     ],
   },
   {

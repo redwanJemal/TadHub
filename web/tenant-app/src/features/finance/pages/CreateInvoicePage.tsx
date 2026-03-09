@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { useWorkers } from '@/features/workers/hooks';
+import { useClients } from '@/features/clients/hooks';
+import { useContracts } from '@/features/contracts/hooks';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Label } from '@/shared/components/ui/label';
@@ -73,6 +76,16 @@ export function CreateInvoicePage() {
   const [clientTrn, setClientTrn] = useState('');
   const [notes, setNotes] = useState('');
   const [applyVat, setApplyVat] = useState(true);
+
+  // Search state for dropdowns
+  const [contractSearch, setContractSearch] = useState('');
+  const [clientSearch, setClientSearch] = useState('');
+  const [workerSearch, setWorkerSearch] = useState('');
+
+  // Search hooks
+  const { data: contractsData } = useContracts({ pageSize: 5, search: contractSearch || undefined });
+  const { data: clientsData } = useClients({ pageSize: 5, search: clientSearch || undefined });
+  const { data: workersData } = useWorkers({ pageSize: 5, search: workerSearch || undefined });
 
   const [lineItems, setLineItems] = useState<LineItemRow[]>([
     {
@@ -185,28 +198,80 @@ export function CreateInvoicePage() {
             ) : (
               <>
                 <div className="space-y-2">
-                  <Label>Contract ID *</Label>
+                  <Label>Contract *</Label>
                   <Input
-                    placeholder="Enter contract ID"
-                    value={contractId}
-                    onChange={(e) => setContractId(e.target.value)}
+                    placeholder="Search contracts..."
+                    value={contractSearch}
+                    onChange={(e) => { setContractSearch(e.target.value); if (contractId) { setContractId(''); } }}
                   />
+                  {contractsData && contractsData.items.length > 0 && contractSearch && !contractId && (
+                    <div className="border rounded-md max-h-40 overflow-y-auto">
+                      {contractsData.items.map((c) => (
+                        <button key={c.id} type="button" className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                          onClick={() => { setContractId(c.id); setContractSearch(c.contractCode); }}>
+                          <span className="font-medium font-mono">{c.contractCode}</span>
+                          {c.worker && <span className="text-muted-foreground ms-2 text-xs">{c.worker.fullNameEn}</span>}
+                          {c.client && <span className="text-muted-foreground ms-2 text-xs">— {c.client.nameEn}</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {contractId && (
+                    <button type="button" className="text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => { setContractId(''); setContractSearch(''); }}>
+                      Clear
+                    </button>
+                  )}
                 </div>
                 <div className="space-y-2">
-                  <Label>Client ID *</Label>
+                  <Label>Client *</Label>
                   <Input
-                    placeholder="Enter client ID"
-                    value={clientId}
-                    onChange={(e) => setClientId(e.target.value)}
+                    placeholder="Search clients..."
+                    value={clientSearch}
+                    onChange={(e) => { setClientSearch(e.target.value); if (clientId) { setClientId(''); } }}
                   />
+                  {clientsData && clientsData.items.length > 0 && clientSearch && !clientId && (
+                    <div className="border rounded-md max-h-40 overflow-y-auto">
+                      {clientsData.items.map((c) => (
+                        <button key={c.id} type="button" className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                          onClick={() => { setClientId(c.id); setClientSearch(c.nameEn); }}>
+                          <span className="font-medium">{c.nameEn}</span>
+                          {c.nameAr && <span className="text-muted-foreground ms-2 text-xs">{c.nameAr}</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {clientId && (
+                    <button type="button" className="text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => { setClientId(''); setClientSearch(''); }}>
+                      Clear
+                    </button>
+                  )}
                 </div>
                 <div className="space-y-2">
-                  <Label>Worker ID</Label>
+                  <Label>Worker</Label>
                   <Input
-                    placeholder="Optional worker ID"
-                    value={workerId}
-                    onChange={(e) => setWorkerId(e.target.value)}
+                    placeholder="Search workers..."
+                    value={workerSearch}
+                    onChange={(e) => { setWorkerSearch(e.target.value); if (workerId) { setWorkerId(''); } }}
                   />
+                  {workersData && workersData.items.length > 0 && workerSearch && !workerId && (
+                    <div className="border rounded-md max-h-40 overflow-y-auto">
+                      {workersData.items.map((w) => (
+                        <button key={w.id} type="button" className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                          onClick={() => { setWorkerId(w.id); setWorkerSearch(w.fullNameEn); }}>
+                          <span className="font-medium">{w.fullNameEn}</span>
+                          <span className="text-muted-foreground ms-2 text-xs font-mono">{w.workerCode}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {workerId && (
+                    <button type="button" className="text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => { setWorkerId(''); setWorkerSearch(''); }}>
+                      Clear
+                    </button>
+                  )}
                 </div>
               </>
             )}

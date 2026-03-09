@@ -37,6 +37,7 @@ const TeamPage = lazy(() => import('@/features/team').then(m => ({ default: m.Te
 
 // Suppliers
 const SuppliersPage = lazy(() => import('@/features/suppliers').then(m => ({ default: m.SuppliersPage })));
+const SupplierDetailPage = lazy(() => import('@/features/suppliers').then(m => ({ default: m.SupplierDetailPage })));
 
 // Candidates
 const CandidatesPage = lazy(() => import('@/features/candidates').then(m => ({ default: m.CandidatesPage })));
@@ -119,12 +120,6 @@ const FinancialReportsPage = lazy(() => import('@/features/finance').then(m => (
 const CashReconciliationPage = lazy(() => import('@/features/finance').then(m => ({ default: m.CashReconciliationPage })));
 const FinancialSettingsPage = lazy(() => import('@/features/finance').then(m => ({ default: m.FinancialSettingsPage })));
 
-// Supplier Portal
-const SupplierDashboardPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierDashboardPage })));
-const SupplierCandidatesPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierCandidatesPage })));
-const SupplierWorkersPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierWorkersPage })));
-const SupplierCommissionsPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierCommissionsPage })));
-const SupplierArrivalsPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierArrivalsPage })));
 
 // Country Packages
 const CountryPackagesPage = lazy(() => import('@/features/country-packages').then(m => ({ default: m.CountryPackagesPage })));
@@ -184,6 +179,7 @@ export function AppRouter() {
 
           {/* Suppliers */}
           <Route path="suppliers" element={<Guarded permission="suppliers.view"><SuppliersPage /></Guarded>} />
+          <Route path="suppliers/:id" element={<Guarded permission="suppliers.view"><SupplierDetailPage /></Guarded>} />
 
           {/* Candidates */}
           <Route path="candidates" element={<Guarded permission="candidates.view"><CandidatesPage /></Guarded>} />
@@ -253,12 +249,6 @@ export function AppRouter() {
           <Route path="finance/cash-reconciliation" element={<Guarded permission="financial_reports.view"><CashReconciliationPage /></Guarded>} />
           <Route path="finance/settings" element={<Guarded permission="financial_reports.manage"><FinancialSettingsPage /></Guarded>} />
 
-          {/* Supplier Portal */}
-          <Route path="supplier-portal" element={<Guarded permission="supplier_portal.view"><SupplierDashboardPage /></Guarded>} />
-          <Route path="supplier-portal/candidates" element={<Guarded permission="supplier_portal.view"><SupplierCandidatesPage /></Guarded>} />
-          <Route path="supplier-portal/workers" element={<Guarded permission="supplier_portal.view"><SupplierWorkersPage /></Guarded>} />
-          <Route path="supplier-portal/commissions" element={<Guarded permission="supplier_portal.view"><SupplierCommissionsPage /></Guarded>} />
-          <Route path="supplier-portal/arrivals" element={<Guarded permission="supplier_portal.view"><SupplierArrivalsPage /></Guarded>} />
 
           {/* Reports Hub */}
           <Route path="reports" element={<Guarded permission="reports.view"><ReportsHubPage /></Guarded>} />

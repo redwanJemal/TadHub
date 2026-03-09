@@ -6,6 +6,8 @@ import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
+import { useWorkers } from '@/features/workers/hooks';
+import { useClients } from '@/features/clients/hooks';
 import { useCreateTrial } from '../hooks';
 import type { CreateTrialRequest } from '../types';
 
@@ -19,6 +21,19 @@ export function CreateTrialPage() {
   const [clientId, setClientId] = useState(searchParams.get('clientId') || '');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState('');
+
+  const [workerSearch, setWorkerSearch] = useState('');
+  const [clientSearch, setClientSearch] = useState('');
+
+  const { data: workersData } = useWorkers({
+    pageSize: 5,
+    search: workerSearch || undefined,
+  });
+
+  const { data: clientsData } = useClients({
+    pageSize: 5,
+    search: clientSearch || undefined,
+  });
 
   const endDate = startDate
     ? (() => {
@@ -68,24 +83,99 @@ export function CreateTrialPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>{t('worker_id')}</Label>
+              <Label>{t('worker_id')} *</Label>
               <Input
-                value={workerId}
-                onChange={(e) => setWorkerId(e.target.value)}
                 placeholder={t('worker_id_placeholder')}
-                required
+                value={workerSearch}
+                onChange={(e) => {
+                  setWorkerSearch(e.target.value);
+                  if (workerId) {
+                    setWorkerId('');
+                  }
+                }}
               />
-              <p className="text-xs text-muted-foreground">{t('worker_id_help')}</p>
+              {workersData && workersData.items.length > 0 && workerSearch && !workerId && (
+                <div className="border rounded-md max-h-40 overflow-y-auto">
+                  {workersData.items.map((w) => (
+                    <button
+                      key={w.id}
+                      type="button"
+                      className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                      onClick={() => {
+                        setWorkerId(w.id);
+                        setWorkerSearch(`${w.fullNameEn} (${w.workerCode})`);
+                      }}
+                    >
+                      <span className="font-medium">{w.fullNameEn}</span>
+                      <span className="text-muted-foreground ms-2 font-mono text-xs">
+                        {w.workerCode}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {workerId && (
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => {
+                    setWorkerId('');
+                    setWorkerSearch('');
+                  }}
+                >
+                  {t('common:cancel')}
+                </button>
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label>{t('client_id')}</Label>
+              <Label>{t('client_id')} *</Label>
               <Input
-                value={clientId}
-                onChange={(e) => setClientId(e.target.value)}
                 placeholder={t('client_id_placeholder')}
-                required
+                value={clientSearch}
+                onChange={(e) => {
+                  setClientSearch(e.target.value);
+                  if (clientId) {
+                    setClientId('');
+                  }
+                }}
               />
+              {clientsData && clientsData.items.length > 0 && clientSearch && !clientId && (
+                <div className="border rounded-md max-h-40 overflow-y-auto">
+                  {clientsData.items.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                      onClick={() => {
+                        setClientId(c.id);
+                        setClientSearch(
+                          c.nameAr ? `${c.nameEn} (${c.nameAr})` : c.nameEn
+                        );
+                      }}
+                    >
+                      <span className="font-medium">{c.nameEn}</span>
+                      {c.nameAr && (
+                        <span className="text-muted-foreground ms-2 text-xs">
+                          {c.nameAr}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {clientId && (
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => {
+                    setClientId('');
+                    setClientSearch('');
+                  }}
+                >
+                  {t('common:cancel')}
+                </button>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">

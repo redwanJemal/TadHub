@@ -9,6 +9,10 @@ import { Label } from '@/shared/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { useCreateReturneeCase } from '../hooks';
 import { RETURN_TYPES } from '../constants';
+import { useWorkers } from '@/features/workers/hooks';
+import { useClients } from '@/features/clients/hooks';
+import { useContracts } from '@/features/contracts/hooks';
+import { useSuppliers } from '@/features/suppliers/hooks';
 
 export function CreateReturneeCasePage() {
   const { t } = useTranslation('returnees');
@@ -23,6 +27,16 @@ export function CreateReturneeCasePage() {
   const [returnDate, setReturnDate] = useState('');
   const [returnReason, setReturnReason] = useState('');
   const [notes, setNotes] = useState('');
+
+  const [workerSearch, setWorkerSearch] = useState('');
+  const [clientSearch, setClientSearch] = useState('');
+  const [contractSearch, setContractSearch] = useState('');
+  const [supplierSearch, setSupplierSearch] = useState('');
+
+  const { data: workersData } = useWorkers({ pageSize: 5, search: workerSearch || undefined });
+  const { data: clientsData } = useClients({ pageSize: 5, search: clientSearch || undefined });
+  const { data: contractsData } = useContracts({ pageSize: 5, search: contractSearch || undefined });
+  const { data: suppliersData } = useSuppliers({ pageSize: 5, search: supplierSearch || undefined });
 
   const isValid = workerId && contractId && clientId && returnType && returnDate && returnReason;
 
@@ -68,39 +82,112 @@ export function CreateReturneeCasePage() {
             <CardTitle className="text-base">{t('party_info')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Worker search/select */}
             <div className="space-y-2">
               <Label>{t('worker_id')} *</Label>
               <Input
-                value={workerId}
-                onChange={(e) => setWorkerId(e.target.value)}
                 placeholder={t('worker_id_placeholder')}
+                value={workerSearch}
+                onChange={(e) => { setWorkerSearch(e.target.value); if (workerId) { setWorkerId(''); } }}
               />
-              <p className="text-xs text-muted-foreground">{t('worker_id_help')}</p>
+              {workersData && workersData.items.length > 0 && workerSearch && !workerId && (
+                <div className="border rounded-md max-h-40 overflow-y-auto">
+                  {workersData.items.map((w) => (
+                    <button key={w.id} type="button" className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                      onClick={() => { setWorkerId(w.id); setWorkerSearch(`${w.fullNameEn} (${w.workerCode})`); }}>
+                      <span className="font-medium">{w.fullNameEn}</span>
+                      <span className="text-muted-foreground ms-2 font-mono text-xs">{w.workerCode}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {workerId && (
+                <button type="button" className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => { setWorkerId(''); setWorkerSearch(''); }}>
+                  {t('common:cancel')}
+                </button>
+              )}
             </div>
+
+            {/* Contract search/select */}
             <div className="space-y-2">
               <Label>{t('contract_id')} *</Label>
               <Input
-                value={contractId}
-                onChange={(e) => setContractId(e.target.value)}
                 placeholder={t('contract_id_placeholder')}
+                value={contractSearch}
+                onChange={(e) => { setContractSearch(e.target.value); if (contractId) { setContractId(''); } }}
               />
-              <p className="text-xs text-muted-foreground">{t('contract_id_help')}</p>
+              {contractsData && contractsData.items.length > 0 && contractSearch && !contractId && (
+                <div className="border rounded-md max-h-40 overflow-y-auto">
+                  {contractsData.items.map((c) => (
+                    <button key={c.id} type="button" className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                      onClick={() => { setContractId(c.id); setContractSearch(`${c.contractCode}${c.worker ? ` - ${c.worker.fullNameEn}` : ''}`); }}>
+                      <span className="font-medium font-mono">{c.contractCode}</span>
+                      {c.worker && <span className="text-muted-foreground ms-2 text-xs">{c.worker.fullNameEn}</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {contractId && (
+                <button type="button" className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => { setContractId(''); setContractSearch(''); }}>
+                  {t('common:cancel')}
+                </button>
+              )}
             </div>
+
+            {/* Client search/select */}
             <div className="space-y-2">
               <Label>{t('client_id')} *</Label>
               <Input
-                value={clientId}
-                onChange={(e) => setClientId(e.target.value)}
                 placeholder={t('client_id_placeholder')}
+                value={clientSearch}
+                onChange={(e) => { setClientSearch(e.target.value); if (clientId) { setClientId(''); } }}
               />
+              {clientsData && clientsData.items.length > 0 && clientSearch && !clientId && (
+                <div className="border rounded-md max-h-40 overflow-y-auto">
+                  {clientsData.items.map((c) => (
+                    <button key={c.id} type="button" className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                      onClick={() => { setClientId(c.id); setClientSearch(`${c.nameEn}${c.nameAr ? ` (${c.nameAr})` : ''}`); }}>
+                      <span className="font-medium">{c.nameEn}</span>
+                      {c.nameAr && <span className="text-muted-foreground ms-2 text-xs">{c.nameAr}</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {clientId && (
+                <button type="button" className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => { setClientId(''); setClientSearch(''); }}>
+                  {t('common:cancel')}
+                </button>
+              )}
             </div>
+
+            {/* Supplier search/select */}
             <div className="space-y-2">
               <Label>{t('supplier_id')}</Label>
               <Input
-                value={supplierId}
-                onChange={(e) => setSupplierId(e.target.value)}
                 placeholder={t('supplier_id_placeholder')}
+                value={supplierSearch}
+                onChange={(e) => { setSupplierSearch(e.target.value); if (supplierId) { setSupplierId(''); } }}
               />
+              {suppliersData && suppliersData.items.length > 0 && supplierSearch && !supplierId && (
+                <div className="border rounded-md max-h-40 overflow-y-auto">
+                  {suppliersData.items.map((s) => (
+                    <button key={s.id} type="button" className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                      onClick={() => { setSupplierId(s.id); setSupplierSearch(`${s.supplier?.nameEn ?? s.id}${s.supplier?.nameAr ? ` (${s.supplier.nameAr})` : ''}`); }}>
+                      <span className="font-medium">{s.supplier?.nameEn ?? s.id}</span>
+                      {s.supplier?.nameAr && <span className="text-muted-foreground ms-2 text-xs">{s.supplier.nameAr}</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {supplierId && (
+                <button type="button" className="text-xs text-muted-foreground hover:text-foreground"
+                  onClick={() => { setSupplierId(''); setSupplierSearch(''); }}>
+                  {t('common:cancel')}
+                </button>
+              )}
             </div>
           </CardContent>
         </Card>

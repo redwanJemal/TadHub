@@ -5,6 +5,9 @@ import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import { Input } from '@/shared/components/ui/input';
+import { Label } from '@/shared/components/ui/label';
+import { useWorkers } from '@/features/workers/hooks';
 import { useCheckIn } from '../hooks';
 
 export function CheckInPage() {
@@ -13,12 +16,15 @@ export function CheckInPage() {
   const checkInMutation = useCheckIn();
 
   const [workerId, setWorkerId] = useState('');
+  const [workerSearch, setWorkerSearch] = useState('');
   const [room, setRoom] = useState('');
   const [location, setLocation] = useState('');
 
+  const { data: workersData } = useWorkers({ pageSize: 5, search: workerSearch || undefined });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!workerId.trim()) return;
+    if (!workerId) return;
 
     checkInMutation.mutate(
       {
@@ -59,17 +65,30 @@ export function CheckInPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-medium">
-                {t('accommodations.workerId', 'Worker ID')} *
-              </label>
-              <input
-                type="text"
-                value={workerId}
-                onChange={(e) => setWorkerId(e.target.value)}
-                className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                placeholder={t('accommodations.workerIdPlaceholder', 'Enter worker ID (UUID)')}
-                required
+              <Label>{t('accommodations.workerId', 'Worker')} *</Label>
+              <Input
+                className="mt-1"
+                placeholder={t('accommodations.searchWorker', 'Search workers...')}
+                value={workerSearch}
+                onChange={(e) => { setWorkerSearch(e.target.value); if (workerId) { setWorkerId(''); } }}
               />
+              {workersData && workersData.items.length > 0 && workerSearch && !workerId && (
+                <div className="border rounded-md max-h-40 overflow-y-auto mt-1">
+                  {workersData.items.map((w) => (
+                    <button key={w.id} type="button" className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                      onClick={() => { setWorkerId(w.id); setWorkerSearch(`${w.fullNameEn} (${w.workerCode})`); }}>
+                      <span className="font-medium">{w.fullNameEn}</span>
+                      <span className="text-muted-foreground ms-2 font-mono text-xs">{w.workerCode}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {workerId && (
+                <button type="button" className="text-xs text-muted-foreground hover:text-foreground mt-1"
+                  onClick={() => { setWorkerId(''); setWorkerSearch(''); }}>
+                  {t('cancel', 'Clear')}
+                </button>
+              )}
             </div>
 
             <div>
@@ -102,7 +121,7 @@ export function CheckInPage() {
               <Button type="button" variant="outline" onClick={() => navigate('/accommodations')}>
                 {t('cancel', 'Cancel')}
               </Button>
-              <Button type="submit" disabled={!workerId.trim() || checkInMutation.isPending}>
+              <Button type="submit" disabled={!workerId || checkInMutation.isPending}>
                 {checkInMutation.isPending
                   ? t('accommodations.checkingIn', 'Checking in...')
                   : t('accommodations.checkIn', 'Check In')}

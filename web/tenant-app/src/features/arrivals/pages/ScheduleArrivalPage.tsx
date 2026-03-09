@@ -5,6 +5,10 @@ import { toast } from 'sonner';
 import { ArrowLeft, Plane } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import { Input } from '@/shared/components/ui/input';
+import { Label } from '@/shared/components/ui/label';
+import { useWorkers } from '@/features/workers/hooks';
+import { usePlacements } from '@/features/placements/hooks';
 import { useScheduleArrival } from '../hooks';
 
 export function ScheduleArrivalPage() {
@@ -21,6 +25,12 @@ export function ScheduleArrivalPage() {
   const [scheduledArrivalDate, setScheduledArrivalDate] = useState('');
   const [scheduledArrivalTime, setScheduledArrivalTime] = useState('');
   const [notes, setNotes] = useState('');
+
+  const [workerSearch, setWorkerSearch] = useState('');
+  const [placementSearch, setPlacementSearch] = useState('');
+
+  const { data: workersData } = useWorkers({ pageSize: 5, search: workerSearch || undefined });
+  const { data: placementsData } = usePlacements({ pageSize: 5, search: placementSearch || undefined });
 
   const canSubmit = placementId.trim() && workerId.trim() && scheduledArrivalDate;
 
@@ -78,28 +88,81 @@ export function ScheduleArrivalPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium">
-                  {t('arrivals.placementId', 'Placement ID')} *
-                </label>
-                <input
-                  type="text"
-                  value={placementId}
-                  onChange={(e) => setPlacementId(e.target.value)}
-                  className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                  required
+                <Label>{t('arrivals.placementId', 'Placement')} *</Label>
+                <Input
+                  className="mt-1"
+                  placeholder={t('arrivals.searchPlacement', 'Search placements...')}
+                  value={placementSearch}
+                  onChange={(e) => { setPlacementSearch(e.target.value); if (placementId) { setPlacementId(''); } }}
                 />
+                {placementsData && placementsData.items.length > 0 && placementSearch && !placementId && (
+                  <div className="border rounded-md max-h-40 overflow-y-auto mt-1">
+                    {placementsData.items.map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                        onClick={() => {
+                          setPlacementId(p.id);
+                          const label = p.candidate?.fullNameEn
+                            ? `${p.placementCode} — ${p.candidate.fullNameEn}`
+                            : p.placementCode;
+                          setPlacementSearch(label);
+                        }}
+                      >
+                        <span className="font-medium font-mono text-xs">{p.placementCode}</span>
+                        {p.candidate?.fullNameEn && (
+                          <span className="text-muted-foreground ms-2 text-xs">{p.candidate.fullNameEn}</span>
+                        )}
+                        {p.client?.nameEn && (
+                          <span className="text-muted-foreground ms-2 text-xs">({p.client.nameEn})</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {placementId && (
+                  <button
+                    type="button"
+                    className="text-xs text-muted-foreground hover:text-foreground mt-1"
+                    onClick={() => { setPlacementId(''); setPlacementSearch(''); }}
+                  >
+                    {t('cancel', 'Clear')}
+                  </button>
+                )}
               </div>
               <div>
-                <label className="text-sm font-medium">
-                  {t('arrivals.workerId', 'Worker ID')} *
-                </label>
-                <input
-                  type="text"
-                  value={workerId}
-                  onChange={(e) => setWorkerId(e.target.value)}
-                  className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                  required
+                <Label>{t('arrivals.workerId', 'Worker')} *</Label>
+                <Input
+                  className="mt-1"
+                  placeholder={t('arrivals.searchWorker', 'Search workers...')}
+                  value={workerSearch}
+                  onChange={(e) => { setWorkerSearch(e.target.value); if (workerId) { setWorkerId(''); } }}
                 />
+                {workersData && workersData.items.length > 0 && workerSearch && !workerId && (
+                  <div className="border rounded-md max-h-40 overflow-y-auto mt-1">
+                    {workersData.items.map((w) => (
+                      <button
+                        key={w.id}
+                        type="button"
+                        className="w-full text-start px-3 py-2 hover:bg-muted text-sm"
+                        onClick={() => { setWorkerId(w.id); setWorkerSearch(`${w.fullNameEn} (${w.workerCode})`); }}
+                      >
+                        <span className="font-medium">{w.fullNameEn}</span>
+                        <span className="text-muted-foreground ms-2 font-mono text-xs">{w.workerCode}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {workerId && (
+                  <button
+                    type="button"
+                    className="text-xs text-muted-foreground hover:text-foreground mt-1"
+                    onClick={() => { setWorkerId(''); setWorkerSearch(''); }}
+                  >
+                    {t('cancel', 'Clear')}
+                  </button>
+                )}
               </div>
             </div>
 
