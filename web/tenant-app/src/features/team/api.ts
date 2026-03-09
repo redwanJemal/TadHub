@@ -6,6 +6,7 @@ import type {
   TenantInvitation,
   Role,
   InviteMemberRequest,
+  CreateMemberRequest,
   AssignRoleRequest,
 } from './types';
 
@@ -38,6 +39,11 @@ export function inviteMember(data: InviteMemberRequest) {
 
 export function revokeInvitation(invitationId: string) {
   return apiClient.delete<void>(tenantPath(`/invitations/${invitationId}`));
+}
+
+// Create member (with password)
+export function createMember(data: CreateMemberRequest) {
+  return apiClient.post<TenantMember>(tenantPath('/members'), data);
 }
 
 // Roles

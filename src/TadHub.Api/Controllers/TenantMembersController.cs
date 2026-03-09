@@ -73,6 +73,35 @@ public class TenantMembersController : ControllerBase
     }
 
     /// <summary>
+    /// Creates a new user and adds them as a member with a password.
+    /// </summary>
+    [HttpPost]
+    [ProducesResponseType(typeof(TenantMemberDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> CreateMember(
+        Guid tenantId,
+        [FromBody] CreateMemberRequest request,
+        CancellationToken ct)
+    {
+        var hasPermission = await _permissionChecker.HasPermissionAsync(
+            tenantId, _currentUser.UserId, "members.invite", ct);
+        if (!hasPermission)
+            return Forbid();
+
+        var result = await _tenantService.CreateMemberAsync(tenantId, request, ct);
+
+        if (!result.IsSuccess)
+        {
+            if (result.ErrorCode == "CONFLICT")
+                return Conflict(new { error = result.Error });
+            return BadRequest(new { error = result.Error });
+        }
+
+        return Created($"/api/v1/tenants/{tenantId}/members/{result.Value!.UserId}", result.Value);
+    }
+
+    /// <summary>
     /// Removes a member from the tenant.
     /// Allows self-removal without permission, otherwise requires members.remove permission.
     /// </summary>

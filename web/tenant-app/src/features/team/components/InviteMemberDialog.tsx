@@ -18,7 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/select';
-import { useInviteMember, useRoles } from '../hooks';
+import { useCreateMember, useRoles } from '../hooks';
+import { toast } from 'sonner';
 
 interface InviteMemberDialogProps {
   open: boolean;
@@ -28,23 +29,39 @@ interface InviteMemberDialogProps {
 export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogProps) {
   const { t } = useTranslation('team');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [roleId, setRoleId] = useState<string>('');
-  const inviteMember = useInviteMember();
+  const createMember = useCreateMember();
   const { data: rolesData } = useRoles();
   const roles = rolesData?.items ?? [];
 
+  const canSubmit = email.trim() && password.length >= 8 && firstName.trim() && lastName.trim();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!canSubmit) return;
 
-    await inviteMember.mutateAsync({
-      email: email.trim(),
-      roleId: roleId || undefined,
-    });
+    try {
+      await createMember.mutateAsync({
+        email: email.trim(),
+        password,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        roleId: roleId || undefined,
+      });
 
-    setEmail('');
-    setRoleId('');
-    onOpenChange(false);
+      toast.success(t('invite.memberCreated', 'Member created successfully'));
+      setEmail('');
+      setPassword('');
+      setFirstName('');
+      setLastName('');
+      setRoleId('');
+      onOpenChange(false);
+    } catch {
+      toast.error(t('invite.createFailed', 'Failed to create member'));
+    }
   };
 
   return (
@@ -52,19 +69,55 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t('invite.title')}</DialogTitle>
-            <DialogDescription>{t('invite.description')}</DialogDescription>
+            <DialogTitle>{t('invite.createTitle', 'Add Team Member')}</DialogTitle>
+            <DialogDescription>{t('invite.createDescription', 'Create a new user account and add them to your team.')}</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-2">
+                <Label htmlFor="firstName">{t('invite.firstName', 'First Name')} *</Label>
+                <Input
+                  id="firstName"
+                  placeholder={t('invite.firstNamePlaceholder', 'John')}
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="lastName">{t('invite.lastName', 'Last Name')} *</Label>
+                <Input
+                  id="lastName"
+                  placeholder={t('invite.lastNamePlaceholder', 'Doe')}
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
             <div className="grid gap-2">
-              <Label htmlFor="email">{t('invite.emailLabel')}</Label>
+              <Label htmlFor="email">{t('invite.emailLabel')} *</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder={t('invite.emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="password">{t('invite.password', 'Password')} *</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder={t('invite.passwordPlaceholder', 'Minimum 8 characters')}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={8}
                 required
               />
             </div>
@@ -94,8 +147,8 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
             >
               {t('common:cancel')}
             </Button>
-            <Button type="submit" disabled={inviteMember.isPending || !email.trim()}>
-              {inviteMember.isPending ? t('common:loading') : t('invite.submit')}
+            <Button type="submit" disabled={createMember.isPending || !canSubmit}>
+              {createMember.isPending ? t('common:loading') : t('invite.createSubmit', 'Create Member')}
             </Button>
           </DialogFooter>
         </form>

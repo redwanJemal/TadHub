@@ -494,6 +494,139 @@ public class TenantService : ITenantService
         return result;
     }
 
+    public async Task<Result<TenantMemberDto>> CreateMemberAsync(Guid tenantId, CreateMemberRequest request, CancellationToken ct = default)
+    {
+        // 1. Check tenant exists
+        var tenantExists = await _db.Set<Tenant>().AnyAsync(x => x.Id == tenantId, ct);
+        if (!tenantExists)
+            return Result<TenantMemberDto>.NotFound("Tenant not found");
+
+        // 2. Check email uniqueness — local DB
+        var existingLocal = await _identityService.GetByEmailAsync(request.Email, ct);
+        if (existingLocal.IsSuccess)
+        {
+            // User exists locally — check if already a member
+            var alreadyMember = await _db.Set<TenantMembership>()
+                .AnyAsync(x => x.TenantId == tenantId && x.UserId == existingLocal.Value!.Id, ct);
+            if (alreadyMember)
+                return Result<TenantMemberDto>.Conflict("User is already a member of this tenant");
+
+            // Add existing user as member
+            var addResult = await AddMemberAsync(tenantId, existingLocal.Value!.Id, isOwner: false, ct);
+            if (!addResult.IsSuccess)
+                return addResult;
+
+            // Assign role if specified
+            if (request.RoleId.HasValue)
+            {
+                var userRole = new UserRole
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    UserId = existingLocal.Value!.Id,
+                    RoleId = request.RoleId.Value
+                };
+                _db.Set<UserRole>().Add(userRole);
+                await _db.SaveChangesAsync(ct);
+            }
+
+            return await GetMemberAsync(tenantId, existingLocal.Value!.Id, ct);
+        }
+
+        // 3. Check email uniqueness — Keycloak
+        var existingKc = await _keycloakAdmin.GetUserByEmailAsync(request.Email, ct);
+        if (existingKc is not null)
+            return Result<TenantMemberDto>.Conflict($"A user with email '{request.Email}' already exists in the identity provider");
+
+        // 4. Create Keycloak user
+        string keycloakUserId;
+        try
+        {
+            var kcUser = new KeycloakUserRepresentation
+            {
+                Username = request.Email.ToLower(),
+                Email = request.Email.ToLower(),
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Enabled = true,
+                EmailVerified = true,
+                Credentials = new List<KeycloakCredentialRepresentation>
+                {
+                    new()
+                    {
+                        Type = "password",
+                        Value = request.Password,
+                        Temporary = false
+                    }
+                }
+            };
+
+            keycloakUserId = await _keycloakAdmin.CreateUserAsync(kcUser, ct);
+            _logger.LogInformation("Created Keycloak user {KeycloakUserId} for member {Email}", keycloakUserId, request.Email);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create Keycloak user for member {Email}", request.Email);
+            return Result<TenantMemberDto>.Failure("Failed to create user in identity provider", "KEYCLOAK_ERROR");
+        }
+
+        try
+        {
+            // 5. Create local UserProfile
+            var profileResult = await _identityService.CreateAsync(new CreateUserProfileRequest
+            {
+                KeycloakId = keycloakUserId,
+                Email = request.Email.ToLower(),
+                FirstName = request.FirstName,
+                LastName = request.LastName
+            }, ct);
+
+            if (!profileResult.IsSuccess)
+            {
+                await RollbackKeycloakUserAsync(keycloakUserId);
+                return Result<TenantMemberDto>.Failure(
+                    profileResult.Error ?? "Failed to create user profile",
+                    "IDENTITY_ERROR");
+            }
+
+            var internalUserId = profileResult.Value!.Id;
+
+            // 6. Add as member
+            var memberResult = await AddMemberAsync(tenantId, internalUserId, isOwner: false, ct);
+            if (!memberResult.IsSuccess)
+            {
+                await RollbackKeycloakUserAsync(keycloakUserId);
+                return memberResult;
+            }
+
+            // 7. Assign role if specified
+            if (request.RoleId.HasValue)
+            {
+                var userRole = new UserRole
+                {
+                    Id = Guid.NewGuid(),
+                    TenantId = tenantId,
+                    UserId = internalUserId,
+                    RoleId = request.RoleId.Value
+                };
+                _db.Set<UserRole>().Add(userRole);
+                await _db.SaveChangesAsync(ct);
+            }
+
+            _logger.LogInformation(
+                "Created member {Email} (UserId: {UserId}) for tenant {TenantId}",
+                request.Email, internalUserId, tenantId);
+
+            return await GetMemberAsync(tenantId, internalUserId, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to set up member {Email} for tenant {TenantId}", request.Email, tenantId);
+            await RollbackKeycloakUserAsync(keycloakUserId);
+            return Result<TenantMemberDto>.Failure("Failed to create member", "MEMBER_CREATE_ERROR");
+        }
+    }
+
     public async Task<Result<bool>> RemoveMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
         var member = await _db.Set<TenantMembership>()

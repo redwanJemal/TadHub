@@ -82,6 +82,11 @@ public interface ITenantService
     Task<Result<TenantMemberDto>> AddMemberAsync(Guid tenantId, Guid userId, bool isOwner = false, CancellationToken ct = default);
 
     /// <summary>
+    /// Creates a new user in Keycloak and adds them directly as a tenant member.
+    /// </summary>
+    Task<Result<TenantMemberDto>> CreateMemberAsync(Guid tenantId, CreateMemberRequest request, CancellationToken ct = default);
+
+    /// <summary>
     /// Removes a member from a tenant.
     /// </summary>
     Task<Result<bool>> RemoveMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default);

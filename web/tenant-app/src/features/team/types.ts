@@ -41,6 +41,14 @@ export interface InviteMemberRequest {
   roleId?: string;
 }
 
+export interface CreateMemberRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  roleId?: string;
+}
+
 export interface AssignRoleRequest {
   userId: string;
   roleId: string;
