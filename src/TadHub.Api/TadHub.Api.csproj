@@ -54,6 +54,10 @@
     <ProjectReference Include="..\Modules\Runaway\Runaway.Core\Runaway.Core.csproj" />
     <!-- Visa module -->
     <ProjectReference Include="..\Modules\Visa\Visa.Core\Visa.Core.csproj" />
+    <!-- Arrival module -->
+    <ProjectReference Include="..\Modules\Arrival\Arrival.Core\Arrival.Core.csproj" />
+    <!-- Accommodation module -->
+    <ProjectReference Include="..\Modules\Accommodation\Accommodation.Core\Accommodation.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -62,6 +62,16 @@ const VisaApplicationsListPage = lazy(() => import('@/features/visas').then(m =>
 const VisaApplicationDetailPage = lazy(() => import('@/features/visas').then(m => ({ default: m.VisaApplicationDetailPage })));
 const CreateVisaApplicationPage = lazy(() => import('@/features/visas').then(m => ({ default: m.CreateVisaApplicationPage })));
 
+// Arrivals
+const ArrivalsListPage = lazy(() => import('@/features/arrivals').then(m => ({ default: m.ArrivalsListPage })));
+const ArrivalDetailPage = lazy(() => import('@/features/arrivals').then(m => ({ default: m.ArrivalDetailPage })));
+const ScheduleArrivalPage = lazy(() => import('@/features/arrivals').then(m => ({ default: m.ScheduleArrivalPage })));
+
+// Accommodations
+const AccommodationListPage = lazy(() => import('@/features/accommodations').then(m => ({ default: m.AccommodationListPage })));
+const AccommodationDetailPage = lazy(() => import('@/features/accommodations').then(m => ({ default: m.AccommodationDetailPage })));
+const CheckInPage = lazy(() => import('@/features/accommodations').then(m => ({ default: m.CheckInPage })));
+
 // Documents / Compliance
 const CompliancePage = lazy(() => import('@/features/documents').then(m => ({ default: m.CompliancePage })));
 
@@ -147,6 +157,12 @@ export function AppRouter() {
           <Route path="visa-applications" element={<VisaApplicationsListPage />} />
           <Route path="visa-applications/new" element={<CreateVisaApplicationPage />} />
           <Route path="visa-applications/:id" element={<VisaApplicationDetailPage />} />
+          <Route path="arrivals" element={<ArrivalsListPage />} />
+          <Route path="arrivals/new" element={<ScheduleArrivalPage />} />
+          <Route path="arrivals/:id" element={<ArrivalDetailPage />} />
+          <Route path="accommodations" element={<AccommodationListPage />} />
+          <Route path="accommodations/check-in" element={<CheckInPage />} />
+          <Route path="accommodations/:id" element={<AccommodationDetailPage />} />
           <Route path="finance/invoices" element={<InvoicesListPage />} />
           <Route path="finance/invoices/new" element={<CreateInvoicePage />} />
           <Route path="finance/invoices/:invoiceId" element={<InvoiceDetailPage />} />

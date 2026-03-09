@@ -218,6 +218,17 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "visas.create", Description = "Create visa applications", Module = "visas", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
             new() { Id = Guid.NewGuid(), Name = "visas.manage", Description = "Manage visa applications", Module = "visas", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
             new() { Id = Guid.NewGuid(), Name = "visas.delete", Description = "Delete visa applications", Module = "visas", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+
+            // Arrivals module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "arrivals.view", Description = "View arrivals", Module = "arrivals", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "arrivals.create", Description = "Schedule arrivals", Module = "arrivals", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "arrivals.manage", Description = "Manage arrivals", Module = "arrivals", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "arrivals.driver_actions", Description = "Perform driver actions", Module = "arrivals", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "arrivals.delete", Description = "Delete arrivals", Module = "arrivals", Scope = PermissionScope.Tenant, DisplayOrder = 5 },
+
+            // Accommodations module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "accommodations.view", Description = "View accommodation stays", Module = "accommodations", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "accommodations.manage", Description = "Manage accommodation check-ins/check-outs", Module = "accommodations", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
         };
     }
 }

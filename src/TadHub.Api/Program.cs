@@ -33,6 +33,8 @@ using Trial.Core;
 using Returnee.Core;
 using Runaway.Core;
 using Visa.Core;
+using Arrival.Core;
+using Accommodation.Core;
 using TadHub.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -194,6 +196,12 @@ builder.Services.AddRunawayModule();
 // Visa module
 builder.Services.AddVisaModule();
 
+// Arrival module
+builder.Services.AddArrivalModule();
+
+// Accommodation module
+builder.Services.AddAccommodationModule();
+
 var app = builder.Build();
 
 // =============================================================================
@@ -304,6 +312,11 @@ Hangfire.RecurringJob.AddOrUpdate<Document.Core.Jobs.DocumentExpiryJob>(
     "document-expiry-check",
     job => job.ExecuteAsync(CancellationToken.None),
     Hangfire.Cron.Daily(2)); // Run daily at 2 AM UTC
+
+Hangfire.RecurringJob.AddOrUpdate<Arrival.Core.Jobs.NonArrivalCheckJob>(
+    "non-arrival-check",
+    job => job.ExecuteAsync(CancellationToken.None),
+    Hangfire.Cron.Hourly()); // Run every hour
 
 // =============================================================================
 // Run

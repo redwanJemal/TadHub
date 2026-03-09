@@ -96,6 +96,8 @@
     "returnees": "Returnees",
     "runaways": "Runaway Cases",
     "visas": "Visa Applications",
+    "arrivals": "Arrivals",
+    "accommodations": "Accommodation",
     "audit": "Audit Log"
   },
   "language": "Language",
