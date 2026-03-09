@@ -21,12 +21,15 @@ import {
 import { useCreateMember, useRoles } from '../hooks';
 import { toast } from 'sonner';
 
-interface InviteMemberDialogProps {
+interface CreateMemberDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogProps) {
+/** @deprecated Use CreateMemberDialog instead */
+export const InviteMemberDialog = CreateMemberDialog;
+
+export function CreateMemberDialog({ open, onOpenChange }: CreateMemberDialogProps) {
   const { t } = useTranslation('team');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

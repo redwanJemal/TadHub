@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Reporting.Contracts;
 using Reporting.Contracts.DTOs;
-using TadHub.Infrastructure.Api;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Models;
@@ -51,10 +50,8 @@ public class ReportService : IReportService
         AppendFilter(sql, parameters, qp, "supplierId", "w.tenant_supplier_id::text");
         AppendSearch(sql, parameters, qp, "w.worker_code", "w.full_name_en", "w.full_name_ar");
 
-        sql.Append(" ORDER BY w.created_at DESC");
-
-        var query = _db.Database.SqlQueryRaw<InventoryReportItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<InventoryReportItemDto>(
+            sql, parameters, "w.created_at DESC", qp, ct);
     }
 
     public async Task<PagedList<DeployedReportItemDto>> GetDeployedReportAsync(
@@ -85,10 +82,8 @@ public class ReportService : IReportService
         AppendFilter(sql, parameters, qp, "contractType", "c.type::text");
         AppendSearch(sql, parameters, qp, "w.worker_code", "w.full_name_en", "cl.name_en");
 
-        sql.Append(" ORDER BY c.start_date DESC");
-
-        var query = _db.Database.SqlQueryRaw<DeployedReportItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<DeployedReportItemDto>(
+            sql, parameters, "c.start_date DESC", qp, ct);
     }
 
     public async Task<PagedList<ReturneeReportItemDto>> GetReturneeReportAsync(
@@ -120,10 +115,8 @@ public class ReportService : IReportService
         AppendDateRange(sql, parameters, qp, "rc.return_date");
         AppendSearch(sql, parameters, qp, "rc.case_code", "w.full_name_en", "cl.name_en");
 
-        sql.Append(" ORDER BY rc.created_at DESC");
-
-        var query = _db.Database.SqlQueryRaw<ReturneeReportItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<ReturneeReportItemDto>(
+            sql, parameters, "rc.created_at DESC", qp, ct);
     }
 
     public async Task<PagedList<RunawayReportItemDto>> GetRunawayReportAsync(
@@ -155,10 +148,8 @@ public class ReportService : IReportService
         AppendDateRange(sql, parameters, qp, "rc.reported_date::date");
         AppendSearch(sql, parameters, qp, "rc.case_code", "w.full_name_en", "cl.name_en");
 
-        sql.Append(" ORDER BY rc.created_at DESC");
-
-        var query = _db.Database.SqlQueryRaw<RunawayReportItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<RunawayReportItemDto>(
+            sql, parameters, "rc.created_at DESC", qp, ct);
     }
 
     // ── Operational Reports ──
@@ -190,10 +181,8 @@ public class ReportService : IReportService
         AppendDateRange(sql, parameters, qp, "a.scheduled_arrival_date");
         AppendSearch(sql, parameters, qp, "a.arrival_code", "w.full_name_en", "a.flight_number");
 
-        sql.Append(" ORDER BY a.scheduled_arrival_date DESC, a.scheduled_arrival_time DESC");
-
-        var query = _db.Database.SqlQueryRaw<ArrivalReportItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<ArrivalReportItemDto>(
+            sql, parameters, "a.scheduled_arrival_date DESC, a.scheduled_arrival_time DESC", qp, ct);
     }
 
     public async Task<PagedList<AccommodationDailyItemDto>> GetAccommodationDailyListAsync(
@@ -221,10 +210,8 @@ public class ReportService : IReportService
         AppendFilter(sql, parameters, qp, "room", "s.room");
         AppendSearch(sql, parameters, qp, "s.stay_code", "w.full_name_en", "s.room");
 
-        sql.Append(" ORDER BY s.location, s.room, w.full_name_en");
-
-        var query = _db.Database.SqlQueryRaw<AccommodationDailyItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<AccommodationDailyItemDto>(
+            sql, parameters, "s.location, s.room, w.full_name_en", qp, ct);
     }
 
     public async Task<List<DeploymentPipelineItemDto>> GetDeploymentPipelineAsync(
@@ -274,10 +261,9 @@ public class ReportService : IReportService
         }
 
         sql.Append(" GROUP BY sp.supplier_id, s.name_en, s.name_ar");
-        sql.Append(" ORDER BY \"TotalPaid\" DESC");
 
-        var query = _db.Database.SqlQueryRaw<SupplierCommissionItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<SupplierCommissionItemDto>(
+            sql, parameters, @"""TotalPaid"" DESC", qp, ct);
     }
 
     public async Task<PagedList<RefundReportItemDto>> GetRefundReportAsync(
@@ -308,10 +294,8 @@ public class ReportService : IReportService
         AppendFilter(sql, parameters, qp, "method", "p.method::text");
         AppendSearch(sql, parameters, qp, "p.payment_number", "cl.name_en", "i.invoice_number");
 
-        sql.Append(" ORDER BY p.created_at DESC");
-
-        var query = _db.Database.SqlQueryRaw<RefundReportItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<RefundReportItemDto>(
+            sql, parameters, "p.created_at DESC", qp, ct);
     }
 
     public async Task<PagedList<CostPerMaidItemDto>> GetCostPerMaidReportAsync(
@@ -343,13 +327,42 @@ public class ReportService : IReportService
         AppendSearch(sql, parameters, qp, "w.worker_code", "w.full_name_en", "w.full_name_ar");
 
         sql.Append(" GROUP BY p.worker_id, w.worker_code, w.full_name_en, w.full_name_ar");
-        sql.Append(" ORDER BY \"TotalCost\" DESC");
 
-        var query = _db.Database.SqlQueryRaw<CostPerMaidItemDto>(sql.ToString(), parameters.ToArray());
-        return await query.ToPagedListAsync(qp, ct);
+        return await ExecutePagedRawAsync<CostPerMaidItemDto>(
+            sql, parameters, @"""TotalCost"" DESC", qp, ct);
     }
 
-    // ── SQL Helpers ──
+    // ── Pagination & SQL Helpers ──
+
+    /// <summary>
+    /// Executes a raw SQL query with manual pagination (COUNT + LIMIT/OFFSET).
+    /// This avoids EF Core wrapping SqlQueryRaw in subqueries that break column aliases.
+    /// </summary>
+    private async Task<PagedList<T>> ExecutePagedRawAsync<T>(
+        StringBuilder baseSql, List<object> parameters, string orderBy,
+        QueryParameters qp, CancellationToken ct) where T : class
+    {
+        var page = Math.Max(1, qp.Page);
+        var pageSize = Math.Clamp(qp.PageSize, 1, 100);
+        var offset = (page - 1) * pageSize;
+
+        // COUNT query — wrap the base SQL (no ORDER BY) in a subquery
+        var countSql = $"SELECT COUNT(*)::int AS \"Value\" FROM ({baseSql}) AS _cnt";
+        var totalCount = await _db.Database
+            .SqlQueryRaw<int>(countSql, parameters.ToArray())
+            .FirstOrDefaultAsync(ct);
+
+        if (totalCount == 0)
+            return PagedList<T>.Empty(page, pageSize);
+
+        // Items query — add ORDER BY + LIMIT/OFFSET to original SQL
+        baseSql.Append($" ORDER BY {orderBy} LIMIT {pageSize} OFFSET {offset}");
+        var items = await _db.Database
+            .SqlQueryRaw<T>(baseSql.ToString(), parameters.ToArray())
+            .ToListAsync(ct);
+
+        return new PagedList<T>(items, totalCount, page, pageSize);
+    }
 
     private static void AppendFilter(StringBuilder sql, List<object> parameters, QueryParameters qp, string filterName, string column)
     {
