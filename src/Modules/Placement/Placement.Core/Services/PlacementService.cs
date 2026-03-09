@@ -29,6 +29,7 @@ public class PlacementService : IPlacementService
     private static readonly Dictionary<string, Expression<Func<Entities.Placement, object>>> FilterableFields = new()
     {
         ["status"] = x => x.Status,
+        ["flowType"] = x => x.FlowType,
         ["candidateId"] = x => x.CandidateId,
         ["clientId"] = x => x.ClientId,
         ["workerId"] = x => x.WorkerId!,
@@ -44,11 +45,14 @@ public class PlacementService : IPlacementService
         ["updatedAt"] = x => x.UpdatedAt,
     };
 
-    // Active pipeline statuses (not terminal) — includes both legacy and new outside-country steps
+    // Active pipeline statuses (not terminal) — includes both legacy, outside-country, and inside-country steps
     private static readonly PlacementStatus[] ActiveStatuses =
     [
         PlacementStatus.Booked,
+        PlacementStatus.InTrial,
+        PlacementStatus.TrialSuccessful,
         PlacementStatus.ContractCreated,
+        PlacementStatus.StatusChanged,
         PlacementStatus.EmploymentVisaProcessing,
         PlacementStatus.TicketArranged,
         PlacementStatus.InTransit,
@@ -182,6 +186,33 @@ public class PlacementService : IPlacementService
 
         var placementCode = $"PLC-{nextNumber:D6}";
 
+        // Detect flow type based on worker location (raw SQL — cross-module read)
+        var flowType = PlacementFlowType.OutsideCountry;
+        var workerLocationRows = await _db.Database
+            .SqlQueryRaw<string>(
+                "SELECT location::text AS \"Value\" FROM workers WHERE candidate_id = {0} AND tenant_id = {1} AND is_deleted = false LIMIT 1",
+                request.CandidateId, tenantId)
+            .ToListAsync(ct);
+
+        if (workerLocationRows.Count > 0 && workerLocationRows[0] == "InCountry")
+        {
+            flowType = PlacementFlowType.InsideCountry;
+        }
+        else
+        {
+            // Also check if this is a returnee worker (has prior deployment history)
+            var hasDeploymentHistory = await _db.Database
+                .SqlQueryRaw<int>(
+                    "SELECT COUNT(*)::int AS \"Value\" FROM placements WHERE candidate_id = {0} AND tenant_id = {1} AND is_deleted = false AND status IN ('Completed') AND id != '00000000-0000-0000-0000-000000000000' LIMIT 1",
+                    request.CandidateId, tenantId)
+                .ToListAsync(ct);
+
+            if (hasDeploymentHistory.Count > 0 && hasDeploymentHistory[0] > 0)
+            {
+                flowType = PlacementFlowType.InsideCountry;
+            }
+        }
+
         var now = _clock.UtcNow;
         var placement = new Entities.Placement
         {
@@ -190,6 +221,7 @@ public class PlacementService : IPlacementService
             PlacementCode = placementCode,
             Status = PlacementStatus.Booked,
             StatusChangedAt = now,
+            FlowType = flowType,
             CandidateId = request.CandidateId,
             ClientId = request.ClientId,
             BookedBy = _currentUser.UserId,
@@ -255,6 +287,7 @@ public class PlacementService : IPlacementService
             CandidateId = request.CandidateId,
             ClientId = request.ClientId,
             BookedBy = _currentUser.UserId,
+            FlowType = placement.FlowType.ToString(),
         }, ct);
 
         return Result<PlacementDto>.Success(MapToDto(placement, includeStatusHistory: false, includeCostItems: false));
@@ -274,6 +307,7 @@ public class PlacementService : IPlacementService
         if (request.ExpectedArrivalDate.HasValue) placement.ExpectedArrivalDate = request.ExpectedArrivalDate.Value;
         if (request.BookingNotes is not null) placement.BookingNotes = request.BookingNotes;
         if (request.ContractId.HasValue) placement.ContractId = request.ContractId.Value;
+        if (request.TrialId.HasValue) placement.TrialId = request.TrialId.Value;
         if (request.EmploymentVisaApplicationId.HasValue) placement.EmploymentVisaApplicationId = request.EmploymentVisaApplicationId.Value;
         if (request.ResidenceVisaApplicationId.HasValue) placement.ResidenceVisaApplicationId = request.ResidenceVisaApplicationId.Value;
         if (request.EmiratesIdApplicationId.HasValue) placement.EmiratesIdApplicationId = request.EmiratesIdApplicationId.Value;
@@ -316,9 +350,9 @@ public class PlacementService : IPlacementService
         if (placement is null)
             return Result<PlacementDto>.NotFound($"Placement with ID {id} not found");
 
-        var nextStep = PlacementStatusMachine.GetNextOutsideCountryStep(placement.Status);
+        var nextStep = PlacementStatusMachine.GetNextStep(placement.Status, placement.FlowType);
         if (nextStep is null)
-            return Result<PlacementDto>.ValidationError($"Cannot advance from status '{placement.Status}'. No next step in the outside-country pipeline.");
+            return Result<PlacementDto>.ValidationError($"Cannot advance from status '{placement.Status}'. No next step in the {placement.FlowType} pipeline.");
 
         // Validate prerequisites for each step
         var validationError = ValidateStepPrerequisites(placement, nextStep.Value);
@@ -403,11 +437,11 @@ public class PlacementService : IPlacementService
             .GroupBy(x => x.Status)
             .ToDictionary(g => g.Key.ToString(), g => g.Count());
 
-        // Use outside-country pipeline statuses for board columns
+        // Include both pipeline columns
         foreach (var status in PlacementStatusMachine.OutsideCountryPipeline)
-        {
             statusCounts.TryAdd(status.ToString(), 0);
-        }
+        foreach (var status in PlacementStatusMachine.InsideCountryPipeline)
+            statusCounts.TryAdd(status.ToString(), 0);
 
         var columns = placements
             .GroupBy(x => x.Status)
@@ -416,9 +450,9 @@ public class PlacementService : IPlacementService
                 g => g.Select(x => MapToListDto(x)).ToList());
 
         foreach (var status in PlacementStatusMachine.OutsideCountryPipeline)
-        {
             columns.TryAdd(status.ToString(), []);
-        }
+        foreach (var status in PlacementStatusMachine.InsideCountryPipeline)
+            columns.TryAdd(status.ToString(), []);
 
         return Result<PlacementBoardDto>.Success(new PlacementBoardDto
         {
@@ -513,40 +547,53 @@ public class PlacementService : IPlacementService
     {
         return nextStep switch
         {
-            // Step 2: Contract must be linked
-            PlacementStatus.ContractCreated =>
-                placement.ContractId is null
-                    ? "A contract must be created and linked to this placement before advancing to 'Contract Created'. Set the contractId via the update endpoint."
+            // Inside-country: InTrial — no additional prereqs (trial created externally)
+            PlacementStatus.InTrial => null,
+
+            // Inside-country: TrialSuccessful — trial must be linked
+            PlacementStatus.TrialSuccessful =>
+                placement.TrialId is null
+                    ? "A trial must be linked to this placement before advancing to 'Trial Successful'. Set the trialId via the update endpoint."
                     : null,
 
-            // Step 3: Employment visa — contract must exist
+            // Contract must be linked
+            PlacementStatus.ContractCreated =>
+                placement.FlowType == PlacementFlowType.InsideCountry
+                    ? (placement.ContractId is null
+                        ? "A contract must be created and linked to this placement before advancing to 'Contract Created'. Set the contractId via the update endpoint."
+                        : null)
+                    : (placement.ContractId is null
+                        ? "A contract must be created and linked to this placement before advancing to 'Contract Created'. Set the contractId via the update endpoint."
+                        : null),
+
+            // Inside-country: StatusChanged — contract must exist
+            PlacementStatus.StatusChanged =>
+                placement.ContractId is null
+                    ? "Contract must be created before updating worker status."
+                    : null,
+
+            // Employment visa — contract must exist
             PlacementStatus.EmploymentVisaProcessing =>
                 placement.ContractId is null
                     ? "Contract must be created before starting employment visa processing."
                     : null,
 
-            // Step 4: Ticket — employment visa should be linked
+            // Ticket — outside-country only, ticket date must be set
             PlacementStatus.TicketArranged =>
                 placement.TicketDate is null
                     ? "Ticket date must be set before advancing to 'Ticket Arranged'. Update the placement with ticketDate first."
                     : null,
 
-            // Step 5: Arrived — ticket must be arranged
-            PlacementStatus.Arrived => null, // No additional prereqs beyond state machine
-
-            // Step 6: Deployed — maid arrived
+            PlacementStatus.Arrived => null,
             PlacementStatus.Deployed => null,
 
-            // Step 7: Full payment — check cost items have at least one paid
+            // Full payment — check cost items have at least one paid
             PlacementStatus.FullPaymentReceived =>
                 (placement.CostItems == null || !placement.CostItems.Any(c => c.Status == PlacementCostStatus.Paid))
                     ? "At least one cost item must be marked as 'Paid' before confirming full payment received."
                     : null,
 
-            // Step 8: Residence visa — full payment must be received
             PlacementStatus.ResidenceVisaProcessing => null,
-
-            // Step 9: Emirates ID — residence visa processing must have started
             PlacementStatus.EmiratesIdProcessing => null,
 
             _ => null,
@@ -559,49 +606,87 @@ public class PlacementService : IPlacementService
 
     private static PlacementChecklistDto BuildChecklist(Entities.Placement placement)
     {
-        var currentStepNum = PlacementStatusMachine.GetStepNumber(placement.Status);
+        var flowType = placement.FlowType;
+        var currentStepNum = PlacementStatusMachine.GetStepNumber(placement.Status, flowType);
         var isTerminal = PlacementStatusMachine.IsTerminal(placement.Status);
+        var pipeline = PlacementStatusMachine.GetPipeline(flowType);
+        var totalSteps = pipeline.Length;
 
-        var steps = new List<PlacementChecklistStepDto>
+        List<PlacementChecklistStepDto> steps;
+
+        if (flowType == PlacementFlowType.InsideCountry)
         {
-            BuildStep(1, PlacementStatus.Booked, "Booking", "Candidate booked with partial/advance payment",
-                placement.BookedAt, placement, "Record Payment", null, null),
+            steps =
+            [
+                BuildStep(1, PlacementStatus.Booked, "Booking", "Candidate booked for inside-country placement",
+                    placement.BookedAt, placement, flowType, "Book", null, null),
 
-            BuildStep(2, PlacementStatus.ContractCreated, "Contract Creation", "2-year employment contract created",
-                placement.ContractCreatedAt, placement, "Create Contract", placement.ContractId, "Contract"),
+                BuildStep(2, PlacementStatus.InTrial, "Trial Period", "5-day trial period with client",
+                    placement.TrialStartedAt, placement, flowType, "Start Trial", placement.TrialId, "Trial"),
 
-            BuildStep(3, PlacementStatus.EmploymentVisaProcessing, "Employment Visa", "Employment visa application submitted and processed",
-                placement.EmploymentVisaStartedAt, placement, "Start Visa Application", placement.EmploymentVisaApplicationId, "VisaApplication"),
+                BuildStep(3, PlacementStatus.TrialSuccessful, "Trial Outcome", "Trial completed successfully",
+                    placement.TrialSucceededAt, placement, flowType, "Record Outcome", placement.TrialId, "Trial"),
 
-            BuildStep(4, PlacementStatus.TicketArranged, "Ticket Processing", "Flight ticket issued and travel date set",
-                placement.TicketDate.HasValue ? placement.StatusChangedAt : null, placement, "Arrange Ticket", null, null),
+                BuildStep(4, PlacementStatus.ContractCreated, "Contract Creation", "2-year employment contract created",
+                    placement.ContractCreatedAt, placement, flowType, "Create Contract", placement.ContractId, "Contract"),
 
-            BuildStep(5, PlacementStatus.Arrived, "Arrival", "Maid arrived and processed through arrival management",
-                placement.ArrivedAt, placement, "Confirm Arrival", placement.ArrivalId, "Arrival"),
+                BuildStep(5, PlacementStatus.StatusChanged, "Status Change", "Worker status updated to reflect new contract",
+                    placement.StatusChangedStepAt, placement, flowType, "Update Status", null, null),
 
-            BuildStep(6, PlacementStatus.Deployed, "Deployment", "Maid deployed to customer household",
-                placement.DeployedAt, placement, "Confirm Deployment", null, null),
+                BuildStep(6, PlacementStatus.EmploymentVisaProcessing, "Employment Visa", "Passport + Photo required; Medical optional",
+                    placement.EmploymentVisaStartedAt, placement, flowType, "Start Visa Application", placement.EmploymentVisaApplicationId, "VisaApplication"),
 
-            BuildStep(7, PlacementStatus.FullPaymentReceived, "Full Payment", "Remaining balance paid by customer",
-                placement.FullPaymentReceivedAt, placement, "Verify Payment", null, null),
+                BuildStep(7, PlacementStatus.ResidenceVisaProcessing, "Residence Visa", "Local Medical + Passport + Photo required",
+                    placement.ResidenceVisaStartedAt, placement, flowType, "Start Residence Visa", placement.ResidenceVisaApplicationId, "VisaApplication"),
 
-            BuildStep(8, PlacementStatus.ResidenceVisaProcessing, "Residence Visa", "Residence visa application submitted",
-                placement.ResidenceVisaStartedAt, placement, "Start Residence Visa", placement.ResidenceVisaApplicationId, "VisaApplication"),
+                BuildStep(8, PlacementStatus.EmiratesIdProcessing, "Emirates ID", "Emirates ID application submitted",
+                    placement.EmiratesIdStartedAt, placement, flowType, "Start Emirates ID", placement.EmiratesIdApplicationId, "VisaApplication"),
+            ];
+        }
+        else
+        {
+            steps =
+            [
+                BuildStep(1, PlacementStatus.Booked, "Booking", "Candidate booked with partial/advance payment",
+                    placement.BookedAt, placement, flowType, "Record Payment", null, null),
 
-            BuildStep(9, PlacementStatus.EmiratesIdProcessing, "Emirates ID", "Emirates ID application submitted",
-                placement.EmiratesIdStartedAt, placement, "Start Emirates ID", placement.EmiratesIdApplicationId, "VisaApplication"),
-        };
+                BuildStep(2, PlacementStatus.ContractCreated, "Contract Creation", "2-year employment contract created",
+                    placement.ContractCreatedAt, placement, flowType, "Create Contract", placement.ContractId, "Contract"),
+
+                BuildStep(3, PlacementStatus.EmploymentVisaProcessing, "Employment Visa", "Employment visa application submitted and processed",
+                    placement.EmploymentVisaStartedAt, placement, flowType, "Start Visa Application", placement.EmploymentVisaApplicationId, "VisaApplication"),
+
+                BuildStep(4, PlacementStatus.TicketArranged, "Ticket Processing", "Flight ticket issued and travel date set",
+                    placement.TicketDate.HasValue ? placement.StatusChangedAt : null, placement, flowType, "Arrange Ticket", null, null),
+
+                BuildStep(5, PlacementStatus.Arrived, "Arrival", "Maid arrived and processed through arrival management",
+                    placement.ArrivedAt, placement, flowType, "Confirm Arrival", placement.ArrivalId, "Arrival"),
+
+                BuildStep(6, PlacementStatus.Deployed, "Deployment", "Maid deployed to customer household",
+                    placement.DeployedAt, placement, flowType, "Confirm Deployment", null, null),
+
+                BuildStep(7, PlacementStatus.FullPaymentReceived, "Full Payment", "Remaining balance paid by customer",
+                    placement.FullPaymentReceivedAt, placement, flowType, "Verify Payment", null, null),
+
+                BuildStep(8, PlacementStatus.ResidenceVisaProcessing, "Residence Visa", "Residence visa application submitted",
+                    placement.ResidenceVisaStartedAt, placement, flowType, "Start Residence Visa", placement.ResidenceVisaApplicationId, "VisaApplication"),
+
+                BuildStep(9, PlacementStatus.EmiratesIdProcessing, "Emirates ID", "Emirates ID application submitted",
+                    placement.EmiratesIdStartedAt, placement, flowType, "Start Emirates ID", placement.EmiratesIdApplicationId, "VisaApplication"),
+            ];
+        }
 
         var completedSteps = isTerminal && placement.Status == PlacementStatus.Completed
-            ? 9
+            ? totalSteps
             : currentStepNum > 0 ? currentStepNum - 1 : 0;
 
         return new PlacementChecklistDto
         {
             Steps = steps,
             CurrentStepNumber = currentStepNum,
-            TotalSteps = 9,
-            ProgressPercent = Math.Round(completedSteps / 9.0 * 100, 1),
+            TotalSteps = totalSteps,
+            ProgressPercent = Math.Round(completedSteps / (double)totalSteps * 100, 1),
+            FlowType = flowType.ToString(),
         };
     }
 
@@ -612,11 +697,12 @@ public class PlacementService : IPlacementService
         string description,
         DateTimeOffset? completedAt,
         Entities.Placement placement,
+        PlacementFlowType flowType,
         string actionLabel,
         Guid? linkedEntityId,
         string? linkedEntityType)
     {
-        var currentStepNum = PlacementStatusMachine.GetStepNumber(placement.Status);
+        var currentStepNum = PlacementStatusMachine.GetStepNumber(placement.Status, flowType);
         var isCompleted = placement.Status == PlacementStatus.Completed;
 
         string stepState;
@@ -663,8 +749,17 @@ public class PlacementService : IPlacementService
         // Set pipeline timestamp fields
         switch (targetStatus)
         {
+            case PlacementStatus.InTrial:
+                placement.TrialStartedAt = now;
+                break;
+            case PlacementStatus.TrialSuccessful:
+                placement.TrialSucceededAt = now;
+                break;
             case PlacementStatus.ContractCreated:
                 placement.ContractCreatedAt = now;
+                break;
+            case PlacementStatus.StatusChanged:
+                placement.StatusChangedStepAt = now;
                 break;
             case PlacementStatus.EmploymentVisaProcessing:
                 placement.EmploymentVisaStartedAt = now;
@@ -751,10 +846,12 @@ public class PlacementService : IPlacementService
             Status = p.Status.ToString(),
             StatusChangedAt = p.StatusChangedAt,
             StatusReason = p.StatusReason,
+            FlowType = p.FlowType.ToString(),
             CandidateId = p.CandidateId,
             ClientId = p.ClientId,
             WorkerId = p.WorkerId,
             ContractId = p.ContractId,
+            TrialId = p.TrialId,
             EmploymentVisaApplicationId = p.EmploymentVisaApplicationId,
             ResidenceVisaApplicationId = p.ResidenceVisaApplicationId,
             EmiratesIdApplicationId = p.EmiratesIdApplicationId,
@@ -773,6 +870,9 @@ public class PlacementService : IPlacementService
             FullPaymentReceivedAt = p.FullPaymentReceivedAt,
             ResidenceVisaStartedAt = p.ResidenceVisaStartedAt,
             EmiratesIdStartedAt = p.EmiratesIdStartedAt,
+            TrialStartedAt = p.TrialStartedAt,
+            TrialSucceededAt = p.TrialSucceededAt,
+            StatusChangedStepAt = p.StatusChangedStepAt,
             MedicalClearedAt = p.MedicalClearedAt,
             GovtClearedAt = p.GovtClearedAt,
             PlacedAt = p.PlacedAt,
@@ -796,13 +896,15 @@ public class PlacementService : IPlacementService
 
     private static PlacementListDto MapToListDto(Entities.Placement p)
     {
-        var stepNum = PlacementStatusMachine.GetStepNumber(p.Status);
+        var stepNum = PlacementStatusMachine.GetStepNumber(p.Status, p.FlowType);
+        var pipeline = PlacementStatusMachine.GetPipeline(p.FlowType);
         return new PlacementListDto
         {
             Id = p.Id,
             PlacementCode = p.PlacementCode,
             Status = p.Status.ToString(),
             StatusChangedAt = p.StatusChangedAt,
+            FlowType = p.FlowType.ToString(),
             CandidateId = p.CandidateId,
             ClientId = p.ClientId,
             WorkerId = p.WorkerId,
@@ -812,7 +914,7 @@ public class PlacementService : IPlacementService
             TotalCost = p.CostItems?.Where(c => c.Status != PlacementCostStatus.Cancelled).Sum(c => c.Amount) ?? 0,
             CreatedAt = p.CreatedAt,
             CurrentStep = stepNum > 0 ? stepNum : 0,
-            TotalSteps = 9,
+            TotalSteps = pipeline.Length,
         };
     }
 

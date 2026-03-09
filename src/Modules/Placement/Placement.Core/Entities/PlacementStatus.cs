@@ -5,19 +5,19 @@ public enum PlacementStatus
     // Step 1: Booking
     Booked = 0,
 
-    // Step 2: Contract Creation
+    // Step 2: Contract Creation (outside-country) / Step 4 (inside-country)
     ContractCreated = 13,
 
     // Step 3: Employment Visa
     EmploymentVisaProcessing = 14,
 
-    // Step 4: Ticket Processing
+    // Step 4: Ticket Processing (outside-country only)
     TicketArranged = 1,
 
     // Legacy (kept for backward compat)
     InTransit = 2,
 
-    // Step 5: Arrival
+    // Step 5: Arrival (outside-country only)
     Arrived = 3,
 
     // Legacy statuses (kept for backward compat)
@@ -44,4 +44,15 @@ public enum PlacementStatus
     // Terminal
     Completed = 11,
     Cancelled = 12,
+
+    // Inside-country flow statuses
+    InTrial = 19,
+    TrialSuccessful = 20,
+    StatusChanged = 21,
+}
+
+public enum PlacementFlowType
+{
+    OutsideCountry = 0,
+    InsideCountry = 1,
 }

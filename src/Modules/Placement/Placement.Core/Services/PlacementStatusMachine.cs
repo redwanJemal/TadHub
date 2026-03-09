@@ -8,19 +8,29 @@ public static class PlacementStatusMachine
     // 1. Booked → 2. ContractCreated → 3. EmploymentVisaProcessing → 4. TicketArranged
     // → 5. Arrived → 6. Deployed → 7. FullPaymentReceived → 8. ResidenceVisaProcessing
     // → 9. EmiratesIdProcessing → Completed
+    //
+    // Inside-country 8-step flow:
+    // 1. Booked → 2. InTrial → 3. TrialSuccessful → 4. ContractCreated → 5. StatusChanged
+    // → 6. EmploymentVisaProcessing → 7. ResidenceVisaProcessing → 8. EmiratesIdProcessing → Completed
     private static readonly Dictionary<PlacementStatus, HashSet<PlacementStatus>> Transitions = new()
     {
-        // Step 1 → Step 2
-        [PlacementStatus.Booked] = [PlacementStatus.ContractCreated, PlacementStatus.Cancelled],
-        // Step 2 → Step 3
-        [PlacementStatus.ContractCreated] = [PlacementStatus.EmploymentVisaProcessing, PlacementStatus.Cancelled],
-        // Step 3 → Step 4
-        [PlacementStatus.EmploymentVisaProcessing] = [PlacementStatus.TicketArranged, PlacementStatus.Cancelled],
-        // Step 4 → Step 5
+        // Outside-country: Step 1 → Step 2 / Inside-country: Step 1 → Step 2 (InTrial)
+        [PlacementStatus.Booked] = [PlacementStatus.ContractCreated, PlacementStatus.InTrial, PlacementStatus.Cancelled],
+        // Inside-country: Step 2 (InTrial) → Step 3 (TrialSuccessful) or Cancelled
+        [PlacementStatus.InTrial] = [PlacementStatus.TrialSuccessful, PlacementStatus.Cancelled],
+        // Inside-country: Step 3 (TrialSuccessful) → Step 4 (ContractCreated) or Cancelled
+        [PlacementStatus.TrialSuccessful] = [PlacementStatus.ContractCreated, PlacementStatus.Cancelled],
+        // Step 2 (outside) / Step 4 (inside) → Step 3 (outside) / Step 5 (inside)
+        [PlacementStatus.ContractCreated] = [PlacementStatus.EmploymentVisaProcessing, PlacementStatus.StatusChanged, PlacementStatus.Cancelled],
+        // Inside-country: Step 5 (StatusChanged) → Step 6 (EmploymentVisaProcessing) or Cancelled
+        [PlacementStatus.StatusChanged] = [PlacementStatus.EmploymentVisaProcessing, PlacementStatus.Cancelled],
+        // Step 3 (outside) → Step 4 / Inside-country Step 6 → Step 7
+        [PlacementStatus.EmploymentVisaProcessing] = [PlacementStatus.TicketArranged, PlacementStatus.ResidenceVisaProcessing, PlacementStatus.Cancelled],
+        // Step 4 → Step 5 (outside-country only)
         [PlacementStatus.TicketArranged] = [PlacementStatus.InTransit, PlacementStatus.Arrived, PlacementStatus.Cancelled],
         // Legacy: InTransit → Arrived
         [PlacementStatus.InTransit] = [PlacementStatus.Arrived, PlacementStatus.Cancelled],
-        // Step 5 → Step 6
+        // Step 5 → Step 6 (outside-country only)
         [PlacementStatus.Arrived] = [PlacementStatus.Deployed, PlacementStatus.MedicalInProgress, PlacementStatus.Cancelled],
         // Legacy transitions (kept for backward compat)
         [PlacementStatus.MedicalInProgress] = [PlacementStatus.MedicalCleared, PlacementStatus.Cancelled],
@@ -30,9 +40,9 @@ public static class PlacementStatusMachine
         [PlacementStatus.Training] = [PlacementStatus.ReadyForPlacement, PlacementStatus.Cancelled],
         [PlacementStatus.ReadyForPlacement] = [PlacementStatus.Placed, PlacementStatus.Deployed, PlacementStatus.Cancelled],
         [PlacementStatus.Placed] = [PlacementStatus.Completed, PlacementStatus.Cancelled],
-        // Step 6 → Step 7
+        // Step 6 → Step 7 (outside-country only)
         [PlacementStatus.Deployed] = [PlacementStatus.FullPaymentReceived, PlacementStatus.Cancelled],
-        // Step 7 → Step 8
+        // Step 7 → Step 8 (outside-country only)
         [PlacementStatus.FullPaymentReceived] = [PlacementStatus.ResidenceVisaProcessing, PlacementStatus.Cancelled],
         // Step 8 → Step 9
         [PlacementStatus.ResidenceVisaProcessing] = [PlacementStatus.EmiratesIdProcessing, PlacementStatus.Cancelled],
@@ -66,6 +76,24 @@ public static class PlacementStatusMachine
         PlacementStatus.ResidenceVisaProcessing,
         PlacementStatus.EmiratesIdProcessing,
     ];
+
+    /// <summary>
+    /// The 8-step inside-country pipeline statuses in order.
+    /// </summary>
+    public static readonly PlacementStatus[] InsideCountryPipeline =
+    [
+        PlacementStatus.Booked,
+        PlacementStatus.InTrial,
+        PlacementStatus.TrialSuccessful,
+        PlacementStatus.ContractCreated,
+        PlacementStatus.StatusChanged,
+        PlacementStatus.EmploymentVisaProcessing,
+        PlacementStatus.ResidenceVisaProcessing,
+        PlacementStatus.EmiratesIdProcessing,
+    ];
+
+    public static PlacementStatus[] GetPipeline(PlacementFlowType flowType) =>
+        flowType == PlacementFlowType.InsideCountry ? InsideCountryPipeline : OutsideCountryPipeline;
 
     public static string? Validate(PlacementStatus from, PlacementStatus to, string? reason)
     {
@@ -101,12 +129,33 @@ public static class PlacementStatusMachine
     }
 
     /// <summary>
-    /// Gets the step number (1-based) for a status in the outside-country pipeline.
+    /// Gets the next step in the inside-country pipeline for the given current status.
+    /// Returns null if current status is not in the pipeline or is the last step.
+    /// </summary>
+    public static PlacementStatus? GetNextInsideCountryStep(PlacementStatus current)
+    {
+        var idx = Array.IndexOf(InsideCountryPipeline, current);
+        if (idx < 0 || idx >= InsideCountryPipeline.Length - 1)
+            return null;
+        return InsideCountryPipeline[idx + 1];
+    }
+
+    /// <summary>
+    /// Gets the next step based on flow type.
+    /// </summary>
+    public static PlacementStatus? GetNextStep(PlacementStatus current, PlacementFlowType flowType) =>
+        flowType == PlacementFlowType.InsideCountry
+            ? GetNextInsideCountryStep(current)
+            : GetNextOutsideCountryStep(current);
+
+    /// <summary>
+    /// Gets the step number (1-based) for a status in the given pipeline.
     /// Returns 0 if not in the pipeline.
     /// </summary>
-    public static int GetStepNumber(PlacementStatus status)
+    public static int GetStepNumber(PlacementStatus status, PlacementFlowType flowType = PlacementFlowType.OutsideCountry)
     {
-        var idx = Array.IndexOf(OutsideCountryPipeline, status);
+        var pipeline = GetPipeline(flowType);
+        var idx = Array.IndexOf(pipeline, status);
         return idx >= 0 ? idx + 1 : 0;
     }
 

@@ -1,6 +1,9 @@
 export type PlacementStatus =
   | 'Booked'
+  | 'InTrial'
+  | 'TrialSuccessful'
   | 'ContractCreated'
+  | 'StatusChanged'
   | 'EmploymentVisaProcessing'
   | 'TicketArranged'
   | 'InTransit'
@@ -18,6 +21,8 @@ export type PlacementStatus =
   | 'EmiratesIdProcessing'
   | 'Completed'
   | 'Cancelled';
+
+export type PlacementFlowType = 'OutsideCountry' | 'InsideCountry';
 
 export type PlacementCostType =
   | 'Procurement'
@@ -98,6 +103,7 @@ export interface PlacementChecklistDto {
   currentStepNumber: number;
   totalSteps: number;
   progressPercent: number;
+  flowType: PlacementFlowType;
 }
 
 export interface PlacementDto {
@@ -107,10 +113,12 @@ export interface PlacementDto {
   status: PlacementStatus;
   statusChangedAt: string;
   statusReason?: string;
+  flowType: PlacementFlowType;
   candidateId: string;
   clientId: string;
   workerId?: string;
   contractId?: string;
+  trialId?: string;
   employmentVisaApplicationId?: string;
   residenceVisaApplicationId?: string;
   emiratesIdApplicationId?: string;
@@ -132,6 +140,9 @@ export interface PlacementDto {
   fullPaymentReceivedAt?: string;
   residenceVisaStartedAt?: string;
   emiratesIdStartedAt?: string;
+  trialStartedAt?: string;
+  trialSucceededAt?: string;
+  statusChangedStepAt?: string;
   medicalClearedAt?: string;
   govtClearedAt?: string;
   placedAt?: string;
@@ -154,6 +165,7 @@ export interface PlacementListDto {
   placementCode: string;
   status: PlacementStatus;
   statusChangedAt: string;
+  flowType: PlacementFlowType;
   candidateId: string;
   clientId: string;
   workerId?: string;
@@ -181,6 +193,7 @@ export interface UpdatePlacementRequest {
   expectedArrivalDate?: string;
   bookingNotes?: string;
   contractId?: string;
+  trialId?: string;
   employmentVisaApplicationId?: string;
   residenceVisaApplicationId?: string;
   emiratesIdApplicationId?: string;

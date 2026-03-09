@@ -8,12 +8,14 @@ public class Placement : SoftDeletableEntity, IAuditable
     public PlacementStatus Status { get; set; } = PlacementStatus.Booked;
     public DateTimeOffset StatusChangedAt { get; set; }
     public string? StatusReason { get; set; }
+    public PlacementFlowType FlowType { get; set; } = PlacementFlowType.OutsideCountry;
 
     // Cross-module refs (GUIDs only, no EF FKs)
     public Guid CandidateId { get; set; }
     public Guid ClientId { get; set; }
     public Guid? WorkerId { get; set; }
     public Guid? ContractId { get; set; }
+    public Guid? TrialId { get; set; }
 
     // Booking info
     public Guid? BookedBy { get; set; }
@@ -32,6 +34,9 @@ public class Placement : SoftDeletableEntity, IAuditable
     public DateTimeOffset? FullPaymentReceivedAt { get; set; }
     public DateTimeOffset? ResidenceVisaStartedAt { get; set; }
     public DateTimeOffset? EmiratesIdStartedAt { get; set; }
+    public DateTimeOffset? TrialStartedAt { get; set; }
+    public DateTimeOffset? TrialSucceededAt { get; set; }
+    public DateTimeOffset? StatusChangedStepAt { get; set; }
     public DateTimeOffset? MedicalClearedAt { get; set; }
     public DateTimeOffset? GovtClearedAt { get; set; }
     public DateTimeOffset? PlacedAt { get; set; }

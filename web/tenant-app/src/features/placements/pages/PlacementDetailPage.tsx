@@ -37,8 +37,8 @@ import {
   useDeletePlacementCostItem,
   useDeletePlacement,
 } from '../hooks';
-import { STATUS_CONFIG, PIPELINE_STATUSES, COST_TYPES, ALLOWED_TRANSITIONS } from '../constants';
-import type { PlacementStatus, CreatePlacementCostItemRequest, PlacementChecklistStepDto } from '../types';
+import { STATUS_CONFIG, COST_TYPES, ALLOWED_TRANSITIONS, getPipelineForFlow } from '../constants';
+import type { PlacementStatus, PlacementFlowType, CreatePlacementCostItemRequest, PlacementChecklistStepDto } from '../types';
 
 function InfoItem({ label, value }: { label: string; value?: string | number | null }) {
   return (
@@ -91,7 +91,7 @@ function ChecklistStep({ step, isLast }: { step: PlacementChecklistStepDto; isLa
         )}
         {step.linkedEntityId && step.linkedEntityType && (
           <Link
-            to={`/${step.linkedEntityType === 'Contract' ? 'contracts' : step.linkedEntityType === 'VisaApplication' ? 'visas' : 'arrivals'}/${step.linkedEntityId}`}
+            to={`/${step.linkedEntityType === 'Contract' ? 'contracts' : step.linkedEntityType === 'Trial' ? 'trials' : step.linkedEntityType === 'VisaApplication' ? 'visas' : 'arrivals'}/${step.linkedEntityId}`}
             className="mt-1 inline-flex items-center gap-1 text-xs text-primary hover:underline"
           >
             <ExternalLink className="h-3 w-3" />
@@ -106,7 +106,6 @@ function ChecklistStep({ step, isLast }: { step: PlacementChecklistStepDto; isLa
 function DetailSkeleton() {
   return (
     <div className="space-y-6 p-6">
-      {/* Header */}
       <div>
         <Skeleton className="mb-2 h-4 w-32" />
         <div className="flex items-center justify-between">
@@ -123,8 +122,6 @@ function DetailSkeleton() {
           </div>
         </div>
       </div>
-
-      {/* Progress Bar */}
       <Card>
         <CardContent className="py-4">
           <div className="space-y-2">
@@ -136,8 +133,6 @@ function DetailSkeleton() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Checklist & Info */}
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader><Skeleton className="h-5 w-28" /></CardHeader>
@@ -186,7 +181,6 @@ export function PlacementDetailPage() {
   const [showTransition, setShowTransition] = useState(false);
   const [showAddCost, setShowAddCost] = useState(false);
 
-  // Cost item form state
   const [costType, setCostType] = useState('');
   const [costDescription, setCostDescription] = useState('');
   const [costAmount, setCostAmount] = useState('');
@@ -206,9 +200,14 @@ export function PlacementDetailPage() {
   }
 
   const currentStatus = placement.status as PlacementStatus;
+  const flowType = (placement.flowType || 'OutsideCountry') as PlacementFlowType;
+  const isInsideCountry = flowType === 'InsideCountry';
+  const pipelineStatuses = getPipelineForFlow(flowType);
   const hasTransitions = (ALLOWED_TRANSITIONS[currentStatus] || []).length > 0;
-  const currentStepIndex = PIPELINE_STATUSES.indexOf(currentStatus);
+  const currentStepIndex = pipelineStatuses.indexOf(currentStatus);
   const checklist = placement.checklist;
+
+  const flowLabel = isInsideCountry ? 'Inside Country Flow' : 'Outside Country Flow';
 
   const handleTransition = (status: string, reason?: string, notes?: string) => {
     transitionMutation.mutate(
@@ -263,14 +262,16 @@ export function PlacementDetailPage() {
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold">{placement.placementCode}</h1>
             <PlacementStatusBadge status={currentStatus} />
+            <Badge variant={isInsideCountry ? 'default' : 'secondary'} className="text-xs">
+              {isInsideCountry ? 'Inside Country' : 'Outside Country'}
+            </Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
             {placement.candidate?.fullNameEn || 'Unknown candidate'} → {placement.client?.nameEn || 'Unknown client'}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Advance Step button — primary action for outside-country flow */}
-          {checklist && currentStepIndex >= 0 && currentStepIndex < PIPELINE_STATUSES.length - 1 && (
+          {checklist && currentStepIndex >= 0 && currentStepIndex < pipelineStatuses.length - 1 && (
             <PermissionGate permission="placements.manage">
               <Button
                 size="sm"
@@ -321,7 +322,7 @@ export function PlacementDetailPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">
-                  Outside Country Flow — Step {checklist.currentStepNumber} of {checklist.totalSteps}
+                  {flowLabel} — Step {checklist.currentStepNumber} of {checklist.totalSteps}
                 </span>
                 <span className="text-muted-foreground">{checklist.progressPercent}%</span>
               </div>
@@ -333,7 +334,7 @@ export function PlacementDetailPage() {
               </div>
               {/* Step indicators */}
               <div className="flex items-center justify-between pt-1">
-                {PIPELINE_STATUSES.map((status, i) => {
+                {pipelineStatuses.map((status, i) => {
                   const config = STATUS_CONFIG[status];
                   const Icon = config.icon;
                   const isActive = status === currentStatus;
@@ -435,6 +436,7 @@ export function PlacementDetailPage() {
                 <CardTitle className="text-base">Booking</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
+                <InfoItem label="Flow Type" value={isInsideCountry ? 'Inside Country' : 'Outside Country'} />
                 <InfoItem label="Booked By" value={placement.bookedByName} />
                 <InfoItem label="Booked At" value={new Date(placement.bookedAt).toLocaleDateString()} />
                 <InfoItem label="Notes" value={placement.bookingNotes} />
@@ -447,14 +449,27 @@ export function PlacementDetailPage() {
                 <CardTitle className="text-base">Pipeline Dates</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
+                {isInsideCountry && (
+                  <>
+                    <InfoItem label="Trial Started" value={placement.trialStartedAt ? new Date(placement.trialStartedAt).toLocaleDateString() : undefined} />
+                    <InfoItem label="Trial Succeeded" value={placement.trialSucceededAt ? new Date(placement.trialSucceededAt).toLocaleDateString() : undefined} />
+                  </>
+                )}
                 <InfoItem label="Contract Created" value={placement.contractCreatedAt ? new Date(placement.contractCreatedAt).toLocaleDateString() : undefined} />
+                {isInsideCountry && (
+                  <InfoItem label="Status Changed" value={placement.statusChangedStepAt ? new Date(placement.statusChangedStepAt).toLocaleDateString() : undefined} />
+                )}
                 <InfoItem label="Employment Visa Started" value={placement.employmentVisaStartedAt ? new Date(placement.employmentVisaStartedAt).toLocaleDateString() : undefined} />
-                <InfoItem label="Ticket Date" value={placement.ticketDate} />
-                <InfoItem label="Flight Details" value={placement.flightDetails} />
-                <InfoItem label="Expected Arrival" value={placement.expectedArrivalDate} />
-                <InfoItem label="Arrived" value={placement.arrivedAt ? new Date(placement.arrivedAt).toLocaleDateString() : undefined} />
-                <InfoItem label="Deployed" value={placement.deployedAt ? new Date(placement.deployedAt).toLocaleDateString() : undefined} />
-                <InfoItem label="Full Payment" value={placement.fullPaymentReceivedAt ? new Date(placement.fullPaymentReceivedAt).toLocaleDateString() : undefined} />
+                {!isInsideCountry && (
+                  <>
+                    <InfoItem label="Ticket Date" value={placement.ticketDate} />
+                    <InfoItem label="Flight Details" value={placement.flightDetails} />
+                    <InfoItem label="Expected Arrival" value={placement.expectedArrivalDate} />
+                    <InfoItem label="Arrived" value={placement.arrivedAt ? new Date(placement.arrivedAt).toLocaleDateString() : undefined} />
+                    <InfoItem label="Deployed" value={placement.deployedAt ? new Date(placement.deployedAt).toLocaleDateString() : undefined} />
+                    <InfoItem label="Full Payment" value={placement.fullPaymentReceivedAt ? new Date(placement.fullPaymentReceivedAt).toLocaleDateString() : undefined} />
+                  </>
+                )}
                 <InfoItem label="Residence Visa" value={placement.residenceVisaStartedAt ? new Date(placement.residenceVisaStartedAt).toLocaleDateString() : undefined} />
                 <InfoItem label="Emirates ID" value={placement.emiratesIdStartedAt ? new Date(placement.emiratesIdStartedAt).toLocaleDateString() : undefined} />
               </CardContent>
@@ -466,6 +481,18 @@ export function PlacementDetailPage() {
                 <CardTitle className="text-base">Linked Records</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
+                {isInsideCountry && placement.trialId ? (
+                  <div>
+                    <dt className="text-sm text-muted-foreground">Trial</dt>
+                    <dd className="mt-0.5">
+                      <Link to={`/trials/${placement.trialId}`} className="text-sm text-primary hover:underline">
+                        View Trial
+                      </Link>
+                    </dd>
+                  </div>
+                ) : isInsideCountry ? (
+                  <InfoItem label="Trial" value="Not linked" />
+                ) : null}
                 {placement.contractId ? (
                   <div>
                     <dt className="text-sm text-muted-foreground">Contract</dt>
@@ -478,7 +505,7 @@ export function PlacementDetailPage() {
                 ) : (
                   <InfoItem label="Contract" value="Not linked" />
                 )}
-                {placement.arrivalId ? (
+                {!isInsideCountry && (placement.arrivalId ? (
                   <div>
                     <dt className="text-sm text-muted-foreground">Arrival</dt>
                     <dd className="mt-0.5">
@@ -489,7 +516,7 @@ export function PlacementDetailPage() {
                   </div>
                 ) : (
                   <InfoItem label="Arrival" value="Not linked" />
-                )}
+                ))}
                 {placement.employmentVisaApplicationId ? (
                   <div>
                     <dt className="text-sm text-muted-foreground">Employment Visa</dt>

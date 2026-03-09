@@ -72,6 +72,9 @@ export function PlacementCard({ placement, status, onAdvance, onClick }: Placeme
 
       {/* Meta row */}
       <div className="mt-2 flex items-center gap-2 text-xs">
+        {placement.flowType === 'InsideCountry' && (
+          <span className="rounded bg-blue-50 px-1.5 py-0.5 font-medium text-blue-600">IC</span>
+        )}
         <span className={cn('rounded px-1.5 py-0.5 font-medium', daysColor)}>
           {days}d
         </span>

@@ -8,12 +8,14 @@ public sealed record PlacementDto
     public string Status { get; init; } = string.Empty;
     public DateTimeOffset StatusChangedAt { get; init; }
     public string? StatusReason { get; init; }
+    public string FlowType { get; init; } = "OutsideCountry";
 
     // Cross-module refs
     public Guid CandidateId { get; init; }
     public Guid ClientId { get; init; }
     public Guid? WorkerId { get; init; }
     public Guid? ContractId { get; init; }
+    public Guid? TrialId { get; init; }
 
     // Visa cross-module refs
     public Guid? EmploymentVisaApplicationId { get; init; }
@@ -45,6 +47,9 @@ public sealed record PlacementDto
     public DateTimeOffset? FullPaymentReceivedAt { get; init; }
     public DateTimeOffset? ResidenceVisaStartedAt { get; init; }
     public DateTimeOffset? EmiratesIdStartedAt { get; init; }
+    public DateTimeOffset? TrialStartedAt { get; init; }
+    public DateTimeOffset? TrialSucceededAt { get; init; }
+    public DateTimeOffset? StatusChangedStepAt { get; init; }
     public DateTimeOffset? MedicalClearedAt { get; init; }
     public DateTimeOffset? GovtClearedAt { get; init; }
     public DateTimeOffset? PlacedAt { get; init; }
@@ -76,6 +81,7 @@ public sealed record PlacementListDto
     public string PlacementCode { get; init; } = string.Empty;
     public string Status { get; init; } = string.Empty;
     public DateTimeOffset StatusChangedAt { get; init; }
+    public string FlowType { get; init; } = "OutsideCountry";
     public Guid CandidateId { get; init; }
     public Guid ClientId { get; init; }
     public Guid? WorkerId { get; init; }
@@ -157,6 +163,7 @@ public sealed record UpdatePlacementRequest
     public DateOnly? ExpectedArrivalDate { get; init; }
     public string? BookingNotes { get; init; }
     public Guid? ContractId { get; init; }
+    public Guid? TrialId { get; init; }
     public Guid? EmploymentVisaApplicationId { get; init; }
     public Guid? ResidenceVisaApplicationId { get; init; }
     public Guid? EmiratesIdApplicationId { get; init; }
@@ -206,13 +213,14 @@ public sealed record PlacementBoardDto
     public Dictionary<string, List<PlacementListDto>> Columns { get; init; } = new();
 }
 
-// Checklist DTOs for 9-step progress tracking
+// Checklist DTOs for pipeline progress tracking
 public sealed record PlacementChecklistDto
 {
     public List<PlacementChecklistStepDto> Steps { get; init; } = new();
     public int CurrentStepNumber { get; init; }
     public int TotalSteps { get; init; }
     public double ProgressPercent { get; init; }
+    public string FlowType { get; init; } = "OutsideCountry";
 }
 
 public sealed record PlacementChecklistStepDto

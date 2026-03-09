@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T02:57:44.333903+00:00",
-  "current_task": "15-placement-outside-country-flow",
+  "last_updated": "2026-03-09T03:16:43.237636+00:00",
+  "current_task": "17-contract-enhancements",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -231,16 +231,16 @@
     },
     "16-placement-inside-country-flow": {
       "title": "Placement \u2014 Inside Country Flow",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "flow-detection": "pending",
-        "trial-integration": "pending",
-        "frontend": "pending",
+        "flow-detection": "completed",
+        "trial-integration": "completed",
+        "frontend": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T03:16:43Z",
+      "completed_at": "2026-03-09T04:00:00Z",
+      "notes": "Added InsideCountry 8-step pipeline: Booked → InTrial → TrialSuccessful → ContractCreated → StatusChanged → EmploymentVisaProcessing → ResidenceVisaProcessing → EmiratesIdProcessing. Auto flow detection from worker location (raw SQL). Returnee detection from prior completed placements. 3 new PlacementStatus enum values (InTrial, TrialSuccessful, StatusChanged). PlacementFlowType enum (OutsideCountry/InsideCountry). TrialCompletedConsumer for trial outcome handling (succeed → TrialSuccessful, fail → Cancelled). Dual-pipeline state machine, checklist, and step validation. Frontend: flow-aware board with All/Outside/Inside toggle, PlacementCard IC badge, detail page with flow-specific pipeline dates and trial link, step descriptions for both flows. i18n en/ar. Migration: AddInsideCountryPlacementFlow."
     },
     "17-contract-enhancements": {
       "title": "Contract Enhancements",
