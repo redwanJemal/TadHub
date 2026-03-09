@@ -492,4 +492,19 @@ export const apiClient = {
     });
     return handleResponse<T>(response);
   },
+
+  async uploadFile<T>(endpoint: string, file: File, fieldName: string = 'file'): Promise<T> {
+    const formData = new FormData();
+    formData.append(fieldName, file);
+
+    const response = await fetchWithRetry(buildUrl(endpoint), {
+      method: 'PUT',
+      headers: {
+        // Do not set Content-Type — browser sets multipart/form-data with boundary
+        ...getAuthHeaders(),
+      },
+      body: formData,
+    });
+    return handleResponse<T>(response);
+  },
 };

@@ -1,0 +1,16 @@
+{
+  "title": "استلاماتي",
+  "subtitle": "عرض وإدارة الاستلامات المخصصة لك",
+  "activePickups": "نشط",
+  "completedPickups": "مكتمل",
+  "pendingPickups": "استلامات معلقة",
+  "noPickups": "لا توجد استلامات مخصصة",
+  "noPickupsDescription": "لا توجد استلامات مخصصة لك في الوقت الحالي.",
+  "confirmPickup": "تأكيد الاستلام",
+  "uploadPhoto": "صورة",
+  "waitingForArrival": "بانتظار الوصول",
+  "pickupConfirmedSuccess": "تم تأكيد الاستلام بنجاح",
+  "pickupConfirmedError": "فشل تأكيد الاستلام",
+  "photoUploaded": "تم رفع الصورة بنجاح",
+  "photoUploadError": "فشل رفع الصورة"
+}

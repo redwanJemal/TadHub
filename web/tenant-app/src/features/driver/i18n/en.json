@@ -1,0 +1,16 @@
+{
+  "title": "My Pickups",
+  "subtitle": "View and manage your assigned pickups",
+  "activePickups": "Active",
+  "completedPickups": "Completed",
+  "pendingPickups": "Pending Pickups",
+  "noPickups": "No pickups assigned",
+  "noPickupsDescription": "You have no pickups assigned to you at the moment.",
+  "confirmPickup": "Confirm Pickup",
+  "uploadPhoto": "Photo",
+  "waitingForArrival": "Waiting for arrival",
+  "pickupConfirmedSuccess": "Pickup confirmed successfully",
+  "pickupConfirmedError": "Failed to confirm pickup",
+  "photoUploaded": "Photo uploaded successfully",
+  "photoUploadError": "Failed to upload photo"
+}

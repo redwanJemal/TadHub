@@ -66,6 +66,7 @@ const CreateVisaApplicationPage = lazy(() => import('@/features/visas').then(m =
 const ArrivalsListPage = lazy(() => import('@/features/arrivals').then(m => ({ default: m.ArrivalsListPage })));
 const ArrivalDetailPage = lazy(() => import('@/features/arrivals').then(m => ({ default: m.ArrivalDetailPage })));
 const ScheduleArrivalPage = lazy(() => import('@/features/arrivals').then(m => ({ default: m.ScheduleArrivalPage })));
+const DriverDashboardPage = lazy(() => import('@/features/arrivals').then(m => ({ default: m.DriverDashboardPage })));
 
 // Accommodations
 const AccommodationListPage = lazy(() => import('@/features/accommodations').then(m => ({ default: m.AccommodationListPage })));
@@ -160,6 +161,7 @@ export function AppRouter() {
           <Route path="arrivals" element={<ArrivalsListPage />} />
           <Route path="arrivals/new" element={<ScheduleArrivalPage />} />
           <Route path="arrivals/:id" element={<ArrivalDetailPage />} />
+          <Route path="driver" element={<DriverDashboardPage />} />
           <Route path="accommodations" element={<AccommodationListPage />} />
           <Route path="accommodations/check-in" element={<CheckInPage />} />
           <Route path="accommodations/:id" element={<AccommodationDetailPage />} />

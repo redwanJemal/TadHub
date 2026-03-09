@@ -266,6 +266,16 @@ public class RoleTemplateSeeder : IHostedService
                 IsSystem = false,
                 DisplayOrder = 6,
                 PermissionFilter = p => p.Name.EndsWith(".view")
+            },
+
+            // Driver: limited access to assigned pickups only
+            new()
+            {
+                Name = "Driver",
+                Description = "Driver role with access to assigned pickups, confirm pickup, and upload photos.",
+                IsSystem = false,
+                DisplayOrder = 7,
+                PermissionFilter = p => p.Name == "arrivals.driver_actions"
             }
         };
     }

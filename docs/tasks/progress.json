@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T00:18:31.820962+00:00",
-  "current_task": "07-accommodation-module",
+  "last_updated": "2026-03-09T00:36:12.675838+00:00",
+  "current_task": "08-driver-role",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -121,15 +121,15 @@
     },
     "08-driver-role": {
       "title": "Driver Role",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "backend": "pending",
-        "frontend": "pending",
+        "backend": "completed",
+        "frontend": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T00:36:12Z",
+      "completed_at": "2026-03-09T05:00:00Z",
+      "notes": "Driver role template added to RoleTemplateSeeder with arrivals.driver_actions permission. Driver-scoped API endpoints: GET /my-pickups (filters by current user's driver ID), PUT /{id}/upload-pickup-photo (with ownership check). SetDriverPickupPhotoAsync added to ArrivalService. Frontend: DriverDashboardPage with mobile-friendly card-based UI, skeleton loading, confirm pickup + camera photo upload (capture=environment for mobile). apiClient.uploadFile method added for multipart form uploads. Route at /driver, sidebar nav entry with Car icon gated by arrivals.driver_actions. i18n en/ar for driver namespace."
     },
     "09-supplier-portal": {
       "title": "Supplier Portal",
