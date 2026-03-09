@@ -1,0 +1,80 @@
+{
+  "title": "حزم الدفع حسب الدولة",
+  "description": "إدارة مخططات التسعير القياسية حسب بلد المنشأ",
+  "addPackage": "إضافة حزمة",
+  "searchPlaceholder": "البحث في الحزم...",
+  "notFound": "الحزمة غير موجودة",
+  "createSuccess": "تم إنشاء الحزمة بنجاح",
+  "createError": "فشل في إنشاء الحزمة",
+  "updateSuccess": "تم تحديث الحزمة بنجاح",
+  "updateError": "فشل في تحديث الحزمة",
+  "deleteSuccess": "تم حذف الحزمة بنجاح",
+  "deleteError": "فشل في حذف الحزمة",
+  "columns": {
+    "name": "اسم الحزمة",
+    "country": "الدولة",
+    "totalPrice": "السعر الإجمالي",
+    "guarantee": "الضمان",
+    "effective": "فترة السريان",
+    "status": "الحالة"
+  },
+  "filters": {
+    "status": "الحالة",
+    "country": "الدولة"
+  },
+  "deleteConfirm": {
+    "title": "حذف الحزمة",
+    "message": "هل أنت متأكد من حذف \"{{name}}\"؟ لا يمكن التراجع عن هذا الإجراء."
+  },
+  "create": {
+    "title": "إنشاء حزمة",
+    "basicInfo": "المعلومات الأساسية",
+    "country": "الدولة",
+    "countryPlaceholder": "اختر دولة",
+    "name": "اسم الحزمة",
+    "namePlaceholder": "مثال: إثيوبيا قياسي",
+    "effectiveFrom": "سارية من",
+    "effectiveTo": "سارية حتى",
+    "currency": "العملة",
+    "isDefault": "الحزمة الافتراضية لهذه الدولة",
+    "isActive": "نشطة",
+    "commissionSettings": "العمولة والضمان",
+    "guaranteePeriod": "فترة الضمان الافتراضية",
+    "commissionType": "نوع العمولة",
+    "supplierCommission": "عمولة المورد",
+    "costBreakdown": "تفاصيل التكاليف",
+    "calculateTotal": "حساب الإجمالي",
+    "notes": "ملاحظات",
+    "notesPlaceholder": "ملاحظات اختيارية حول هذه الحزمة...",
+    "submit": "إنشاء الحزمة",
+    "submitting": "جاري الإنشاء..."
+  },
+  "detail": {
+    "packageInfo": "معلومات الحزمة",
+    "country": "الدولة",
+    "createdAt": "تاريخ الإنشاء"
+  },
+  "costs": {
+    "maidCost": "تكلفة استقدام العاملة",
+    "monthlyAccommodationCost": "الإقامة الشهرية",
+    "visaCost": "تكلفة التأشيرة (مجمعة)",
+    "employmentVisaCost": "تأشيرة العمل",
+    "residenceVisaCost": "تأشيرة الإقامة",
+    "medicalCost": "التكلفة الطبية",
+    "transportationCost": "النقل",
+    "ticketCost": "تذكرة الطيران",
+    "insuranceCost": "التأمين",
+    "emiratesIdCost": "الهوية الإماراتية",
+    "otherCosts": "تكاليف أخرى",
+    "totalPackagePrice": "إجمالي سعر الحزمة"
+  },
+  "guaranteePeriod": {
+    "SixMonths": "٦ أشهر",
+    "OneYear": "سنة واحدة",
+    "TwoYears": "سنتان"
+  },
+  "commissionType": {
+    "FixedAmount": "مبلغ ثابت",
+    "Percentage": "نسبة مئوية"
+  }
+}

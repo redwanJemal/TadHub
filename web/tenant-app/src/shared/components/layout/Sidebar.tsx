@@ -35,6 +35,7 @@ import {
   Store,
   FileWarning,
   FileBarChart,
+  Package,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -96,6 +97,7 @@ const navItems: NavItem[] = [
       { path: "/supplier-portal/arrivals", icon: Plane, labelKey: "nav.supplier_portal_arrivals" },
     ],
   },
+  { path: "/country-packages", icon: Package, labelKey: "nav.country_packages", permission: "packages.view" },
   { path: "/compliance", icon: ShieldCheck, labelKey: "nav.compliance", permission: "documents.view" },
   { path: "/audit", icon: ClipboardList, labelKey: "nav.audit", permission: "audit.view" },
   {

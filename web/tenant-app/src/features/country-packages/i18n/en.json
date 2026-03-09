@@ -1,0 +1,80 @@
+{
+  "title": "Country Payment Packages",
+  "description": "Manage standard pricing schemas per country of origin",
+  "addPackage": "Add Package",
+  "searchPlaceholder": "Search packages...",
+  "notFound": "Package not found",
+  "createSuccess": "Package created successfully",
+  "createError": "Failed to create package",
+  "updateSuccess": "Package updated successfully",
+  "updateError": "Failed to update package",
+  "deleteSuccess": "Package deleted successfully",
+  "deleteError": "Failed to delete package",
+  "columns": {
+    "name": "Package Name",
+    "country": "Country",
+    "totalPrice": "Total Price",
+    "guarantee": "Guarantee",
+    "effective": "Effective Period",
+    "status": "Status"
+  },
+  "filters": {
+    "status": "Status",
+    "country": "Country"
+  },
+  "deleteConfirm": {
+    "title": "Delete Package",
+    "message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
+  },
+  "create": {
+    "title": "Create Package",
+    "basicInfo": "Basic Information",
+    "country": "Country",
+    "countryPlaceholder": "Select a country",
+    "name": "Package Name",
+    "namePlaceholder": "e.g., Ethiopia Standard",
+    "effectiveFrom": "Effective From",
+    "effectiveTo": "Effective To",
+    "currency": "Currency",
+    "isDefault": "Default package for this country",
+    "isActive": "Active",
+    "commissionSettings": "Commission & Guarantee",
+    "guaranteePeriod": "Default Guarantee Period",
+    "commissionType": "Commission Type",
+    "supplierCommission": "Supplier Commission",
+    "costBreakdown": "Cost Breakdown",
+    "calculateTotal": "Calculate Total",
+    "notes": "Notes",
+    "notesPlaceholder": "Optional notes about this package...",
+    "submit": "Create Package",
+    "submitting": "Creating..."
+  },
+  "detail": {
+    "packageInfo": "Package Information",
+    "country": "Country",
+    "createdAt": "Created"
+  },
+  "costs": {
+    "maidCost": "Maid Procurement Cost",
+    "monthlyAccommodationCost": "Monthly Accommodation",
+    "visaCost": "Visa Cost (Combined)",
+    "employmentVisaCost": "Employment Visa",
+    "residenceVisaCost": "Residence Visa",
+    "medicalCost": "Medical Cost",
+    "transportationCost": "Transportation",
+    "ticketCost": "Flight Ticket",
+    "insuranceCost": "Insurance",
+    "emiratesIdCost": "Emirates ID",
+    "otherCosts": "Other Costs",
+    "totalPackagePrice": "Total Package Price"
+  },
+  "guaranteePeriod": {
+    "SixMonths": "6 Months",
+    "OneYear": "1 Year",
+    "TwoYears": "2 Years"
+  },
+  "commissionType": {
+    "FixedAmount": "Fixed Amount",
+    "Percentage": "Percentage"
+  }
+}

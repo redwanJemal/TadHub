@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T03:36:01.290172+00:00",
-  "current_task": "17-contract-enhancements",
+  "last_updated": "2026-03-09T03:52:58.736614+00:00",
+  "current_task": "18-country-payment-packages",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -260,20 +260,20 @@
     },
     "18-country-payment-packages": {
       "title": "Country Payment Packages",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "entities": "pending",
-        "service": "pending",
-        "api": "pending",
-        "permissions": "pending",
-        "auto-fill": "pending",
-        "frontend": "pending",
-        "migration": "pending",
+        "entities": "completed",
+        "service": "completed",
+        "api": "completed",
+        "permissions": "completed",
+        "auto-fill": "completed",
+        "frontend": "completed",
+        "migration": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T03:52:58Z",
+      "completed_at": "2026-03-09T04:10:00Z",
+      "notes": "CountryPackage entity (TenantScopedEntity) in ReferenceData module with 11 cost components, supplier commission (Fixed/Percentage), default guarantee period (SixMonths/OneYear/TwoYears), effective date ranges, currency. Service with CRUD, GetByCountry, GetDefaultByCountry, one-default-per-country enforcement. API: 7 endpoints under packages.view/create/edit/delete permissions. Frontend: list page with DataTableAdvanced, create page with cost breakdown + auto-calculate, detail page with inline editing + skeleton loading. Sidebar nav (Package icon). i18n en/ar. Migration: AddCountryPackages."
     },
     "19-sidebar-reorganization": {
       "title": "Sidebar Navigation Reorganization",

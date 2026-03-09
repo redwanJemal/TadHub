@@ -18,6 +18,7 @@ public static class ReferenceDataServiceRegistration
         // Services
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IJobCategoryService, JobCategoryService>();
+        services.AddScoped<ICountryPackageService, CountryPackageService>();
 
         // Seeders
         services.AddScoped<CountrySeeder>();

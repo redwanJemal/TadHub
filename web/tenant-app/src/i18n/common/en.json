@@ -108,7 +108,8 @@
     "supplier_portal_candidates": "My Candidates",
     "supplier_portal_workers": "My Workers",
     "supplier_portal_commissions": "Commissions",
-    "supplier_portal_arrivals": "My Arrivals"
+    "supplier_portal_arrivals": "My Arrivals",
+    "country_packages": "Payment Packages"
   },
   "language": "Language",
   "english": "English",

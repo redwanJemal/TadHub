@@ -51,6 +51,8 @@ import supplierPortalEn from '../features/supplier-portal/i18n/en.json';
 import supplierPortalAr from '../features/supplier-portal/i18n/ar.json';
 import reportsEn from '../features/reports/i18n/en.json';
 import reportsAr from '../features/reports/i18n/ar.json';
+import countryPackagesEn from '../features/country-packages/i18n/en.json';
+import countryPackagesAr from '../features/country-packages/i18n/ar.json';
 
 const resources = {
   en: {
@@ -77,6 +79,7 @@ const resources = {
     driver: driverEn,
     supplierPortal: supplierPortalEn,
     reports: reportsEn,
+    countryPackages: countryPackagesEn,
   },
   ar: {
     common: commonAr,
@@ -102,6 +105,7 @@ const resources = {
     driver: driverAr,
     supplierPortal: supplierPortalAr,
     reports: reportsAr,
+    countryPackages: countryPackagesAr,
   },
 };
 
@@ -112,7 +116,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard', 'notifications', 'settings', 'placements', 'trials', 'returnees', 'runaways', 'visas', 'arrivals', 'accommodations', 'driver', 'supplierPortal', 'reports'],
+    ns: ['common', 'auth', 'team', 'suppliers', 'candidates', 'workers', 'clients', 'contracts', 'audit', 'documents', 'dashboard', 'notifications', 'settings', 'placements', 'trials', 'returnees', 'runaways', 'visas', 'arrivals', 'accommodations', 'driver', 'supplierPortal', 'reports', 'countryPackages'],
     interpolation: {
       escapeValue: false,
     },

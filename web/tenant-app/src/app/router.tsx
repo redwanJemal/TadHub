@@ -106,6 +106,11 @@ const SupplierWorkersPage = lazy(() => import('@/features/supplier-portal').then
 const SupplierCommissionsPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierCommissionsPage })));
 const SupplierArrivalsPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierArrivalsPage })));
 
+// Country Packages
+const CountryPackagesPage = lazy(() => import('@/features/country-packages').then(m => ({ default: m.CountryPackagesPage })));
+const CreateCountryPackagePage = lazy(() => import('@/features/country-packages').then(m => ({ default: m.CreateCountryPackagePage })));
+const CountryPackageDetailPage = lazy(() => import('@/features/country-packages').then(m => ({ default: m.CountryPackageDetailPage })));
+
 // Reports
 const ReportsHubPage = lazy(() => import('@/features/reports').then(m => ({ default: m.ReportsHubPage })));
 const InventoryReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.InventoryReportPage })));
@@ -214,6 +219,9 @@ export function AppRouter() {
           <Route path="reports/supplier-commissions" element={<SupplierCommissionReportPage />} />
           <Route path="reports/refunds" element={<RefundReportPage />} />
           <Route path="reports/cost-per-maid" element={<CostPerMaidReportPage />} />
+          <Route path="country-packages" element={<CountryPackagesPage />} />
+          <Route path="country-packages/new" element={<CreateCountryPackagePage />} />
+          <Route path="country-packages/:id" element={<CountryPackageDetailPage />} />
           <Route path="compliance" element={<CompliancePage />} />
           <Route path="audit" element={<AuditPage />} />
           <Route path="settings" element={<Navigate to="/settings/notifications" replace />} />

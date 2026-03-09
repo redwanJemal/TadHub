@@ -242,6 +242,12 @@ public class PermissionSeeder : IHostedService
             new() { Id = Guid.NewGuid(), Name = "reports.view", Description = "View operational and workforce reports", Module = "reports", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
             new() { Id = Guid.NewGuid(), Name = "reports.export", Description = "Export reports to CSV", Module = "reports", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
 
+            // Country Packages module (Tenant)
+            new() { Id = Guid.NewGuid(), Name = "packages.view", Description = "View country payment packages", Module = "packages", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "packages.create", Description = "Create country payment packages", Module = "packages", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "packages.edit", Description = "Edit country payment packages", Module = "packages", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "packages.delete", Description = "Delete country payment packages", Module = "packages", Scope = PermissionScope.Tenant, DisplayOrder = 4 },
+
             // Supplier Portal module (Tenant)
             new() { Id = Guid.NewGuid(), Name = "supplier_portal.view", Description = "Access supplier portal dashboard and data", Module = "supplier_portal", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
             new() { Id = Guid.NewGuid(), Name = "supplier_portal.create_candidate", Description = "Register new candidates via supplier portal", Module = "supplier_portal", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
