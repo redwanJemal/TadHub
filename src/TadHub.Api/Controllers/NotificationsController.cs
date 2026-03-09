@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Notification.Contracts;
 using Notification.Contracts.DTOs;
 using TadHub.Api.Filters;
+using TadHub.Infrastructure.Auth;
 using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Interfaces;
 
@@ -216,4 +217,143 @@ public record CreateNotificationWithTenantRequest
     public string Body { get; init; } = string.Empty;
     public string Type { get; init; } = "info";
     public string? Link { get; init; }
+}
+
+/// <summary>
+/// Notification template management endpoints.
+/// </summary>
+[ApiController]
+[Route("api/v1/tenants/{tenantId:guid}/notification-templates")]
+[Authorize]
+[TenantMemberRequired(TenantIdParameter = "tenantId")]
+public class NotificationTemplatesController : ControllerBase
+{
+    private readonly INotificationTemplateService _templateService;
+
+    public NotificationTemplatesController(INotificationTemplateService templateService)
+    {
+        _templateService = templateService;
+    }
+
+    [HttpGet]
+    [HasPermission("notifications.manage")]
+    [ProducesResponseType(typeof(IEnumerable<NotificationTemplateListDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> List(
+        Guid tenantId,
+        [FromQuery] QueryParameters qp,
+        CancellationToken ct)
+    {
+        var result = await _templateService.ListAsync(tenantId, qp, ct);
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}")]
+    [HasPermission("notifications.manage")]
+    [ProducesResponseType(typeof(NotificationTemplateDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(
+        Guid tenantId,
+        Guid id,
+        CancellationToken ct)
+    {
+        var result = await _templateService.GetByIdAsync(tenantId, id, ct);
+        if (!result.IsSuccess)
+            return NotFound(new { error = result.Error });
+        return Ok(result.Value);
+    }
+
+    [HttpPost]
+    [HasPermission("notifications.manage")]
+    [ProducesResponseType(typeof(NotificationTemplateDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> Create(
+        Guid tenantId,
+        [FromBody] CreateNotificationTemplateRequest request,
+        CancellationToken ct)
+    {
+        var result = await _templateService.CreateAsync(tenantId, request, ct);
+        if (!result.IsSuccess)
+        {
+            if (result.ErrorCode == "CONFLICT")
+                return Conflict(new { error = result.Error });
+            return BadRequest(new { error = result.Error });
+        }
+        return CreatedAtAction(nameof(GetById), new { tenantId, id = result.Value!.Id }, result.Value);
+    }
+
+    [HttpPatch("{id:guid}")]
+    [HasPermission("notifications.manage")]
+    [ProducesResponseType(typeof(NotificationTemplateDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(
+        Guid tenantId,
+        Guid id,
+        [FromBody] UpdateNotificationTemplateRequest request,
+        CancellationToken ct)
+    {
+        var result = await _templateService.UpdateAsync(tenantId, id, request, ct);
+        if (!result.IsSuccess)
+            return NotFound(new { error = result.Error });
+        return Ok(result.Value);
+    }
+
+    [HttpDelete("{id:guid}")]
+    [HasPermission("notifications.manage")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(
+        Guid tenantId,
+        Guid id,
+        CancellationToken ct)
+    {
+        var result = await _templateService.DeleteAsync(tenantId, id, ct);
+        if (!result.IsSuccess)
+            return NotFound(new { error = result.Error });
+        return NoContent();
+    }
+}
+
+/// <summary>
+/// User notification preference endpoints.
+/// </summary>
+[ApiController]
+[Route("api/v1/tenants/{tenantId:guid}/notification-preferences")]
+[Authorize]
+[TenantMemberRequired(TenantIdParameter = "tenantId")]
+public class NotificationPreferencesController : ControllerBase
+{
+    private readonly IUserNotificationPreferenceService _preferenceService;
+    private readonly ICurrentUser _currentUser;
+
+    public NotificationPreferencesController(
+        IUserNotificationPreferenceService preferenceService,
+        ICurrentUser currentUser)
+    {
+        _preferenceService = preferenceService;
+        _currentUser = currentUser;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<UserNotificationPreferenceDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPreferences(
+        Guid tenantId,
+        CancellationToken ct)
+    {
+        var result = await _preferenceService.GetPreferencesAsync(tenantId, _currentUser.UserId, ct);
+        return Ok(result);
+    }
+
+    [HttpPut]
+    [ProducesResponseType(typeof(IEnumerable<UserNotificationPreferenceDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> UpdatePreferences(
+        Guid tenantId,
+        [FromBody] BulkUpdateUserPreferencesRequest request,
+        CancellationToken ct)
+    {
+        var result = await _preferenceService.BulkUpdateAsync(tenantId, _currentUser.UserId, request, ct);
+        if (!result.IsSuccess)
+            return BadRequest(new { error = result.Error });
+        return Ok(result.Value);
+    }
 }

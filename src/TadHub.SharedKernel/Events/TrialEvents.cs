@@ -42,3 +42,17 @@ public sealed record TrialCancelledEvent : IDomainEvent
 
     public TrialCancelledEvent() { }
 }
+
+public sealed record TrialCompletionDueEvent : IDomainEvent
+{
+    public Guid EventId { get; init; } = Guid.NewGuid();
+    public DateTimeOffset OccurredAt { get; init; }
+    public Guid TenantId { get; init; }
+    public Guid TrialId { get; init; }
+    public Guid WorkerId { get; init; }
+    public Guid ClientId { get; init; }
+    public DateOnly EndDate { get; init; }
+    public int DaysRemaining { get; init; }
+
+    public TrialCompletionDueEvent() { }
+}

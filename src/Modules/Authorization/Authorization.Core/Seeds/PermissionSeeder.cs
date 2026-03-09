@@ -103,6 +103,7 @@ public class PermissionSeeder : IHostedService
             // Notifications module (Tenant)
             new() { Id = Guid.NewGuid(), Name = "notifications.view", Description = "View notifications", Module = "notifications", Scope = PermissionScope.Tenant, DisplayOrder = 1 },
             new() { Id = Guid.NewGuid(), Name = "notifications.send", Description = "Send notifications to users", Module = "notifications", Scope = PermissionScope.Tenant, DisplayOrder = 2 },
+            new() { Id = Guid.NewGuid(), Name = "notifications.manage", Description = "Manage notification templates and settings", Module = "notifications", Scope = PermissionScope.Tenant, DisplayOrder = 3 },
 
             // ── New domain permissions ──
 

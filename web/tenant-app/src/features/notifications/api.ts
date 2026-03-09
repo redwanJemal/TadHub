@@ -1,7 +1,8 @@
 import { apiClient } from '@/shared/api/client';
-import type { NotificationDto } from './types';
+import type { NotificationDto, UserNotificationPreferenceDto, BulkUpdateUserPreferencesRequest } from './types';
 
 const BASE = (tenantId: string) => `/tenants/${tenantId}/notifications`;
+const PREFS_BASE = (tenantId: string) => `/tenants/${tenantId}/notification-preferences`;
 
 export function listNotifications(tenantId: string, params?: Record<string, unknown>) {
   return apiClient.getPaged<NotificationDto>(BASE(tenantId), params);
@@ -21,4 +22,12 @@ export function markAllAsRead(tenantId: string) {
 
 export function deleteNotification(tenantId: string, notificationId: string) {
   return apiClient.delete<void>(`${BASE(tenantId)}/${notificationId}`);
+}
+
+export function getNotificationPreferences(tenantId: string) {
+  return apiClient.get<UserNotificationPreferenceDto[]>(PREFS_BASE(tenantId));
+}
+
+export function updateNotificationPreferences(tenantId: string, request: BulkUpdateUserPreferencesRequest) {
+  return apiClient.put<UserNotificationPreferenceDto[]>(PREFS_BASE(tenantId), request);
 }

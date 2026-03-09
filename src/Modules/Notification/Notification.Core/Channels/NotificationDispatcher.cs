@@ -59,6 +59,7 @@ public sealed class NotificationDispatcher : INotificationDispatcher
         string? link,
         string eventType,
         Dictionary<string, string>? templateData = null,
+        string priority = "normal",
         CancellationToken ct = default)
     {
         foreach (var recipient in recipients)
@@ -72,6 +73,7 @@ public sealed class NotificationDispatcher : INotificationDispatcher
                 Body = body,
                 Type = type,
                 Link = link,
+                Priority = priority,
                 EventType = eventType,
                 TemplateData = templateData ?? new()
             };

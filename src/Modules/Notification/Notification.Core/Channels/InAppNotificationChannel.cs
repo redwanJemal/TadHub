@@ -34,7 +34,9 @@ public sealed class InAppNotificationChannel : INotificationChannel
                 Title = context.Title,
                 Body = context.Body,
                 Type = context.Type,
-                Link = context.Link
+                Link = context.Link,
+                Priority = context.Priority,
+                EventType = context.EventType
             },
             ct);
 

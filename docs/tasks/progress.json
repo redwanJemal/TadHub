@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T02:14:39.211948+00:00",
-  "current_task": "13-maid-status-lifecycle",
+  "last_updated": "2026-03-09T02:25:54.952226+00:00",
+  "current_task": "14-notifications-expansion",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -203,17 +203,17 @@
     },
     "14-notifications-expansion": {
       "title": "Notifications Expansion",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "event-consumers": "pending",
-        "templates": "pending",
-        "preferences": "pending",
-        "frontend": "pending",
+        "event-consumers": "completed",
+        "templates": "completed",
+        "preferences": "completed",
+        "frontend": "completed",
         "screenshots": "pending"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": ""
+      "started_at": "2026-03-09T02:25:54Z",
+      "completed_at": "2026-03-09T02:50:00Z",
+      "notes": "Added Priority (normal/urgent) and EventType fields to Notification entity. Created NotificationTemplate entity (tenant-configurable, bilingual en/ar, per event type). Created UserNotificationPreference entity (per-user mute/channel preferences per event type). Added 18 new MassTransit event consumers covering all business events: maid lifecycle (CandidateStatusChanged), booking/deployment (PlacementCreated, PlacementStatusChanged), arrivals (Scheduled, Confirmed, NoShow [urgent], PickupConfirmed), visa (StatusChanged, Issued), trials (Created, CompletionDue, Completed), returnees (Created, Approved with cost recovery), runaways (Reported [urgent], Confirmed [urgent]), financial (PaymentReceived, RefundProcessed, SupplierCommissionDue, OverduePayment [urgent]). Created FinancialEvents.cs and TrialCompletionDueEvent in SharedKernel. API: NotificationTemplatesController (CRUD with notifications.manage permission), NotificationPreferencesController (GET/PUT for current user). Frontend: updated NotificationItem with urgent visual distinction (red border, Zap icon, 'urgent' badge), NotificationsPage with skeleton loading, NotificationPreferencesPage with category-grouped event toggles and channel selection. Sidebar nav entry added. i18n en/ar for all 23 event types. Migration: AddNotificationExpansion."
     },
     "15-placement-outside-country-flow": {
       "title": "Placement \u2014 Outside Country Flow",

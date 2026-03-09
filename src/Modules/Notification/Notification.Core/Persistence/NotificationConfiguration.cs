@@ -27,6 +27,14 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Entities.Notif
         builder.Property(x => x.Link)
             .HasMaxLength(2048);
 
+        builder.Property(x => x.Priority)
+            .HasMaxLength(16)
+            .IsRequired()
+            .HasDefaultValue("normal");
+
+        builder.Property(x => x.EventType)
+            .HasMaxLength(64);
+
         builder.Property(x => x.IsRead)
             .HasDefaultValue(false);
 

@@ -12,6 +12,8 @@ public record NotificationDto
     public string Body { get; init; } = string.Empty;
     public string Type { get; init; } = "info";
     public string? Link { get; init; }
+    public string Priority { get; init; } = "normal";
+    public string? EventType { get; init; }
     public bool IsRead { get; init; }
     public DateTimeOffset? ReadAt { get; init; }
     public DateTimeOffset CreatedAt { get; init; }
@@ -27,6 +29,8 @@ public record CreateNotificationRequest
     public string Body { get; init; } = string.Empty;
     public string Type { get; init; } = "info";
     public string? Link { get; init; }
+    public string Priority { get; init; } = "normal";
+    public string? EventType { get; init; }
 }
 
 /// <summary>

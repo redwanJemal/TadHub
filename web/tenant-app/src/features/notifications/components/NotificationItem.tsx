@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Info, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { Info, AlertTriangle, CheckCircle, XCircle, Zap } from 'lucide-react';
 import { cn } from '@/shared/lib/cn';
 import type { NotificationDto } from '../types';
 
@@ -35,6 +35,7 @@ export function NotificationItem({ notification, onMarkRead, onClose }: Notifica
   const navigate = useNavigate();
   const config = typeConfig[notification.type] ?? typeConfig.info;
   const Icon = config.icon;
+  const isUrgent = notification.priority === 'urgent';
 
   const handleClick = () => {
     if (!notification.isRead) {
@@ -51,15 +52,26 @@ export function NotificationItem({ notification, onMarkRead, onClose }: Notifica
       onClick={handleClick}
       className={cn(
         'flex items-start gap-3 w-full rounded-lg p-3 text-start transition-colors hover:bg-muted/50',
-        !notification.isRead && 'bg-primary/5'
+        !notification.isRead && 'bg-primary/5',
+        isUrgent && !notification.isRead && 'bg-red-50 dark:bg-red-950/20 border-l-2 border-red-500'
       )}
     >
-      <Icon className={cn('h-5 w-5 shrink-0 mt-0.5', config.color)} />
+      <div className="relative shrink-0 mt-0.5">
+        <Icon className={cn('h-5 w-5', config.color)} />
+        {isUrgent && (
+          <Zap className="absolute -top-1.5 -end-1.5 h-3 w-3 text-red-500 fill-red-500" />
+        )}
+      </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <p className={cn('text-sm font-medium truncate', !notification.isRead && 'font-semibold')}>
             {notification.title}
           </p>
+          {isUrgent && (
+            <span className="shrink-0 rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-red-700 dark:bg-red-900/30 dark:text-red-400">
+              urgent
+            </span>
+          )}
           {!notification.isRead && (
             <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
           )}

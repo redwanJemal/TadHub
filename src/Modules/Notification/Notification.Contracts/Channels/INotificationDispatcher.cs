@@ -22,6 +22,7 @@ public interface INotificationDispatcher
         string? link,
         string eventType,
         Dictionary<string, string>? templateData = null,
+        string priority = "normal",
         CancellationToken ct = default);
 }
 

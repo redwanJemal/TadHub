@@ -1,9 +1,55 @@
 {
-  "title": "\u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a",
-  "empty": "\u0644\u0627 \u062a\u0648\u062c\u062f \u0625\u0634\u0639\u0627\u0631\u0627\u062a \u0628\u0639\u062f",
-  "markAllRead": "\u062a\u0639\u064a\u064a\u0646 \u0627\u0644\u0643\u0644 \u0643\u0645\u0642\u0631\u0648\u0621",
-  "viewAll": "\u0639\u0631\u0636 \u062c\u0645\u064a\u0639 \u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a",
-  "markRead": "\u062a\u0639\u064a\u064a\u0646 \u0643\u0645\u0642\u0631\u0648\u0621",
-  "delete": "\u062d\u0630\u0641",
-  "noMore": "\u0644\u0627 \u0645\u0632\u064a\u062f \u0645\u0646 \u0627\u0644\u0625\u0634\u0639\u0627\u0631\u0627\u062a"
+  "title": "الإشعارات",
+  "empty": "لا توجد إشعارات بعد",
+  "markAllRead": "تعيين الكل كمقروء",
+  "viewAll": "عرض جميع الإشعارات",
+  "markRead": "تعيين كمقروء",
+  "delete": "حذف",
+  "noMore": "لا مزيد من الإشعارات",
+  "preferences": {
+    "title": "تفضيلات الإشعارات",
+    "description": "اختر الإشعارات التي تريد تلقيها وطريقة استلامها.",
+    "save": "حفظ التفضيلات",
+    "categories": {
+      "maid": "دورة حياة العاملة",
+      "booking": "الحجز والنشر",
+      "arrival": "الوصول",
+      "visa": "التأشيرة والمعالجة",
+      "trial": "فترة التجربة",
+      "returnee": "حالات الإرجاع",
+      "runaway": "حالات الهروب",
+      "financial": "المالية",
+      "document": "المستندات",
+      "contract": "العقود"
+    },
+    "channels": {
+      "in_app": "داخل التطبيق",
+      "email": "البريد الإلكتروني"
+    },
+    "events": {
+      "candidate_status_changed": "تغيير حالة المرشحة",
+      "placement_created": "حجز جديد",
+      "placement_status_changed": "تغيير حالة التوظيف",
+      "arrival_scheduled": "جدولة الوصول",
+      "arrival_confirmed": "تأكيد الوصول",
+      "arrival_no_show": "عدم الوصول",
+      "arrival_pickup_confirmed": "تأكيد الاستلام",
+      "visa_status_changed": "تحديث حالة التأشيرة",
+      "visa_issued": "إصدار التأشيرة / الهوية الإماراتية",
+      "trial_created": "بدء فترة التجربة",
+      "trial_completion_due": "تذكير انتهاء فترة التجربة",
+      "trial_completed": "نتيجة التجربة",
+      "returnee_created": "تقديم حالة إرجاع",
+      "returnee_approved": "الموافقة على حالة الإرجاع",
+      "runaway_reported": "الإبلاغ عن هروب",
+      "runaway_confirmed": "تأكيد الهروب",
+      "payment_received": "استلام دفعة",
+      "refund_processed": "معالجة استرداد",
+      "supplier_commission_due": "عمولة المورد مستحقة",
+      "payment_overdue": "دفعة متأخرة",
+      "document_expiring": "مستند يقترب انتهاؤه",
+      "document_expired": "مستند منتهي الصلاحية",
+      "contract_status_changed": "تغيير حالة العقد"
+    }
+  }
 }

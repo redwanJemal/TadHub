@@ -106,6 +106,7 @@ const navItems: NavItem[] = [
     children: [
       { path: "/settings/general", icon: Settings, labelKey: "nav.settings_general" },
       { path: "/settings/notifications", icon: Bell, labelKey: "nav.settings_notifications" },
+      { path: "/notification-preferences", icon: Bell, labelKey: "nav.notification_preferences" },
     ],
   },
 ];

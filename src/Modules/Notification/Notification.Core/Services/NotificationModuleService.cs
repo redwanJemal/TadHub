@@ -86,6 +86,11 @@ public class NotificationModuleService : INotificationModuleService
         if (!validTypes.Contains(request.Type.ToLowerInvariant()))
             return Result<NotificationDto>.ValidationError($"Invalid type. Must be one of: {string.Join(", ", validTypes)}");
 
+        var validPriorities = new[] { "normal", "urgent" };
+        var priority = request.Priority?.ToLowerInvariant() ?? "normal";
+        if (!validPriorities.Contains(priority))
+            priority = "normal";
+
         var notification = new Entities.Notification
         {
             Id = Guid.NewGuid(),
@@ -95,6 +100,8 @@ public class NotificationModuleService : INotificationModuleService
             Body = request.Body,
             Type = request.Type.ToLowerInvariant(),
             Link = request.Link,
+            Priority = priority,
+            EventType = request.EventType,
             IsRead = false
         };
 
@@ -228,6 +235,8 @@ public class NotificationModuleService : INotificationModuleService
         Body = n.Body,
         Type = n.Type,
         Link = n.Link,
+        Priority = n.Priority,
+        EventType = n.EventType,
         IsRead = n.IsRead,
         ReadAt = n.ReadAt,
         CreatedAt = n.CreatedAt

@@ -12,6 +12,7 @@ public sealed record NotificationContext
     public string Body { get; init; } = string.Empty;
     public string Type { get; init; } = "info";
     public string? Link { get; init; }
+    public string Priority { get; init; } = "normal";
     public string EventType { get; init; } = string.Empty;
     public Dictionary<string, string> TemplateData { get; init; } = new();
 }

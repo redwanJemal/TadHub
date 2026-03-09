@@ -33,6 +33,16 @@ public class Notification : TenantScopedEntity
     public string? Link { get; set; }
 
     /// <summary>
+    /// Priority: normal, urgent.
+    /// </summary>
+    public string Priority { get; set; } = "normal";
+
+    /// <summary>
+    /// The event type that triggered this notification (e.g., "candidate.status_changed").
+    /// </summary>
+    public string? EventType { get; set; }
+
+    /// <summary>
     /// Whether the notification has been read.
     /// </summary>
     public bool IsRead { get; set; } = false;

@@ -51,7 +51,7 @@ public sealed class DocumentExpiredNotificationConsumer : IConsumer<DocumentExpi
             link,
             "document.expired",
             templateData,
-            context.CancellationToken);
+            ct: context.CancellationToken);
 
         _logger.LogInformation(
             "Dispatched document expired notification for {DocumentType} to {RecipientCount} recipients",

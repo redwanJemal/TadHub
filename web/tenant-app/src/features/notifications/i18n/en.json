@@ -5,5 +5,51 @@
   "viewAll": "View all notifications",
   "markRead": "Mark as read",
   "delete": "Delete",
-  "noMore": "No more notifications"
+  "noMore": "No more notifications",
+  "preferences": {
+    "title": "Notification Preferences",
+    "description": "Choose which notifications you want to receive and how.",
+    "save": "Save Preferences",
+    "categories": {
+      "maid": "Maid Lifecycle",
+      "booking": "Booking & Deployment",
+      "arrival": "Arrivals",
+      "visa": "Visa & Processing",
+      "trial": "Trial Period",
+      "returnee": "Returnee Cases",
+      "runaway": "Runaway Cases",
+      "financial": "Financial",
+      "document": "Documents",
+      "contract": "Contracts"
+    },
+    "channels": {
+      "in_app": "In-App",
+      "email": "Email"
+    },
+    "events": {
+      "candidate_status_changed": "Candidate Status Change",
+      "placement_created": "New Booking Created",
+      "placement_status_changed": "Placement Status Change",
+      "arrival_scheduled": "Arrival Scheduled",
+      "arrival_confirmed": "Arrival Confirmed",
+      "arrival_no_show": "Missing Arrival / No-Show",
+      "arrival_pickup_confirmed": "Pickup Confirmed",
+      "visa_status_changed": "Visa Status Update",
+      "visa_issued": "Visa / Emirates ID Issued",
+      "trial_created": "Trial Period Started",
+      "trial_completion_due": "Trial Completion Reminder",
+      "trial_completed": "Trial Outcome",
+      "returnee_created": "Returnee Case Filed",
+      "returnee_approved": "Returnee Case Approved",
+      "runaway_reported": "Runaway Reported",
+      "runaway_confirmed": "Runaway Confirmed",
+      "payment_received": "Payment Received",
+      "refund_processed": "Refund Processed",
+      "supplier_commission_due": "Supplier Commission Due",
+      "payment_overdue": "Overdue Payment",
+      "document_expiring": "Document Expiring",
+      "document_expired": "Document Expired",
+      "contract_status_changed": "Contract Status Change"
+    }
+  }
 }

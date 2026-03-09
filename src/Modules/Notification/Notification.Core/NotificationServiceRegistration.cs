@@ -30,6 +30,10 @@ public static class NotificationServiceRegistration
         services.AddScoped<ITenantNotificationSettingsProvider, TenantNotificationSettingsProvider>();
         services.AddScoped<INotificationRecipientResolver, NotificationRecipientResolver>();
 
+        // Templates & user preferences
+        services.AddScoped<INotificationTemplateService, NotificationTemplateService>();
+        services.AddScoped<IUserNotificationPreferenceService, UserNotificationPreferenceService>();
+
         return services;
     }
 }

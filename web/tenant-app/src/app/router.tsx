@@ -84,6 +84,7 @@ const SettingsPage = lazy(() => import('@/features/settings').then(m => ({ defau
 
 // Notifications (full page)
 const NotificationsPage = lazy(() => import('@/features/notifications').then(m => ({ default: m.NotificationsPage })));
+const NotificationPreferencesPage = lazy(() => import('@/features/notifications').then(m => ({ default: m.NotificationPreferencesPage })));
 
 // Finance
 const InvoicesListPage = lazy(() => import('@/features/finance').then(m => ({ default: m.InvoicesListPage })));
@@ -218,6 +219,7 @@ export function AppRouter() {
           <Route path="settings" element={<Navigate to="/settings/notifications" replace />} />
           <Route path="settings/:tab" element={<SettingsPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="notification-preferences" element={<NotificationPreferencesPage />} />
         </Route>
 
         {/* Catch all */}

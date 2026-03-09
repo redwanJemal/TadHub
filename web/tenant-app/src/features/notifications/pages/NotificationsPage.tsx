@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bell } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 import { useNotifications, useMarkAsRead, useMarkAllAsRead, useUnreadCount } from '../hooks';
 import { NotificationItem } from '../components/NotificationItem';
 
@@ -34,9 +35,7 @@ export function NotificationsPage() {
 
       <div className="rounded-lg border bg-card">
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-          </div>
+          <NotificationsSkeleton />
         ) : notifications.length === 0 ? (
           <div className="py-12 text-center">
             <Bell className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
@@ -80,6 +79,23 @@ export function NotificationsPage() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function NotificationsSkeleton() {
+  return (
+    <div className="divide-y">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="flex items-start gap-3 p-3 px-5">
+          <Skeleton className="h-5 w-5 rounded-full shrink-0 mt-0.5" />
+          <div className="flex-1 space-y-1.5">
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-3 w-72" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
