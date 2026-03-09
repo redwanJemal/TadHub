@@ -34,6 +34,7 @@ import {
   Car,
   Store,
   FileWarning,
+  FileBarChart,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -68,6 +69,7 @@ const navItems: NavItem[] = [
   { path: "/arrivals", icon: Plane, labelKey: "nav.arrivals", permission: "arrivals.view" },
   { path: "/driver", icon: Car, labelKey: "nav.driver", permission: "arrivals.driver_actions" },
   { path: "/accommodations", icon: Building2, labelKey: "nav.accommodations", permission: "accommodations.view" },
+  { path: "/reports", icon: FileBarChart, labelKey: "nav.reports", permission: "reports.view" },
   {
     path: "/finance",
     icon: DollarSign,

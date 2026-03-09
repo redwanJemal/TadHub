@@ -1,0 +1,139 @@
+{
+  "reports": {
+    "title": "التقارير",
+    "description": "عرض التقارير التشغيلية والعمالة والمالية",
+    "exportCsv": "تصدير CSV",
+    "print": "طباعة",
+    "dateRange": "نطاق التاريخ",
+    "from": "من",
+    "to": "إلى",
+    "apply": "تطبيق",
+    "category": {
+      "workforce": "تقارير العمالة",
+      "operational": "التقارير التشغيلية",
+      "finance": "التقارير المالية"
+    },
+    "inventory": {
+      "title": "تقرير المخزون",
+      "description": "جميع العاملات المتوفرات حالياً في المخزون",
+      "workerCode": "رمز العاملة",
+      "name": "الاسم",
+      "nationality": "الجنسية",
+      "location": "الموقع",
+      "status": "الحالة",
+      "gender": "الجنس",
+      "experience": "الخبرة (سنوات)",
+      "salary": "الراتب الشهري",
+      "supplier": "المورد",
+      "registeredAt": "تاريخ التسجيل"
+    },
+    "deployed": {
+      "title": "تقرير المنتشرات",
+      "description": "جميع العاملات المنتشرات حالياً مع معلومات العقد",
+      "workerCode": "رمز العاملة",
+      "workerName": "اسم العاملة",
+      "nationality": "الجنسية",
+      "contractCode": "رمز العقد",
+      "client": "العميل",
+      "startDate": "تاريخ البداية",
+      "endDate": "تاريخ الانتهاء",
+      "contractType": "نوع العقد",
+      "rate": "السعر"
+    },
+    "returnees": {
+      "title": "تقرير الإرجاع",
+      "description": "جميع حالات الإرجاع مع حسابات الاسترداد وحالة التسوية",
+      "caseCode": "رمز الحالة",
+      "status": "الحالة",
+      "returnType": "نوع الإرجاع",
+      "returnDate": "تاريخ الإرجاع",
+      "worker": "العاملة",
+      "client": "العميل",
+      "amountPaid": "المبلغ المدفوع",
+      "refundAmount": "مبلغ الاسترداد",
+      "guarantee": "ضمن الضمان",
+      "settledAt": "تاريخ التسوية"
+    },
+    "runaways": {
+      "title": "تقرير الهروب",
+      "description": "جميع حالات الهروب مع تفاصيل الضمان واسترداد التكلفة",
+      "caseCode": "رمز الحالة",
+      "status": "الحالة",
+      "reportedDate": "تاريخ البلاغ",
+      "worker": "العاملة",
+      "client": "العميل",
+      "guarantee": "ضمن الضمان",
+      "policeReport": "رقم البلاغ",
+      "totalExpenses": "إجمالي المصاريف",
+      "settledAt": "تاريخ التسوية"
+    },
+    "arrivals": {
+      "title": "تقرير الوصول",
+      "description": "الوصولات حسب نطاق التاريخ وتوزيع الحالات",
+      "arrivalCode": "رمز الوصول",
+      "status": "الحالة",
+      "worker": "العاملة",
+      "flight": "الرحلة",
+      "airport": "المطار",
+      "scheduledDate": "تاريخ الوصول المجدول",
+      "scheduledTime": "وقت الوصول المجدول",
+      "actualTime": "وقت الوصول الفعلي",
+      "driver": "السائق",
+      "pickedUpAt": "وقت الاستلام"
+    },
+    "accommodationDaily": {
+      "title": "القائمة اليومية للسكن",
+      "description": "القائمة اليومية لجميع العاملات في السكن",
+      "date": "التاريخ",
+      "stayCode": "رمز الإقامة",
+      "worker": "العاملة",
+      "room": "الغرفة",
+      "location": "الموقع",
+      "checkInDate": "تاريخ الدخول",
+      "checkOutDate": "تاريخ الخروج",
+      "status": "الحالة"
+    },
+    "deploymentPipeline": {
+      "title": "خط أنابيب التوزيع",
+      "description": "عرض خط الأنابيب — عدد العاملات في كل مرحلة",
+      "stage": "المرحلة",
+      "count": "العدد",
+      "total": "الإجمالي في خط الأنابيب"
+    },
+    "supplierCommissions": {
+      "title": "تقرير عمولات الموردين",
+      "description": "العمولات المدفوعة/المعلقة لكل مورد حسب الفترة",
+      "supplier": "المورد",
+      "paymentCount": "المدفوعات",
+      "totalPaid": "إجمالي المدفوع",
+      "totalPending": "إجمالي المعلق",
+      "total": "الإجمالي"
+    },
+    "refunds": {
+      "title": "تقرير الاستردادات",
+      "description": "استردادات العملاء الصادرة مع التفاصيل المرتبطة",
+      "paymentNumber": "رقم الدفعة",
+      "amount": "المبلغ",
+      "refundAmount": "مبلغ الاسترداد",
+      "method": "الطريقة",
+      "paymentDate": "تاريخ الدفع",
+      "client": "العميل",
+      "invoice": "الفاتورة"
+    },
+    "costPerMaid": {
+      "title": "تقرير التكلفة لكل عاملة",
+      "description": "تفصيل إجمالي التكلفة لكل عاملة",
+      "workerCode": "رمز العاملة",
+      "workerName": "اسم العاملة",
+      "procurement": "الاستقدام",
+      "flight": "الطيران",
+      "medical": "الطبي",
+      "visa": "التأشيرة",
+      "insurance": "التأمين",
+      "accommodation": "السكن",
+      "training": "التدريب",
+      "other": "أخرى",
+      "total": "إجمالي التكلفة"
+    }
+  }
+}

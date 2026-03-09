@@ -36,6 +36,7 @@ using Visa.Core;
 using Arrival.Core;
 using Accommodation.Core;
 using SupplierPortal.Core;
+using Reporting.Core;
 using TadHub.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -205,6 +206,9 @@ builder.Services.AddAccommodationModule();
 
 // SupplierPortal module
 builder.Services.AddSupplierPortalModule();
+
+// Reporting module
+builder.Services.AddReportingModule();
 
 var app = builder.Build();
 

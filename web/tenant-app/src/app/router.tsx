@@ -105,6 +105,19 @@ const SupplierWorkersPage = lazy(() => import('@/features/supplier-portal').then
 const SupplierCommissionsPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierCommissionsPage })));
 const SupplierArrivalsPage = lazy(() => import('@/features/supplier-portal').then(m => ({ default: m.SupplierArrivalsPage })));
 
+// Reports
+const ReportsHubPage = lazy(() => import('@/features/reports').then(m => ({ default: m.ReportsHubPage })));
+const InventoryReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.InventoryReportPage })));
+const DeployedReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.DeployedReportPage })));
+const ReturneeReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.ReturneeReportPage })));
+const RunawayReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.RunawayReportPage })));
+const ArrivalsReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.ArrivalsReportPage })));
+const AccommodationDailyPage = lazy(() => import('@/features/reports').then(m => ({ default: m.AccommodationDailyPage })));
+const DeploymentPipelinePage = lazy(() => import('@/features/reports').then(m => ({ default: m.DeploymentPipelinePage })));
+const SupplierCommissionReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.SupplierCommissionReportPage })));
+const RefundReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.RefundReportPage })));
+const CostPerMaidReportPage = lazy(() => import('@/features/reports').then(m => ({ default: m.CostPerMaidReportPage })));
+
 // Dashboard
 const DashboardPage = lazy(() => import('@/features/dashboard').then(m => ({ default: m.DashboardPage })));
 
@@ -189,6 +202,17 @@ export function AppRouter() {
           <Route path="supplier-portal/workers" element={<SupplierWorkersPage />} />
           <Route path="supplier-portal/commissions" element={<SupplierCommissionsPage />} />
           <Route path="supplier-portal/arrivals" element={<SupplierArrivalsPage />} />
+          <Route path="reports" element={<ReportsHubPage />} />
+          <Route path="reports/inventory" element={<InventoryReportPage />} />
+          <Route path="reports/deployed" element={<DeployedReportPage />} />
+          <Route path="reports/returnees" element={<ReturneeReportPage />} />
+          <Route path="reports/runaways" element={<RunawayReportPage />} />
+          <Route path="reports/arrivals" element={<ArrivalsReportPage />} />
+          <Route path="reports/accommodation-daily" element={<AccommodationDailyPage />} />
+          <Route path="reports/deployment-pipeline" element={<DeploymentPipelinePage />} />
+          <Route path="reports/supplier-commissions" element={<SupplierCommissionReportPage />} />
+          <Route path="reports/refunds" element={<RefundReportPage />} />
+          <Route path="reports/cost-per-maid" element={<CostPerMaidReportPage />} />
           <Route path="compliance" element={<CompliancePage />} />
           <Route path="audit" element={<AuditPage />} />
           <Route path="settings" element={<Navigate to="/settings/notifications" replace />} />

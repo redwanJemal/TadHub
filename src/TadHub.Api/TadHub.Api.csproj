@@ -60,6 +60,8 @@
     <ProjectReference Include="..\Modules\Accommodation\Accommodation.Core\Accommodation.Core.csproj" />
     <!-- SupplierPortal module -->
     <ProjectReference Include="..\Modules\SupplierPortal\SupplierPortal.Core\SupplierPortal.Core.csproj" />
+    <!-- Reporting module -->
+    <ProjectReference Include="..\Modules\Reporting\Reporting.Core\Reporting.Core.csproj" />
   </ItemGroup>
 
 </Project>

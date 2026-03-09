@@ -1,0 +1,139 @@
+{
+  "reports": {
+    "title": "Reports",
+    "description": "View operational, workforce, and financial reports",
+    "exportCsv": "Export CSV",
+    "print": "Print",
+    "dateRange": "Date Range",
+    "from": "From",
+    "to": "To",
+    "apply": "Apply",
+    "category": {
+      "workforce": "Workforce Reports",
+      "operational": "Operational Reports",
+      "finance": "Finance Reports"
+    },
+    "inventory": {
+      "title": "Inventory Report",
+      "description": "All maids currently in inventory",
+      "workerCode": "Worker Code",
+      "name": "Name",
+      "nationality": "Nationality",
+      "location": "Location",
+      "status": "Status",
+      "gender": "Gender",
+      "experience": "Experience (Years)",
+      "salary": "Monthly Salary",
+      "supplier": "Supplier",
+      "registeredAt": "Registered At"
+    },
+    "deployed": {
+      "title": "Deployed Report",
+      "description": "All currently deployed maids with contract info",
+      "workerCode": "Worker Code",
+      "workerName": "Worker Name",
+      "nationality": "Nationality",
+      "contractCode": "Contract Code",
+      "client": "Client",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "contractType": "Contract Type",
+      "rate": "Rate"
+    },
+    "returnees": {
+      "title": "Returnee Report",
+      "description": "All returnee cases with refund and settlement status",
+      "caseCode": "Case Code",
+      "status": "Status",
+      "returnType": "Return Type",
+      "returnDate": "Return Date",
+      "worker": "Worker",
+      "client": "Client",
+      "amountPaid": "Amount Paid",
+      "refundAmount": "Refund Amount",
+      "guarantee": "Within Guarantee",
+      "settledAt": "Settled At"
+    },
+    "runaways": {
+      "title": "Runaway Report",
+      "description": "All runaway cases with guarantee and cost recovery details",
+      "caseCode": "Case Code",
+      "status": "Status",
+      "reportedDate": "Reported Date",
+      "worker": "Worker",
+      "client": "Client",
+      "guarantee": "Within Guarantee",
+      "policeReport": "Police Report #",
+      "totalExpenses": "Total Expenses",
+      "settledAt": "Settled At"
+    },
+    "arrivals": {
+      "title": "Arrivals Report",
+      "description": "Arrivals by date range and status breakdown",
+      "arrivalCode": "Arrival Code",
+      "status": "Status",
+      "worker": "Worker",
+      "flight": "Flight",
+      "airport": "Airport",
+      "scheduledDate": "Scheduled Date",
+      "scheduledTime": "Scheduled Time",
+      "actualTime": "Actual Time",
+      "driver": "Driver",
+      "pickedUpAt": "Picked Up At"
+    },
+    "accommodationDaily": {
+      "title": "Accommodation Daily List",
+      "description": "Daily list of all maids in accommodation",
+      "date": "Date",
+      "stayCode": "Stay Code",
+      "worker": "Worker",
+      "room": "Room",
+      "location": "Location",
+      "checkInDate": "Check-in Date",
+      "checkOutDate": "Check-out Date",
+      "status": "Status"
+    },
+    "deploymentPipeline": {
+      "title": "Deployment Pipeline",
+      "description": "Pipeline view — maids at each deployment stage",
+      "stage": "Stage",
+      "count": "Count",
+      "total": "Total in Pipeline"
+    },
+    "supplierCommissions": {
+      "title": "Supplier Commission Report",
+      "description": "Commissions paid/pending per supplier, per period",
+      "supplier": "Supplier",
+      "paymentCount": "Payments",
+      "totalPaid": "Total Paid",
+      "totalPending": "Total Pending",
+      "total": "Total"
+    },
+    "refunds": {
+      "title": "Refund Report",
+      "description": "Customer refunds issued with linked details",
+      "paymentNumber": "Payment #",
+      "amount": "Amount",
+      "refundAmount": "Refund Amount",
+      "method": "Method",
+      "paymentDate": "Payment Date",
+      "client": "Client",
+      "invoice": "Invoice"
+    },
+    "costPerMaid": {
+      "title": "Cost Per Maid Report",
+      "description": "Total cost breakdown per maid",
+      "workerCode": "Worker Code",
+      "workerName": "Worker Name",
+      "procurement": "Procurement",
+      "flight": "Flight",
+      "medical": "Medical",
+      "visa": "Visa",
+      "insurance": "Insurance",
+      "accommodation": "Accommodation",
+      "training": "Training",
+      "other": "Other",
+      "total": "Total Cost"
+    }
+  }
+}
