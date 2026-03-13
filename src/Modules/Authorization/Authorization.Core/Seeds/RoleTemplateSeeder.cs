@@ -235,7 +235,7 @@ public class RoleTemplateSeeder : IHostedService
                 PermissionFilter = p => !p.Name.EndsWith(".delete") && p.Name != "tenancy.delete"
             },
 
-            // Accountant: finance, clients, contracts, workers (view), dashboard
+            // Accountant: finance, clients, contracts, workers (view), dashboard, packages (view)
             new()
             {
                 Name = "Accountant",
@@ -250,15 +250,16 @@ public class RoleTemplateSeeder : IHostedService
                     p.Name == "clients.view" ||
                     p.Name == "contracts.view" ||
                     p.Name == "workers.view" ||
-                    p.Name == "workers.passport.view" ||
+                    p.Name == "packages.view" ||
                     p.Name == "reports.view" ||
                     p.Name == "reports.export" ||
                     p.Name == "notifications.view"
             },
 
             // Sales: suppliers, candidates, workers, clients, placements, trials, contracts
-            // Note: Sales can create/edit but NOT transition statuses (manage_status) —
-            // status transitions (e.g. candidate approval) require Admin authority
+            // Note: Sales can create/edit but NOT transition statuses or delete —
+            // status transitions (e.g. candidate approval) require Admin authority,
+            // delete operations are reserved for Owner only
             new()
             {
                 Name = "Sales",
@@ -274,14 +275,17 @@ public class RoleTemplateSeeder : IHostedService
                      p.Module == "trials" ||
                      p.Module == "contracts" ||
                      p.Module == "content" ||
-                     p.Module == "notifications" ||
+                     p.Name == "notifications.view" ||
                      p.Name == "dashboard.view" ||
                      p.Name == "reports.view" ||
                      p.Name == "reports.export")
                     && !p.Name.EndsWith(".manage_status")
+                    && !p.Name.EndsWith(".delete")
             },
 
-            // Operations: arrivals, accommodations, visas, compliance, workers, returnees, runaways
+            // Operations: arrivals, accommodations, visas, compliance, workers (view/edit/status), returnees, runaways
+            // Note: Operations cannot delete or create workers (workers come from candidate approval).
+            // Notifications limited to view-only. Delete operations reserved for Owner.
             new()
             {
                 Name = "Operations",
@@ -289,21 +293,25 @@ public class RoleTemplateSeeder : IHostedService
                 IsSystem = false,
                 DisplayOrder = 5,
                 PermissionFilter = p =>
-                    p.Module == "arrivals" ||
-                    p.Module == "accommodations" ||
-                    p.Module == "visas" ||
-                    p.Module == "documents" ||
-                    p.Module == "returnees" ||
-                    p.Module == "runaways" ||
-                    p.Module == "workers" ||
-                    p.Module == "notifications" ||
-                    p.Name == "dashboard.view" ||
-                    p.Name == "clients.view" ||
-                    p.Name == "contracts.view" ||
-                    p.Name == "placements.view" ||
-                    p.Name == "suppliers.view" ||
-                    p.Name == "reports.view" ||
-                    p.Name == "reports.export"
+                    (p.Module == "arrivals" ||
+                     p.Module == "accommodations" ||
+                     p.Module == "visas" ||
+                     p.Module == "documents" ||
+                     p.Module == "returnees" ||
+                     p.Module == "runaways" ||
+                     p.Name == "workers.view" ||
+                     p.Name == "workers.edit" ||
+                     p.Name == "workers.manage_status" ||
+                     p.Name == "notifications.view" ||
+                     p.Name == "dashboard.view" ||
+                     p.Name == "clients.view" ||
+                     p.Name == "contracts.view" ||
+                     p.Name == "placements.view" ||
+                     p.Name == "suppliers.view" ||
+                     p.Name == "candidates.view" ||
+                     p.Name == "reports.view" ||
+                     p.Name == "reports.export")
+                    && !p.Name.EndsWith(".delete")
             },
 
             // Viewer: dashboard + read-only access to core operational data
@@ -324,14 +332,16 @@ public class RoleTemplateSeeder : IHostedService
                     p.Name == "notifications.view"
             },
 
-            // Driver: limited access to assigned pickups only
+            // Driver: limited access to assigned pickups and dashboard landing page
             new()
             {
                 Name = "Driver",
                 Description = "Driver role with access to assigned pickups, confirm pickup, and upload photos.",
                 IsSystem = false,
                 DisplayOrder = 7,
-                PermissionFilter = p => p.Name == "arrivals.driver_actions"
+                PermissionFilter = p =>
+                    p.Name == "dashboard.view" ||
+                    p.Name == "arrivals.driver_actions"
             },
 
             // Accommodation Staff: limited to accommodation management and viewing arrivals
