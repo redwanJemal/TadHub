@@ -448,16 +448,23 @@ public class ArrivalService : IArrivalService
 
     private async Task<Entities.Arrival?> GetArrivalForTransition(Guid tenantId, Guid id, CancellationToken ct)
     {
+        // Use IgnoreQueryFilters() to bypass tenant/soft-delete filters (since we
+        // filter manually), but do NOT Include navigations — adding child entities
+        // to included collections causes EF to generate UPDATE instead of INSERT,
+        // triggering DbUpdateConcurrencyException. Status history is added directly
+        // via _db.Set<ArrivalStatusHistory>().Add() instead.
         return await _db.Set<Entities.Arrival>()
             .IgnoreQueryFilters()
-            .Include(x => x.StatusHistory)
             .FirstOrDefaultAsync(x => x.TenantId == tenantId && !x.IsDeleted && x.Id == id, ct);
     }
 
     private void AddStatusHistory(Entities.Arrival arrival, ArrivalStatus fromStatus, ArrivalStatus toStatus, string? notes = null, string? reason = null)
     {
-        arrival.StatusHistory.Add(new ArrivalStatusHistory
+        // Add directly to DbSet instead of navigation collection to avoid
+        // change tracker issues when parent was loaded with IgnoreQueryFilters.
+        _db.Set<ArrivalStatusHistory>().Add(new ArrivalStatusHistory
         {
+            ArrivalId = arrival.Id,
             TenantId = arrival.TenantId,
             FromStatus = fromStatus,
             ToStatus = toStatus,
