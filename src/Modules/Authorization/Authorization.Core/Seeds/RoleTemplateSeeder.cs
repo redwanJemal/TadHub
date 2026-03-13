@@ -235,11 +235,11 @@ public class RoleTemplateSeeder : IHostedService
                 PermissionFilter = p => !p.Name.EndsWith(".delete") && p.Name != "tenancy.delete"
             },
 
-            // Accountant: finance, clients, contracts, workers (view), dashboard, packages (view)
+            // Accountant: finance, clients, contracts, workers (view), suppliers (view), dashboard, packages (view)
             new()
             {
                 Name = "Accountant",
-                Description = "Financial and billing access with read-only view of clients, contracts, and workers.",
+                Description = "Financial and billing access with read-only view of clients, contracts, workers, and suppliers.",
                 IsSystem = false,
                 DisplayOrder = 3,
                 PermissionFilter = p =>
@@ -250,6 +250,7 @@ public class RoleTemplateSeeder : IHostedService
                     p.Name == "clients.view" ||
                     p.Name == "contracts.view" ||
                     p.Name == "workers.view" ||
+                    p.Name == "suppliers.view" ||
                     p.Name == "packages.view" ||
                     p.Name == "reports.view" ||
                     p.Name == "reports.export" ||
@@ -332,7 +333,7 @@ public class RoleTemplateSeeder : IHostedService
                     p.Name == "notifications.view"
             },
 
-            // Driver: limited access to assigned pickups and dashboard landing page
+            // Driver: limited access to assigned pickups, dashboard, and notifications
             new()
             {
                 Name = "Driver",
@@ -341,21 +342,25 @@ public class RoleTemplateSeeder : IHostedService
                 DisplayOrder = 7,
                 PermissionFilter = p =>
                     p.Name == "dashboard.view" ||
-                    p.Name == "arrivals.driver_actions"
+                    p.Name == "arrivals.driver_actions" ||
+                    p.Name == "notifications.view"
             },
 
-            // Accommodation Staff: limited to accommodation management and viewing arrivals
+            // Accommodation Staff: accommodation management, arrivals, workers/candidates (view), notifications
             new()
             {
                 Name = "Accommodation Staff",
-                Description = "Accommodation staff with access to check-in/check-out, occupant lists, and incoming arrivals.",
+                Description = "Accommodation staff with access to check-in/check-out, occupant lists, incoming arrivals, and worker/candidate info.",
                 IsSystem = false,
                 DisplayOrder = 8,
                 PermissionFilter = p =>
                     p.Name == "dashboard.view" ||
                     p.Name == "accommodations.view" ||
                     p.Name == "accommodations.manage" ||
-                    p.Name == "arrivals.view"
+                    p.Name == "arrivals.view" ||
+                    p.Name == "workers.view" ||
+                    p.Name == "candidates.view" ||
+                    p.Name == "notifications.view"
             }
         };
     }
