@@ -18,7 +18,6 @@ using TadHub.Infrastructure.Keycloak.Models;
 using TadHub.SharedKernel.Models;
 using Tenancy.Contracts;
 using Tenancy.Contracts.DTOs;
-using Authorization.Core.Entities;
 using Tenancy.Core.Entities;
 
 namespace Tenancy.Core.Services;
@@ -420,51 +419,34 @@ public class TenantService : ITenantService
         var query = _db.Set<TenantMembership>()
             .AsNoTracking()
             .Where(x => x.TenantId == tenantId)
-            .Include(x => x.User)
             .ApplyFilters(qp.Filters, MemberFilters)
             .ApplySort(qp.GetSortFields(), MemberSortable);
 
         var pagedMembers = await query.ToPagedListAsync(qp, ct);
 
-        // Load roles for all members in the page in one query
-        // IgnoreQueryFilters: bypass global tenant filter since we're explicitly filtering by tenantId
+        // Load user profile data via raw SQL (cross-module read)
         var memberUserIds = pagedMembers.Items.Select(m => m.UserId).ToList();
-        var userRoles = await _db.Set<UserRole>()
-            .IgnoreQueryFilters()
-            .AsNoTracking()
-            .Where(ur => ur.TenantId == tenantId && memberUserIds.Contains(ur.UserId))
-            .Include(ur => ur.Role)
-            .ToListAsync(ct);
+        var userProfiles = await LoadUserProfilesAsync(memberUserIds, ct);
 
-        var rolesLookup = userRoles
-            .GroupBy(ur => ur.UserId)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Select(ur => new MemberRoleInfo { Id = ur.RoleId, Name = ur.Role.Name }).ToList());
+        // Load roles via raw SQL (cross-module read)
+        var rolesLookup = await LoadUserRolesAsync(tenantId, memberUserIds, ct);
 
-        return pagedMembers.Map(m => MapMemberToDto(m, rolesLookup));
+        return pagedMembers.Map(m => MapMemberToDto(m, userProfiles, rolesLookup));
     }
 
     public async Task<Result<TenantMemberDto>> GetMemberAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
     {
         var member = await _db.Set<TenantMembership>()
             .AsNoTracking()
-            .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserId == userId, ct);
 
         if (member is null)
             return Result<TenantMemberDto>.NotFound("Member not found");
 
-        var roles = await _db.Set<UserRole>()
-            .IgnoreQueryFilters()
-            .AsNoTracking()
-            .Where(ur => ur.TenantId == tenantId && ur.UserId == userId)
-            .Include(ur => ur.Role)
-            .Select(ur => new MemberRoleInfo { Id = ur.RoleId, Name = ur.Role.Name })
-            .ToListAsync(ct);
+        var userProfiles = await LoadUserProfilesAsync([userId], ct);
+        var rolesLookup = await LoadUserRolesAsync(tenantId, [userId], ct);
 
-        var rolesLookup = new Dictionary<Guid, List<MemberRoleInfo>> { [userId] = roles };
-        return Result<TenantMemberDto>.Success(MapMemberToDto(member, rolesLookup));
+        return Result<TenantMemberDto>.Success(MapMemberToDto(member, userProfiles, rolesLookup));
     }
 
     public async Task<Result<TenantMemberDto>> AddMemberAsync(Guid tenantId, Guid userId, bool isOwner = false, CancellationToken ct = default)
@@ -516,18 +498,10 @@ public class TenantService : ITenantService
             if (!addResult.IsSuccess)
                 return addResult;
 
-            // Assign role if specified
+            // Assign role if specified (raw SQL — cross-module write to authorization tables)
             if (request.RoleId.HasValue)
             {
-                var userRole = new UserRole
-                {
-                    Id = Guid.NewGuid(),
-                    TenantId = tenantId,
-                    UserId = existingLocal.Value!.Id,
-                    RoleId = request.RoleId.Value
-                };
-                _db.Set<UserRole>().Add(userRole);
-                await _db.SaveChangesAsync(ct);
+                await AssignUserRoleAsync(tenantId, existingLocal.Value!.Id, request.RoleId.Value, ct);
             }
 
             return await GetMemberAsync(tenantId, existingLocal.Value!.Id, ct);
@@ -599,18 +573,10 @@ public class TenantService : ITenantService
                 return memberResult;
             }
 
-            // 7. Assign role if specified
+            // 7. Assign role if specified (raw SQL — cross-module write to authorization tables)
             if (request.RoleId.HasValue)
             {
-                var userRole = new UserRole
-                {
-                    Id = Guid.NewGuid(),
-                    TenantId = tenantId,
-                    UserId = internalUserId,
-                    RoleId = request.RoleId.Value
-                };
-                _db.Set<UserRole>().Add(userRole);
-                await _db.SaveChangesAsync(ct);
+                await AssignUserRoleAsync(tenantId, internalUserId, request.RoleId.Value, ct);
             }
 
             _logger.LogInformation(
@@ -675,12 +641,14 @@ public class TenantService : ITenantService
     {
         var internalUserId = _currentUser.UserId;
 
-        // Check if already a member
-        var existingMember = await _db.Set<TenantMembership>()
-            .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.User.Email.ToLower() == request.Email.ToLower(), ct);
+        // Check if already a member (raw SQL join to avoid cross-module navigation)
+        var isMemberByEmail = await _db.Database.SqlQueryRaw<int>(
+            @"SELECT COUNT(1) AS ""Value"" FROM tenant_memberships tm
+              INNER JOIN user_profiles up ON up.id = tm.user_id
+              WHERE tm.tenant_id = {0} AND LOWER(up.email) = LOWER({1})",
+            tenantId, request.Email).FirstOrDefaultAsync(ct);
 
-        if (existingMember is not null)
+        if (isMemberByEmail > 0)
             return Result<TenantInvitationDto>.Conflict("User is already a member of this tenant");
 
         // Check for existing pending invitation
@@ -713,14 +681,14 @@ public class TenantService : ITenantService
 
         // TODO: Send invitation email
 
-        // Reload with tenant and user info
+        // Reload with tenant info
         var result = await _db.Set<TenantUserInvitation>()
             .AsNoTracking()
             .Include(x => x.Tenant)
-            .Include(x => x.InvitedBy)
             .FirstOrDefaultAsync(x => x.Id == invitation.Id, ct);
 
-        return Result<TenantInvitationDto>.Success(MapInvitationToDto(result!));
+        var inviterProfiles = await LoadUserProfilesAsync([result!.InvitedByUserId], ct);
+        return Result<TenantInvitationDto>.Success(MapInvitationToDto(result, inviterProfiles));
     }
 
     public async Task<PagedList<TenantInvitationDto>> GetInvitationsAsync(Guid tenantId, QueryParameters qp, CancellationToken ct = default)
@@ -729,12 +697,15 @@ public class TenantService : ITenantService
             .AsNoTracking()
             .Where(x => x.TenantId == tenantId && x.AcceptedAt == null)
             .Include(x => x.Tenant)
-            .Include(x => x.InvitedBy)
             .OrderByDescending(x => x.CreatedAt);
 
-        return await query
-            .Select(x => MapInvitationToDto(x))
-            .ToPagedListAsync(qp, ct);
+        var pagedInvitations = await query.ToPagedListAsync(qp, ct);
+
+        // Load inviter profiles via raw SQL (cross-module read)
+        var inviterIds = pagedInvitations.Items.Select(i => i.InvitedByUserId).Distinct().ToList();
+        var inviterProfiles = await LoadUserProfilesAsync(inviterIds, ct);
+
+        return pagedInvitations.Map(i => MapInvitationToDto(i, inviterProfiles));
     }
 
     public async Task<Result<TenantMemberDto>> AcceptInvitationAsync(string token, CancellationToken ct = default)
@@ -796,13 +767,13 @@ public class TenantService : ITenantService
         var invitation = await _db.Set<TenantUserInvitation>()
             .AsNoTracking()
             .Include(x => x.Tenant)
-            .Include(x => x.InvitedBy)
             .FirstOrDefaultAsync(x => x.Token == token, ct);
 
         if (invitation is null)
             return Result<TenantInvitationDto>.NotFound("Invitation not found");
 
-        return Result<TenantInvitationDto>.Success(MapInvitationToDto(invitation));
+        var inviterProfiles = await LoadUserProfilesAsync([invitation.InvitedByUserId], ct);
+        return Result<TenantInvitationDto>.Success(MapInvitationToDto(invitation, inviterProfiles));
     }
 
     #endregion
@@ -841,6 +812,87 @@ public class TenantService : ITenantService
         _logger.LogInformation("Updated settings section '{Section}' for tenant {TenantId}", sectionKey, tenantId);
 
         return Result<bool>.Success(true);
+    }
+
+    #endregion
+
+    #region Cross-Module Raw SQL Helpers
+
+    /// <summary>
+    /// Projection record for raw SQL reads from user_profiles (Identity module).
+    /// </summary>
+    private sealed record UserProfileSnapshot
+    {
+        public Guid Id { get; init; }
+        public string Email { get; init; } = string.Empty;
+        public string FirstName { get; init; } = string.Empty;
+        public string LastName { get; init; } = string.Empty;
+        public string? AvatarUrl { get; init; }
+    }
+
+    /// <summary>
+    /// Projection record for raw SQL reads from user_roles + roles (Authorization module).
+    /// </summary>
+    private sealed record UserRoleSnapshot
+    {
+        public Guid UserId { get; init; }
+        public Guid RoleId { get; init; }
+        public string RoleName { get; init; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Load user profiles from the Identity module's table via raw SQL.
+    /// </summary>
+    private async Task<Dictionary<Guid, UserProfileSnapshot>> LoadUserProfilesAsync(
+        List<Guid> userIds, CancellationToken ct)
+    {
+        if (userIds.Count == 0)
+            return new Dictionary<Guid, UserProfileSnapshot>();
+
+        var ids = userIds.ToArray();
+        var profiles = await _db.Database.SqlQuery<UserProfileSnapshot>(
+            $@"SELECT id AS ""Id"", email AS ""Email"", first_name AS ""FirstName"",
+                      last_name AS ""LastName"", avatar_url AS ""AvatarUrl""
+               FROM user_profiles WHERE id = ANY({ids})")
+            .ToListAsync(ct);
+
+        return profiles.ToDictionary(p => p.Id);
+    }
+
+    /// <summary>
+    /// Load user roles from the Authorization module's tables via raw SQL.
+    /// </summary>
+    private async Task<Dictionary<Guid, List<MemberRoleInfo>>> LoadUserRolesAsync(
+        Guid tenantId, List<Guid> userIds, CancellationToken ct)
+    {
+        if (userIds.Count == 0)
+            return new Dictionary<Guid, List<MemberRoleInfo>>();
+
+        var ids = userIds.ToArray();
+        var roleSnapshots = await _db.Database.SqlQuery<UserRoleSnapshot>(
+            $@"SELECT ur.user_id AS ""UserId"", ur.role_id AS ""RoleId"", r.name AS ""RoleName""
+               FROM user_roles ur
+               INNER JOIN roles r ON r.id = ur.role_id
+               WHERE ur.tenant_id = {tenantId} AND ur.user_id = ANY({ids})")
+            .ToListAsync(ct);
+
+        return roleSnapshots
+            .GroupBy(r => r.UserId)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(r => new MemberRoleInfo { Id = r.RoleId, Name = r.RoleName }).ToList());
+    }
+
+    /// <summary>
+    /// Assign a role to a user via raw SQL (cross-module write to authorization tables).
+    /// </summary>
+    private async Task AssignUserRoleAsync(Guid tenantId, Guid userId, Guid roleId, CancellationToken ct)
+    {
+        var id = Guid.NewGuid();
+        var now = _clock.UtcNow;
+        await _db.Database.ExecuteSqlInterpolatedAsync(
+            $@"INSERT INTO user_roles (id, tenant_id, user_id, role_id, created_at, updated_at)
+               VALUES ({id}, {tenantId}, {userId}, {roleId}, {now}, {now})", ct);
     }
 
     #endregion
@@ -887,36 +939,49 @@ public class TenantService : ITenantService
 
     private static TenantMemberDto MapMemberToDto(
         TenantMembership member,
-        Dictionary<Guid, List<MemberRoleInfo>>? rolesLookup = null) => new()
+        Dictionary<Guid, UserProfileSnapshot> userProfiles,
+        Dictionary<Guid, List<MemberRoleInfo>>? rolesLookup = null)
     {
-        Id = member.Id,
-        TenantId = member.TenantId,
-        UserId = member.UserId,
-        Email = member.User.Email,
-        FirstName = member.User.FirstName,
-        LastName = member.User.LastName,
-        AvatarUrl = member.User.AvatarUrl,
-        IsOwner = member.IsOwner,
-        Status = member.Status,
-        Roles = rolesLookup?.GetValueOrDefault(member.UserId)?.AsReadOnly()
-            ?? (IReadOnlyList<MemberRoleInfo>)[],
-        JoinedAt = member.JoinedAt
-    };
+        var profile = userProfiles.GetValueOrDefault(member.UserId);
+        return new TenantMemberDto
+        {
+            Id = member.Id,
+            TenantId = member.TenantId,
+            UserId = member.UserId,
+            Email = profile?.Email ?? string.Empty,
+            FirstName = profile?.FirstName ?? string.Empty,
+            LastName = profile?.LastName ?? string.Empty,
+            AvatarUrl = profile?.AvatarUrl,
+            IsOwner = member.IsOwner,
+            Status = member.Status,
+            Roles = rolesLookup?.GetValueOrDefault(member.UserId)?.AsReadOnly()
+                ?? (IReadOnlyList<MemberRoleInfo>)[],
+            JoinedAt = member.JoinedAt
+        };
+    }
 
-    private static TenantInvitationDto MapInvitationToDto(TenantUserInvitation invitation) => new()
+    private static TenantInvitationDto MapInvitationToDto(
+        TenantUserInvitation invitation,
+        Dictionary<Guid, UserProfileSnapshot> inviterProfiles)
     {
-        Id = invitation.Id,
-        TenantId = invitation.TenantId,
-        TenantName = invitation.Tenant.Name,
-        Email = invitation.Email,
-        DefaultRoleId = invitation.DefaultRoleId,
-        Token = invitation.Token,
-        ExpiresAt = invitation.ExpiresAt,
-        AcceptedAt = invitation.AcceptedAt,
-        InvitedByUserId = invitation.InvitedByUserId,
-        InvitedByName = $"{invitation.InvitedBy.FirstName} {invitation.InvitedBy.LastName}".Trim(),
-        CreatedAt = invitation.CreatedAt
-    };
+        var inviter = inviterProfiles.GetValueOrDefault(invitation.InvitedByUserId);
+        return new TenantInvitationDto
+        {
+            Id = invitation.Id,
+            TenantId = invitation.TenantId,
+            TenantName = invitation.Tenant.Name,
+            Email = invitation.Email,
+            DefaultRoleId = invitation.DefaultRoleId,
+            Token = invitation.Token,
+            ExpiresAt = invitation.ExpiresAt,
+            AcceptedAt = invitation.AcceptedAt,
+            InvitedByUserId = invitation.InvitedByUserId,
+            InvitedByName = inviter is not null
+                ? $"{inviter.FirstName} {inviter.LastName}".Trim()
+                : string.Empty,
+            CreatedAt = invitation.CreatedAt
+        };
+    }
 
     #endregion
 }

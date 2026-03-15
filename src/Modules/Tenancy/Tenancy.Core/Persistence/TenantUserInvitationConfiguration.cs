@@ -50,9 +50,7 @@ public class TenantUserInvitationConfiguration : IEntityTypeConfiguration<Tenant
             .HasForeignKey(x => x.TenantId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(x => x.InvitedBy)
-            .WithMany()
-            .HasForeignKey(x => x.InvitedByUserId)
-            .OnDelete(DeleteBehavior.Restrict);
+        // InvitedByUserId FK to user_profiles — no navigation property to avoid cross-module dependency.
+        // The FK constraint exists in the database; we just don't model the navigation in EF.
     }
 }

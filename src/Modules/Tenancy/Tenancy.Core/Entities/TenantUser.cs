@@ -1,4 +1,3 @@
-using Identity.Core.Entities;
 using TadHub.SharedKernel.Entities;
 using Tenancy.Contracts.DTOs;
 
@@ -21,14 +20,9 @@ public class TenantMembership : BaseEntity
     public Tenant Tenant { get; set; } = null!;
 
     /// <summary>
-    /// The user ID.
+    /// The user ID (FK to user_profiles — no navigation to avoid cross-module dependency).
     /// </summary>
     public Guid UserId { get; set; }
-
-    /// <summary>
-    /// Navigation property for user.
-    /// </summary>
-    public UserProfile User { get; set; } = null!;
 
     /// <summary>
     /// Structural ownership — governance, not permissions.

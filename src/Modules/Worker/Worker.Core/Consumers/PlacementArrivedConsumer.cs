@@ -5,9 +5,52 @@ using Worker.Core.Entities;
 using TadHub.Infrastructure.Persistence;
 using TadHub.SharedKernel.Events;
 using TadHub.SharedKernel.Interfaces;
-using Candidate.Contracts;
 
 namespace Worker.Core.Consumers;
+
+/// <summary>
+/// Projection record for raw SQL reads from candidates table (Candidate module).
+/// </summary>
+file sealed record CandidateSnapshot
+{
+    public string FullNameEn { get; init; } = string.Empty;
+    public string? FullNameAr { get; init; }
+    public string Nationality { get; init; } = string.Empty;
+    public DateOnly? DateOfBirth { get; init; }
+    public string? Gender { get; init; }
+    public string? PassportNumber { get; init; }
+    public DateOnly? PassportExpiry { get; init; }
+    public string? Phone { get; init; }
+    public string? Email { get; init; }
+    public string? Religion { get; init; }
+    public string? MaritalStatus { get; init; }
+    public string? EducationLevel { get; init; }
+    public Guid? JobCategoryId { get; init; }
+    public int? ExperienceYears { get; init; }
+    public decimal? MonthlySalary { get; init; }
+    public string? PhotoUrl { get; init; }
+    public string? VideoUrl { get; init; }
+    public string? PassportDocumentUrl { get; init; }
+    public Guid? TenantSupplierId { get; init; }
+}
+
+/// <summary>
+/// Projection record for raw SQL reads from candidate_skills table.
+/// </summary>
+file sealed record CandidateSkillSnapshot
+{
+    public string SkillName { get; init; } = string.Empty;
+    public string ProficiencyLevel { get; init; } = string.Empty;
+}
+
+/// <summary>
+/// Projection record for raw SQL reads from candidate_languages table.
+/// </summary>
+file sealed record CandidateLanguageSnapshot
+{
+    public string Language { get; init; } = string.Empty;
+    public string ProficiencyLevel { get; init; } = string.Empty;
+}
 
 /// <summary>
 /// Creates a Worker record when a Placement reaches Arrived status.
@@ -17,18 +60,15 @@ public class PlacementArrivedConsumer : IConsumer<PlacementStatusChangedEvent>
 {
     private readonly AppDbContext _db;
     private readonly IClock _clock;
-    private readonly ICandidateService _candidateService;
     private readonly ILogger<PlacementArrivedConsumer> _logger;
 
     public PlacementArrivedConsumer(
         AppDbContext db,
         IClock clock,
-        ICandidateService candidateService,
         ILogger<PlacementArrivedConsumer> logger)
     {
         _db = db;
         _clock = clock;
-        _candidateService = candidateService;
         _logger = logger;
     }
 
@@ -64,15 +104,41 @@ public class PlacementArrivedConsumer : IConsumer<PlacementStatusChangedEvent>
             return;
         }
 
-        // Fetch candidate data
-        var candidateResult = await _candidateService.GetByIdAsync(message.TenantId, message.CandidateId, ct: ct);
-        if (!candidateResult.IsSuccess)
+        // Fetch candidate data via raw SQL (cross-module read from Candidate module)
+        var data = await _db.Database.SqlQueryRaw<CandidateSnapshot>(
+            @"SELECT full_name_en AS ""FullNameEn"", full_name_ar AS ""FullNameAr"",
+                     nationality AS ""Nationality"", date_of_birth AS ""DateOfBirth"",
+                     gender AS ""Gender"", passport_number AS ""PassportNumber"",
+                     passport_expiry AS ""PassportExpiry"", phone AS ""Phone"", email AS ""Email"",
+                     religion AS ""Religion"", marital_status AS ""MaritalStatus"",
+                     education_level AS ""EducationLevel"", job_category_id AS ""JobCategoryId"",
+                     experience_years AS ""ExperienceYears"", monthly_salary AS ""MonthlySalary"",
+                     photo_url AS ""PhotoUrl"", video_url AS ""VideoUrl"",
+                     passport_document_url AS ""PassportDocumentUrl"",
+                     tenant_supplier_id AS ""TenantSupplierId""
+              FROM candidates
+              WHERE id = {0} AND tenant_id = {1} AND is_deleted = false",
+            message.CandidateId, message.TenantId).FirstOrDefaultAsync(ct);
+
+        if (data is null)
         {
             _logger.LogError("Could not fetch candidate {CandidateId} for worker creation", message.CandidateId);
             return;
         }
 
-        var data = candidateResult.Value!;
+        // Fetch skills via raw SQL
+        var skills = await _db.Database.SqlQueryRaw<CandidateSkillSnapshot>(
+            @"SELECT skill_name AS ""SkillName"", proficiency_level AS ""ProficiencyLevel""
+              FROM candidate_skills
+              WHERE candidate_id = {0} AND tenant_id = {1} AND is_deleted = false",
+            message.CandidateId, message.TenantId).ToListAsync(ct);
+
+        // Fetch languages via raw SQL
+        var languages = await _db.Database.SqlQueryRaw<CandidateLanguageSnapshot>(
+            @"SELECT language AS ""Language"", proficiency_level AS ""ProficiencyLevel""
+              FROM candidate_languages
+              WHERE candidate_id = {0} AND tenant_id = {1} AND is_deleted = false",
+            message.CandidateId, message.TenantId).ToListAsync(ct);
 
         // Generate worker code: WRK-000001
         var maxCode = await _db.Set<Entities.Worker>()
@@ -131,35 +197,29 @@ public class PlacementArrivedConsumer : IConsumer<PlacementStatusChangedEvent>
         };
 
         // Copy skills from candidate
-        if (data.Skills?.Count > 0)
+        foreach (var skill in skills)
         {
-            foreach (var skill in data.Skills)
+            worker.Skills.Add(new WorkerSkill
             {
-                worker.Skills.Add(new WorkerSkill
-                {
-                    Id = Guid.NewGuid(),
-                    TenantId = message.TenantId,
-                    WorkerId = worker.Id,
-                    SkillName = skill.SkillName,
-                    ProficiencyLevel = skill.ProficiencyLevel,
-                });
-            }
+                Id = Guid.NewGuid(),
+                TenantId = message.TenantId,
+                WorkerId = worker.Id,
+                SkillName = skill.SkillName,
+                ProficiencyLevel = skill.ProficiencyLevel,
+            });
         }
 
         // Copy languages from candidate
-        if (data.Languages?.Count > 0)
+        foreach (var lang in languages)
         {
-            foreach (var lang in data.Languages)
+            worker.Languages.Add(new WorkerLanguage
             {
-                worker.Languages.Add(new WorkerLanguage
-                {
-                    Id = Guid.NewGuid(),
-                    TenantId = message.TenantId,
-                    WorkerId = worker.Id,
-                    Language = lang.Language,
-                    ProficiencyLevel = lang.ProficiencyLevel,
-                });
-            }
+                Id = Guid.NewGuid(),
+                TenantId = message.TenantId,
+                WorkerId = worker.Id,
+                Language = lang.Language,
+                ProficiencyLevel = lang.ProficiencyLevel,
+            });
         }
 
         // Initial status history entry

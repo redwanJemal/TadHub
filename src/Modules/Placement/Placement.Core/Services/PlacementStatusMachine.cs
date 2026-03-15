@@ -118,25 +118,29 @@ public static class PlacementStatusMachine
 
     /// <summary>
     /// Gets the next step in the outside-country pipeline for the given current status.
-    /// Returns null if current status is not in the pipeline or is the last step.
+    /// Returns Completed when at the last pipeline step, null if not in the pipeline.
     /// </summary>
     public static PlacementStatus? GetNextOutsideCountryStep(PlacementStatus current)
     {
         var idx = Array.IndexOf(OutsideCountryPipeline, current);
-        if (idx < 0 || idx >= OutsideCountryPipeline.Length - 1)
+        if (idx < 0)
             return null;
+        if (idx >= OutsideCountryPipeline.Length - 1)
+            return PlacementStatus.Completed;
         return OutsideCountryPipeline[idx + 1];
     }
 
     /// <summary>
     /// Gets the next step in the inside-country pipeline for the given current status.
-    /// Returns null if current status is not in the pipeline or is the last step.
+    /// Returns Completed when at the last pipeline step, null if not in the pipeline.
     /// </summary>
     public static PlacementStatus? GetNextInsideCountryStep(PlacementStatus current)
     {
         var idx = Array.IndexOf(InsideCountryPipeline, current);
-        if (idx < 0 || idx >= InsideCountryPipeline.Length - 1)
+        if (idx < 0)
             return null;
+        if (idx >= InsideCountryPipeline.Length - 1)
+            return PlacementStatus.Completed;
         return InsideCountryPipeline[idx + 1];
     }
 

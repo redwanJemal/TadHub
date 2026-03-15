@@ -1,4 +1,3 @@
-using Identity.Core.Entities;
 using TadHub.SharedKernel.Entities;
 
 namespace Tenancy.Core.Entities;
@@ -45,14 +44,9 @@ public class TenantUserInvitation : BaseEntity
     public DateTimeOffset? AcceptedAt { get; set; }
 
     /// <summary>
-    /// User who sent the invitation.
+    /// User who sent the invitation (FK to user_profiles — no navigation to avoid cross-module dependency).
     /// </summary>
     public Guid InvitedByUserId { get; set; }
-
-    /// <summary>
-    /// Navigation property for inviting user.
-    /// </summary>
-    public UserProfile InvitedBy { get; set; } = null!;
 
     /// <summary>
     /// Whether the invitation has expired.

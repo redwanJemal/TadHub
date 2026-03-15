@@ -119,9 +119,10 @@ public class TrialService : ITrialService
     public async Task<Result<TrialDto>> CreateAsync(Guid tenantId, CreateTrialRequest request, CancellationToken ct = default)
     {
         // Validate worker exists and is inside country via raw SQL
+        // Note: column aliases must be snake_case to match UseSnakeCaseNamingConvention()
         var workerInfo = await _db.Database
             .SqlQueryRaw<WorkerInfoRaw>(
-                "SELECT id AS \"Id\", status AS \"Status\", location AS \"Location\" FROM workers WHERE id = {0} AND tenant_id = {1} AND is_deleted = false",
+                "SELECT id, status, location FROM workers WHERE id = {0} AND tenant_id = {1} AND is_deleted = false",
                 request.WorkerId, tenantId)
             .FirstOrDefaultAsync(ct);
 
@@ -138,7 +139,7 @@ public class TrialService : ITrialService
         // Validate client exists via raw SQL
         var clientExists = await _db.Database
             .SqlQueryRaw<RawBool>(
-                "SELECT EXISTS(SELECT 1 FROM clients WHERE id = {0} AND tenant_id = {1} AND is_deleted = false AND is_active = true) AS \"Value\"",
+                "SELECT EXISTS(SELECT 1 FROM clients WHERE id = {0} AND tenant_id = {1} AND is_deleted = false AND is_active = true) AS value",
                 request.ClientId, tenantId)
             .FirstOrDefaultAsync(ct);
 

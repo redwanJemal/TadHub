@@ -2,12 +2,18 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Document.Core.Entities;
-using Worker.Contracts;
 using TadHub.Infrastructure.Persistence;
-using TadHub.SharedKernel.Api;
 using TadHub.SharedKernel.Events;
 
 namespace Document.Core.Consumers;
+
+/// <summary>
+/// Projection record for raw SQL reads from workers table (Worker module).
+/// </summary>
+file sealed record WorkerRef
+{
+    public Guid Id { get; init; }
+}
 
 /// <summary>
 /// Consumes CandidateApprovedEvent to auto-create a Passport document
@@ -16,16 +22,13 @@ namespace Document.Core.Consumers;
 public class CandidateApprovedDocumentConsumer : IConsumer<CandidateApprovedEvent>
 {
     private readonly AppDbContext _db;
-    private readonly IWorkerService _workerService;
     private readonly ILogger<CandidateApprovedDocumentConsumer> _logger;
 
     public CandidateApprovedDocumentConsumer(
         AppDbContext db,
-        IWorkerService workerService,
         ILogger<CandidateApprovedDocumentConsumer> logger)
     {
         _db = db;
-        _workerService = workerService;
         _logger = logger;
     }
 
@@ -44,12 +47,14 @@ public class CandidateApprovedDocumentConsumer : IConsumer<CandidateApprovedEven
             return;
         }
 
-        // Find the worker by searching for the passport number
-        var workers = await _workerService.ListAsync(message.TenantId,
-            new QueryParameters { Search = data.PassportNumber, PageSize = 1 }, ct);
+        // Find the worker by passport number via raw SQL (cross-module read)
+        var workerRef = await _db.Database.SqlQueryRaw<WorkerRef>(
+            @"SELECT id AS ""Id"" FROM workers
+              WHERE tenant_id = {0} AND passport_number = {1} AND is_deleted = false
+              LIMIT 1",
+            message.TenantId, data.PassportNumber).FirstOrDefaultAsync(ct);
 
-        var worker = workers.Items.FirstOrDefault();
-        if (worker is null)
+        if (workerRef is null)
         {
             _logger.LogWarning(
                 "Worker not found for candidate {CandidateId} in tenant {TenantId}, skipping document creation",
@@ -61,7 +66,7 @@ public class CandidateApprovedDocumentConsumer : IConsumer<CandidateApprovedEven
         var exists = await _db.Set<WorkerDocument>()
             .IgnoreQueryFilters()
             .AnyAsync(x => x.TenantId == message.TenantId
-                && x.WorkerId == worker.Id
+                && x.WorkerId == workerRef.Id
                 && x.DocumentType == DocumentType.Passport
                 && x.DocumentNumber == data.PassportNumber
                 && !x.IsDeleted, ct);
@@ -70,7 +75,7 @@ public class CandidateApprovedDocumentConsumer : IConsumer<CandidateApprovedEven
         {
             _logger.LogInformation(
                 "Passport document already exists for worker {WorkerId}, skipping",
-                worker.Id);
+                workerRef.Id);
             return;
         }
 
@@ -78,7 +83,7 @@ public class CandidateApprovedDocumentConsumer : IConsumer<CandidateApprovedEven
         {
             Id = Guid.NewGuid(),
             TenantId = message.TenantId,
-            WorkerId = worker.Id,
+            WorkerId = workerRef.Id,
             DocumentType = DocumentType.Passport,
             DocumentNumber = data.PassportNumber,
             ExpiresAt = data.PassportExpiry,
@@ -94,6 +99,6 @@ public class CandidateApprovedDocumentConsumer : IConsumer<CandidateApprovedEven
 
         _logger.LogInformation(
             "Created passport document {DocId} for worker {WorkerId} from candidate {CandidateId}",
-            doc.Id, worker.Id, message.CandidateId);
+            doc.Id, workerRef.Id, message.CandidateId);
     }
 }
