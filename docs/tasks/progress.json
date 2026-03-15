@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-15T09:34:57.515602+00:00",
-  "current_task": "25-fix-file-upload-validation",
+  "last_updated": "2026-03-15T09:39:12.284003+00:00",
+  "current_task": "26-add-unit-tests",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -361,14 +361,17 @@
     },
     "26-add-unit-tests": {
       "title": "Add Unit Test Project and Critical Tests",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "test-project": "pending",
-        "placement-status-machine": "pending",
-        "refund-calculation": "pending",
-        "placement-service": "pending",
-        "trial-service": "pending"
-      }
+        "test-project": "completed",
+        "placement-status-machine": "completed",
+        "refund-calculation": "completed",
+        "placement-service": "completed",
+        "trial-service": "completed"
+      },
+      "started_at": "2026-03-15T09:39:12Z",
+      "completed_at": "2026-03-15T10:15:00Z",
+      "notes": "Added tests to existing TadHub.Tests.Unit project. PlacementStatusMachineTests: 100% transition coverage for both outside/inside country flows, cancellation, legacy transitions, pipeline helpers (252+ test cases via Theory). RefundCalculationTests: formula correctness for amortization, RoundDown, ProRata partial month methods, edge cases (0 months, full contract, negative clamp). PlacementServiceTests: candidate/client validation, active placement conflict, status transitions, cost item CRUD, soft delete. TrialServiceTests: complete with ProceedToContract/ReturnToInventory outcomes, cancel, status history, event publishing, validation. All 405 tests pass."
     },
     "27-extract-duplicated-patterns": {
       "title": "Extract Duplicated Service Patterns",
