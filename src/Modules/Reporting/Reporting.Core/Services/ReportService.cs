@@ -29,18 +29,18 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId };
 
         sql.Append("""
-            SELECT w.id AS "Id", w.worker_code AS "WorkerCode",
-                   w.full_name_en AS "FullNameEn", w.full_name_ar AS "FullNameAr",
-                   w.nationality AS "Nationality", w.location::text AS "Location",
-                   w.status::text AS "Status", w.gender AS "Gender",
-                   w.date_of_birth AS "DateOfBirth", w.experience_years AS "ExperienceYears",
-                   w.monthly_salary AS "MonthlySalary", w.tenant_supplier_id AS "TenantSupplierId",
-                   s.name_en AS "SupplierNameEn", s.name_ar AS "SupplierNameAr",
-                   w.created_at AS "CreatedAt"
+            SELECT w.id AS id, w.worker_code AS worker_code,
+                   w.full_name_en AS full_name_en, w.full_name_ar AS full_name_ar,
+                   w.nationality AS nationality, w.location::text AS location,
+                   w.status::text AS status, w.gender AS gender,
+                   w.date_of_birth AS date_of_birth, w.experience_years AS experience_years,
+                   w.monthly_salary AS monthly_salary, w.tenant_supplier_id AS tenant_supplier_id,
+                   s.name_en AS supplier_name_en, s.name_ar AS supplier_name_ar,
+                   w.created_at AS created_at
             FROM workers w
             LEFT JOIN tenant_suppliers ts ON w.tenant_supplier_id = ts.id
             LEFT JOIN suppliers s ON ts.supplier_id = s.id
-            WHERE w.tenant_id = {0} AND w.deleted_at IS NULL
+            WHERE w.tenant_id = {0} AND w.is_deleted = false
               AND w.status IN ('Available', 'NewArrival', 'InTraining', 'UnderMedicalTest')
             """);
 
@@ -61,21 +61,21 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId };
 
         sql.Append("""
-            SELECT w.id AS "WorkerId", w.worker_code AS "WorkerCode",
-                   w.full_name_en AS "FullNameEn", w.full_name_ar AS "FullNameAr",
-                   w.nationality AS "Nationality",
-                   c.id AS "ContractId", c.contract_code AS "ContractCode",
-                   c.client_id AS "ClientId",
-                   cl.name_en AS "ClientNameEn", cl.name_ar AS "ClientNameAr",
-                   c.start_date AS "StartDate", c.end_date AS "EndDate",
-                   c.type::text AS "ContractType",
-                   c.rate AS "Rate", c.rate_period::text AS "RatePeriod"
+            SELECT w.id AS worker_id, w.worker_code AS worker_code,
+                   w.full_name_en AS full_name_en, w.full_name_ar AS full_name_ar,
+                   w.nationality AS nationality,
+                   c.id AS contract_id, c.contract_code AS contract_code,
+                   c.client_id AS client_id,
+                   cl.name_en AS client_name_en, cl.name_ar AS client_name_ar,
+                   c.start_date AS start_date, c.end_date AS end_date,
+                   c.type::text AS contract_type,
+                   c.rate AS rate, c.rate_period::text AS rate_period
             FROM workers w
             INNER JOIN contracts c ON c.worker_id = w.id
               AND c.tenant_id = w.tenant_id AND c.deleted_at IS NULL
               AND c.status IN ('Active', 'OnProbation')
             LEFT JOIN clients cl ON c.client_id = cl.id
-            WHERE w.tenant_id = {0} AND w.deleted_at IS NULL
+            WHERE w.tenant_id = {0} AND w.is_deleted = false
             """);
 
         AppendFilter(sql, parameters, qp, "nationality", "w.nationality");
@@ -93,19 +93,19 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId };
 
         sql.Append("""
-            SELECT rc.id AS "Id", rc.case_code AS "CaseCode",
-                   rc.status::text AS "Status", rc.return_type::text AS "ReturnType",
-                   rc.return_date AS "ReturnDate", rc.return_reason AS "ReturnReason",
-                   rc.worker_id AS "WorkerId",
-                   w.full_name_en AS "WorkerNameEn", w.full_name_ar AS "WorkerNameAr",
-                   rc.client_id AS "ClientId",
-                   cl.name_en AS "ClientNameEn", cl.name_ar AS "ClientNameAr",
-                   rc.total_amount_paid AS "TotalAmountPaid", rc.refund_amount AS "RefundAmount",
-                   rc.is_within_guarantee AS "IsWithinGuarantee",
-                   rc.guarantee_period_type::text AS "GuaranteePeriodType",
-                   rc.settled_at AS "SettledAt", rc.created_at AS "CreatedAt"
+            SELECT rc.id AS id, rc.case_code AS case_code,
+                   rc.status::text AS status, rc.return_type::text AS return_type,
+                   rc.return_date AS return_date, rc.return_reason AS return_reason,
+                   rc.worker_id AS worker_id,
+                   w.full_name_en AS worker_name_en, w.full_name_ar AS worker_name_ar,
+                   rc.client_id AS client_id,
+                   cl.name_en AS client_name_en, cl.name_ar AS client_name_ar,
+                   rc.total_amount_paid AS total_amount_paid, rc.refund_amount AS refund_amount,
+                   rc.is_within_guarantee AS is_within_guarantee,
+                   rc.guarantee_period_type::text AS guarantee_period_type,
+                   rc.settled_at AS settled_at, rc.created_at AS created_at
             FROM returnee_cases rc
-            LEFT JOIN workers w ON rc.worker_id = w.id AND w.deleted_at IS NULL
+            LEFT JOIN workers w ON rc.worker_id = w.id AND w.is_deleted = false
             LEFT JOIN clients cl ON rc.client_id = cl.id
             WHERE rc.tenant_id = {0} AND rc.deleted_at IS NULL
             """);
@@ -126,20 +126,20 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId };
 
         sql.Append("""
-            SELECT rc.id AS "Id", rc.case_code AS "CaseCode",
-                   rc.status::text AS "Status",
-                   rc.reported_date AS "ReportedDate",
-                   rc.worker_id AS "WorkerId",
-                   w.full_name_en AS "WorkerNameEn", w.full_name_ar AS "WorkerNameAr",
-                   rc.client_id AS "ClientId",
-                   cl.name_en AS "ClientNameEn", cl.name_ar AS "ClientNameAr",
-                   rc.is_within_guarantee AS "IsWithinGuarantee",
-                   rc.guarantee_period_type::text AS "GuaranteePeriodType",
-                   rc.police_report_number AS "PoliceReportNumber",
-                   COALESCE((SELECT SUM(e.amount) FROM runaway_expenses e WHERE e.runaway_case_id = rc.id), 0) AS "TotalExpenses",
-                   rc.settled_at AS "SettledAt", rc.created_at AS "CreatedAt"
+            SELECT rc.id AS id, rc.case_code AS case_code,
+                   rc.status::text AS status,
+                   rc.reported_date AS reported_date,
+                   rc.worker_id AS worker_id,
+                   w.full_name_en AS worker_name_en, w.full_name_ar AS worker_name_ar,
+                   rc.client_id AS client_id,
+                   cl.name_en AS client_name_en, cl.name_ar AS client_name_ar,
+                   rc.is_within_guarantee AS is_within_guarantee,
+                   rc.guarantee_period_type::text AS guarantee_period_type,
+                   rc.police_report_number AS police_report_number,
+                   COALESCE((SELECT SUM(e.amount) FROM runaway_expenses e WHERE e.runaway_case_id = rc.id), 0) AS total_expenses,
+                   rc.settled_at AS settled_at, rc.created_at AS created_at
             FROM runaway_cases rc
-            LEFT JOIN workers w ON rc.worker_id = w.id AND w.deleted_at IS NULL
+            LEFT JOIN workers w ON rc.worker_id = w.id AND w.is_deleted = false
             LEFT JOIN clients cl ON rc.client_id = cl.id
             WHERE rc.tenant_id = {0} AND rc.deleted_at IS NULL
             """);
@@ -161,19 +161,19 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId };
 
         sql.Append("""
-            SELECT a.id AS "Id", a.arrival_code AS "ArrivalCode",
-                   a.status::text AS "Status",
-                   a.worker_id AS "WorkerId",
-                   w.full_name_en AS "WorkerNameEn", w.full_name_ar AS "WorkerNameAr",
-                   a.flight_number AS "FlightNumber", a.airport_name AS "AirportName",
-                   a.scheduled_arrival_date AS "ScheduledArrivalDate",
-                   a.scheduled_arrival_time AS "ScheduledArrivalTime",
-                   a.actual_arrival_time AS "ActualArrivalTime",
-                   a.driver_name AS "DriverName",
-                   a.driver_confirmed_pickup_at AS "DriverConfirmedPickupAt",
-                   a.created_at AS "CreatedAt"
+            SELECT a.id AS id, a.arrival_code AS arrival_code,
+                   a.status::text AS status,
+                   a.worker_id AS worker_id,
+                   w.full_name_en AS worker_name_en, w.full_name_ar AS worker_name_ar,
+                   a.flight_number AS flight_number, a.airport_name AS airport_name,
+                   a.scheduled_arrival_date AS scheduled_arrival_date,
+                   a.scheduled_arrival_time AS scheduled_arrival_time,
+                   a.actual_arrival_time AS actual_arrival_time,
+                   a.driver_name AS driver_name,
+                   a.driver_confirmed_pickup_at AS driver_confirmed_pickup_at,
+                   a.created_at AS created_at
             FROM arrivals a
-            LEFT JOIN workers w ON a.worker_id = w.id AND w.deleted_at IS NULL
+            LEFT JOIN workers w ON a.worker_id = w.id AND w.is_deleted = false
             WHERE a.tenant_id = {0} AND a.deleted_at IS NULL
             """);
 
@@ -192,15 +192,15 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId, date };
 
         sql.Append("""
-            SELECT s.id AS "Id", s.stay_code AS "StayCode",
-                   s.status::text AS "Status",
-                   s.worker_id AS "WorkerId",
-                   w.full_name_en AS "WorkerNameEn", w.full_name_ar AS "WorkerNameAr",
-                   s.room AS "Room", s.location AS "LocationName",
-                   s.check_in_date AS "CheckInDate", s.check_out_date AS "CheckOutDate",
-                   s.departure_reason::text AS "DepartureReason"
+            SELECT s.id AS id, s.stay_code AS stay_code,
+                   s.status::text AS status,
+                   s.worker_id AS worker_id,
+                   w.full_name_en AS worker_name_en, w.full_name_ar AS worker_name_ar,
+                   s.room AS room, s.location AS location_name,
+                   s.check_in_date AS check_in_date, s.check_out_date AS check_out_date,
+                   s.departure_reason::text AS departure_reason
             FROM accommodation_stays s
-            LEFT JOIN workers w ON s.worker_id = w.id AND w.deleted_at IS NULL
+            LEFT JOIN workers w ON s.worker_id = w.id AND w.is_deleted = false
             WHERE s.tenant_id = {0} AND s.deleted_at IS NULL
               AND s.check_in_date <= {1}
               AND (s.check_out_date IS NULL OR s.check_out_date >= {1})
@@ -218,7 +218,7 @@ public class ReportService : IReportService
         Guid tenantId, CancellationToken ct = default)
     {
         var sql = """
-            SELECT p.status::text AS "Stage", COUNT(*)::int AS "Count"
+            SELECT p.status::text AS stage, COUNT(*)::int AS count
             FROM placements p
             WHERE p.tenant_id = {0} AND p.deleted_at IS NULL
               AND p.status NOT IN ('Completed', 'Cancelled')
@@ -239,11 +239,11 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId };
 
         sql.Append("""
-            SELECT sp.supplier_id AS "SupplierId",
-                   s.name_en AS "SupplierNameEn", s.name_ar AS "SupplierNameAr",
-                   COUNT(*)::int AS "PaymentCount",
-                   COALESCE(SUM(CASE WHEN sp.status = 'Paid' THEN sp.amount ELSE 0 END), 0) AS "TotalPaid",
-                   COALESCE(SUM(CASE WHEN sp.status = 'Pending' THEN sp.amount ELSE 0 END), 0) AS "TotalPending"
+            SELECT sp.supplier_id AS supplier_id,
+                   s.name_en AS supplier_name_en, s.name_ar AS supplier_name_ar,
+                   COUNT(*)::int AS payment_count,
+                   COALESCE(SUM(CASE WHEN sp.status = 'Paid' THEN sp.amount ELSE 0 END), 0) AS total_paid,
+                   COALESCE(SUM(CASE WHEN sp.status = 'Pending' THEN sp.amount ELSE 0 END), 0) AS total_pending
             FROM supplier_payments sp
             LEFT JOIN tenant_suppliers ts ON sp.supplier_id = ts.id
             LEFT JOIN suppliers s ON ts.supplier_id = s.id
@@ -273,16 +273,16 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId };
 
         sql.Append("""
-            SELECT p.id AS "PaymentId", p.payment_number AS "PaymentNumber",
-                   p.status::text AS "Status",
-                   p.amount AS "Amount", p.refund_amount AS "RefundAmount",
-                   p.method::text AS "Method",
-                   p.payment_date AS "PaymentDate",
-                   p.client_id AS "ClientId",
-                   cl.name_en AS "ClientNameEn", cl.name_ar AS "ClientNameAr",
-                   p.invoice_id AS "InvoiceId",
-                   i.invoice_number AS "InvoiceNumber",
-                   p.created_at AS "CreatedAt"
+            SELECT p.id AS payment_id, p.payment_number AS payment_number,
+                   p.status::text AS status,
+                   p.amount AS amount, p.refund_amount AS refund_amount,
+                   p.method::text AS method,
+                   p.payment_date AS payment_date,
+                   p.client_id AS client_id,
+                   cl.name_en AS client_name_en, cl.name_ar AS client_name_ar,
+                   p.invoice_id AS invoice_id,
+                   i.invoice_number AS invoice_number,
+                   p.created_at AS created_at
             FROM payments p
             LEFT JOIN clients cl ON p.client_id = cl.id
             LEFT JOIN invoices i ON p.invoice_id = i.id AND i.deleted_at IS NULL
@@ -305,21 +305,21 @@ public class ReportService : IReportService
         var parameters = new List<object> { tenantId };
 
         sql.Append("""
-            SELECT p.worker_id AS "WorkerId",
-                   w.worker_code AS "WorkerCode",
-                   w.full_name_en AS "WorkerNameEn", w.full_name_ar AS "WorkerNameAr",
-                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Procurement' THEN ci.amount ELSE 0 END), 0) AS "ProcurementCost",
-                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Flight' THEN ci.amount ELSE 0 END), 0) AS "FlightCost",
-                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Medical' THEN ci.amount ELSE 0 END), 0) AS "MedicalCost",
-                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Visa' THEN ci.amount ELSE 0 END), 0) AS "VisaCost",
-                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Insurance' THEN ci.amount ELSE 0 END), 0) AS "InsuranceCost",
-                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Accommodation' THEN ci.amount ELSE 0 END), 0) AS "AccommodationCost",
-                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Training' THEN ci.amount ELSE 0 END), 0) AS "TrainingCost",
-                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Other' THEN ci.amount ELSE 0 END), 0) AS "OtherCost",
-                   COALESCE(SUM(ci.amount), 0) AS "TotalCost"
+            SELECT p.worker_id AS worker_id,
+                   w.worker_code AS worker_code,
+                   w.full_name_en AS worker_name_en, w.full_name_ar AS worker_name_ar,
+                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Procurement' THEN ci.amount ELSE 0 END), 0) AS procurement_cost,
+                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Flight' THEN ci.amount ELSE 0 END), 0) AS flight_cost,
+                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Medical' THEN ci.amount ELSE 0 END), 0) AS medical_cost,
+                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Visa' THEN ci.amount ELSE 0 END), 0) AS visa_cost,
+                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Insurance' THEN ci.amount ELSE 0 END), 0) AS insurance_cost,
+                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Accommodation' THEN ci.amount ELSE 0 END), 0) AS accommodation_cost,
+                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Training' THEN ci.amount ELSE 0 END), 0) AS training_cost,
+                   COALESCE(SUM(CASE WHEN ci.cost_type = 'Other' THEN ci.amount ELSE 0 END), 0) AS other_cost,
+                   COALESCE(SUM(ci.amount), 0) AS total_cost
             FROM placements p
             INNER JOIN placement_cost_items ci ON ci.placement_id = p.id
-            LEFT JOIN workers w ON p.worker_id = w.id AND w.deleted_at IS NULL
+            LEFT JOIN workers w ON p.worker_id = w.id AND w.is_deleted = false
             WHERE p.tenant_id = {0} AND p.deleted_at IS NULL
               AND p.worker_id IS NOT NULL
             """);
@@ -335,6 +335,22 @@ public class ReportService : IReportService
     // ── Pagination & SQL Helpers ──
 
     /// <summary>
+    /// Allowed ORDER BY clauses. Only these exact strings may be used.
+    /// This prevents SQL injection via the orderBy parameter.
+    /// </summary>
+    private static readonly HashSet<string> AllowedOrderByClauses = new(StringComparer.Ordinal)
+    {
+        "w.created_at DESC",
+        "c.start_date DESC",
+        "rc.created_at DESC",
+        "a.scheduled_arrival_date DESC, a.scheduled_arrival_time DESC",
+        "s.location, s.room, w.full_name_en",
+        @"""TotalPaid"" DESC",
+        @"""TotalCost"" DESC",
+        "p.created_at DESC",
+    };
+
+    /// <summary>
     /// Executes a raw SQL query with manual pagination (COUNT + LIMIT/OFFSET).
     /// This avoids EF Core wrapping SqlQueryRaw in subqueries that break column aliases.
     /// </summary>
@@ -342,6 +358,9 @@ public class ReportService : IReportService
         StringBuilder baseSql, List<object> parameters, string orderBy,
         QueryParameters qp, CancellationToken ct) where T : class
     {
+        if (!AllowedOrderByClauses.Contains(orderBy))
+            throw new ArgumentException($"Invalid ORDER BY clause: '{orderBy}'", nameof(orderBy));
+
         var page = Math.Max(1, qp.Page);
         var pageSize = Math.Clamp(qp.PageSize, 1, 100);
         var offset = (page - 1) * pageSize;
@@ -355,8 +374,13 @@ public class ReportService : IReportService
         if (totalCount == 0)
             return PagedList<T>.Empty(page, pageSize);
 
-        // Items query — add ORDER BY + LIMIT/OFFSET to original SQL
-        baseSql.Append($" ORDER BY {orderBy} LIMIT {pageSize} OFFSET {offset}");
+        // Items query — add ORDER BY (validated) + parameterized LIMIT/OFFSET
+        var limitIdx = parameters.Count;
+        parameters.Add(pageSize);
+        var offsetIdx = parameters.Count;
+        parameters.Add(offset);
+
+        baseSql.Append($" ORDER BY {orderBy} LIMIT {{{limitIdx}}} OFFSET {{{offsetIdx}}}");
         var items = await _db.Database
             .SqlQueryRaw<T>(baseSql.ToString(), parameters.ToArray())
             .ToListAsync(ct);

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-09T04:16:23.078579+00:00",
-  "current_task": null,
+  "last_updated": "2026-03-15T02:16:15.327006+00:00",
+  "current_task": "20-fix-sql-injection",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -287,6 +287,109 @@
       "started_at": "2026-03-09T04:13:09Z",
       "completed_at": "2026-03-09T04:25:00Z",
       "notes": "Reorganized sidebar into 7 sections: Dashboard (standalone), Recruitment (Suppliers, Candidates), Inventory & Sales (Workers, Clients, Placements, Trials, Contracts), Operations (Arrivals, Driver, Accommodation, Visa Processing, Compliance), Finance (collapsible group with Invoices, Payments, Supplier Debits, Reports, Settings), Cases (Returnees, Runaways), Administration (Team, Country Packages, Reports, Audit, Settings). Section headers are uppercase, small text, muted color \u2014 hidden in collapsed mode (replaced by thin dividers). Empty sections auto-hidden when user lacks permissions. Supplier Portal kept as standalone collapsible group. i18n keys added for all 6 section headers in en/ar."
+    },
+    "20-fix-sql-injection": {
+      "title": "Fix SQL Injection Vulnerabilities",
+      "status": "completed",
+      "subtasks": {
+        "supplier-portal": "completed",
+        "report-service": "completed",
+        "orderby-validation": "completed"
+      },
+      "started_at": "2026-03-15T02:16:15Z",
+      "completed_at": "2026-03-15T02:45:00Z",
+      "notes": "Parameterized OFFSET/LIMIT in all 4 SupplierPortalService list methods (ListCandidates, ListWorkers, ListCommissions, ListArrivals). Parameterized LIMIT/OFFSET in ReportService.ExecutePagedRawAsync. Added ORDER BY whitelist (AllowedOrderByClauses HashSet) in ReportService to validate all orderBy strings before SQL insertion."
+    },
+    "21-fix-n-plus-1-supplier-portal": {
+      "title": "Fix N+1 Query in SupplierPortalService",
+      "status": "pending",
+      "subtasks": {
+        "bulk-load": "pending"
+      }
+    },
+    "22-fix-raw-sql-bypassing-tracking": {
+      "title": "Replace ExecuteSqlRaw with EF Core Tracked Updates",
+      "status": "pending",
+      "subtasks": {
+        "runaway-events": "pending",
+        "returnee-check": "pending",
+        "verify-audit": "pending"
+      }
+    },
+    "23-fix-module-boundary-violations": {
+      "title": "Fix Modular Monolith Boundary Violations",
+      "status": "pending",
+      "subtasks": {
+        "tenancy-identity": "pending",
+        "tenancy-authorization": "pending",
+        "consumer-injection": "pending"
+      }
+    },
+    "24-move-credentials-to-secrets": {
+      "title": "Move Credentials to Environment Variables",
+      "status": "pending",
+      "subtasks": {
+        "appsettings": "pending",
+        "env-example": "pending",
+        "gitignore": "pending",
+        "design-time-factory": "pending"
+      }
+    },
+    "25-fix-file-upload-validation": {
+      "title": "Add File Signature Validation for Uploads",
+      "status": "pending",
+      "subtasks": {
+        "validator": "pending",
+        "controllers": "pending",
+        "size-limits": "pending"
+      }
+    },
+    "26-add-unit-tests": {
+      "title": "Add Unit Test Project and Critical Tests",
+      "status": "pending",
+      "subtasks": {
+        "test-project": "pending",
+        "placement-status-machine": "pending",
+        "refund-calculation": "pending",
+        "placement-service": "pending",
+        "trial-service": "pending"
+      }
+    },
+    "27-extract-duplicated-patterns": {
+      "title": "Extract Duplicated Service Patterns",
+      "status": "pending",
+      "subtasks": {
+        "code-generator": "pending",
+        "status-history": "pending",
+        "existence-check": "pending"
+      }
+    },
+    "28-split-oversized-services": {
+      "title": "Split Oversized Services",
+      "status": "pending",
+      "subtasks": {
+        "placement-service": "pending",
+        "tenant-service": "pending",
+        "di-registration": "pending"
+      }
+    },
+    "29-frontend-error-handling": {
+      "title": "Add Frontend Error Handling",
+      "status": "pending",
+      "subtasks": {
+        "error-boundary": "pending",
+        "mutation-errors": "pending",
+        "form-handlers": "pending",
+        "query-errors": "pending"
+      }
+    },
+    "30-add-search-indexes-and-rate-limiting": {
+      "title": "Add Search Indexes and Rate Limiting",
+      "status": "pending",
+      "subtasks": {
+        "search-indexes": "pending",
+        "rate-limiting": "pending"
+      }
     }
   }
 }

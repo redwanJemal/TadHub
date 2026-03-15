@@ -209,7 +209,13 @@ public class SupplierPortalService : ISupplierPortalService
         var countSql = "SELECT COUNT(*)::int AS \"Value\" FROM candidates WHERE " + whereClauses;
         var totalCount = await _db.Database.SqlQueryRaw<int>(countSql, paramsArray).FirstOrDefaultAsync(ct);
 
-        var dataSql = "SELECT id AS \"Id\", full_name_en AS \"FullNameEn\", full_name_ar AS \"FullNameAr\", nationality AS \"Nationality\", status AS \"Status\", photo_url AS \"PhotoUrl\", passport_number AS \"PassportNumber\", created_at AS \"CreatedAt\" FROM candidates WHERE " + whereClauses + " ORDER BY created_at DESC OFFSET " + qp.Skip + " LIMIT " + qp.PageSize;
+        var offsetIdx = baseParams.Count;
+        baseParams.Add(qp.Skip);
+        var limitIdx = baseParams.Count;
+        baseParams.Add(qp.PageSize);
+        paramsArray = baseParams.ToArray();
+
+        var dataSql = "SELECT id AS \"Id\", full_name_en AS \"FullNameEn\", full_name_ar AS \"FullNameAr\", nationality AS \"Nationality\", status AS \"Status\", photo_url AS \"PhotoUrl\", passport_number AS \"PassportNumber\", created_at AS \"CreatedAt\" FROM candidates WHERE " + whereClauses + " ORDER BY created_at DESC OFFSET {" + offsetIdx + "} LIMIT {" + limitIdx + "}";
 
         var items = await _db.Database.SqlQueryRaw<SupplierCandidateListDto>(dataSql, paramsArray).ToListAsync(ct);
 
@@ -258,7 +264,13 @@ public class SupplierPortalService : ISupplierPortalService
         var countSql = "SELECT COUNT(*)::int AS \"Value\" FROM workers WHERE " + whereClauses;
         var totalCount = await _db.Database.SqlQueryRaw<int>(countSql, paramsArray).FirstOrDefaultAsync(ct);
 
-        var dataSql = "SELECT id AS \"Id\", worker_code AS \"WorkerCode\", full_name_en AS \"FullNameEn\", full_name_ar AS \"FullNameAr\", nationality AS \"Nationality\", status AS \"Status\", photo_url AS \"PhotoUrl\", created_at AS \"CreatedAt\" FROM workers WHERE " + whereClauses + " ORDER BY created_at DESC OFFSET " + qp.Skip + " LIMIT " + qp.PageSize;
+        var offsetIdx = baseParams.Count;
+        baseParams.Add(qp.Skip);
+        var limitIdx = baseParams.Count;
+        baseParams.Add(qp.PageSize);
+        paramsArray = baseParams.ToArray();
+
+        var dataSql = "SELECT id AS \"Id\", worker_code AS \"WorkerCode\", full_name_en AS \"FullNameEn\", full_name_ar AS \"FullNameAr\", nationality AS \"Nationality\", status AS \"Status\", photo_url AS \"PhotoUrl\", created_at AS \"CreatedAt\" FROM workers WHERE " + whereClauses + " ORDER BY created_at DESC OFFSET {" + offsetIdx + "} LIMIT {" + limitIdx + "}";
 
         var items = await _db.Database.SqlQueryRaw<SupplierWorkerListDto>(dataSql, paramsArray).ToListAsync(ct);
 
@@ -299,7 +311,13 @@ public class SupplierPortalService : ISupplierPortalService
         var countSql = "SELECT COUNT(*)::int AS \"Value\" FROM supplier_payments sp WHERE " + whereClauses;
         var totalCount = await _db.Database.SqlQueryRaw<int>(countSql, paramsArray).FirstOrDefaultAsync(ct);
 
-        var dataSql = "SELECT sp.id AS \"Id\", sp.payment_number AS \"ReferenceNumber\", sp.amount AS \"Amount\", sp.currency AS \"Currency\", sp.status AS \"Status\", w.full_name_en AS \"WorkerNameEn\", sp.notes AS \"Notes\", sp.paid_at AS \"PaymentDate\", sp.created_at AS \"CreatedAt\" FROM supplier_payments sp LEFT JOIN workers w ON w.id = sp.worker_id WHERE " + whereClauses + " ORDER BY sp.created_at DESC OFFSET " + qp.Skip + " LIMIT " + qp.PageSize;
+        var offsetIdx = baseParams.Count;
+        baseParams.Add(qp.Skip);
+        var limitIdx = baseParams.Count;
+        baseParams.Add(qp.PageSize);
+        paramsArray = baseParams.ToArray();
+
+        var dataSql = "SELECT sp.id AS \"Id\", sp.payment_number AS \"ReferenceNumber\", sp.amount AS \"Amount\", sp.currency AS \"Currency\", sp.status AS \"Status\", w.full_name_en AS \"WorkerNameEn\", sp.notes AS \"Notes\", sp.paid_at AS \"PaymentDate\", sp.created_at AS \"CreatedAt\" FROM supplier_payments sp LEFT JOIN workers w ON w.id = sp.worker_id WHERE " + whereClauses + " ORDER BY sp.created_at DESC OFFSET {" + offsetIdx + "} LIMIT {" + limitIdx + "}";
 
         var items = await _db.Database.SqlQueryRaw<SupplierCommissionDto>(dataSql, paramsArray).ToListAsync(ct);
 
@@ -328,7 +346,13 @@ public class SupplierPortalService : ISupplierPortalService
         var countSql = "SELECT COUNT(*)::int AS \"Value\" FROM arrivals a INNER JOIN workers w ON w.id = a.worker_id WHERE " + whereClauses;
         var totalCount = await _db.Database.SqlQueryRaw<int>(countSql, paramsArray).FirstOrDefaultAsync(ct);
 
-        var dataSql = "SELECT a.id AS \"Id\", w.full_name_en AS \"WorkerNameEn\", a.flight_number AS \"FlightNumber\", a.arrival_date AS \"ArrivalDate\", a.status AS \"Status\", a.airport_code AS \"AirportCode\", (a.pre_travel_photo_url IS NOT NULL) AS \"HasPreTravelPhoto\", a.created_at AS \"CreatedAt\" FROM arrivals a INNER JOIN workers w ON w.id = a.worker_id WHERE " + whereClauses + " ORDER BY a.created_at DESC OFFSET " + qp.Skip + " LIMIT " + qp.PageSize;
+        var offsetIdx = baseParams.Count;
+        baseParams.Add(qp.Skip);
+        var limitIdx = baseParams.Count;
+        baseParams.Add(qp.PageSize);
+        paramsArray = baseParams.ToArray();
+
+        var dataSql = "SELECT a.id AS \"Id\", w.full_name_en AS \"WorkerNameEn\", a.flight_number AS \"FlightNumber\", a.arrival_date AS \"ArrivalDate\", a.status AS \"Status\", a.airport_code AS \"AirportCode\", (a.pre_travel_photo_url IS NOT NULL) AS \"HasPreTravelPhoto\", a.created_at AS \"CreatedAt\" FROM arrivals a INNER JOIN workers w ON w.id = a.worker_id WHERE " + whereClauses + " ORDER BY a.created_at DESC OFFSET {" + offsetIdx + "} LIMIT {" + limitIdx + "}";
 
         var items = await _db.Database.SqlQueryRaw<SupplierArrivalListDto>(dataSql, paramsArray).ToListAsync(ct);
 
