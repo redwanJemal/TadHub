@@ -225,16 +225,6 @@ public class RunawayService : IRunawayService
             Notes = "Runaway case reported",
         };
 
-        // Set worker status to Absconded via raw SQL
-        await _db.Database.ExecuteSqlRawAsync(
-            "UPDATE workers SET status = 'Absconded', updated_at = {0} WHERE id = {1} AND tenant_id = {2}",
-            now, request.WorkerId, tenantId);
-
-        // Terminate contract via raw SQL
-        await _db.Database.ExecuteSqlRawAsync(
-            "UPDATE contracts SET status = 'Terminated', updated_at = {0} WHERE id = {1} AND tenant_id = {2}",
-            now, request.ContractId, tenantId);
-
         _db.Set<RunawayCase>().Add(runawayCase);
         _db.Set<RunawayCaseStatusHistory>().Add(history);
         await _db.SaveChangesAsync(ct);

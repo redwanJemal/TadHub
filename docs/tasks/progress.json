@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-15T05:10:46.082864+00:00",
-  "current_task": "21-fix-n-plus-1-supplier-portal",
+  "last_updated": "2026-03-15T05:21:17.702138+00:00",
+  "current_task": "22-fix-raw-sql-bypassing-tracking",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -308,16 +308,19 @@
       },
       "started_at": "2026-03-15T05:10:45Z",
       "completed_at": "2026-03-15T05:25:00Z",
-      "notes": "Replaced N+1 per-item SqlQueryRaw in ListSupplierUsersAsync with a single bulk query using ANY({0}) to fetch all supplier names at once. Added dictionary-based MapToDto overload. List now fires 3 queries (count + data + supplier names) instead of N+1."
+      "notes": "Replaced N+1 per-item SqlQueryRaw in ListSupplierUsersAsync with a single bulk query using ANY({0}) to fetch all supplier names at once. Added dictionary-based MapToDto overload. List now fires 3 queries (count + data + supplier names) instead of N+1. | Standards validation warnings \u2014 review recommended"
     },
     "22-fix-raw-sql-bypassing-tracking": {
       "title": "Replace ExecuteSqlRaw with EF Core Tracked Updates",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "runaway-events": "pending",
-        "returnee-check": "pending",
-        "verify-audit": "pending"
-      }
+        "runaway-events": "completed",
+        "returnee-check": "completed",
+        "verify-audit": "completed"
+      },
+      "started_at": "2026-03-15T05:21:17Z",
+      "completed_at": "2026-03-15T06:10:00Z",
+      "notes": "Removed 2 ExecuteSqlRawAsync UPDATE calls from RunawayService.ReportAsync (worker Absconded + contract Terminated). Created RunawayCaseReportedConsumer in Worker.Core (loads worker via EF, sets Status=Absconded, adds WorkerStatusHistory, triggers audit interceptor). Created RunawayCaseReportedConsumer in Contract.Core (loads contract via EF, sets Status=Terminated with TerminationReason=Runaway, adds ContractStatusHistory, publishes ContractStatusChangedEvent, triggers audit interceptor). Both consumers have idempotency checks. ReturneeService verified — no ExecuteSqlRawAsync UPDATE calls found (only read-only SqlQueryRaw). AuditableEntityInterceptor now correctly fires for worker/contract status changes on runaway report."
     },
     "23-fix-module-boundary-violations": {
       "title": "Fix Modular Monolith Boundary Violations",
