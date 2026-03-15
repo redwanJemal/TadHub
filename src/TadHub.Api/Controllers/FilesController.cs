@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TadHub.Api.Filters;
 using TadHub.Infrastructure.Storage;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Helpers;
 
 namespace TadHub.Api.Controllers;
 
@@ -60,6 +61,9 @@ public class FilesController : ControllerBase
             return Problem(ApiError.BadRequest($"Content type {file.ContentType} not allowed for {fileType}. Allowed: {string.Join(", ", rules.Value.AllowedTypes)}", path));
 
         await using var stream = file.OpenReadStream();
+        if (!FileSignatureValidator.IsValidFileSignature(stream, rules.Value.AllowedTypes))
+            return Problem(ApiError.BadRequest($"File content does not match any allowed format for {fileType}", path));
+
         var result = await _tenantFileService.UploadAsync(
             tenantId, file.FileName, stream, file.ContentType, file.Length, fileType, ct);
 

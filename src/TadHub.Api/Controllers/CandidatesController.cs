@@ -8,6 +8,7 @@ using TadHub.Api.Filters;
 using TadHub.Infrastructure.Auth;
 using TadHub.Infrastructure.Storage;
 using TadHub.SharedKernel.Api;
+using TadHub.SharedKernel.Helpers;
 using TadHub.SharedKernel.Models;
 
 namespace TadHub.Api.Controllers;
@@ -259,6 +260,9 @@ public class CandidatesController : ControllerBase
             return Problem(ApiError.BadRequest("Photo must be JPEG, PNG, or WebP", HttpContext.Request.Path));
 
         await using var stream = file.OpenReadStream();
+        if (!FileSignatureValidator.IsValidFileSignature(stream, AllowedPhotoTypes))
+            return Problem(ApiError.BadRequest("File content does not match an allowed photo format", HttpContext.Request.Path));
+
         var tenantFile = await _tenantFileService.UploadAsync(
             tenantId, file.FileName, stream, file.ContentType, file.Length, "photo", ct);
 
@@ -299,6 +303,9 @@ public class CandidatesController : ControllerBase
             return Problem(ApiError.BadRequest("Video must be MP4 or WebM", HttpContext.Request.Path));
 
         await using var stream = file.OpenReadStream();
+        if (!FileSignatureValidator.IsValidFileSignature(stream, AllowedVideoTypes))
+            return Problem(ApiError.BadRequest("File content does not match an allowed video format", HttpContext.Request.Path));
+
         var tenantFile = await _tenantFileService.UploadAsync(
             tenantId, file.FileName, stream, file.ContentType, file.Length, "video", ct);
 
@@ -340,6 +347,9 @@ public class CandidatesController : ControllerBase
 
         // Upload via TenantFileService for tracking
         await using var stream = file.OpenReadStream();
+        if (!FileSignatureValidator.IsValidFileSignature(stream, AllowedPassportTypes))
+            return Problem(ApiError.BadRequest("File content does not match an allowed document format", HttpContext.Request.Path));
+
         var tenantFile = await _tenantFileService.UploadAsync(
             tenantId, file.FileName, stream, file.ContentType, file.Length, "passport", ct);
 

@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-15T09:31:52.563035+00:00",
-  "current_task": "24-move-credentials-to-secrets",
+  "last_updated": "2026-03-15T09:34:57.515602+00:00",
+  "current_task": "25-fix-file-upload-validation",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -345,16 +345,19 @@
       },
       "started_at": "2026-03-15T09:31:52Z",
       "completed_at": "2026-03-15T09:45:00Z",
-      "notes": "Replaced all plaintext credentials in appsettings.json and appsettings.Development.json with empty strings. Created .env.example with all required env vars documented. Added .env to .gitignore (with !.env.example exclusion). Removed hardcoded fallback connection string from DesignTimeDbContextFactory — now throws with helpful message. WebApplicationBuilder already calls AddEnvironmentVariables() by default."
+      "notes": "Replaced all plaintext credentials in appsettings.json and appsettings.Development.json with empty strings. Created .env.example with all required env vars documented. Added .env to .gitignore (with !.env.example exclusion). Removed hardcoded fallback connection string from DesignTimeDbContextFactory \u2014 now throws with helpful message. WebApplicationBuilder already calls AddEnvironmentVariables() by default."
     },
     "25-fix-file-upload-validation": {
       "title": "Add File Signature Validation for Uploads",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "validator": "pending",
-        "controllers": "pending",
-        "size-limits": "pending"
-      }
+        "validator": "completed",
+        "controllers": "completed",
+        "size-limits": "completed"
+      },
+      "started_at": "2026-03-15T09:34:57Z",
+      "completed_at": "2026-03-15T10:00:00Z",
+      "notes": "Created FileSignatureValidator in SharedKernel/Helpers with magic byte checks for JPEG, PNG, WebP, PDF, MP4, WebM. Applied to all 3 CandidatesController upload endpoints (photo, video, passport) and FilesController generic upload. RequestSizeLimit attributes already present on all endpoints. Stream position reset after validation."
     },
     "26-add-unit-tests": {
       "title": "Add Unit Test Project and Critical Tests",
