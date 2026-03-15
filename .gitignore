@@ -72,6 +72,8 @@ secrets.json
 *.pfx
 *.key
 *.pem
+.env
+!.env.example
 
 # Docker
 docker/.env

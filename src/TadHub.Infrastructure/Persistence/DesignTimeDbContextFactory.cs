@@ -26,7 +26,9 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
             .Build();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? "Host=localhost;Port=5432;Database=saaskit_dev;Username=saaskit;Password=saaskit";
+            ?? throw new InvalidOperationException(
+                "Connection string 'DefaultConnection' not found. " +
+                "Set it via environment variable 'ConnectionStrings__DefaultConnection' or in appsettings.Development.json.");
 
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
         optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>

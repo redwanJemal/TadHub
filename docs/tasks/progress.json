@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-15T09:27:47.077777+00:00",
-  "current_task": "23-fix-module-boundary-violations",
+  "last_updated": "2026-03-15T09:31:52.563035+00:00",
+  "current_task": "24-move-credentials-to-secrets",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -336,16 +336,16 @@
     },
     "24-move-credentials-to-secrets": {
       "title": "Move Credentials to Environment Variables",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "appsettings": "pending",
-        "env-example": "pending",
-        "gitignore": "pending",
-        "design-time-factory": "pending"
+        "appsettings": "completed",
+        "env-example": "completed",
+        "gitignore": "completed",
+        "design-time-factory": "completed"
       },
-      "started_at": null,
-      "completed_at": null,
-      "notes": null
+      "started_at": "2026-03-15T09:31:52Z",
+      "completed_at": "2026-03-15T09:45:00Z",
+      "notes": "Replaced all plaintext credentials in appsettings.json and appsettings.Development.json with empty strings. Created .env.example with all required env vars documented. Added .env to .gitignore (with !.env.example exclusion). Removed hardcoded fallback connection string from DesignTimeDbContextFactory — now throws with helpful message. WebApplicationBuilder already calls AddEnvironmentVariables() by default."
     },
     "25-fix-file-upload-validation": {
       "title": "Add File Signature Validation for Uploads",
