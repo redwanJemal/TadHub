@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-03-15T02:16:15.327006+00:00",
-  "current_task": "20-fix-sql-injection",
+  "last_updated": "2026-03-15T05:10:46.082864+00:00",
+  "current_task": "21-fix-n-plus-1-supplier-portal",
   "current_subtask": null,
   "tasks": {
     "01-candidate-registration-gaps": {
@@ -302,10 +302,13 @@
     },
     "21-fix-n-plus-1-supplier-portal": {
       "title": "Fix N+1 Query in SupplierPortalService",
-      "status": "pending",
+      "status": "completed",
       "subtasks": {
-        "bulk-load": "pending"
-      }
+        "bulk-load": "completed"
+      },
+      "started_at": "2026-03-15T05:10:45Z",
+      "completed_at": "2026-03-15T05:25:00Z",
+      "notes": "Replaced N+1 per-item SqlQueryRaw in ListSupplierUsersAsync with a single bulk query using ANY({0}) to fetch all supplier names at once. Added dictionary-based MapToDto overload. List now fires 3 queries (count + data + supplier names) instead of N+1."
     },
     "22-fix-raw-sql-bypassing-tracking": {
       "title": "Replace ExecuteSqlRaw with EF Core Tracked Updates",

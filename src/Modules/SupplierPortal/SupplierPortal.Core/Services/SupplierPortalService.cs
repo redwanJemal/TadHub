@@ -100,11 +100,24 @@ public class SupplierPortalService : ISupplierPortalService
             .Take(qp.PageSize)
             .ToListAsync(ct);
 
-        var dtos = new List<SupplierUserDto>();
-        foreach (var item in items)
+        // Bulk-load supplier names to avoid N+1 queries
+        var supplierIds = items.Select(x => x.SupplierId).Distinct().ToList();
+        var supplierNameMap = new Dictionary<Guid, (string? NameEn, string? NameAr)>();
+        if (supplierIds.Count > 0)
         {
-            dtos.Add(await MapToDto(item, ct));
+            var supplierNames = await _db.Database
+                .SqlQueryRaw<SupplierNameWithIdRow>(
+                    "SELECT id AS \"Id\", name_en AS \"NameEn\", name_ar AS \"NameAr\" FROM suppliers WHERE id = ANY({0})",
+                    supplierIds.ToArray())
+                .ToListAsync(ct);
+
+            foreach (var s in supplierNames)
+            {
+                supplierNameMap[s.Id] = (s.NameEn, s.NameAr);
+            }
         }
+
+        var dtos = items.Select(item => MapToDto(item, supplierNameMap)).ToList();
 
         return new PagedList<SupplierUserDto>(dtos, totalCount, qp.Page, qp.PageSize);
     }
@@ -390,20 +403,11 @@ public class SupplierPortalService : ISupplierPortalService
 
     private async Task<SupplierUserDto> MapToDto(SupplierUser entity, CancellationToken ct)
     {
-        string? supplierNameEn = null;
-        string? supplierNameAr = null;
-
         var supplierNames = await _db.Database
             .SqlQueryRaw<SupplierNameRow>(
                 "SELECT name_en AS \"NameEn\", name_ar AS \"NameAr\" FROM suppliers WHERE id = {0}",
                 entity.SupplierId)
             .FirstOrDefaultAsync(ct);
-
-        if (supplierNames is not null)
-        {
-            supplierNameEn = supplierNames.NameEn;
-            supplierNameAr = supplierNames.NameAr;
-        }
 
         return new SupplierUserDto
         {
@@ -414,8 +418,28 @@ public class SupplierPortalService : ISupplierPortalService
             DisplayName = entity.DisplayName,
             Email = entity.Email,
             Phone = entity.Phone,
-            SupplierNameEn = supplierNameEn,
-            SupplierNameAr = supplierNameAr,
+            SupplierNameEn = supplierNames?.NameEn,
+            SupplierNameAr = supplierNames?.NameAr,
+            CreatedAt = entity.CreatedAt,
+            UpdatedAt = entity.UpdatedAt,
+        };
+    }
+
+    private static SupplierUserDto MapToDto(SupplierUser entity, Dictionary<Guid, (string? NameEn, string? NameAr)> supplierNameMap)
+    {
+        supplierNameMap.TryGetValue(entity.SupplierId, out var names);
+
+        return new SupplierUserDto
+        {
+            Id = entity.Id,
+            UserId = entity.UserId,
+            SupplierId = entity.SupplierId,
+            IsActive = entity.IsActive,
+            DisplayName = entity.DisplayName,
+            Email = entity.Email,
+            Phone = entity.Phone,
+            SupplierNameEn = names.NameEn,
+            SupplierNameAr = names.NameAr,
             CreatedAt = entity.CreatedAt,
             UpdatedAt = entity.UpdatedAt,
         };
@@ -440,6 +464,13 @@ internal sealed class CommissionSummary
 
 internal sealed class SupplierNameRow
 {
+    public string? NameEn { get; set; }
+    public string? NameAr { get; set; }
+}
+
+internal sealed class SupplierNameWithIdRow
+{
+    public Guid Id { get; set; }
     public string? NameEn { get; set; }
     public string? NameAr { get; set; }
 }
